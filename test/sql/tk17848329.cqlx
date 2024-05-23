@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17848329_S1 (c1 integer, c2 integer, c3 double) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk17848329_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17848329_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk17848329_q1 as select c1, c2, count(c3) as amount 
+                   from tk17848329_S1[partition by c1, c2 rows 3 range 3 seconds slide 2 seconds] 
+                   where c3 > 0 group by c1, c2 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17848329_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17848329_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17848329_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

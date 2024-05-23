@@ -1,0 +1,918 @@
+<project name="target.tests">
+
+	<!-- import macro defs -->
+	<import file="${build.dir.target}/deploy_macrodefs.xml" />
+
+	<!-- import short regress target -->
+	<import file="${build.dir.target}/deploy_linroad.xml" />
+    
+        <property environment="env"/>
+        <property file="${env.OSA_HOME}/infra/db.properties"/>
+	
+	<fileset dir="${test.sql}" id="test.cqlx">
+		<include name="**/*.cqlx" />
+		<exclude name="**/order.cqlx" />
+		<exclude name="**/tkscale*.cqlx" />
+		<exclude name="**/tk20cols_scale*.cqlx" />
+		<exclude name="**/tkcsfbprscale.cqlx" />
+		<exclude name="**/tkpocbi.cqlx" />
+		<exclude name="**/tkstartup.cqlx" />
+		<exclude name="**/tkcsfb2.cqlx" />
+		<exclude name="**/tkpatternDemo1.cqlx" />
+		<exclude name="**/tkpatternDemo2.cqlx" />
+		<exclude name="**/tklinroad.cqlx" />
+		<exclude name="**/tklinroadpush.cqlx" />
+		<exclude name="**/tklrbdemo.cqlx" />
+		<exclude name="**/tklinroadbm3hrs_5000000.cqlx.new" />
+		<exclude name="**/tkdata140.cqlx" />
+		<exclude name="**/tkdata168.cqlx" />
+		<exclude name="**/tkdata145.cqlx" />
+		<exclude name="**/tkpatternScale.cqlx" />
+		<exclude name="**/tkhbtest.cqlx" />
+		<exclude name="**/tkdata6_rr.cqlx" />
+		<exclude name="**/tkdata7_rr.cqlx" />
+		<exclude name="**/tkdata40.cqlx" />
+		<exclude name="**/tkdata_fab1.cqlx" />
+		<exclude name="**/tklog.cqlx" />
+		<exclude name="**/tkairline.cqlx" />
+		<exclude name="**/tkdata1.cqlx" />
+		<exclude name="**/tkdata1_xml.cqlx" />
+		<exclude name="**/tkdata11.cqlx" />
+		<exclude name="**/tkdata12.cqlx" />
+		<exclude name="**/tkOnDemand.cqlx" />
+		<exclude name="**/tkxmlAgg_di.cqlx" />
+		<exclude name="**/tkdata_qryout.cqlx" />
+		<exclude name="**/tkgaming.cqlx" />
+		<exclude name="**/tkhbtimeout.cqlx" />
+		<exclude name="**/tkautohbtimeout.cqlx" />
+		<exclude name="**/tkMantasDup.cqlx" />
+		<exclude name="**/tkTotalOrdering.cqlx" />
+		<exclude name="**/tkValueWindow.cqlx" />
+		<exclude name="**/tkSubqueryValueWindow.cqlx" />
+		<exclude name="**/tkpartparallel.cqlx" />
+		<exclude name="**/tkunordparallel.cqlx" />
+		<exclude name="**/tkppview.cqlx" />
+		<exclude name="**/tkppjoin.cqlx" />
+		<exclude name="**/tkpptest.cqlx" />
+		<exclude name="**/tkppsignalgen.cqlx" />
+		<exclude name="**/tkpptf.cqlx" />
+		<exclude name="**/tk15962405.cqlx" />
+		<exclude name="**/tk16769886.cqlx" />
+		<exclude name="**/tksubquery2.cqlx" />
+		<!-- Commented tochar and tkdata54 to fix apple bug 13530508
+                where we disabled soft exceptions.-->
+		<exclude name="**/tktochar.cqlx" />
+		<exclude name="**/tkdata54.cqlx" />
+		<!-- some issue in queries based on view involving join in FIFO mode -->
+		<exclude name="**/tkArchivedView.cqlx" />
+		<exclude name="**/tkArchivedDimJoin.cqlx" />
+		<exclude name="**/tkArchivedDimJoin2.cqlx" />
+		<exclude name="**/tkArchivedDimJoin3.cqlx" />
+		<exclude name="**/tkArchivedDimJoin4.cqlx" />
+		<exclude name="**/tk16677757.cqlx" />
+		<exclude name="**/tk16966411.cqlx" />
+		<exclude name="**/tk16968207.cqlx" />
+		<exclude name="**/tkExtTimeZone.cqlx" />
+		<exclude name="**/tk17710958.cqlx" />
+		<exclude name="**/tkpartnstream.cqlx" />
+	</fileset>
+
+	<fileset dir="${test.sql}" id="mttest.cqlx">
+		<include name="**/*.cqlx" />
+		<exclude name="**/order.cqlx" />
+		<exclude name="**/tkBoolCoverage.cqlx" />
+		<exclude name="**/tkscale*.cqlx" />
+		<exclude name="**/tk20cols_scale*.cqlx" />
+		<exclude name="**/tkcsfbprscale.cqlx" />
+		<exclude name="**/tklinroad.cqlx" />
+		<exclude name="**/tklinroadpush.cqlx" />
+		<exclude name="**/tklrbdemo.cqlx" />
+		<exclude name="**/tkpocbi.cqlx" />
+		<exclude name="**/tkstartup.cqlx" />
+		<exclude name="**/tkcsfb2.cqlx" />
+		<exclude name="**/tkpatternDemo1.cqlx" />
+		<exclude name="**/tkpatternDemo2.cqlx" />
+		<exclude name="**/tkdata2_rstrm.cqlx" />
+		<exclude name="**/tkdata2_thread.cqlx" />
+		<exclude name="**/tkdata_relstm.cqlx" />
+		<exclude name="**/tkdata1.cqlx" />
+		<exclude name="**/tkdata1_xml.cqlx" />
+		<exclude name="**/tkdata4.cqlx" />
+		<exclude name="**/tkdata5.cqlx" />
+		<exclude name="**/tkdata6_fifo.cqlx" />
+		<exclude name="**/tkdata6_rr.cqlx" />
+		<exclude name="**/tkdata7_fifo.cqlx" />
+		<exclude name="**/tkdata7_rr.cqlx" />
+		<exclude name="**/tkdata8.cqlx" />
+		<exclude name="**/tkdata9.cqlx" />
+		<exclude name="**/tkdata11.cqlx" />
+		<exclude name="**/tkdata12.cqlx" />
+		<exclude name="**/tkdata17.cqlx" />
+		<exclude name="**/tkdata18.cqlx" />
+		<exclude name="**/tkdata19.cqlx" />
+		<exclude name="**/tkdata20.cqlx" />
+		<exclude name="**/tkdata21.cqlx" />
+		<exclude name="**/tkdata22.cqlx" />
+		<exclude name="**/tklinroadbm3hrs_5000000.cqlx.new" />
+		<exclude name="**/tkMantas.cqlx" />
+		<exclude name="**/tkMantasDup.cqlx" />
+		<exclude name="**/tkdata140.cqlx" />
+		<exclude name="**/tkdata168.cqlx" />
+		<exclude name="**/tkpatternScale.cqlx" />
+		<exclude name="**/tkhbtest.cqlx" />
+		<exclude name="**/tkdata_fab1.cqlx" />
+		<exclude name="**/tkairline.cqlx" />
+		<exclude name="**/tklog.cqlx" />
+		<exclude name="**/tkdata145.cqlx" />
+		<exclude name="**/tkOnDemand.cqlx" />
+		<exclude name="**/tkxmlAgg_di.cqlx" />
+		<exclude name="**/tkdata_qryout.cqlx" />
+		<exclude name="**/tkgaming.cqlx" />
+		<exclude name="**/tkhbtimeout.cqlx" />
+		<exclude name="**/tkautohbtimeout.cqlx" />
+		<exclude name="**/tkTotalOrdering_fifo.cqlx" />
+		<!-- removing tkExternal from mt untill the intermittent diffs are resolved -->
+		<exclude name="**/tkExternal.cqlx" />
+		<exclude name="**/tkExtTimeZone.cqlx" />
+		<exclude name="**/tkpartparallel.cqlx" />
+		<exclude name="**/tkunordparallel.cqlx" />
+		<exclude name="**/tkppview.cqlx" />
+		<exclude name="**/tkppjoin.cqlx" />
+		<exclude name="**/tkpptest.cqlx" />
+		<exclude name="**/tkppsignalgen.cqlx" />
+		<exclude name="**/tkpptf.cqlx" />
+		<exclude name="**/tk15962405.cqlx" />
+		<exclude name="**/tk16769886.cqlx" />
+		<exclude name="**/tksubquery2.cqlx" />
+		<exclude name="**/tkArchivedDimJoin2.cqlx" />
+		<exclude name="**/tkArchivedDimJoin3.cqlx" />
+		<exclude name="**/tkArchivedDimJoin4.cqlx" />
+		<exclude name="**/tkpartnstream.cqlx" />
+
+
+	</fileset>
+
+	<fileset dir="${test.sql}" id="ditest.cqlx">
+		<include name="**/*.cqlx" />
+		<exclude name="**/order.cqlx" />
+		<exclude name="**/tkscale*.cqlx" />
+		<exclude name="**/tk20cols_scale*.cqlx" />
+		<exclude name="**/tkcsfbprscale.cqlx" />
+		<exclude name="**/tkpocbi.cqlx" />
+		<exclude name="**/tkstartup.cqlx" />
+		<exclude name="**/tkcsfb2.cqlx" />
+		<exclude name="**/tkpatternDemo1.cqlx" />
+		<exclude name="**/tkpatternDemo2.cqlx" />
+		<exclude name="**/tklinroad.cqlx" />
+		<exclude name="**/tklinroadpush.cqlx" />
+		<exclude name="**/tklrbdemo.cqlx" />
+		<exclude name="**/tklinroadbm3hrs_5000000.cqlx.new" />
+		<exclude name="**/tkdata140.cqlx" />
+		<exclude name="**/tkdata168.cqlx" />
+		<exclude name="**/tkdata145.cqlx" />
+		<exclude name="**/tkpatternScale.cqlx" />
+		<exclude name="**/tkhbtest.cqlx" />
+		<exclude name="**/tkdata6_rr.cqlx" />
+		<exclude name="**/tkdata7_rr.cqlx" />
+		<exclude name="**/tkdata40.cqlx" />
+		<exclude name="**/tkdata_fab1.cqlx" />
+		<exclude name="**/tklog.cqlx" />
+		<exclude name="**/tkairline.cqlx" />
+		<exclude name="**/tkdata1.cqlx" />
+		<exclude name="**/tkdata1_xml.cqlx" />
+		<exclude name="**/tkdata11.cqlx" />
+		<exclude name="**/tkdata12.cqlx" />
+		<exclude name="**/tkOnDemand.cqlx" />
+		<exclude name="**/tkdata4.cqlx" />
+		<exclude name="**/tkdata6_fifo.cqlx" />
+		<exclude name="**/tkdata6_rr.cqlx" />
+		<exclude name="**/tkdata7_fifo.cqlx" />
+		<exclude name="**/tkdata7_rr.cqlx" />
+		<exclude name="**/tkdata8.cqlx" />
+		<exclude name="**/tkdata9.cqlx" />
+		<exclude name="**/tkdata17.cqlx" />
+		<exclude name="**/tkdata18.cqlx" />
+		<exclude name="**/tkdata19.cqlx" />
+		<exclude name="**/tkdata20.cqlx" />
+		<exclude name="**/tkdata21.cqlx" />
+		<exclude name="**/tkdata22.cqlx" />
+		<exclude name="**/tkdata185.cqlx" />
+		<exclude name="**/tkxmlAgg.cqlx" />
+		<exclude name="**/tkdata_qryout.cqlx" />
+		<!-- DI tests will run tkTotalOrdering.cqlx and 
+                     will skip tkTotalOrdering_fifo-->
+		<exclude name="**/tkTotalOrdering_fifo.cqlx" />
+		<!-- Note: Temporarily commenting out the test from SRG DI -->
+		<!-- Reason: Queries q6, q9, q10 and q11 are hanging on label PCBPEL_MAIN_GENERIC_130509.1952.4412 -->
+		<!--         All queries are based on inpTotalOrdering_R1 -->
+		<exclude name="**/tkTotalOrdering.cqlx" />
+		<exclude name="**/tksubquery2.cqlx" />
+		<exclude name="**/tkArchivedDimJoin2.cqlx" />
+		<exclude name="**/tkArchivedDimJoin3.cqlx" />
+	</fileset>
+
+
+	<fileset dir="${test.sql}" id="rc.exclude.cqlx">
+		<!-- memory overflow in rc traces -->
+		<include name="**/tkMantas.cqlx" />
+		<include name="**/tkMantasDup.cqlx" />
+		<include name="**/tkmantasIn.cqlx" />
+	</fileset>
+
+	<pathconvert pathsep="," property="all.test.list" refid="test.cqlx">
+	</pathconvert>
+
+	<pathconvert pathsep="," property="di.test.list" refid="ditest.cqlx">
+	</pathconvert>
+
+	<pathconvert pathsep="," property="rc.test.list" refid="test.cqlx">
+	</pathconvert>
+
+	<pathconvert pathsep="," property="mt.test.list" refid="mttest.cqlx">
+	</pathconvert>
+
+	<pathconvert pathsep="," property="rc.exclude.list" refid="rc.exclude.cqlx">
+	</pathconvert>
+
+	<setup.jvm/>
+
+	<target name="tkclean">
+		<clean.test/>
+		<!--add.db.tables/-->
+	</target>
+
+	<target name="tksrg" depends = "tkclean">
+		<antcall target="tksrg.sa" />
+	</target>
+
+	<target name="tklrg" depends = "tkclean">
+		<if>
+			<isset property="cqlx.file" />
+			<then>
+	  		  <echo message="**** ${cqlx.file} ****" />
+			  <antcall target="tkcqlx.sa.di" />
+			</then>
+			<else>
+	        	<if>
+	        		<isset property="cqlx.filelist" />
+	        		<then>
+	          		  <echo message="**** ${cqlx.filelist} ****" />
+	        		  <antcall target="tkcqlxlist.sa.di" />
+	        		</then>
+	        		<else>
+	                  <antcall target="tklrg.sa" />
+	        		</else>
+	        	</if>
+	        </else>
+		</if>
+	</target>
+
+	<target name="tksrgrc">
+		<antcall target="tksrgrc.sa" />
+	</target>
+
+	<target name="tkmt">
+		<antcall target="tkmt.sa" />
+	</target>
+
+	<target name="tkcsfb">
+		<antcall target="tkcsfb.sa" />
+	</target>
+
+	<target name="tklinear20secs">
+		<antcall target="tklinear20secs.sa" />
+	</target>
+
+	<target name="tkmrg.sa">
+		<antcall target="tksrg.sa.di" />
+		<antcall target="tkcsfb.sa.di" />
+		<antcall target="tklinear20secs.sa.di" />
+		<!--bug:10145105 Addition of new seed function to_JavaBigDecimal needs java cartridge; tkmisc works without java cartridge -->
+		<!--antcall target="tkmisc" /-->
+		<antcall target="tkjdbc.singletask" />
+	</target>
+
+	<target name="tklrg.sa">
+		<antcall target="tksrg.sa.di" />
+		<antcall target="tkcsfb.sa.di" />
+		<antcall target="tklinear20secs.sa.di" />
+		<!--bug:10145105 Addition of new seed function to_JavaBigDecimal needs java cartridge; tkmisc works without java cartridge -->
+		<!--antcall target="tkmisc" /-->
+		<antcall target="tkjdbc.singletask" />
+	</target>
+
+	<target name="tkcqlx.sa">
+		<antcall target="tkcqlx.sa.di" />
+	</target>
+
+	<target name="tkcqlxlist.sa.di">
+		<generate.context test.list="tksrg.di.lst" config.directInterop="true" />
+		<generate.list test.list="${cqlx.filelist}" test.listfile="tksrg.di.lst" />
+		<test.drv regress.tla="srg_di" />
+	</target>
+
+	<target name="tkcqlx.sa.di" >
+		<generate.context test.filename="${cqlx.file}.cqlx" dumpplan.afterrun="true" config.directInterop="true" />
+		<test.drv regress.tla="single_di" />
+	</target>
+
+	<target name="tksrg.sa" depends="tkclean">
+		<antcall target="tksrg.sa.di" />
+		<!--antcall target="tksrg.sa.fifo" /-->
+	</target>
+
+	<target name="tksrg.sa.di" >
+		<generate.context test.list="tksrg.di.lst" config.directInterop="true" />
+		<generate.list test.list="${di.test.list}" test.listfile="tksrg.di.lst" />
+		<test.drv regress.tla="srg_di" />
+	</target>
+
+	<target name="tksrgrc.sa.di">
+		<antcall target="debugrefcount.on" />
+		<antcall target="tksrgrc.sa.di0" />
+		<antcall target="debugrefcount.off" />
+	</target>
+
+	<target name="tksrgrc.sa.di0"  >
+		<property name="exclude.list" value="${rc.exclude.list}" />
+		<generate.context test.list="tksrgrc.lst.di" config.directInterop="true" />
+		<generate.list test.list="${di.test.list}" test.listfile="tksrgrc.lst.di" />
+		<test.drv regress.tla="srgrc_di" />
+	</target>
+
+	<target name="tksrgdt.sa.di"  >
+		<generate.context test.list="tksrg.di.lst" config.directInterop="true" config.useDynTuple="true" />
+		<generate.list test.list="${di.test.list}" test.listfile="tksrgdt.di.lst" />
+		<test.drv regress.tla="srg_dtdi" />
+	</target>
+
+	<target name="debugrefcount.on">
+		<echo message="Turn on DEBUG_TUPLE_REFCOUNT" />
+		<exec executable="${test.shell}" vmlauncher="false">
+			<arg value="${debug.flag.sh}" />
+			<arg value="DEBUG_TUPLE_REFCOUNT" />
+			<arg value="true" />
+		</exec>
+		<ant dir="server" target="clean" inheritAll="false" />
+		<ant dir="server" target="publish" inheritAll="false" />
+	</target>
+
+	<target name="debugrefcount.off">
+		<echo message="Turn off DEBUG_TUPLE_REFCOUNT" />
+		<exec executable="${test.shell}" vmlauncher="false">
+			<arg value="${debug.flag.sh}" />
+			<arg value="DEBUG_TUPLE_REFCOUNT" />
+			<arg value="false" />
+		</exec>
+		<ant dir="server" target="clean" inheritAll="false" />
+		<ant dir="server" target="publish" inheritAll="false" />
+	</target>
+
+	<target name="tkcsfb.sa.di" >
+		<generate.context test.filename="tkcsfbprscale.cqlx" config.directInterop="true" />
+		<test.drv regress.tla="csfb_di" scale.size="1000" scale.rate="1" scale.range="1" />
+	</target>
+
+	<!-- These tests are independent of scheduler mode -->
+	<target name="tkmisc" depends="tkjunit, tkunitcov">
+	</target>
+
+	<target name="tkjunit">
+		<junit.test.drv junit.name="tkjunit" junit.test.name="oracle.cep.test.TestAll">
+		</junit.test.drv>
+	</target>
+
+	<target name="tkOffset">
+		<runclass classname="oracle.cep.test.parser.TestOffset" sleep="0" />
+	</target>
+
+	<!-- run coverage test -->
+	<target name="tkunitcov">
+		<clean.work.log clean.opt="work.log" />
+
+		<echo message="Running coverage" />
+		<runclass classname="TkCEPCov" sleep="0" />
+	</target>
+
+	<target name="runcsfb">
+		<generate.context test.filename="tkcsfbprscale.cqlx" />
+		<test.drv regress.tla="" scale.size="1000000" scale.rate="1000" scale.range="1" />
+	</target>
+
+	<!-- run cep server -->
+	<target name="startcep" >
+		<prepare.resource/>
+		<!-- Start JDBC server -->
+		<echo message="starting cep server..." />
+		<prep.context/>
+		<runserver jvm.maxmem="512m" jvmarg="-Xdebug" arg1="-nohup"/>
+	</target>
+
+	<target name="startcep0" >
+		<!-- Start JDBC server -->
+		<runserver jvm.maxmem="512m" jvmarg="-Xdebug" arg1="-nohup"/>
+	</target>
+
+	<!-- run cep server multiple times (fabric start/stop scenario) -->
+	<target name="tknstart">
+		<prepare.resource/>
+		<filter token="CQLX_FILE" value="cqlx=${cqlengine.dir}/test/sql/tkdata1.cqlx" />
+		<prep.context/>
+		<copy file="${cqlengine.dir}/test/config/NStartApplicationContext.xml" tofile="${work.cep}/ApplicationContext.xml" filtering="true" overwrite="true">
+		</copy>
+		<runclass classname="TkCEPnStart" arg1="file:${work.cep}/ApplicationContext.xml" arg2="3" arg3="1000" />
+	</target>
+
+
+	<!-- run jdbc test -->
+	<target name="tkjdbc" >
+
+		<parallel threadCount='2'>
+			<!-- Start JDBC server -->
+			<daemons>
+				<echo message="Server daemon" />
+				<generate.logging.properties logbase="jdbc" />
+				<antcall target="startcep" />
+				<echo message="daemon started" />
+			</daemons>
+
+			<echo message="Server started" />
+			<!-- Start client tests. Add tests here -->
+			<sequential>
+				<sleep seconds="30" />
+				<echo message="Running JDBC client1" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest1" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" />
+				<echo message="Running JDBC client2" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest2" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<echo message="Running JDBC client3" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest3" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<echo message="Running JDBC client4" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest4" sleep="30" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<!-- this takes too long, don't run in lrg
+              <echo message="Running JDBC client5"/>
+              <runclass classname="oracle.cep.test.jdbc.TkJDBCTest5" sleep="10" />
+              -->
+				<echo message="Running JDBC client6" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest6" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<echo message="Running JDBC client7" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest7" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<echo message="Running JDBC client8" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest8" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCLoggingTest1" sleep="10" arg1="60000" arg2="1" arg3="${test.work.home}" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<echo message="Running JDBC Logging Test" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCLoggingTest1" sleep="10" arg1="60000" arg2="1" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<echo message="Running JDBC NLS Test" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCNLS" sleep="10" arg1="60000" arg2="1" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<echo message="Running JDBC Stale Source Test" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCStaleSource" sleep="10" arg1="60000" arg2="1" optional.classpath="${generated.cep}/com.oracle.cep.client_11.1.1.0.0.jar" />
+
+				<echo message="Running JDBC Long char" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCChar" sleep="10" arg1="60000" arg2="1" optional.classpath="${generated.cep}/${cep.client.jar}" />
+
+				<!-- Kill server -->
+				<!--
+              <exec executable="${test.shell}"  vmlauncher="false">
+                 <arg value="${build.dir.target}/killServer.sh" />
+    		</exec>
+              -->
+				<diff.file.set regress.tla="jdbc" />
+			</sequential>
+		</parallel>
+	</target>
+
+
+	<target name="tkjdbc0">
+		<parallel threadCount='2'>
+			<daemons>
+				<antcall target="startcep" />
+			</daemons>
+			<sequential>
+				<sleep seconds="30" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBC${name}" optional.classpath="${generated.cep}/${cep.client.jar}" />
+			</sequential>
+		</parallel>
+	</target>
+
+	<target name="tkjdbc6s">
+		<prep.context/>
+		<runclass classname="oracle.cep.test.jdbc.TkJDBCTest6" sleep="10" optional.classpath="${work.cep}" arg1="singletask" />
+	</target>
+
+	<target name="tkjdbcss">
+		<prep.context/>
+		<generate.logging.properties logging="logging100k" logbase="jdbcss" />
+		<runclass classname="TkJDBCTest8" sleep="10" optional.classpath="${work.cep}" arg1="singletask" arg2="ss" />
+	</target>
+
+	<target name="tkjdbcms">
+		<prep.context/>
+		<generate.logging.properties logging="logging100k" logbase="jdbcms" />
+		<runclass classname="TkJDBCTest8" sleep="10" optional.classpath="${work.cep}" arg1="singletask" arg2="ms" />
+	</target>
+
+	<target name="tkjdbcnls">
+		<prep.context />
+		<generate.logging.properties logbase="jdbchello" />
+		<runclass classname="oracle.cep.test.jdbc.TkJDBCNLS" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+	</target>
+
+	<target name="tkjdbc7Perf">
+		<prep.context/>
+		<runclass classname="TkJDBCTest7" sleep="10" optional.classpath="${work.cep}" arg1="singletask" />
+	</target>
+
+	<target name="tkjdbc9PrtnMem">
+		<parallel threadCount='2'>
+			<!-- Start JDBC server -->
+			<daemons>
+				<echo message="Server daemon" />
+				<generate.logging.properties logbase="jdbc" />
+				<antcall target="startcep" />
+				<echo message="daemon started" />
+			</daemons>
+
+			<echo message="Server started" />
+			<sequential>
+				<sleep seconds="30" />
+				<echo message="Running JDBC client 9 - PartitionWindow Memory Consumption Test - Should NOT result in Out of Memory"/>
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCTest9" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single"/>
+		        </sequential>
+		</parallel>
+	</target>
+
+
+	<target name="tkjdbc.debug">
+		<prep.context/>
+		<runclass classname="oracle.cep.test.jdbc.TkJDBC${name}" optional.classpath="${generated.cep}/${cep.client.jar}" />
+	</target>
+
+	<target name="tkjdbcs.debug">
+		<prep.context/>
+		<copy file="${cqlengine.dir}/test/config/JDBCApplicationContext.xml" tofile="${work.cep}/ApplicationContext.xml" filtering="true" overwrite="true" />
+		<runclass classname="oracle.cep.test.jdbc.TkJDBC${name}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" optional.classpath="${generated.cep}/${cep.client.jar}" />
+	</target>
+
+	<!-- run jdbc test with singletask mode-->
+	<target name="tkjdbc.singletask">
+		<sequential>
+			<echo message="Preparing Application Context" />
+			<prep.context/>
+			<copy file="${cqlengine.dir}/test/config/JDBCApplicationContext.xml" tofile="${work.cep}/ApplicationContext.xml" filtering="true" overwrite="true" />
+
+			<echo message="Running JDBC client1" />
+			<generate.logging.properties logbase="jdbcs1" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCTest1" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+			<!--                            optional.classpath="${generated.cep}/${cep.client.jar}" -->
+
+			<echo message="Running JDBC client2" />
+			<generate.logging.properties logbase="jdbcs2" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCTest2" 
+				    optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<echo message="Running JDBC client3" />
+			<generate.logging.properties logbase="jdbcs3" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCTest3" optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<echo message="Running JDBC client4" />
+			<generate.logging.properties logbase="jdbcs4" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCTest4" optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<echo message="Running JDBC client7" />
+			<generate.logging.properties logbase="jdbcs7" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCTest7" optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<echo message="Running JDBC client double counting 1" />
+			<generate.logging.properties logbase="jdbcsdc1" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCTestDoubleCounting1" optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<echo message="Running JDBC NLS" />
+			<generate.logging.properties logbase="jdbcsnls" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCNLS" optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<echo message="Running JDBC Stale Source" />
+			<generate.logging.properties logbase="jdbcsstale" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCStaleSource" optional.classpath="${generated.cep}/${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<echo message="Running JDBC long char" />
+			<generate.logging.properties logbase="jdbclchar" />
+			<runclass classname="oracle.cep.test.jdbc.TkJDBCChar" optional.classpath="${cep.client.jar}" arg1="-single" arg2="${work.cep}/ApplicationContext.xml" />
+
+			<!--
+	                        <echo message="Running JDBC trace" />
+				<generate.logging.properties logbase="trace" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCLoggingTest2" optional.classpath="${generated.cep}/com.oracle.cep.client_11.1.1.0.0.jar" argline="-single -work ${test.work.home} -home ${wlevs.home} file://${work.cep}/ApplicationContext.xml"/>
+
+	    		<echo message="Applying log filter" />
+	                -->
+
+			<!--<setup.perl />-->
+			<!-- 
+	          		<exec dir="${test}" executable="${test.perl}">
+	    			<arg value="-I" />
+	    			<arg value="${test.perl.lib}" />
+	    			<arg value="${test.sosd}/logfilter.pl" />
+	    			<arg value="-summary" />
+	    			<arg value="-o" />
+	    			<arg value="${work.cep.log}/tktrace.txt" />
+	    			<arg value="${work.cep}/cep_trace.log" />
+	    		</exec>
+	                -->
+
+			<!-- TEMPORARILY DISABLED as the test is failing. The output log is nothing but lots of log lines having failure messages.
+	                    PLEASE ENABLE THE TEST ONCE THE ISSUE IS FIXED
+				<echo message="Running JDBC spatial2" />
+				<generate.logging.properties logging="errlogging" logbase="spatial2" />
+				<runclass classname="oracle.cep.test.spatial.TkJDBCSpatial2" optional.classpath="${generated.cep}/com.oracle.cep.client_11.1.1.0.0.jar" argline="-single -work ${test.work.home} -home ${wlevs.home} ${work.cep}/ApplicationContext.xml"/>
+
+	    		<echo message="Applying log filter" />
+	    		<!-<setup.perl />->
+	    		<exec dir="${test}" executable="${test.perl}">
+	    			<arg value="-I" />
+	    			<arg value="${test.perl.lib}" />
+	    			<arg value="${test.sosd}/logfilter.pl" />
+	    			<arg value="-o" />
+	    			<arg value="${work.cep.log}/tkspatial12.txt" />
+	    			<arg value="-f" />
+	    			<arg value="${test.config}/ceplogfilter.cmd" />
+	    			<arg value="${work.cep}/cep_spatial2.log" />
+	    		</exec>
+	                -->
+			<diff.file.set regress.tla="jdbcs" />
+		</sequential>
+	</target>
+	<target name="tklog.server">
+		<echo message="Server daemon" />
+		<generate.context test.list="empty" exit.afterrun="false" />
+		<runserver jvm.maxmem="1024m" jvmarg="-Xdebug" />
+	</target>
+
+	<!-- This test involves silent relations, so currently only in non-di -->
+	<target name="tklog">
+		<parallel threadCount='2'>
+			<daemons>
+				<echo message="Server daemon" />
+				<prep.context/>
+				<generate.logging.properties logbase="trace" />
+				<generate.context test.list="empty" exit.afterrun="false" config.scheduler="oracle.cep.execution.scheduler.RounRobinScheduler" />
+				<!--
+                    spill.policy="fullEvictPolicy" debug.count="1000" />
+                -->
+				<runserver jvm.maxmem="1024m" jvmarg="-Xdebug" />
+			</daemons>
+
+			<!-- Start client tests. Add tests here -->
+			<sequential>
+				<echo message="Client... waiting 30 seconds" />
+				<sleep seconds="30" />
+				<echo message="Running JDBC Logging Test" />
+				<runclass classname="oracle.cep.test.jdbc.TkJDBCLoggingTest2" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" argline="-work ${test.work.home} -home ${wlevs.home}"/>
+			</sequential>
+		</parallel>
+		<echo message="Applying log filter" />
+		<!--<setup.perl />-->
+		<exec dir="${test}" executable="${test.perl}">
+			<arg value="-I" />
+			<arg value="${test.perl.lib}" />
+			<arg value="${test.sosd}/logfilter.pl" />
+			<arg value="-summary" />
+			<arg value="-o" />
+			<arg value="${work.cep.log}/tktrace.txt" />
+			<arg value="${work.cep}/cep_trace.log" />
+		</exec>
+
+		<diff.file.set regress.tla="log" />
+
+	</target>
+
+	<target name="tklog0">
+		<echo message="Running JDBC Logging Test" />
+		<runclass classname="TkJDBCLoggingTest2" sleep="10" optional.classpath="${generated.cep}/${cep.client.jar}" argline="-work ${test.work.home} -home ${wlevs.home}" />
+	</target>
+
+
+	<target name="tkstats">
+		<qa.stat/>
+	</target>
+
+	<target name="tksrg.dtc">
+		<generate.context test.list="tksrgdtc.lst" config.useDynTuple="true" />
+		<generate.list test.list="${all.test.list}" test.listfile="tksrgdtc.lst" />
+		<test.drv regress.tla="srgdtc" />
+	</target>
+
+	<target name="tksrg.pt">
+		<generate.context test.list="tksrgpt.lst" config.usePagedTuple="true" config.usePagedList="true" />
+		<generate.list test.list="${all.test.list}" test.listfile="tksrgpt.lst" />
+		<test.drv regress.tla="srgpt" />
+	</target>
+
+	<!-- Gnerate Colt test file -->
+	<target name="gen.colt.test">
+		<ant dir="${cqlengine.dir}/colt" target="gen.colt" />
+		<echo message="Generating Test for Colt Functions : tkdata140.cqlx" />
+		<java fork="true" classname="oracle.cep.tools.colt.functions.ColtTestGenerator">
+			<classpath>
+				<path refid="cep.classpath" />
+			</classpath>
+			<arg file="${test.sql}/tkdata140.cqlx" />
+			<arg file="${colt.functions.xmlfile}" />
+			<assertions>
+				<enable/>
+			</assertions>
+		</java>
+	</target>
+
+	<target name="gen.colt.aggr.test">
+		<ant dir="${cqlengine.dir}/colt" target="gen.colt" />
+		<echo message="Generating Test for Colt Aggregate Functions : tkdata168.cqlx" />
+		<java fork="true" classname="oracle.cep.tools.colt.aggr.ColtAggrTestGenerator">
+			<classpath>
+				<path refid="cep.classpath" />
+			</classpath>
+			<arg file="${tools}/src/oracle/cep/tools/colt/aggr/XML2ColtAggrTest.xsl" />
+			<arg file="${colt.aggr.functions.xmlfile}" />
+			<arg file="${test.sql}/tkdata168.cqlx" />
+			<assertions>
+				<enable/>
+			</assertions>
+		</java>
+	</target>
+
+	<target name="tkvwap" depends="tkclean">
+		<property name="rate" value="150000" />
+		<property name="runTime" value="15000" />
+		<!-- given run time is divided into few time intervals; default timeInterval = 1000ms -->
+		<property name="timeInterval" value="1000" />
+		<property name="query" value="create query q$ as select * from Market" />
+		<property name="numSymbols" value="1" />
+		<property name="numThreads" value="1" />
+		<property name="schedName" value="oracle.cep.execution.scheduler.FIFOScheduler" />
+		<property name="schedTimeSlice" value="1000" />
+
+		<echo message="Running VWAP Benchmark Kit.." />
+		<copy file="${test.config}/VwapApplicationContext.xml" tofile="${work.cep}/ApplicationContext.xml" filtering="true" overwrite="true">
+		</copy>
+		<java fork="true" maxmemory="2g" classname="oracle.cep.test.vwap.server.VWAPBenchmarkKit" jvm="${test.jvm}">
+			<classpath>
+				<path refid="cep.classpath" />
+			</classpath>
+			<jvmarg value="-server" />
+			<jvmarg value="-Xgc:gencon" />
+			<!-- Sun's JVM specific arguments
+        <jvmarg value="-XX:+UseParallelGC"/>
+        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
+        <jvmarg value="-Xnoincgc"/>-->
+			<!--<jvmarg value="-Dcom.sun.management.jmxremote"/>-->
+			<jvmarg value="-Xms2g" />
+			<jvmarg value="-Xmx2g" />
+			<jvmarg value="-Xns128m" />
+			<!--<arg value="${test.config}/cep1_config.xml"/>-->
+			<arg value="${work.cep}/ApplicationContext.xml" />
+			<arg value="-rate" />
+			<arg value="${rate}" />
+			<arg value="-runTime" />
+			<arg value="${runTime}" />
+			<arg value="-query" />
+			<arg value="${query}" />
+			<arg value="-numSymbols" />
+			<arg value="${numSymbols}" />
+			<arg value="-numThreads" />
+			<arg value="${numThreads}" />
+			<arg value="-schedName" />
+			<arg value="${schedName}" />
+			<arg value="-schedTimeSlice" />
+			<arg value="${schedTimeSlice}" />
+			<arg value="-timeInterval" />
+			<arg value="${timeInterval}" />
+		</java>
+	</target>
+
+	<!-- Target for Inifinitely running server -->
+	<target name="tkvwapserver" depends="tkclean">
+		<!--<property name="query" value='create query q$ as select * from Market where ticker="$"'/>-->
+		<property name="query" value='create query q$ as select * from Market' />
+		<property name="numSymbols" value="1" />
+		<property name="numThreads" value="1" />
+		<property name="schedName" value="oracle.cep.execution.scheduler.FIFOScheduler" />
+		<property name="schedTimeSlice" value="1000" />
+
+		<echo message="Running VWAP Benchmark Kit.." />
+		<copy file="${test.config}/VwapApplicationContext.xml" tofile="${work.cep}/ApplicationContext.xml" filtering="true" overwrite="true">
+		</copy>
+		<java fork="true" maxmemory="2g" classname="oracle.cep.test.vwap.server.EnhVWAPBenchmarkKit" jvm="${test.jvm}">
+			<classpath>
+				<path refid="cep.classpath" />
+			</classpath>
+			<jvmarg value="-server" />
+			<jvmarg value="-Xms2g" />
+			<jvmarg value="-Xmx2g" />
+			<jvmarg value="-Xns128m" />
+			<jvmarg value="-Xgc:gencon" />
+			<!-- Sun's JVM specific arguments
+            <jvmarg value="-XX:+UseParallelGC"/>
+            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
+            <jvmarg value="-Xnoincgc"/>-->
+
+			<!--<jvmarg value="-Dcom.sun.management.jmxremote"/>-->
+			<!--<arg value="${test.config}/cep1_config.xml"/>-->
+			<arg value="${work.cep}/ApplicationContext.xml" />
+			<arg value="-query" />
+			<arg value="${query}" />
+			<arg value="-numSymbols" />
+			<arg value="${numSymbols}" />
+			<arg value="-numThreads" />
+			<arg value="${numThreads}" />
+			<arg value="-schedName" />
+			<arg value="${schedName}" />
+			<arg value="-schedTimeSlice" />
+			<arg value="${schedTimeSlice}" />
+		</java>
+	</target>
+
+	<!-- Target for Data Injection Client -->
+	<target name="tkvwapclient">
+		<echo message="Running VWAP Benchmark Client.." />
+		<property name="rate" value="100000" />
+		<property name="runTime" value="15000" />
+
+		<java fork="true" maxmemory="1024m" classname="oracle.cep.test.vwap.client.VWAPBenchmarkClient" jvm="${test.jvm}">
+			<classpath>
+				<path refid="cep.classpath" />
+			</classpath>
+			<arg value="-rate" />
+			<arg value="${rate}" />
+			<arg value="-runTime" />
+			<arg value="${runTime}" />
+		</java>
+	</target>
+
+	<target name="tkcheck.visualizer" unless="has.visualizer">
+		<available file="${generated.cep}/${cep.visualizer.jar}" type="file" property="has.visualizer.tmp" />
+		<if>
+			<equals arg1="${has.visualizer.tmp}" arg2="true" />
+			<then>
+				<echo message="visualizer exists." />
+			</then>
+			<else>
+				<echo message="building visualizer..." />
+				<ant dir="${cqlengine.dir}/tools/visualizer" target="all" inheritAll="false" />
+				<property name="has.visualizer" value="true" />
+			</else>
+		</if>
+	</target>
+
+	<target name="showplan" depends="tkcheck.visualizer">
+		<runclass classname="TkJMXClient" arg1="-class" arg2="oracle.cep.test.TestServer" arg3="-twork" arg4="${work}" arg5="@${test.config}/dumpplan.cmd" />
+		<exec executable="${test.shell}" dir="${cqlengine.dir}/tools/visualizer/bin" vmlauncher="false">
+			<arg value="${cqlengine.dir}/tools/visualizer/bin/visfile.sh" />
+			<arg value="plan" />
+		</exec>
+	</target>
+
+	<target name="copy.srgcqls">
+		<available file="${dest}" type="dir" property="has.dest" />
+		<if>
+			<equals arg1="${has.dest}" arg2="true" />
+			<then>
+				<delete file="${dest}/tksrg.lst" failonerror="false" />
+				<echo message="generating list : ${dest}/tksrg.lst" />
+				<for list="${all.test.list}" param="file.name">
+					<sequential>
+						<concat destfile="${dest}/tksrg.lst" append="yes" fixlastline="yes">@{file.name}</concat>
+						<copy file="${cqlengine.dir}/test/sql/@{file.name}" todir="${dest}" overwrite="true">
+						</copy>
+					</sequential>
+				</for>
+			</then>
+			<else>
+				<echo message="destinaion does not exist : ${dest}" />
+			</else>
+		</if>
+
+	</target>
+    
+	<target name="cqlxtest">
+        <if>
+            <isset property="cqlx.file" />
+            <then>
+                <antcall target="tkcqlx.sa" />
+            </then>
+            <else>
+                <antcall target="tksrg" />
+            </else>
+        </if>
+	</target>
+
+</project>
+
+
+

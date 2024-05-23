@@ -1,0 +1,44 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata2_ddl_S0 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> register stream tkdata2_ddl_S5 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> register stream tkdata2_ddl_S6 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> register stream tkdata2_ddl_S9 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> register stream tkdata2_ddl_SinpByte1 (c1 integer, c2 byte(10))</CEP_DDL>
+<CEP_DDL> <![CDATA[ create function tkdata2_ddl_var(c1 int) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_ddl_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>               
+<CEP_DDL> <![CDATA[ alter stream tkdata2_ddl_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_ddl_S6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_ddl_S9 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_ddl_SinpByte1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpByte1.txt</Address></EndPointReference>"]]> </CEP_DDL>   
+<CEP_DDL> <![CDATA[ register view tkdata2_ddl_v0 (c1 integer, c2 float) as select * from tkdata2_ddl_S0]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ register view tkdata2_ddl_v1 (c1 integer, c2 float) as select * from tkdata2_ddl_S0 [range 1]]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_q11 as select * from tkdata2_ddl_S0 [range 1]]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_q12 as select * from tkdata2_ddl_v0]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_q13 as select c1 from tkdata2_ddl_S9]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_q21 as select tkdata2_ddl_var(c1) from tkdata2_ddl_S9 [range 10]]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_q22 as select * from tkdata2_ddl_S5 [range 2 minutes], tkdata2_ddl_S6 [range 2 minutes]]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_q23 as select * from tkdata2_ddl_v1 where c1 > 10]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_qb1 as select * from tkdata2_ddl_SinpByte1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_qb2 as select c1+1.2, rawtohex( c2) from tkdata2_ddl_SinpByte1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_ddl_qb3 as select * from tkdata2_ddl_SinpByte1 where c2 > hextoraw("22")]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_q11 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outCr211.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_q12 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outCr212.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_q13 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outCr213.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_q21 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outCr221.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_q22 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outCr222.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_q23 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outCr223.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_qb1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outQB1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_qb2 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outQB2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_ddl_qb3 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outQB3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_q11 start</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_q12 start</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_q13 start</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_q21 start</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_q22 start</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_q23 start</CEP_DDL>
+<CEP_DDL> drop query tkdata2_ddl_q13</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_qb1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_qb2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata2_ddl_qb3 start</CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

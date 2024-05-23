@@ -1,0 +1,21 @@
++ "abcd",<info>
+<name>abcd</name>
+<desig>MTS</desig>
+</info>,5.25,08/07/2004 11:13:48
++ ,<info>
+<name>efgh</name>
+<desig>SMTS</desig>
+</info>,1.24562672,08/03/2006 09:32:46
++ "19",<info>
+<name>ijkl</name>
+<desig>PMTS</desig>
+</info>,10.576,04/06/2004 11:24:51
++ "0aff",
+<info>
+<name>mnop</name>
+<desig>CMTS</desig>
+</info>,252.0,
+- "19",<info>
+<name>ijkl</name>
+<desig>PMTS</desig>
+</info>,10.576,04/06/2004 11:24:51

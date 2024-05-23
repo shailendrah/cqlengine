@@ -1,0 +1,7 @@
+i, c 20, TOF
+1000 F 70, "oracle"
+1000 F 80, 
+1000 F , "ibm"
+1000 F 100, "apple"
+1000 F 110, "apple"
+1000 T 120, "apple"

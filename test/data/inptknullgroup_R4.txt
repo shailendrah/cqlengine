@@ -1,0 +1,8 @@
+i, c 20, s TOF
+500  F + 1, ORCL
+1000 F + 1, ORCL
+1000 F - 1, ORCL
+1000 F - 1, ORCL
+1000 F + 1, ORCL
+2000 F + 1, ORCL
+h 3000

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> register stream tkboolean_S1 (c1 boolean, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkboolean_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSbool-f.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkboolean_S2 (c1 int, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkboolean_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkboolean_S3 (c1 bigint, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkboolean_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSBigInt-l-f.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkboolean_1 as select * from tkboolean_S1[now] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check eq  -->
+<CEP_DDL><![CDATA[ create query tkboolean_eq as select * from tkboolean_S1 [now] where c1 = true ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_eq add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-eq.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check eq  -->
+<CEP_DDL><![CDATA[ create query tkboolean_eq1 as select * from tkboolean_S1 [now] where c1 = false ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_eq1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-eq1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint ne bigint -->
+<CEP_DDL><![CDATA[ create query tkboolean_ne as select * from tkboolean_S1 [now] where c1 != true ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_ne add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-ne.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check is null -->
+<CEP_DDL><![CDATA[ create query tkboolean_null as select * from tkboolean_S1 [now] where c1 is null ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_null add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-null.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check eq  null -->
+<CEP_DDL><![CDATA[ create query tkboolean_null_1 as select * from tkboolean_S1 [now] where c1  = null ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_null_1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-null_1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check not eq  null -->
+<CEP_DDL><![CDATA[ create query tkboolean_null_2 as select * from tkboolean_S1 [now] where c1  != null ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_null_2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-null_2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check true eq null -->
+<CEP_DDL><![CDATA[ create query tkboolean_null_3 as select * from tkboolean_S1 [now] where true  = null ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_null_3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-null_3.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check false eq null -->
+<CEP_DDL><![CDATA[ create query tkboolean_null_4 as select * from tkboolean_S1 [now] where false  = null ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_null_4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-null_4.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check null eq null in values -->
+<CEP_DDL><![CDATA[ create query tkboolean_null_5 as select * from tkboolean_S1 [rows 3] as A , tkboolean_S1[rows 3] as B  where A.c1 = B.c1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_null_5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-null_5.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check is not null -->
+<CEP_DDL><![CDATA[ create query tkboolean_nnull as select * from tkboolean_S1 [now] where c1 is not null ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_nnull add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-nnull.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check nvl -->
+<CEP_DDL> create query tkboolean_nvl as select nvl(c1, true), c2 from tkboolean_S1 [now] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_nvl add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-nvl.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check convert from int  -->
+<CEP_DDL><![CDATA[ register view tkboolean_cvtintv1 (c1 boolean, c2 integer) as select to_boolean(c1), c1  from tkboolean_S2 [now] where c1 = 5]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkboolean_cvtint as select * from tkboolean_cvtintv1]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_cvtint add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-cvtint.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check convert from bigint  -->
+<CEP_DDL><![CDATA[ register view tkboolean_cvtbintv2 (c1 boolean, c2 bigint) as select to_boolean(c1), c1 from tkboolean_S3 [now] where c2 = 0.1]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkboolean_cvtbint as select * from tkboolean_cvtbintv2]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkboolean_cvtbint add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-cvtbint.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check int UDF(boolean) -->
+<CEP_DDL> create function tkbool_udf(c1 boolean) return char as language java name "oracle.cep.test.userfunctions.TkBoolStr" </CEP_DDL>
+<CEP_DDL> create query tkbool_udf1 as select c1, tkbool_udf(c1) from tkboolean_S1 [now]  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbool_udf1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-udf1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check int UDA(boolean) -->
+<CEP_DDL> create function tkbool_uda(c1 boolean) return int aggregate using "oracle.cep.test.userfunctions.TkBoolCount" </CEP_DDL>
+<CEP_DDL> create query tkbool_uda1 as select c1, tkbool_uda(c1) from tkboolean_S1 [range 10] group by c1 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbool_uda1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbool-uda1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> alter query tkboolean_1 start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_eq start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_ne start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_null start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_null_1 start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_null_2 start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_null_3 start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_null_4 start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_null_5 start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_nnull start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_nvl start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_cvtint start </CEP_DDL>
+<CEP_DDL> alter query tkboolean_cvtbint start </CEP_DDL>
+<CEP_DDL> alter query tkbool_udf1 start </CEP_DDL>
+<CEP_DDL> alter query tkbool_uda1 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>
+

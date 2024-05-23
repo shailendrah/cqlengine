@@ -1,0 +1,13 @@
+c 10, i, i
+data1, 10, 1 
+data2, 20, 1
+data3, 10, 2
+data4, 10, 3
+data5, 20, 1
+data6, 20, 2
+data7, 20, 2
+data8, 20, 3
+data9, 20, 2
+data10, 10, 4
+data11, 20, 1 
+data12, 20, 1

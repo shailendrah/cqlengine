@@ -1,0 +1,31 @@
+<definitions
+     name="OrderAlertProcessor"
+     targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/jms/OrderAlertProcessor/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/jms/OrderAlertProcessor/"
+     xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+     xmlns:jca="http://xmlns.oracle.com/pcbpel/wsdl/jca/"
+     xmlns:imp1="http://www.oracle.com/cep"
+     xmlns:hdr="http://xmlns.oracle.com/pcbpel/adapter/jms/"
+    >
+    <import namespace="http://xmlns.oracle.com/pcbpel/adapter/jms/" location="jmsAdapterOutboundHeader.wsdl"/>
+    <types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" >
+        <import namespace="http://www.oracle.com/cep" schemaLocation="order.xsd" />
+      </schema>
+    </types>
+    <message name="Order_msg">
+        <part name="payload" element="imp1:ComplexEvent"/>
+    </message>
+    <portType name="sendMessage_ptt">
+        <operation name="sendMessage">
+            <input message="tns:Order_msg"/>
+        </operation>
+    </portType>
+
+  <plt:partnerLinkType name="sendMessage_plt" >
+    <plt:role name="sendMessage_role" >
+      <plt:portType name="tns:sendMessage_ptt" />
+    </plt:role>
+  </plt:partnerLinkType>
+</definitions>

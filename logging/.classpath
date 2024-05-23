@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry path="bin" kind="output"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/com.bea.core/apache.commons.logging.api/1.0.0.0_1-1-1/e5b41cc43c5b93465910aa0c40e1a6438d4dd54c/apache.commons.logging.api-1.0.0.0_1-1-1.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/ojdl/ojdl/1.0/b43eb6bbe2cc4d52a882563e53e1e9f9ccc0f2ab/ojdl-1.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/junit/junit/4.11/4e031bb61df09069aeb2bffb4019e7a5034a4ee0/junit-4.11.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/out/install/oracle-middleware-12.2.1.2.0/coherence/lib/coherence.jar"/>
+</classpath>

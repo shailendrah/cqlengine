@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkpartition_SP1(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkpartition_SP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkpartition_SP2(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkpartition_SP2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkpartition_SP3(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkpartition_SP3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkpartition_SP4(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkpartition_SP4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP4.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkpartition_SP5(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkpartition_SP5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP5.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkpartition_SP6(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkpartition_SP6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP6.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkpartition_SP7(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkpartition_SP7 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP7.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> register relation tkpartition_RP1(d1 integer, rname char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter relation tkpartition_RP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpRP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- row parition -->
+<CEP_DDL><![CDATA[ create query tkpartition_row as select * from tkpartition_SP1 [partition by c1 rows 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_row add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-row.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_row2 as select * from tkpartition_SP1 [partition by c1 rows 2] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_row2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-row2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_row4 as select * from tkpartition_SP1 [partition by c1 rows 4] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_row4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-row4.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_row5 as select * from tkpartition_SP4 [partition by c1 rows 2] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_row5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-row5.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_row6 as select * from tkpartition_SP6 [partition by c2 rows 3] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_row6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-row6.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- ranged partition window  -->
+<CEP_DDL><![CDATA[ create query tkpartition_range as select * from tkpartition_SP3 [partition by c1 rows 1 range 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_range add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-range.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_range1 as select * from tkpartition_SP2 [partition by c1 rows 2 range 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_range1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-range1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_range2 as select * from tkpartition_SP5 [partition by c1 rows 2 range 2] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_range2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-range2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- partion window join -->
+<CEP_DDL><![CDATA[ create query tkpartition_join as select c1, name, rname from tkpartition_SP1 [partition by c1 rows 1], tkpartition_RP1 where tkpartition_SP1.c1 = tkpartition_RP1.d1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_join add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-join.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_join1 as select c1, name, rname from tkpartition_SP1 [partition by c1 rows 2], tkpartition_RP1 where tkpartition_SP1.c1 = tkpartition_RP1.d1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_join1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-join1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- partion window with predicate -->
+<CEP_DDL><![CDATA[ create query tkpartition_predicate as select * from tkpartition_SP7 [partition by c1 rows 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_predicate add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-predicate.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_predicate1 as select * from tkpartition_SP7 [partition by c1 rows 1] where c2 > 0 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_predicate1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-predicate1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<!-- For operator sharing test -->
+<CEP_DDL><![CDATA[ create query tkpartition_predicate1a as select * from tkpartition_SP7 [partition by c1 rows 1] where c2 > 0 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_predicate1a add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-predicate1a.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_predicate2 as select * from tkpartition_SP7 [partition by c1 rows 3] where c2 > 0 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_predicate2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-predicate2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_predicate3 as select * from tkpartition_SP7 [partition by c1 rows 1 range 1] where c2 > 0 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_predicate3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-predicate3.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_predicate4 as select * from tkpartition_SP7 [partition by c1 rows 1] where c2 > 0 and c1 <= 10 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_predicate4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-predicate4.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_predicate5 as select c1, name, rname from tkpartition_SP1 [partition by c1 rows 2], tkpartition_RP1 where tkpartition_SP1.c1 = tkpartition_RP1.d1 and length(tkpartition_SP1.name) > 2 and tkpartition_SP1.c1 > 1]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_predicate5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-predicate5.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- with range and slide 
+<CEP_DDL><![CDATA[ create query tkpartition_rangeslide as select * from tkpartition_SP1 [partition by c1 rows 1 range 1 slide 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_rangeslide add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-slide.txt</Address></EndPointReference>" ]]></CEP_DDL>
+-->
+
+<!-- bug 7667271 : ambiguous attr -->
+<!-- this shoul fail, but ok-->
+<CEP_DDL>create query tkpartition_attr1 as select * from tkpartition_RP1, tkpartition_SP1 [PARTITION BY d1 ROWS 1]  </CEP_DDL>
+
+
+<!-- this shoul ok, but fail -->
+<CEP_DDL>create query tkpartition_attr2 as select * from tkpartition_SP1 [NOW], tkpartition_SP2 [PARTITION BY c1 ROWS 1]  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_attr2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPartwin-attr2.txt?convertTs=false</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> alter query tkpartition_row start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_row2 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_row4 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_row5 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_row6 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_range start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_range1 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_range2 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_join start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_join1 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_predicate start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_predicate1 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_predicate1a start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_predicate2 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_predicate3 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_predicate4 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_predicate5 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_attr2 start </CEP_DDL>
+<!--
+<CEP_DDL> alter query tkpartition_rangeslide start </CEP_DDL>
+-->
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>
+
+

@@ -1,0 +1,16 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkdata64_S (c1 char(30))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkdata64_S add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata64inpS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkdata64_q1 as select XMLCONCAT(XMLELEMENT("parent", c1), xmlcomment("this is a comment")) from tkdata64_S</CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter query tkdata64_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata64_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<CEP_DDL> alter query tkdata64_q1 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

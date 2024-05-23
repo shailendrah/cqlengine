@@ -1,0 +1,12 @@
+
+//Disable ojdl usage
+sourceSets.main.java.excludes += '**/ODL**'
+
+dependencies
+{
+    compile project(":modules:common-util")
+
+    compile libraries.cep_apache_logging
+    //compile libraries.cep_ojdl
+}
+

@@ -1,0 +1,7 @@
+t, c 40
+1000 "11-Jan-99 11.14.23.111111 AM", "MM-dd-yyyy HH:mm:ss.SSSS a"
+1000 "11-Feb-99 11.14.23.11111 PM", "MM-dd-yyyy HH:mm:ss.SSSS a"
+1000 "11-mar-99 11.14.23.1111 AM", "MM-dd-yyyy HH:mm:ss.SSSS a"
+1000 "11-aPR-99 11.14.23.111 AM", "MM-dd-yyyy HH:mm:ss.SSSS a"
+1000 "11-May-99 11.14.23.11 PM", "MM-dd-yyyy HH:mm:ss.SSSS a"
+1000 "11-JUN-99 11.14.23.1 AM", "MM-dd-yyyy HH:mm:ss.SSSS a"

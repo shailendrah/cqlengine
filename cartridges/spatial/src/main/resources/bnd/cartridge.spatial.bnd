@@ -1,0 +1,20 @@
+Bundle-Version: ${wlevs.version}
+Bundle-SymbolicName: com.oracle.cep.cartridge.spatial
+Bundle-Description: OCEP Data Cartridge for Spatial
+Extension-Name: oep.cartridge.spatial
+Export-Package: com.oracle.cep.cartridge.spatial*;version=${wlevs.version},\
+ oracle.spatial.topo;version=${oracle.cep.version},\
+ oracle.spatial.geometry;version=${oracle.cep.version},\
+ oracle.spatial.util;version=${oracle.cep.version}
+Import-Package: com.bea.wlevs.ede.api;version=${wlevs.version},\
+ com.bea.wlevs.eventtyperepo.event;version=${wlevs.version},\
+ com.bea.wlevs.spring.support;version=${wlevs.version},\
+ oracle.cep*;version=${oracle.cep.version},\
+ com.oracle.cep*;version=${wlevs.version},\
+ org.apache.commons.logging,\
+ org.springframework.osgi*;version=${spring.osgi.version},\
+ org.springframework*;version=${spring.version},\
+ org.springframework.osgi.service.exporter.support;version=${spring.osgi.version},\
+ org.springframework.osgi.service.importer.support;version=${spring.osgi.version},\
+ oracle.sql
+

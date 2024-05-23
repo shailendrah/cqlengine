@@ -1,0 +1,21 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>create stream tk16968207_productInputChannel (product_id integer,product_type_id integer, name char(30), price double, firstExpiredInterval bigint, secExpiredInterval bigint, variableRate double)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk16968207_productInputChannel add source "<EndPointReference><Address>file://@TEST_DATA@/inp16968207.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tk16968207_q1 as
+	IStream(SELECT product_id, product_type_id, name 
+		FROM tk16968207_productInputChannel[range java.lang.Double((firstExpiredInterval+secExpiredInterval)*variableRate).intValue() second slide 3 second]
+		where product_id != 1 
+		order by product_id DESC rows 1) 
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16968207_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out16968207_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16968207_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

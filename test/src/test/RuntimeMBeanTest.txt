@@ -1,0 +1,239 @@
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.openmbean.CompositeData;
+
+
+import oracle.as.jmx.framework.mapping.MBeanProxy;
+import oracle.cep.jmx.CEPStatsMXBeanProxy;
+import oracle.cep.jmx.stats.OperatorStatsRow;
+import oracle.cep.jmx.stats.QueryStatsRow;
+import oracle.cep.jmx.stats.SystemStatsRow;
+import oracle.cep.jmx.stats.StreamStatsRow;
+import oracle.cep.jmx.stats.Column;
+import oracle.cep.jmx.stats.FilterCondition;
+import oracle.cep.jmx.stats.UserFunctionStatsRow;
+
+import java.util.*;
+
+
+
+public class RuntimeMBeanTest{
+public static void main(String[] args) throws Exception{
+
+	            String url = args[0];
+                JMXServiceURL serviceUrl=
+                	//new JMXServiceURL("service:jmx:rmi///jndi/rmi://localhost:1099/jmxapp");
+                			 new JMXServiceURL(url);
+//                new JMXServiceURL("service:jmx:ormi://sta00724.us.oracle.com:23791/oc4j");
+			//	Hashtable env= new Hashtable();
+ 
+		        // this property must always be specified, it points to our provider root package
+	          //  env.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "oracle.oc4j.admin.jmx.remote");
+				
+//				 String credentials[] = {
+//                        "oc4jadmin", "welcome1"
+//                };
+
+	 
+				// specify the login/password to use for the connection
+				//env.put(JMXConnector.CREDENTIALS, credentials);
+               
+              //  JMXConnector jmxCon = JMXConnectorFactory.newJMXConnector(serviceUrl, null);
+                JMXConnector jmxCon = JMXConnectorFactory.connect(serviceUrl, null);
+ 
+				// We finally connect to the OC4J instance defined  in the JMXServiceURL
+			//	jmxCon.connect();
+	 
+				// we retrieve the MBeanServerConnection instance that acts as a proxy
+				// for the OC4J's MBeanServer we are connecting too.
+				MBeanServerConnection con= jmxCon.getMBeanServerConnection();
+				System.out.println("Connection ="+con);
+
+				Hashtable props=new Hashtable();
+				props.put("type","CEPStatsController");
+				props.put("name","CEPStats");
+				//ObjectName oname=new ObjectName("oracle.soa.cep",props) ;
+				ObjectName oname=new ObjectName("CEP",props) ;
+				
+				
+				CEPStatsMXBeanProxy proxy = (CEPStatsMXBeanProxy)MBeanProxy.newProxyInstance(con, oname, CEPStatsMXBeanProxy.class, false);
+                        System.out.println("Proxy name : "+ proxy.getClass().getName());
+
+                 //       proxy.getSystemStats();
+
+		      //  FilterCondition cond = (FilterCondition)proxy.getFilterCondition();
+                FilterCondition cond = new FilterCondition();
+		        cond.setOpKind("CONTAINS");
+		        cond.setColName(Column.STREAM_NAME);
+		        cond.setColVal("TRADE");
+                FilterCondition cond1 = new FilterCondition();
+                        cond1.setOpKind("EQUAL");
+                        cond1.setColName(Column.STREAM_ID);
+                        cond1.setColVal("430");
+		        String[] opKind =cond.getOperatorKind();
+		        System.out.println("Total Operator kind : " +opKind.length);
+		        for(int i=0; i<opKind.length; i++)
+		          System.out.println("Operator Kind " +i+ " : " + opKind[i]);
+		        
+		        FilterCondition[] filter = new FilterCondition[2];
+		        filter[0] = cond;
+                        filter[1] = cond1;
+		        List<StreamStatsRow> stats = proxy.getStreamStats(filter, Column.STREAM_ID, 0, 5);
+		        System.out.println("no of rows in stream stats :" + stats.size());
+		        for(int i=0; i<stats.size(); i++)
+		        {
+		          StreamStatsRow row = stats.get(i);
+		          System.out.println("isStream :" + row.getIsStream());
+		          System.out.println("Stream name : " + row.getStreamName());
+		          System.out.println("Stream id:" + row.getStreamId());
+                          System.out.println("IsPushsrc: "+row.getIsPushSrc());
+                          System.out.println("totalTuplesInMemory: " +row.getTuplesInMemory());
+                          System.out.println("totalTuplesOnDisk: " +row.getTuplesOnDisk());
+		        }
+		        
+		        
+		        FilterCondition cond2 = new FilterCondition();
+		        cond2.setOpKind("equal");
+		        cond2.setColName(Column.QUERY_IS_VIEW);
+		        cond2.setColVal("false");
+		        FilterCondition cond3 = new FilterCondition();
+		        cond3.setOpKind("contains");
+		        cond3.setColName(Column.QUERY_TEXT);
+		        cond3.setColVal("Req");
+		        FilterCondition[] conds = new FilterCondition[2];
+		        conds[0] = cond2;
+		        conds[1] = cond3;
+		        List<QueryStatsRow> qstats = proxy.getQueryStats(conds, Column.QUERY_ID, 0, 10);
+		        System.out.println("no of rows in query stats first time :" +qstats.size());
+		        for(int i=0; i<qstats.size(); i++)
+		        {
+		          QueryStatsRow qrow = qstats.get(i);
+		          System.out.println("query text :" +qrow.getQueryText());
+		          System.out.println("isview :" +qrow.getIsView());
+                          System.out.println("query id:"+qrow.getQueryId());
+		        }
+		        
+		        qstats = proxy.getQueryStats(conds, Column.QUERY_TEXT, 2, 10);
+		        System.out.println("no of rows in query stats second time:" +qstats.size());
+		        for(int i=0; i<qstats.size(); i++)
+		        {
+		          QueryStatsRow qrow = qstats.get(i);
+		          System.out.println("query text :" +qrow.getQueryText());
+		          System.out.println("isview :" +qrow.getIsView());
+                          System.out.println("query id:"+qrow.getQueryId());
+		        }
+		        
+		        FilterCondition[] ocond = new FilterCondition[1];
+		        ocond[0] = new FilterCondition();
+		        ocond[0].setOpKind("EQUAL");
+		        ocond[0].setColName(Column.OPERATOR_ID);
+		        ocond[0].setColVal("0");
+		        List<OperatorStatsRow> opStats = proxy.getOperatorStats(ocond, Column.OPERATOR_ID, 0, 100);
+		        System.out.println("no of rows in operator stats :" +opStats.size());
+		        for(int i=0; i<opStats.size(); i++)
+		        {
+		          OperatorStatsRow orow = opStats.get(i);
+		          System.out.println("operator id : "+orow.getExecOperatorId());
+		          System.out.println("operator name: " +orow.getOptName());
+		          System.out.println("operator type: " +orow.getOpttyp());
+		        }
+		        
+		        System.out.println("Special case starts");
+		        FilterCondition[] scond = new FilterCondition[2];
+		        scond[0] = new FilterCondition();
+		        scond[0].setOpKind("EQUAL");
+		        scond[0].setColName(Column.OPERATOR_QUERY_ID);
+		        scond[0].setColVal("512");
+		        scond[1] = new FilterCondition();
+		        scond[1].setOpKind("EQUAL");
+		        scond[1].setColName(Column.OPERATOR_STREAM_ID);
+		        scond[1].setColVal("413");
+		        List<OperatorStatsRow> opStats1 = proxy.getOperatorStats(scond, Column.OPERATOR_ID, 0, 100);
+		        System.out.println("no of rows in operator stats :" +opStats1.size());
+		        for(int i=0; i<opStats1.size(); i++)
+		        {
+		          OperatorStatsRow orow1 = opStats1.get(i);
+		          System.out.println("operator id : "+orow1.getExecOperatorId());
+		          System.out.println("operator name: " +orow1.getOptName());
+		          System.out.println("operator type: " +orow1.getOpttyp());
+		        }
+		        
+		        FilterCondition[] sconds = new FilterCondition[1];
+		        sconds[0] = new FilterCondition();
+		        sconds[0].setOpKind("EQUAL");
+		        sconds[0].setColName(Column.OPERATOR_QUERY_ID);
+		        sconds[0].setColVal("512");
+		        
+		        List<OperatorStatsRow> opStats2 = proxy.getOperatorStats(sconds, Column.OPERATOR_ID, 0, 67);
+		        System.out.println("no of rows in operator stats 2nd use case:" +opStats2.size());
+		        for(int i=0; i<opStats2.size(); i++)
+		        {
+		          OperatorStatsRow orow2 = opStats2.get(i);
+		          System.out.println("operator id : "+orow2.getExecOperatorId());
+		          System.out.println("operator name: " +orow2.getOptName());
+		          System.out.println("operator type: " +orow2.getOpttyp());
+		        }
+		        
+		        FilterCondition[] qcond = new FilterCondition[1];
+		        qcond[0] = new FilterCondition();
+		        qcond[0].setOpKind("equal");
+		        qcond[0].setColName(Column.QUERY_USERFUNCTION_ID);
+		        qcond[0].setColVal("418");
+		       
+		        List<QueryStatsRow> Qstats = proxy.getQueryStats(qcond, Column.QUERY_ID, 0, 10);
+		        System.out.println("no of rows in query stats first time :" +Qstats.size());
+		        for(int i=0; i<Qstats.size(); i++)
+		        {
+		          QueryStatsRow qrow = Qstats.get(i);
+		          System.out.println("query text :" +qrow.getQueryText());
+		          System.out.println("isview :" +qrow.getIsView());
+                          System.out.println("query id:"+qrow.getQueryId());
+		        }
+		        
+		        FilterCondition[] ucond = new FilterCondition[1];
+		        ucond[0] = new FilterCondition();
+		        ucond[0].setOpKind("equal");
+		        ucond[0].setColName(Column.FUNCTION_QUERY_ID);
+		        ucond[0].setColVal("517");
+//		        ucond[1] = new FilterCondition();
+//		        ucond[1].setOpKind("contains");
+//		        ucond[1].setColName(Column.FUNCTION_TEXT);
+//		        ucond[1].setColVal("seqNo");
+		        List<UserFunctionStatsRow> uStats = proxy.getUserFuncStats(ucond, Column.FUNCTION_ID, 0, 10);
+		        for(int i=0; i<uStats.size(); i++)
+		        {
+		          UserFunctionStatsRow urow = uStats.get(i);
+		          System.out.println("function text : " +urow.getText());
+		          System.out.println("function id : " +urow.getFunctionId());
+		        }
+		        
+		        CompositeData[] _streamstats = (CompositeData[])con.getAttribute(oname, "StreamStats");
+		        for(int i=0; i<_streamstats.length; i++)
+		        {
+		          StreamStatsRow streamrow = StreamStatsRow.from(_streamstats[i]);
+		          System.out.println("isStream :" + streamrow.getIsStream());
+		          System.out.println("Stream name :" +streamrow.getStreamName());
+		          System.out.println("stream id :" +streamrow.getStreamId());
+                          System.out.println("IsPushsrc: "+streamrow.getIsPushSrc());
+                          System.out.println("totalTuplesInMemory: " +streamrow.getTuplesInMemory());
+                          System.out.println("totalTuplesOnDisk: " +streamrow.getTuplesOnDisk());
+		        }
+		        
+				CompositeData[] _systemStats = 
+					(CompositeData[])con.getAttribute(oname, "SystemStats"); 
+				for(int i=0;i<_systemStats.length;i++){
+					 SystemStatsRow stat= SystemStatsRow.from(_systemStats[i]);
+					System.out.println("getFreeMemory ="+stat.getFreeMemory());
+					System.out.println("getUsedMemory ="+stat.getUsedMemory());
+					System.out.println("getTotalMemory ="+stat.getTotalMemory());
+					System.out.println("getNumberOfThreads ="+stat.getNumberOfThreads());
+				}
+				//Set mbeans=con.queryNames(new ObjectName("*"),(javax.management.QueryExp)null);
+				System.out.println("systemStats ="+con.getAttribute(oname, "SystemStats"));
+				//
+
+}
+}

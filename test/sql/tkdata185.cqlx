@@ -1,0 +1,21 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>alter system run_time=1000</CEP_DDL>
+<CEP_DDL> alter system time_slice=1</CEP_DDL>
+<CEP_DDL> create stream tkdata185_S1 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create relation tkdata185_R1 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata185_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata185_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata185_R1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata185_R1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata185_Q1 as select sum(c1) from tkdata185_R1 where c1 != 0 group by c2</CEP_DDL>
+<CEP_DDL> create query tkdata185_Q2 as select sum(c1) from tkdata185_S1 where c1 != 0 group by c2</CEP_DDL>
+<CEP_DDL> create query tkdata185_Q3 as select sum(c1) from tkdata185_R1 where c1 != 0</CEP_DDL>
+<CEP_DDL> create query tkdata185_Q4 as select sum(c1) from tkdata185_S1 where c1 != 0</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata185_Q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata185_Q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata185_Q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata185_Q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata185_Q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata185_Q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata185_Q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata185_Q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata185_Q1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata185_Q2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata185_Q3 start</CEP_DDL>
+<CEP_DDL> alter query tkdata185_Q4 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

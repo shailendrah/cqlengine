@@ -1,0 +1,46 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+    <CEP_DDL> register relation ShopRelation(shopId int, shopName char(100),
+        nCoords int, lat1 double, lng1 double, lat2 double, lng2 double, lat3
+        double, lng3 double, lat4 double, lng4 double, lat5 double, lng5
+        double , lat6 double, lng6 double, lat7 double, lng7 double, lat8
+        double, lng8 double, lat9 double, lng9 double, lat10 double, lng10
+        double) </CEP_DDL>
+    <CEP_DDL> <![CDATA[ 
+        alter relation ShopRelation add source "<EndPointReference> <Address>file://@TEST_DATA@/inpLbsMallMap.txt</Address> </EndPointReference>"
+    ]]></CEP_DDL>
+
+
+<!-- create geometries -->
+<CEP_DDL> create query qgeometries as
+       select
+        com.oracle.cep.cartridge.spatial.Geometry.createPoint(8307, lng1, lat1).toStringFull() as rect,
+        com.oracle.cep.cartridge.spatial.Geometry.createRectangle(8307, lng1,lat1, lng2,lat2).toStringFull() as rect1,
+        com.oracle.cep.cartridge.spatial.Geometry.createLinearPolygon(8307,
+                ORDSGENERATOR@spatial1( 2, nCoords,
+                    lng1,lat1, 
+                    lng2,lat2, 
+                    lng3,lat3, 
+                    lng4,lat4, 
+                    lng5,lat5, 
+                    lng6,lat6, 
+                    lng7,lat7, 
+                    lng8,lat8, 
+                    lng9,lat9, 
+                    lng10, lat10)).toStringFull() as poly1,
+        com.oracle.cep.cartridge.spatial.Geometry.createGeometry(2003, 0,
+                EINFOGENERATOR@spatial1(1,1003,1, 19,2003,1),
+               ORDSGENERATOR@spatial(2d,4d, 4d,3d, 10d,3d, 13d,5d, 13d,9d, 11d,13d, 5d,13d, 2d,11d, 2d,4d, 7d,5d, 7d,10d, 10d,10d, 10d,5d, 7d,5d)
+        ).toStringFull() as poly3,
+        com.oracle.cep.cartridge.spatial.Geometry.createLinearPolygon(0,
+                ORDSGENERATOR2@spatial(
+                   ORDSGENERATOR@spatial(2d,4d, 4d,3d, 10d,3d, 13d,5d, 13d,9d, 11d,13d, 5d,13d, 2d,11d, 2d,4d, 7d,5d),
+                   ORDSGENERATOR@spatial(7d,10d, 10d,10d, 10d,5d, 7d,5d) )).toStringFull() as poly4
+        from ShopRelation
+ </CEP_DDL>     
+<CEP_DDL> <![CDATA[ alter query qgeometries add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/spatial_geoms.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query qgeometries start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+
+

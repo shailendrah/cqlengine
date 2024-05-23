@@ -1,0 +1,28 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create external relation tkExtTimeZone_R1 (c1 timestamp with time zone, c2 char(20))</CEP_DDL>
+<CEP_DDL> create external relation tkExtTimeZone_R2 (c1 timestamp, c2 char(20))</CEP_DDL>
+<CEP_DDL> create stream tkExtTimeZone_S1(d1 timestamp with time zone, c2 char(20)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkExtTimeZone_R1 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkExtTimeZone_R2 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkExtTimeZone_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkExtTimeZone_S1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- 
+   External relation tkExtTimeZone_R1 will contain the timestamp value with timezone; 
+   so join predicate will pass for stream event having timezone information 
+-->
+<CEP_DDL> create query tkExtTimeZone_q1 as select Ext.c2, S.c2 from tkExtTimeZone_R1 as Ext, tkExtTimeZone_S1[NOW] as S where S.d1 = Ext.c1 </CEP_DDL>
+
+<!-- 
+   External relation tkExtTimeZone_R2 will contain the timestamp value without timezone; 
+   so join predicate will pass for stream event having no timezone information 
+-->
+<CEP_DDL> create query tkExtTimeZone_q2 as select Ext.c2, S.c2 from tkExtTimeZone_R2 as Ext, tkExtTimeZone_S1[NOW] as S where S.d1 = Ext.c1 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkExtTimeZone_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtTimeZone_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtTimeZone_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtTimeZone_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkExtTimeZone_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkExtTimeZone_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

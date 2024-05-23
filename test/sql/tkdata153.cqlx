@@ -1,0 +1,39 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata153_S153_1 (c1 char(30)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata153_S153_1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata153_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata153_char_lower as select lower(c1) from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_upper as select upper(c1) from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_initcap as select initcap(c1) from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_ltrim1 as select ltrim("    test data       ") from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_ltrim2 as select ltrim("    test data       ", " tes") from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_rtrim1 as select rtrim("    test data       ") from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_rtrim2 as select rtrim("    test data       ", "ta ") from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_substr1 as select substr("    test data    ", 7, 7), substr("test", 1,1),substr("test", 2, 4) from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_lpad1 as select lpad("test data", 27, "orcl"), c1 from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_rpad1 as select rpad("test data", 27, "orcl"), c1 from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> create query tkdata153_char_translate1 as select translate("test data", "tes", "xy") from tkdata153_S153_1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_lower add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_lower.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_upper add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_upper.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_initcap add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_initcap.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_ltrim1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_ltrim1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_ltrim2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_ltrim2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_rtrim1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_rtrim1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_rtrim2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_rtrim2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_substr1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_substr1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_lpad1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_lpad1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_rpad1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_rpad1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata153_char_translate1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/char_translate1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_lower start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_upper start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_initcap start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_ltrim1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_ltrim2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_rtrim1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_rtrim2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_substr1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_lpad1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_rpad1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata153_char_translate1 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>
+

@@ -1,0 +1,4 @@
+<CEP>
+<CEP_DDL> alter system debug_level = 6</CEP_DDL>
+<CEP_DDL> alter system run_time = 30000 </CEP_DDL>
+</CEP>

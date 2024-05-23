@@ -1,0 +1,60 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>alter system run_time=5000000</CEP_DDL>
+<CEP_DDL> create stream Snapshot (saleAmount float, mediaId integer, mediaName char(10))  is application timestamped</CEP_DDL>
+<CEP_DDL> create stream ActiveData (eventId integer, mediaId integer, mediaName char(10), saleAmount float)  is application timestamped</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream Snapshot add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering2_R1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream ActiveData add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering2_S1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view incrementalResultView as
+           SELECT
+                  SUM(saleAmount) as incrementalAmount,
+                  A.mediaId
+           FROM
+                  ActiveData AS A
+           GROUP BY
+                  mediaId
+]]>  </CEP_DDL>
+      
+<CEP_DDL><![CDATA[ create view snapshotResultView as
+           SELECT
+                  saleAmount as snapshotAmount,
+                  mediaId,
+                  mediaName
+           FROM
+                  Snapshot[PARTITION BY mediaId ROWS 1]
+]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkTotalOrdering2_q1 as
+          ISTREAM(      
+           SELECT
+                  S.mediaId,
+                  mediaName,
+                  nvl(incrementalAmount, 0) + snapshotAmount as saleAmount 
+           FROM
+                  snapshotResultView as S LEFT OUTER JOIN incrementalResultView as I
+           ON
+                  I.mediaId = S.mediaId
+         )
+]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering2_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering2_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering2_q1 start </CEP_DDL>
+
+<!--
+<CEP_DDL><![CDATA[ create query tkTotalOrdering2_q2 as
+           SELECT * from snapshotResultView
+]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering2_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/snapshot.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkTotalOrdering2_q3 as
+           SELECT * from incrementalResultView
+]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering2_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/incremental.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkTotalOrdering2_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering2_q3 start </CEP_DDL>
+-->
+
+<CEP_DDL> alter system run</CEP_DDL>
+
+</CEP>
+

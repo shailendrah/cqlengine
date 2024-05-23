@@ -1,0 +1,13 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation  tkdata5_R1 (d1 integer, d2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata5_R1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpR1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata5_q1 as select *  from tkdata5_R1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata5_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata5_q1 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 10 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 10</CEP_DDL>	
+<CEP_DDL> create query tkdata5_q2 as select *  from tkdata5_R1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata5_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata5_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,89 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkjoin_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkjoin_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkjoin_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/outerjoin0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkjoin_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/outerjoin1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create view tkjoin_v1 (c1 integer, c2 float, c3 integer) as select tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1 from tkjoin_S0[range 5], tkjoin_S1[range 3] where tkjoin_S0.c2 = tkjoin_S1.c2(+) </CEP_DDL>
+<CEP_DDL> create view tkjoin_v2 (c1 integer, c2 float, c3 integer) as select tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1 from tkjoin_S0[range 5], tkjoin_S1[range 3] where tkjoin_S0.c2(+) = tkjoin_S1.c2 </CEP_DDL>
+
+<CEP_DDL>register stream JStream1(c1 bigint) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream JStream1  add source
+"<EndPointReference><Address>file://@TEST_DATA@/testjoindata.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>register stream JStream2(c1 bigint) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream JStream2  add source
+"<EndPointReference><Address>file://@TEST_DATA@/testjoindata.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>register stream JStream3(c1 bigint) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream JStream3  add source
+"<EndPointReference><Address>file://@TEST_DATA@/testjoindata.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>register stream JStream4(c1 bigint,c2 bigint) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream JStream4  add source
+"<EndPointReference><Address>file://@TEST_DATA@/testjoindata2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tkjoin_S10 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkjoin_S11 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkjoin_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkjoin_S11 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>create query tkjoin_q1a as select * from JStream1[range 2] as a, JStream2[range 3] as b, JStream3[range 1] as c where c.c1 = a.c1 AND b.c1 = c.c1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q1a add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtestjoin.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>alter query tkjoin_q1a start</CEP_DDL>
+
+
+<CEP_DDL>create query tkjoin_q1b as select * from JStream1[range 9] as a, JStream4[range 6] as b  where b.c1 = a.c1 AND b.c2 = a.c1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q1b add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtestjoin2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>alter query tkjoin_q1b start</CEP_DDL>
+
+<CEP_DDL> create query tkjoin_q1 as select tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1 from tkjoin_S0[range 5], tkjoin_S1[range 3] where tkjoin_S0.c2 = tkjoin_S1.c2(+)</CEP_DDL>
+<CEP_DDL> create query tkjoin_qtest as select tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1 from tkjoin_S0[range 5], tkjoin_S1[range 3] where tkjoin_S0.c1=tkjoin_S1.c1 and tkjoin_S0.c2 = tkjoin_S1.c2(+)</CEP_DDL>
+<CEP_DDL> create query tkjoin_qnulltest1 as select tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1 from tkjoin_S0[range 5], tkjoin_S1[range 3] where tkjoin_S0.c1=null(+)</CEP_DDL>
+<CEP_DDL> create query tkjoin_qnulltest2 as select tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1 from tkjoin_S0[range 5], tkjoin_S1[range 3] where null(+)=tkjoin_S1.c1</CEP_DDL>
+<CEP_DDL> create query tkjoin_q2 as select tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1 from tkjoin_S0[range 5], tkjoin_S1[range 3] where tkjoin_S0.c2(+) = tkjoin_S1.c2 </CEP_DDL>
+<CEP_DDL> create query tkjoin_q3 as tkjoin_v1 union all tkjoin_v2 </CEP_DDL>
+<CEP_DDL> create query tkjoin_q4 as select * from tkjoin_S0[range 5] as a, tkjoin_S1[range 3] as b where a.c1+a.c2+4.9 = b.c1 + 10 </CEP_DDL>
+<CEP_DDL> create query tkjoin_q5 as select a.c1+b.c1 from tkjoin_S0[range 5] as a, tkjoin_S1[range 3] as b where b.c2 = a.c2(+) </CEP_DDL>
+<CEP_DDL> create query tkjoin_q6 as select a.c1+b.c1 from tkjoin_S0[range 5] as a, tkjoin_S1[range 3] as b where b.c2(+) = a.c2 </CEP_DDL>
+<CEP_DDL> create query tkjoin_q7 as select distinct tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1  from tkjoin_S1[range 3], tkjoin_S0[range 5] where tkjoin_S1.c2 = tkjoin_S0.c2(+) </CEP_DDL>
+<CEP_DDL> create query tkjoin_q8 as select distinct tkjoin_S0.c1,tkjoin_S0.c2,tkjoin_S1.c1  from tkjoin_S1[range 3], tkjoin_S0[range 5] where tkjoin_S1.c2(+) = tkjoin_S0.c2 </CEP_DDL>
+
+<CEP_DDL> create query tkjoin_q9 as select * from tkjoin_S10[NOW], tkjoin_S11[rows 3] where tkjoin_S10.c2 = tkjoin_S11.c2(+) </CEP_DDL>
+<CEP_DDL> create query tkjoin_q10 as select * from tkjoin_S10[NOW], tkjoin_S11[rows 3] where tkjoin_S10.c2(+) = tkjoin_S11.c2 </CEP_DDL>
+<CEP_DDL> create query tkjoin_q11 as RStream(select * from tkjoin_S10[NOW], tkjoin_S11[rows 3] where tkjoin_S10.c2 = tkjoin_S11.c2(+)) </CEP_DDL>
+<CEP_DDL> create query tkjoin_q12 as select * from tkjoin_S0[rows 3] as R1, tkjoin_S1[rows 3] as R2 where R1.c1 = R2.c1(+) and R1.c2 = R2.c2(+)</CEP_DDL>
+
+<!-- Query added to check if correct plan is generated. In particular the join should not be transformed to strmjoin due to the AGGR present in between -->
+<CEP_DDL> create stream tkjoin_timerStream(c1 int) </CEP_DDL>
+<CEP_DDL> create relation tkjoin_R(val int) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkjoin_timerStream add source "<EndPointReference><Address>file://@TEST_DATA@/inpTimerStream.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkjoin_R add source "<EndPointReference><Address>file://@TEST_DATA@/inpRel.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkjoin_q13 as RSTREAM(SELECT SUM(R.val) AS val FROM tkjoin_timerStream[Now], tkjoin_R AS R) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkjoin_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/leftouterjoin.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/rightouterjoin.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/fullouterjoin.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/joinexpr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/joinnormalise1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/joinnormalise2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/revleftouterjoin.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/revrightouterjoin.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkjoin_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/leftouterjoin1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkjoin_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/rightouterjoin1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkjoin_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/rstrmleftouterjoin.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkjoin_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/joinplancheck.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> alter query tkjoin_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkjoin_q13 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

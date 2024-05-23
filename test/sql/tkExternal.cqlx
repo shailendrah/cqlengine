@@ -1,0 +1,217 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create external relation tkExternal_R1 (d1 timestamp, d2 interval)</CEP_DDL>
+<CEP_DDL> create external relation tkExternal_R2(d1 integer, d2 bigint, d3 char(10))</CEP_DDL>
+<CEP_DDL> create external relation tkExternal_R3 (d1 timestamp, d2 char(10))</CEP_DDL>
+<CEP_DDL> create stream tkExternal_S8 (c1 interval)</CEP_DDL>
+<CEP_DDL> create stream tkExternal_S10(c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkExternal_S15(c1 integer, c2 timestamp) </CEP_DDL>
+<CEP_DDL> create stream tkExternal_S25(c1 integer, c2 bigint, c3 char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkExternal_R1 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkExternal_R2 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkExternal_R3 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkExternal_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage8.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkExternal_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkExternal_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkExternal_S25 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS25.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create function tkExternal_function1(c1 integer) return integer as language java name "oracle.cep.test.userfunctions.TkUsrConvert"</CEP_DDL>
+
+<CEP_DDL> create query tkExternal_q1 as RStream(select tkExternal_R3.d1, tkExternal_S10.c2 from tkExternal_R3, tkExternal_S10[now] where tkExternal_R3.d2 = tkExternal_S10.c2) </CEP_DDL> 
+<CEP_DDL> create query tkExternal_q2 as RStream(select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 from tkExternal_R3, tkExternal_S15[NOW] where tkExternal_R3.d1 = tkExternal_S15.c2) </CEP_DDL> 
+<CEP_DDL> create query tkExternal_q3 as RStream(select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 from tkExternal_R3, tkExternal_S15[range 2] where tkExternal_R3.d1 = tkExternal_S15.c2) </CEP_DDL> 
+<CEP_DDL><![CDATA[ create query tkExternal_q4 as RStream(select * from tkExternal_R1, tkExternal_S8[NOW] where tkExternal_R1.d2 < tkExternal_S8.c1)]]> </CEP_DDL> 
+<CEP_DDL><![CDATA[ create query tkExternal_q5 as select * from tkExternal_R1, tkExternal_S8[NOW] where tkExternal_R1.d2 < tkExternal_S8.c1]]> </CEP_DDL> 
+<CEP_DDL> create query tkExternal_q6 as select tkExternal_R3.d1, tkExternal_S10.c2 from tkExternal_R3, tkExternal_S10[NOW] where tkExternal_R3.d2 = tkExternal_S10.c2 </CEP_DDL> 
+<CEP_DDL> create query tkExternal_q7 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 from tkExternal_R3, tkExternal_S15[NOW] where tkExternal_R3.d1 = tkExternal_S15.c2 </CEP_DDL> 
+<CEP_DDL> create query tkExternal_q8 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 from tkExternal_R3, tkExternal_S15[NOW] where tkExternal_R3.d1 > tkExternal_S15.c2 </CEP_DDL> 
+<CEP_DDL> create query tkExternal_q9 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 from tkExternal_R3, tkExternal_S15[NOW] where tkExternal_R3.d1 = tkExternal_S15.c2(+) </CEP_DDL> 
+<CEP_DDL> create query tkExternal_q10 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where S.c1 = Ext.d1 + 2</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q11 as select S.c1, Ext.d1 from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where S.c1 + 2 = Ext.d1</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q12 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where S.c1 = Ext.d1 or S.c2 = Ext.d2</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q13 as select S.c1, Ext.d1, S.c2, Ext.d2 from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where S.c1 = Ext.d1 and S.c2 = Ext.d2</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q14 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where S.c1 = sum(Ext.d1)</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q15 as select tkExternal_R2.d1, tkExternal_S25.c3 from tkExternal_R2, tkExternal_S25[NOW] where tkExternal_R2.d1 = length(tkExternal_S25.c3)</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q16 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where length(Ext.d3) = S.c1</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q17 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where not (Ext.d1 = S.c1)</CEP_DDL>
+<CEP_DDL> create query tkExternal_q18 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where S.c1 is null or Ext.d1 = 2</CEP_DDL>
+<CEP_DDL> create query tkExternal_q19 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where S.c1 = 5 and Ext.d1 is null</CEP_DDL>
+<CEP_DDL> create query tkExternal_q20 as select * from tkExternal_R2 as Ext, tkExternal_S25[NOW] as S where Ext.d1 in (1,2,3)</CEP_DDL>
+<CEP_DDL> create query tkExternal_q21 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 from tkExternal_R3, tkExternal_S15[NOW] where tkExternal_R3.d1(+) = tkExternal_S15.c2 </CEP_DDL> 
+
+
+<!-- Queries to check bug number : 9390635  -->
+<!-- Query to check that select operator is not pushed below the join to the external table -->
+<CEP_DDL> create query tkExternal_q22 as select tkExternal_R2.d1, tkExternal_S15.c1, tkExternal_S15.c2  from tkExternal_S15[NOW] ,tkExternal_R2 where tkExternal_R2.d1 != 5</CEP_DDL> 
+
+<!-- Queries to check bug number : 9390635  -->
+<!-- Query to check that select operator is properly  pushed below the join towards the S[now] operator -->
+<CEP_DDL> create query tkExternal_q23 as select tkExternal_R2.d1, tkExternal_S15.c1, tkExternal_S15.c2  from tkExternal_S15[NOW] ,tkExternal_R2 where tkExternal_S15.c1 != 5</CEP_DDL> 
+
+<!-- Queries with multiple external table joins-->
+<!-- Simple join with multiple external tables -->
+<CEP_DDL> create query tkExternal_q24 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 , tkExternal_R1.d1 from tkExternal_S15[NOW] ,tkExternal_R1, tkExternal_R3 where tkExternal_S15.c2 != tkExternal_R1.d1 and tkExternal_R1.d1 != tkExternal_R3.d1</CEP_DDL> 
+
+<!-- Join with multiple external tables with the same table used twice with an alias name -->
+<CEP_DDL> create query tkExternal_q25 as select A.d1, tkExternal_S15.c1, tkExternal_S15.c2 , B.d1 from tkExternal_S15[NOW] ,tkExternal_R1 as A, tkExternal_R1 as B where tkExternal_S15.c2 != A.d1 and A.d1 != B.d1</CEP_DDL> 
+
+<!-- Join with multiple external tables where S[now] is placed in second position in the from clause  -->
+<CEP_DDL> create query tkExternal_q26 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 , tkExternal_R2.d1 from tkExternal_R3, tkExternal_S15[now], tkExternal_R2 where tkExternal_S15.c2 != tkExternal_R3.d1 and tkExternal_S15.c1 != tkExternal_R2.d1</CEP_DDL> 
+
+<!-- Join with multiple external tables where S[now] is placed in third position in the from clause to check whether normalization of the cross inputs is working -->
+<CEP_DDL> create query tkExternal_q27 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 , tkExternal_R2.d1 from tkExternal_R3, tkExternal_R2, tkExternal_S15[now] where tkExternal_S15.c2 != tkExternal_R3.d1 and tkExternal_S15.c1 != tkExternal_R2.d1</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q28 as select tkExternal_R3.d1, tkExternal_R2.d3, tkExternal_S15.c2 ,tkExternal_R1.d1 ,  tkExternal_R2.d1 from tkExternal_R3, tkExternal_R2, tkExternal_S15[now], tkExternal_R1 where tkExternal_R2.d1 = 3 and tkExternal_S15.c1 = 1</CEP_DDL>
+
+<!-- Outer join on stream cross operator  -->
+<CEP_DDL> create query tkExternal_q29 as RStream(select tkExternal_S15.c1, tkExternal_R2.d1 from tkExternal_S15[now] left outer join tkExternal_R2 on  tkExternal_R2.d1 != tkExternal_S15.c1) </CEP_DDL> 
+
+<!-- Multiple external tables in join on stream cross operator  -->
+<CEP_DDL> create query tkExternal_q30 as RStream(select tkExternal_R3.d1, tkExternal_R1.d2 from tkExternal_R3, tkExternal_R1 , tkExternal_S15[now] where tkExternal_R3.d1 != tkExternal_R1.d1) </CEP_DDL> 
+
+<!-- Join with 5 external tables with  S[now] -->
+<CEP_DDL> create query tkExternal_q31 as select A.d1,  B.d1 , C.c1, C.c2, D.d1, E.d2, F.d1 from tkExternal_R3 as A, tkExternal_R2  as B , tkExternal_S15[now] as C, tkExternal_R1 as D, tkExternal_R2 as E, tkExternal_R3 as F where C.c2 != A.d1 and D.d1 != F.d1 and A.d1 = F.d1 and E.d1 != 5 and C.c1 != 3</CEP_DDL>
+
+<!-- Negative test cases . Shoud throw semantic error as it contains no instantaneous relation ! -->
+
+<CEP_DDL> create query tkExternal_q32 as select tkExternal_R3.d1, tkExternal_S15.c1, tkExternal_S15.c2 , tkExternal_R2.d1 from tkExternal_R3, tkExternal_R2, tkExternal_S15 where tkExternal_S15.c2 != tkExternal_R3.d1 and tkExternal_S15.c1 != tkExternal_R2.d1</CEP_DDL> 
+<CEP_DDL> create query tkExternal_q33 as select A.d1, B.d2, C.d1 from tkExternal_R3 as A, tkExternal_R2 as B, tkExternal_R2 as C where B.d1 = C.d1</CEP_DDL> 
+
+
+<!--TEST: Test for multiple table functions -->
+<CEP_DDL> create query tkExternal_q34 as select R1.d1, R2.d1, S1.c1, S1.c2, S2.c1, S3.c1 from 
+tkExternal_R2 as R2,
+tkExternal_S15[now] as S1, 
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S2,
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S3,
+tkExternal_R1 as R1
+where R1.d1 != S1.c2 </CEP_DDL>
+
+<!-- Integer complex expression -->
+<CEP_DDL> create query tkExternal_q35 as select R1.c1,R2.d1 from tkExternal_S10[now] as R1,
+tkExternal_R2 as R2 where R2.d1 +1  = 4  </CEP_DDL> 
+
+<!-- Integer complex boolean expression-->
+<CEP_DDL> create query tkExternal_q36 as select R1.c1,R2.d1 from tkExternal_S10[now] as R1,
+tkExternal_R2 as R2 where R2.d1 is not null AND R2.d1 = 3 OR R2.d1 = 5</CEP_DDL> 
+
+<!-- Integer inequality operations -->
+<CEP_DDL><![CDATA[ create query tkExternal_q37 as select R1.c1,R2.d1 from tkExternal_S10[now] as R1, tkExternal_R2 as R2 where R2.d1 + 1 < 5 ]]></CEP_DDL> 
+
+<!-- BIGINT equality and complex expression test-->
+<CEP_DDL><![CDATA[ create query tkExternal_q38 as select R1.c2, R2.d2 from tkExternal_S25[now] as R1, tkExternal_R2 as R2 where R2.d2 + 1  = R1.c2 + 1 ]]></CEP_DDL> 
+
+<!-- BIGINT inequality and complex expression test-->
+<CEP_DDL><![CDATA[ create query tkExternal_q39 as RStream(select R1.c2, R2.d2 from tkExternal_S25[now] as R1, tkExternal_R2 as R2 where R2.d2 >= R1.c2 ) ]]></CEP_DDL> 
+
+<!-- Predicate refers to user defined function having external relation attribute as a parameter -->
+<CEP_DDL><![CDATA[ create query tkExternal_q40 as select R1.c1,R2.d1,tkExternal_function1(R2.d1) from tkExternal_S10[now] as R1, tkExternal_R2 as R2 where tkExternal_function1(R2.d1) = R1.c1 ]]></CEP_DDL>
+
+<!-- Test: function eval on stream attributes is supported by external connection -->
+<CEP_DDL> create query tkExternal_q41 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where tkExternal_function1(R1.c1) = R2.d1 </CEP_DDL>
+
+<!-- Test: function eval on external attributes is not supported by external connection -->
+<CEP_DDL> create query tkExternal_q42 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where R1.c1 = tkExternal_function1(R2.d1) </CEP_DDL>
+
+<!-- Test: Complex boolean expressions are supported by jdbc external connection -->
+<CEP_DDL> create query tkExternal_q43 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where R1.c1 = R2.d1 OR R2.d1 = 7 </CEP_DDL>
+
+<!-- Test: Complex boolean expression with function evaluation expression -->
+<CEP_DDL> create query tkExternal_q44 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where tkExternal_function1(R1.c1) = R2.d1 AND R2.d1 = 3 OR R2.d1 = 7 </CEP_DDL>
+
+<!-- Test: Complex boolean expression with arithmetic operations on stream attributes -->
+<CEP_DDL> create query tkExternal_q45 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where R2.d1 = R1.c1 * 1 AND R2.d1 * 1 = R1.c1 </CEP_DDL>
+
+<!-- Test: Predicate having function eval on external attribute will not be evaluated by external connection -->
+<CEP_DDL> create query tkExternal_q46 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where R2.d1 = R1.c1 * 1 AND tkExternal_function1(R2.d1) = R1.c1 </CEP_DDL>
+
+<!-- Test: Unary Minus is supported for both external attributes as well as stream attributes -->
+<CEP_DDL> create query tkExternal_q47 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where R2.d1 != -5 AND R2.d1 = R1.c1 AND R1.c1 != -5 </CEP_DDL> 
+
+<CEP_DDL> create query tkExternal_q48 as select R1.c1, R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where R2.d1 + tkExternal_function1(R1.c1) - R1.c1 + R1.c1 - R2.d1 + tkExternal_function1(R1.c1) = tkExternal_function1(R1.c1) + R2.d1 - R1.c1 + R1.c1 - tkExternal_function1(R1.c1) + R2.d1</CEP_DDL>
+
+<!-- Test : external relation with having clause - bug 14464424-->
+<CEP_DDL> <![CDATA[ create query tkExternal_q49 as select sum(R1.c1), R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 group by R2.d3 having avg(R2.d2) > 15 ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkExternal_q50 as select sum(R1.c1), R2.d3 from tkExternal_S10[NOW] as R1 ,tkExternal_R2 as R2 where R1.c1 = R2.d1 OR R2.d1 = 7 group by R2.d3 having avg(R2.d2) < 15]]> </CEP_DDL>
+
+<!-- Testing the external rows threshold feature -->
+<CEP_DDL> alter external relation tkExternal_R1 set external rows threshold 100L </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkExternal_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq1_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq2_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq4_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq5_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq6_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq7_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq8_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq11_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq13_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq15_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q21 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq21_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q22 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq22_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q23 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq23_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q24 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq24_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q25 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq25_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q26 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq26_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q27 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq27_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q28 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq28_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q29 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq29_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q30 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq30_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q31 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq31_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q34 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq34_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q35 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq35_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q36 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq36_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q37 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq37_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q38 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq38_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q39 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq39_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q40 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq40_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q41 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq41_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q42 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq42_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q43 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq43_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q44 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq44_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q45 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq45_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q46 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq46_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q47 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq47_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q48 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq48_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q49 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq49_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExternal_q50 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq50_ext.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q21 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q22 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q23 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q24 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q25 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q26 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q27 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q28 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q29 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q30 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q31 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q34 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q35 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q36 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q37 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q38 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q39 start </CEP_DDL>
+<!-- TODO: Enable After Fixing External Relation Framework for UDFs
+<CEP_DDL> alter query tkExternal_q40 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q42 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q46 start </CEP_DDL>
+-->
+<CEP_DDL> alter query tkExternal_q41 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q43 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q44 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q45 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q47 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q48 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q49 start </CEP_DDL>
+<CEP_DDL> alter query tkExternal_q50 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

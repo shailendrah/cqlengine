@@ -1,0 +1,10 @@
+1000:- 10,test string1
+1000:+ 60,test string
+1000:- 60,test string
+1000:+ 70,oracle
+1000:- 70,oracle
+1000:+ 80,oracle
+1000:- 80,oracle
+1000:+ 90,ibm
+1000:- 40,oracle
+1000:+ 100,apple

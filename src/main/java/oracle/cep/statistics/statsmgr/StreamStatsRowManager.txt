@@ -1,0 +1,168 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/StreamStatsRowManager.java /main/10 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    04/16/08 - 
+    hopark      04/16/08 - add queuesrc stat
+    parujain    03/13/08 - add stats
+    parujain    10/09/07 - add stats
+    parujain    05/31/07 - cep-em integration
+    parujain    04/26/07 - Stream-wide statistics Manager
+    parujain    04/26/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/StreamStatsRowManager.java /main/10 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.statsmgr;
+
+import java.util.Iterator;
+
+import oracle.cep.common.Datatype;
+import oracle.cep.execution.operators.ExecOpt;
+import oracle.cep.execution.operators.ExecStats;
+import oracle.cep.interfaces.input.QueueSourceStat;
+import oracle.cep.metadata.MetadataException;
+import oracle.cep.metadata.MetadataStats;
+import oracle.cep.metadata.TableManager;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.FilterCondition;
+
+public class StreamStatsRowManager extends StatsManager 
+{
+
+  //iterator to traverse the source(Stream/Relation) operator array
+  private Iterator<ExecOpt> itr;
+  boolean hasFilters = false;
+  Datatype[] types;
+  FilterCondition[] sFilters;
+  
+  //Loop over all the Source execution operators and return the statistics 
+  // corresponding to them. Note that we deliberately do not take a latch
+  // while traversing the operators. So, it is possible that we miss an
+  // operator if it gets added in the beginning of the source array after
+  // we have traversed the initial segment of the array. Also, it is possible
+  // that the different source operators are showing statistics for different 
+  // timestamps
+  public StreamStatsRowManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+  
+  public void close() {
+    itr = null;
+    hasFilters = false;
+    types = null;
+    sFilters = null;
+  }
+
+  public IStats getNext() throws MetadataException {
+    if(factory == null)
+      return null;
+    
+    if(itr == null)
+      return null;
+    
+    ExecOpt sourceOp = null;
+    
+    IStats stats = null;
+    
+    TableManager tblMgr = execContext.getTableMgr();
+    boolean found = false;
+    while((!found) && itr.hasNext())
+    {
+      // This needs to be modified
+      float hitratio = (float)0.0;
+    
+      sourceOp = itr.next();
+     
+      MetadataStats tableStats = tblMgr.getTableStats(sourceOp.getStreamId());
+      QueueSourceStat qsrcstat = tblMgr.getQueueSourceStat(sourceOp.getStreamId());
+       
+        float avg = (float)0.0;
+        if(sourceOp.getStats().getNumInputs() > 0)
+          avg = ((float)sourceOp.getStats().getLatency()/(float)sourceOp.getStats().getNumInputs());
+        float rate = (float)0.0;
+        if(sourceOp.getStats().getTotalTime() > 0)
+         rate = (((float)sourceOp.getStats().getNumInputs()/(float)sourceOp.getStats().getTotalTime())*1000);
+        float percent = (float)0.0;
+        if(ExecStats.getRunningTime() >0)
+          percent = (((float)sourceOp.getStats().getTotalTime()/(float)ExecStats.getRunningTime())*100);
+       
+        stats = factory.createStreamStat(sourceOp.getStreamId(),
+                                   sourceOp.getId(),
+                                   tableStats.getName(),
+                                   tableStats.getIsMetadata(),
+                                   tableStats.getText(),
+                                   sourceOp.getStats().getNumInputs(),
+                                   sourceOp.getStats().getStartTime(),
+                                   sourceOp.getStats().getEndTime(),
+                                   sourceOp.getStats().getNumInputsLatest(),
+                                   avg,
+                                   rate,
+                                   percent,
+                                   tableStats.getIsPushSrc(),
+                                   qsrcstat.getTuplesInMem(),
+                                   qsrcstat.getTuplesInDisk(),
+                                   hitratio);
+      if(hasFilters)
+      {
+        found = processFilter(stats, sFilters, types);
+      }
+      else
+        found = true;
+    
+    }
+    if(found)
+     return stats;
+    else
+     return null;
+  }
+
+  public void init(FilterCondition[] filters)
+  {
+    itr = execContext.getExecMgr().getSourceOpIterator();
+    if(filters == null)
+    {
+      hasFilters = false;
+      sFilters = null;
+      types = null;
+    }
+    else
+    {
+      hasFilters = true;
+      sFilters = filters;
+      types = new Datatype[filters.length];
+      for(int i=0; i<filters.length; i++)
+        types[i] = getDatatype(filters[i].getColName());
+    }
+  }
+  public void init() 
+  {
+   itr = execContext.getExecMgr().getSourceOpIterator();
+   hasFilters = false;
+   sFilters = null;
+   types = null;
+  }
+  
+}

@@ -1,0 +1,6 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata70_foo1(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create function tkdata70_foo1( i1 integer, f2 float, f3 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo12" </CEP_DDL>
+<CEP_DDL> create query tkdata70_q1 as select tkdata70_foo1(1,2,3) from tkdata70_foo1 </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

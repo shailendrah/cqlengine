@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk16188514_S1 (c1 bigint, c2 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk16188514_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16188514_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[create query tk16188514_q1 as select * from tk16188514_S1[range cast@java(c2, Integer.class)] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[create query tk16188514_q2 as select * from tk16188514_S1[range cast@java(c1, Long.class)] ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16188514_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16188514_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16188514_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16188514_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16188514_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk16188514_q2 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

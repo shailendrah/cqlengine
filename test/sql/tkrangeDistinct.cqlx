@@ -1,0 +1,9 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkrangeDistinct_S1 (c1 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkrangeDistinct_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpRange-distinct.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create view tkrangeDistinct_v1(c1 integer) as select distinct * from tkrangeDistinct_S1 where c1 > 20 </CEP_DDL>
+<CEP_DDL> create query tkrangeDistinct_q1 as select sum(c1) from tkrangeDistinct_v1[range 2 slide 2] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkrangeDistinct_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outRange-distinct.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkrangeDistinct_q1 start</CEP_DDL>	
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream S1(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> register stream S2(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> register stream S3(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkr3join_q1 as RSTREAM( select * from S1[NOW] as A, S2[NOW] as B, S3[NOW] as C  where A.c1 = B.c1 and B.c1 = C.c1)</CEP_DDL>
+<CEP_DDL> create query tkr3join_q2 as RSTREAM( select * from S1[NOW] as A, S2[NOW] as B, S3[NOW] as C, S1[NOW] as D, S2[NOW] as E, S3[NOW] as F  where A.c1 = B.c1 and B.c1 = C.c1 and C.c1 = F.c1 and D.c1 = F.c1 and E.c1 = F.c1)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkr3join_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outr3join_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkr3join_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outr3join_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkr3join_q1 start </CEP_DDL> 
+<CEP_DDL> alter query tkr3join_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

@@ -1,0 +1,18 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata63neg_S (c1 char(30))</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata63neg_S add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata63neginpS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkdata63neg_q2 as select XMLPARSE(CONTENT '111111') from tkdata63neg_S</CEP_DDL>
+
+<CEP_DDL> create query tkdata63neg_q3 as select xmlcomment("--bad comment--") from tkdata63neg_S</CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter query tkdata63neg_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata63neg_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata63neg_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata63neg_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<CEP_DDL> alter query tkdata63neg_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata63neg_q3 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

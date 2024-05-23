@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rule root="4">
+<Operator ID="1" type="Source"><cql-property> select * from  tknls_str2 </cql-property>
+	<source-name>tknls_str2</source-name><source-type>Stream</source-type></Operator>
+<Operator ID="2" type="Window"><inputs>
+		<input>1</input></inputs>
+
+	<cql-property> select * from  tknls_str2  [ range 1 ]</cql-property>
+		<type>range-time</type>
+	<range-params><timevalue>1</timevalue>
+		<timeunit/></range-params></Operator><Operator ID="3" type="Select"><inputs><input>2</input></inputs>
+	
+	<cql-property> select  c1 , 日本語文字列  FROM tknls_str2[ range 1 ]</cql-property>
+	<select-list><select-attr>
+		<select-expression> c1 </select-expression></select-attr><select-attr>
+		<select-expression> 日本語文字列 </select-expression></select-attr></select-list></Operator>
+<Operator ID="4" type="Output"><inputs>
+		<input>3</input></inputs>
+	<output-type>Query</output-type>
+	<cql-property>select c1, 日本語文字列 from tknls_str2 [range 1]</cql-property>
+	<output-name>tknls_q4</output-name></Operator>
+</Rule>
+

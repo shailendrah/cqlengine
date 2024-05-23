@@ -1,0 +1,26 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>create stream tkdoubletest_S1 (c1 integer, c2 double)</CEP_DDL>
+<CEP_DDL>create stream tkdoubletest_S2 (c1 integer, c2 double)</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdoubletest_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdouble1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdoubletest_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdouble2.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query tkdoubletest_qArith as select c2+0.5d, c2-5.25D ,c2*3f, c2/2D from tkdoubletest_S1[range 2]</CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdoubletest_qRel as select case when (c2 > 14.5) then "first value" when (c2 <= 15 and c2 >= 11.5d) then "second value" when (c2 < 6.0d) then "third value" when (c2!=5 and c2=10) then "fourth value" else "fifth value" end from tkdoubletest_S1[range 5] ]]> </CEP_DDL>
+<CEP_DDL>create query tkdoubletest_qAggr as select sum(c2), avg(c2), min(c2), max(c2), count(c2) from tkdoubletest_S1[range 5]</CEP_DDL>
+<CEP_DDL>create query tkdoubletest_qIsnull as select c1 from tkdoubletest_S2[range 2] where c2 is null </CEP_DDL>
+<CEP_DDL>create query tkdoubletest_qNvl as select nvl(c2,c1) from tkdoubletest_S2[range 2] </CEP_DDL>
+<CEP_DDL>create function tkdoubletest_var_double(c1 double) return double aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation</CEP_DDL>
+<CEP_DDL>create query tkdoubletest_qExtn as select tkdoubletest_var_double(c2) from tkdoubletest_S1[range 5] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdoubletest_qArith add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outqArithDouble.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdoubletest_qRel add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outqRelDouble.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdoubletest_qAggr add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outqAggrDouble.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdoubletest_qIsnull add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outqIsnullDouble.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdoubletest_qNvl add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outqNvlDouble.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdoubletest_qExtn add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outqExtnDouble.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>alter query tkdoubletest_qArith start</CEP_DDL>
+<CEP_DDL>alter query tkdoubletest_qRel start</CEP_DDL>
+<CEP_DDL>alter query tkdoubletest_qAggr start</CEP_DDL>
+<CEP_DDL>alter query tkdoubletest_qIsnull start</CEP_DDL>
+<CEP_DDL>alter query tkdoubletest_qNvl start</CEP_DDL>
+<CEP_DDL>alter query tkdoubletest_qExtn start</CEP_DDL>
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

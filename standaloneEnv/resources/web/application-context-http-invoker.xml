@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: application-context-http-invoker.xml 13-may-2008.08:52:52 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, Oracle. All rights reserved.  
+
+   NAME
+     application-context-http-invoker.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      03/28/08 - Creation
+
+-->
+<beans>
+    <bean id="cepServer" 
+          class="oracle.cep.server.CEPServer"
+          factory-method="getInstance">
+    </bean>
+    
+    <bean name="/CEP" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="cepServer" />
+        <property name="serviceInterface" value="oracle.cep.server.CEPServerXface" />
+   </bean>
+</beans>
+  
+

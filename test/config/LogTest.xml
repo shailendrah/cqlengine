@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: pcbpel/cep/test/config/LogTest.xml /main/3 2009/01/06 16:31:52 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, 2009, Oracle and/or its affiliates.All rights reserved. 
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      11/06/08 - fix dumpplan
+   hopark      06/19/08 - logging refactor
+   hopark      03/26/08 - Creation
+
+-->
+<beans>
+    <import resource="cep-default-logging.xml" />
+
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="schedRuntime" value="@SCHED_RUN_TIME@" />
+        <property name="schedOnNewThread" value="@USE_THREADED_SCHEDULER@" />
+        <property name="schedNumThreads" value="@NUM_THREADS@" />
+        <property name="usePagedTuple" value="@USE_PAGED_TUPLE@" />
+        <property name="usePagedList" value="@USE_PAGED_LIST@" />
+        <property name="logConfig" ref="@LOG_CONFIG@" />
+        <property name="traceFolder" ref="traceFolder" />
+        <property name="tracePostfix" value="@TRC_ID@" />
+        <property name="dynamicTupleClass" value="@USE_DYNAMIC_TUPLE@" />
+    </bean>
+
+    <bean id="cepServerRegistry" 
+          class="oracle.cep.server.CEPServerRegistryImpl" />
+
+    <bean id="cepManager" 
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="config" ref="config" />
+        <property name="evictPolicy" ref="@EVICT_POLICY@" />
+        <property name="serverRegistry" ref="cepServerRegistry" />
+    </bean>
+  
+    <bean id="fullEvictPolicy" 
+          class="oracle.cep.memmgr.evictPolicy.BottomUpPolicy" >
+        <property name="mode" value="@EVICT_POLICY_MODE@" />
+        <property name="runType"  value="@EVICT_POLICY_RUNTYPE@" />
+        <property name="debugCount" value="@EVICT_POLICY_DEBUG_COUNT@" />
+        <property name="memThreshold1"  value="-25" />
+        <property name="memThreshold2" value="-10" />
+        <property name="countThreshold0"  value="300000" />
+        <property name="countThreshold1" value="100000" />
+        <property name="minEvictable" value="1000" />
+    </bean>
+
+    <bean id="queuesrcEvictPolicy" 
+          class="oracle.cep.memmgr.evictPolicy.QueueSrcPolicy" >
+        <property name="runType"  value="@EVICT_POLICY_RUNTYPE@" />
+        <property name="debugCount" value="@EVICT_POLICY_DEBUG_COUNT@" />
+        <property name="normalThreshold"  value="-50" />
+        <property name="partialThreshold" value="-33" />
+        <property name="fullThreshold"  value="-25" />
+        <property name="syncThreshold" value="-15" />
+    </bean>
+
+    <bean id="traceFolder"
+          class="oracle.cep.metadata.ConfigManager"
+          factory-method="getWorkFilePath" >
+      <constructor-arg value="diag/trc"/>      
+    </bean>
+    
+    <bean id="LogConfig2" 
+          class="oracle.cep.logging.spring.LogConfig" >
+        <property name="names">
+          <props>
+            <prop key="CUSTOMER">oracle.soa.cep</prop>
+            <prop key="TRACE">oracle.soa.cep.trace</prop>
+          </props>        
+        </property>
+        <property name="resources">
+          <props>
+            <prop key="CUSTOMER">oracle.cep.exceptions.CEPResourceBundle</prop>
+            <prop key="TRACE">oracle.cep.exceptions.CEPResourceBundle</prop>
+          </props>        
+        </property>
+        <property name="handlers">
+          <list>
+            <ref bean="traceFileHandlerDesc1"/>
+          </list>
+        </property>
+        <property name="levels">
+          <props>
+            <prop key="oracle.soa.cep">ALL</prop>
+            <prop key="oracle.soa.cep.trace">ALL</prop>
+          </props>        
+        </property>
+    </bean>
+
+    <bean id="traceFileHandlerDesc1"
+          class="oracle.cep.logging.spring.HandlerDesc" >
+      <constructor-arg value="oracle.soa.cep.trace"/>      
+      <constructor-arg ref="traceFileHandler1"/>
+    </bean>
+
+    <bean id="traceFileHandler1"
+          class="java.util.logging.FileHandler" >
+      <constructor-arg ref="logFolderPattern2" />
+      <constructor-arg type="int" value="5000000" />      
+      <constructor-arg type="int" value="1" />      
+      <property name="formatter" ref="simpleFormatter" />
+      <property name="level" ref="fineLevel" />
+    </bean>
+
+    <bean id="fineLevel"
+          factory-bean="levelFactory"
+          factory-method="getLevel" >
+      <constructor-arg value="FINE"/>      
+    </bean>
+    
+    <bean id="logFolderPattern2"
+          class="oracle.cep.metadata.ConfigManager"
+          factory-method="getWorkFilePath" >
+      <constructor-arg value="cep_%u.log"/>      
+    </bean>
+
+    <bean id="cqlRunner" 
+          class="oracle.cep.test.CQLRunner" 
+          init-method="init" >
+        <constructor-arg ref="cepManager"/>      
+        <property name="testRule" value="@CQLX_FILE@,exit=@EXIT_AFTERRUN@,cleanup=@DROPSCHEMA_AFTERRUN@,dumpplan=@DUMPPLAN_AFTERRUN@,cqlfolder=@CQL_FOLDER@,testdata=@TEST_DATA@,testoutput=@TEST_OUTPUT@" />
+    </bean>
+  </beans>
+

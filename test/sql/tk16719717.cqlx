@@ -1,0 +1,22 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk16719717_S1 (product_id integer, product_type_id integer, name char(10), price double, firstExpiredinterval bigint, secExpiredinterval bigint, variableRate double) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk16719717_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16719717_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tk16719717_q1 as select product_id, product_type_id, name from tk16719717_S1[partition by product_type_id rows 1000 range (firstExpiredinterval+1)*2] where product_id is not null</CEP_DDL>
+<CEP_DDL> create query tk16719717_q2 as select product_id, product_type_id, name from tk16719717_S1[partition by product_type_id rows 1000 range (firstExpiredinterval+1)*2] where price > 20.0</CEP_DDL>
+<CEP_DDL> create query tk16719717_q3 as select product_id, product_type_id, name from tk16719717_S1[partition by product_type_id rows 1000 range (firstExpiredinterval+1)*2] where product_type_id > 0</CEP_DDL>
+<CEP_DDL> create query tk16719717_q4 as select product_id, product_type_id, name from tk16719717_S1[partition by product_type_id rows 1000 range (firstExpiredinterval+1)*2] where product_type_id in (1,2) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16719717_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16719717_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16719717_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16719717_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16719717_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16719717_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16719717_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16719717_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk16719717_q1 start</CEP_DDL>
+<CEP_DDL> alter query tk16719717_q2 start</CEP_DDL>
+<CEP_DDL> alter query tk16719717_q3 start</CEP_DDL>
+<CEP_DDL> alter query tk16719717_q4 start</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

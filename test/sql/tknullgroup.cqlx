@@ -1,0 +1,42 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create relation tknullgroup_R1 (c1 integer, c2 char(20)) </CEP_DDL>
+<CEP_DDL> create relation tknullgroup_R2 (c1 integer, c2 char(20)) </CEP_DDL>
+<CEP_DDL> create relation tknullgroup_R3 (c1 integer, c2 char(20)) </CEP_DDL>
+<CEP_DDL> create relation tknullgroup_R4 (c1 integer, c2 char(20)) </CEP_DDL>
+<CEP_DDL> create relation tknullgroup_R5 (c1 integer, c2 char(20)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tknullgroup_R1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptknullgroup_R1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tknullgroup_R2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptknullgroup_R2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tknullgroup_R3 add source "<EndPointReference><Address>file://@TEST_DATA@/inptknullgroup_R3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tknullgroup_R4 add source "<EndPointReference><Address>file://@TEST_DATA@/inptknullgroup_R4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tknullgroup_R5 add source "<EndPointReference><Address>file://@TEST_DATA@/inptknullgroup_R5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test: Group becomes empty while it was dirty -->
+<CEP_DDL><![CDATA[ create query tknullgroup_q1 as select count(*),c2 from tknullgroup_R1 group by c2 ]]> </CEP_DDL>
+
+<!-- Test: Group is created and removed on same timestamp -->
+<CEP_DDL><![CDATA[ create query tknullgroup_q2 as select count(*),c2 from tknullgroup_R2 group by c2 ]]> </CEP_DDL>
+
+<!-- Test: Group creation followed by Group empty without being dirty -->
+<CEP_DDL><![CDATA[ create query tknullgroup_q3 as select count(*),c2 from tknullgroup_R3 group by c2 ]]> </CEP_DDL>
+
+<!-- Test: Group becomes empty while it was dirty and then non-empty on same timestamp -->
+<CEP_DDL><![CDATA[ create query tknullgroup_q4 as select count(*),c2 from tknullgroup_R4 group by c2 having count(*) > -1 ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tknullgroup_q5 as select count(*),c2 from tknullgroup_R5 group by c2 having count(*) > -1 ]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tknullgroup_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtknullgroup_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tknullgroup_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtknullgroup_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tknullgroup_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtknullgroup_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tknullgroup_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtknullgroup_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tknullgroup_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtknullgroup_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tknullgroup_q1 start </CEP_DDL>
+<CEP_DDL> alter query tknullgroup_q2 start </CEP_DDL>
+<CEP_DDL> alter query tknullgroup_q3 start </CEP_DDL>
+<CEP_DDL> alter query tknullgroup_q4 start </CEP_DDL>
+<CEP_DDL> alter query tknullgroup_q5 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>
+

@@ -1,0 +1,13 @@
+c 10, c 15
+1000 anand, piper
+2000 india, india
+3000 india, indiA
+4000 sandeep, BISHNOI
+5000 , nonnull
+6000 nonnull,
+7000 ,
+8000 india, myindia
+9000 indian, india
+10000 india, indian
+11000 india, indindindindian
+12000 india, inamerica

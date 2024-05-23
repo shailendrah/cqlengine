@@ -1,0 +1,751 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkpattern_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S1 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S2 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S3 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S4 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S5 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S6 (c1 integer, c2 integer, c3 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S7 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S8 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S9 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S10 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S11 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S12 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S13 (c1 integer, c2 integer, ticker char(4)) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S14 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S15 (c1 integer, c2 integer, c3 integer) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S16 (price integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S17 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S18 (c1 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_StockTick (clientTimestamp bigint, symbol char(20), lastPrice double) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_MyStockTick (clientTimestamp bigint, symbol char(10), lastPrice double) </CEP_DDL>
+<CEP_DDL> create stream tkpattern_S19 (c1 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S20 (c1 int, c2 char(4))</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S21(c1 integer, c2 xmltype)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S23 (c1 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S24 (c1 integer, c2 integer, c3 xmltype)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S25 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S26 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S27 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S28 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S29 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S30 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S31 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S32 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S33 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S34 (c1 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S35 (c1 integer, c2 integer, c3 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S36 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S37 (c1 integer, c2 integer, c3 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S38 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S39 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_InboundSubstationStatus(sequence integer, status integer, substation integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S40 (val integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S41 (c1 integer, c2 integer, c3 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S42 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S43 (c1 integer, c2 integer) derived timestamped to_bigint(c1*100)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S44 (c1 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S45 (c1 integer, c2 char(10), c3 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S46 (pkey char(10), b int, expire boolean, firstElement boolean)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S47 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S48 (c1 integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S49 (id integer, status integer)</CEP_DDL>
+<CEP_DDL> create stream tkpattern_S50 (id integer, status integer)</CEP_DDL>
+
+<CEP_DDL>  <![CDATA[ create function tkpattern_var(c1 int) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S7 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S9 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S11 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPatternDemo1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S12 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPatternDemo2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S13 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S14 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S16 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S17 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S18 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_StockTick add source "<EndPointReference><Address>mlffile://@TEST_DATA@/inpAMEX.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkpattern_MyStockTick add source "<EndPointReference><Address>file://@TEST_DATA@/myinpAMEX.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S19 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S20 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S21 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S23 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern23.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S24 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern24.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S25 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern25.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S26 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern26.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S27 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern27.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S28 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern28.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S29 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern29.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S30 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern30.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S31 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern31.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S32 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern32.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S33 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern33.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S34 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern34.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S35 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern35.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S36 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern36.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S37 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern37.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S38 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern38.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S39 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern39.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_InboundSubstationStatus add source "<EndPointReference><Address>file://@TEST_DATA@/inpSubStation.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S40 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern40.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S41 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern41.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S42 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern42.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S43 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S44 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern44.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S45 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern45.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S46 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern46.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S47 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern47.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S48 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern48.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S49 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern49.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpattern_S50 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ create query tkpattern_q1 as select T.Ac1,T.Bc1,T.Dc1 from tkpattern_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN(A B C* D) DEFINE A as A.c1 = 30, B as B.c2 = 10.0, C as C.c1 = 7, D as D.c1 = 40) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q2 as select T.Ac1,T.Cc1 from tkpattern_S1 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, C.c1 as Cc1 PATTERN(A B+ C) DEFINE A as A.c1 = prev(A.c1), B as B.c1 = 10, C as C.c1 = 7) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q3 as select T.firstW,T.lastZ from tkpattern_S2 MATCH_RECOGNIZE ( MEASURES A.c1 as firstW, last(Z.c1) as lastZ PATTERN(A W+ X+ Y+ Z+) DEFINE A as A.c2 = A.c2, W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<!-- chosing ABC from ABBBBA for AB*C -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q4 as select T.Ac1,T.Cc1 from tkpattern_S3 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 > 20, B as B.c1 < 16, C as C.c1 < 14) as T]]> </CEP_DDL>
+<!-- check for ABC* -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q5 as select T.Ac1,T.Bc1 from tkpattern_S4 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1 PATTERN(A B C*) DEFINE A as A.c1 > 20, B as B.c1 = 0, C as C.c1 < 15) as T]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q6 as select T.Ac1,T.Cc1 from tkpattern_S4 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, C.c1 as Cc1 PATTERN(A B? C) DEFINE A as A.c1 > 20, B as B.c1 = 0, C as C.c1 < 15) as T]]> </CEP_DDL>
+<!-- to check if partial bindings are correctly maintained -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q7 as select T.Ac1,T.Bc1 from tkpattern_S4 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1 PATTERN(A B C* D*) DEFINE A as A.c1 > 20, B as B.c1 = 0, C as C.c1 < 15, D as D.c1 < 10) as T]]> </CEP_DDL>
+<!-- Test operator sharing -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q8 as select T.expr1, T.expr2 from tkpattern_S4 MATCH_RECOGNIZE ( MEASURES X.c1 + 10 as expr1, Y.c1*2 as expr2 PATTERN(X Y Z*) DEFINE X as X.c1 > 20,Y as Y.c1 = 0,Z as Z.c1 < 15) as T]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q9 as select T.firstc,T.lastc,T.Ac1,T.Bc1,T.avgCc1, T.Dc1 from tkpattern_S0 MATCH_RECOGNIZE ( MEASURES first(C.c2) as firstc, last(C.c2) as lastc, avg(C.c1) as avgCc1, A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN(A B C* D) DEFINE A as A.c1 = 30, B as B.c2 = 10.0, C as C.c1 = 7, D as D.c1 = 40) as T ]]> </CEP_DDL>
+
+<!-- class B tests -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q10 as select T.Ac1, T.sumB, T.Cc1 from tkpattern_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, sum(B.c1) as sumB, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q11 as select T.Ac1, T.countB, T.Cc1 from tkpattern_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q12 as select T.Ac1, T.firstB, T.lastB, T.avgB, T.Cc1 from tkpattern_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, first(B.c1) as firstB, last(B.c1) as lastB, avg(B.c1) as avgB, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q13 as select T.firstW,T.lastZ from tkpattern_S2 MATCH_RECOGNIZE ( MEASURES first(W.c1) as firstW, last(Z.c1) as lastZ PATTERN(W+ X+ Y+ Z+) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q14 as select T.Atime60, T.id from tkpattern_S6 MATCH_RECOGNIZE ( MEASURES A.c1+60 as Atime60, A.c3 as id PATTERN(A B* C) DEFINE A as A.c2 = 10, B as ((B.c2 != 20) AND (B.c1 <= A.c1 + 60)), C as C.c1 > (A.c1 + 60)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q15 as select T.sumA from tkpattern_S7 MATCH_RECOGNIZE ( MEASURES sum(A.c1) as sumA PATTERN(A*) DEFINE A as A.c1 > prev(A.c1)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q16 as select T.sumB, T.sumC, T.d from tkpattern_S8 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, sum(C.c1) as sumC, D.c1 as d PATTERN(A B* C* D) DEFINE A as A.c1 = 10, B as B.c1 = 20, C as C.c1 = 20, D as D.c1 = 30) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q17 as select T.sumB, T.sumC, T.sumD from tkpattern_S8 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, sum(C.c1) as sumC, sum(D.c1) as sumD PATTERN(A B* C* D*) DEFINE A as A.c1 = 10, B as B.c1 = 20, C as C.c1 = 20, D as D.c1 = A.c1 - A.c1 + 30) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q18 as select T.sumB, T.sumC, T.sumD from tkpattern_S8 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, sum(C.c1) as sumC, sum(D.c1) as sumD PATTERN(A B* C* D*) DEFINE A as A.c1 = 10, B as B.c1 = 20, C as C.c1 = 20, D as D.c1 = 30) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q19 as select T.sumB, T.sumC, T.sumD from tkpattern_S8 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, sum(C.c1) as sumC, sum(D.c1) as sumD PATTERN(A B* C* D+) DEFINE A as A.c1 = 10, B as B.c1 = 20, C as C.c1 = 20, D as D.c1 = A.c1 - A.c1 + 30) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q20 as select T.sumB, T.sumC, T.sumD from tkpattern_S8 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, sum(C.c1) as sumC, sum(D.c1) as sumD PATTERN(A B* C* D+) DEFINE A as A.c1 = 10, B as B.c1 = 20, C as C.c1 = 20, D as D.c1 = 30) as T]]> </CEP_DDL>
+<!-- testing preferment for classb -->
+<CEP_DDL><![CDATA[ create query tkpattern_q21 as select T.sumA, T.sumB, T.sumC from tkpattern_S9 MATCH_RECOGNIZE ( MEASURES sum(A.c1) as sumA, sum(B.c1) as sumB, sum(C.c1) as sumC PATTERN(A* B* C* D) DEFINE A as A.c1 = 10, B as ((B.c1 > sum(A.c1)) AND (B.c1 < 100)), C as C.c1 > 5*A.c1, D as D.c1 = 200) as T]]> </CEP_DDL>
+<!-- testing inorder timestamp output -->
+<CEP_DDL><![CDATA[ create query tkpattern_q22 as select T.sumB from tkpattern_S10 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB PATTERN(A B* C) DEFINE A as ((A.c1 < 50) AND (A.c1 > 35)), B as B.c1 > A.c1, C as C.c1 > prev(C.c1)) as T]]> </CEP_DDL>
+<!-- test for ABC, ABBBBBBB, XXXABBBBC -->
+<CEP_DDL><![CDATA[ create query tkpattern_q23 as select T.sumB, T.c from tkpattern_S10 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, C.c1 as c PATTERN(A B* C) DEFINE A as (A.c1 = 10), B as ((B.c1 > (0-40)) AND (B.c1 < 40)), C as C.c1 = A.c1 + sum(B.c1)) as T]]> </CEP_DDL>
+<!-- test sharing in classB -->
+<CEP_DDL><![CDATA[ create query tkpattern_q24 as select T.sumB+10, T.c+10 from tkpattern_S10 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, C.c1 as c PATTERN(A B* C) DEFINE A as (A.c1 = 10), B as ((B.c1 > (0-40)) AND (B.c1 < 40)), C as C.c1 = A.c1 + sum(B.c1)) as T]]> </CEP_DDL>
+<!-- tests for demo queries -->
+<CEP_DDL><![CDATA[ create query tkpattern_q25 as select T.firstW,T.lastZ from tkpattern_S11 MATCH_RECOGNIZE ( MEASURES A.c1 as firstW, last(Z.c1) as lastZ PATTERN(A W+ X+ Y+ Z+) DEFINE A as A.c1 = A.c1, W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q26 as select T.Atime, T.Atime from tkpattern_S12 MATCH_RECOGNIZE ( MEASURES A.c1 as Atime PATTERN(A B* C) DEFINE A as A.c2 = 1, B as ((B.c2 != 5) AND (B.c1 <= A.c1 + 5)), C as C.c1 > (A.c1 + 5)) as T]]> </CEP_DDL>
+
+<!-- tests for partition by -->
+<CEP_DDL><![CDATA[ create query tkpattern_q27 as select T.ticker, T.firstW,T.lastZ from tkpattern_S13 MATCH_RECOGNIZE ( PARTITION BY ticker MEASURES A.c1 as firstW, last(Z.c1) as lastZ, A.ticker as ticker PATTERN(A W+ X+ Y+ Z+) DEFINE A as A.c2 = A.c2, W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q31 as select T.C2, T.A, T.sumB, T.C from tkpattern_S14 MATCH_RECOGNIZE ( PARTITION BY c2 MEASURES A.c1 as A, sum(B.c1) as sumB, C.c1 as C, A.c2 as C2 PATTERN(A B* C) DEFINE A as ((A.c1 < 50) AND (A.c1 > 35)), B as B.c1 > A.c1, C as C.c1 > prev(C.c1)) as T]]> </CEP_DDL>
+
+<!-- test for operators above pattern with a view -->
+<CEP_DDL><![CDATA[ register view tkpattern_v1 (c1 integer, c2 integer) as select T.sumB+10, T.c+10 from tkpattern_S10 MATCH_RECOGNIZE ( MEASURES sum(B.c1) as sumB, C.c1 as c PATTERN(A B* C) DEFINE A as (A.c1 = 10), B as ((B.c1 > (0-40)) AND (B.c1 < 40)), C as C.c1 = A.c1 + sum(B.c1)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q29 as select sum(c1) from tkpattern_v1[range 5] where c1=c1]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q28 as select T.varB from tkpattern_S10 MATCH_RECOGNIZE ( MEASURES tkpattern_var(B.c1) as varB PATTERN(A B* C) DEFINE A as ((A.c1 < 50) AND (A.c1 > 35)), B as B.c1 > A.c1, C as C.c1 > prev(C.c1)) as T]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ register view tkpattern_v2 (c1 integer, c2 integer, c3 integer) as select T.Ac1,T.Bc1,T.Dc1 from tkpattern_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN(A B C* D) DEFINE A as A.c1 = 30, B as B.c2 = 10.0, C as C.c1 = 7, D as D.c1 = 40) as T ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q30 as select * from tkpattern_v2[range 5]]]> </CEP_DDL>
+
+<!-- count * tests -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q32 as select T.Ac1, T.countBStar, T.Cc1 from tkpattern_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.*) as countBStar, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q33 as select T.Ac1, T.Bc1 from tkpattern_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1 PATTERN(A B+) DEFINE A as A.c1 > count(B.*), B as B.c1 = 10) as T ]]> </CEP_DDL>
+
+<!-- prev(A.x1,n) tests -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q34 as select T.Ac1,T.Ac2 from tkpattern_S15 MATCH_RECOGNIZE ( PARTITION BY c2 MEASURES A.c1 as Ac1, A.c2 as Ac2 PATTERN(A) DEFINE A as ((A.c1 = PREV(A.c1,3)) AND (A.c1 = PREV(A.c1,2)) AND (A.c1 = PREV(A.c1,1)) )) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q35 as select T.Ac1 from tkpattern_S15 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1 PATTERN(A) DEFINE A as (A.c1 = PREV(A.c1,3) )) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q36 as select T.Ac1 from tkpattern_S15 MATCH_RECOGNIZE ( PARTITION BY c2 MEASURES A.c1 as Ac1 PATTERN(A) DEFINE A as (A.c1 = PREV(A.c1,3,5000000000L) )) as T ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q37 as select T.expr1, T.expr2 from tkpattern_S4 MATCH_RECOGNIZE ( MEASURES bus.c1 + 10 as expr1, car.c1*2 as expr2 PATTERN(bus car plane*) DEFINE bus as bus.c1 > 20,car as car.c1 = 0,plane as plane.c1 < 15) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q38 as select T.firstW,T.lastZ from tkpattern_S11 MATCH_RECOGNIZE ( MEASURES A.c1 as firstW, last(Z.c1) as lastZ PATTERN(A W+ X+ Y+ Z+) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q39 as select T.ticker, T.firstW,T.lastZ from tkpattern_S13 MATCH_RECOGNIZE ( PARTITION BY ticker MEASURES A.c1 as firstW, last(Z.c1) as lastZ, A.ticker as ticker PATTERN(A W+ X+ Y+ Z+) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q40 as select T.upPrice, T.downPrice from tkpattern_S16 MATCH_RECOGNIZE (MEASURES Up.price as upPrice, Down.price as downPrice PATTERN(Up* Down) DEFINE Up as count(Up.*) = 1 or Up.price > Down.price, Down as Down.price < Up.price) as T]]> </CEP_DDL>
+<!-- All matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q41 as select T.firstW,T.lastZ from tkpattern_S11 MATCH_RECOGNIZE ( MEASURES A.c1 as firstW, last(Z.c1) as lastZ ALL MATCHES PATTERN(A W+ X+ Y+ Z+) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q42 as select T.ticker, T.firstW,T.lastZ from tkpattern_S13 MATCH_RECOGNIZE ( PARTITION BY ticker MEASURES A.c1 as firstW, last(Z.c1) as lastZ, A.ticker as ticker ALL MATCHES PATTERN(A W+ X+ Y+ Z+) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+
+<!-- Lazy quantifiers -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q43 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN(A B+ C*) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > 40) as T ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q44 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN(A B+? C*) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > 40) as T ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q45 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, C.c1 as sumC PATTERN(A B+? C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > 40) as T ]]> </CEP_DDL>
+
+<!-- checking grouping over simple concat -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q46 as select T.Ac1,T.Bc1,T.Dc1 from tkpattern_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN((A B) (C* D)) DEFINE A as A.c1 = 30, B as B.c2 = 10.0, C as C.c1 = 7, D as D.c1 = 40) as T ]]>  </CEP_DDL>
+
+<!-- alternation tests -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q47 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN(A B+ | C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > 40) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q48 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN(A B+? | C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > 40) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q49 as select T.Ac1, T.Bc1, T.Cc1 from tkpattern_S18 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, C.c1 as Cc1 PATTERN(A |B C) DEFINE A as A.c1 = 10, B as B.c1 > 5 , C as C.c1 > 40) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q50 as select T.sumA, T.Bc1, T.Cc1 from tkpattern_S18 MATCH_RECOGNIZE ( MEASURES sum(A.c1) as sumA, B.c1 as Bc1, C.c1 as Cc1 PATTERN(A*|B C) DEFINE A as A.c1 = 10, B as B.c1 > 5 , C as C.c1 > 40) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q51 as select T.sumA, T.Bc1, T.Cc1 from tkpattern_S18 MATCH_RECOGNIZE ( MEASURES sum(A.c1) as sumA, B.c1 as Bc1, C.c1 as Cc1 PATTERN(B C|A*) DEFINE A as A.c1 = 10, B as B.c1 > 5 , C as C.c1 > 40) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q52 as select T.sumA, T.sumB from tkpattern_S18 MATCH_RECOGNIZE ( MEASURES sum(A.c1) as sumA, sum(B.c1) as sumB PATTERN(A*|B*) DEFINE A as A.c1 = 10, B as B.c1 > 5) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q53 as select T.sumA, T.Bc1, T.Cc1 from tkpattern_S18 MATCH_RECOGNIZE ( MEASURES sum(A.c1) as sumA, B.c1 as Bc1, C.c1 as Cc1 PATTERN(A*?|B C) DEFINE A as A.c1 = 10, B as B.c1 > 5 , C as C.c1 > 40) as T  ]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q54 as select T.Atime60, T.id from tkpattern_S6 MATCH_RECOGNIZE ( MEASURES A.c1+60 as Atime60, A.c3 as id PATTERN(A B* A) DEFINE A as A.c2 = 10, B as B.c2 != 10) as T]]> </CEP_DDL>
+
+<!-- SUBSET tests-->
+<CEP_DDL><![CDATA[ create query tkpattern_q55 as select T.firstW,T.lastZ,T.sumDecrArm,T.sumIncrArm,T.overallAvg from tkpattern_S11 MATCH_RECOGNIZE ( MEASURES tkpattern_S2.c1 as firstW, last(tkpattern_S1.c1) as lastZ, sum(tkpattern_S3.c2) as sumDecrArm, sum(tkpattern_S4.c2) as sumIncrArm, avg(tkpattern_S5.c2) as overallAvg PATTERN(A W+ X+ Y+ Z+) SUBSET tkpattern_S1 = (Z) tkpattern_S2 = (A) tkpattern_S3 = (A,W,Y) tkpattern_S4 = (X,Z) tkpattern_S5 = (A,W,X,Y,Z) tkpattern_S6 = (Y) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as tkpattern_S6.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+
+<!-- testing aggregates on undefined correlation names (now removed as the semantic checks are in place-->
+<CEP_DDL><![CDATA[ create query tkpattern_q56 as select T.firstW,T.lastZ from tkpattern_S11 MATCH_RECOGNIZE ( MEASURES A.c1 as firstW, last(Z.c1) as lastZ PATTERN(A W+ X+ Y+ Z+) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+
+<!-- subset usage in DEFINE list -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q57 as select T.Ac1, T.Bc1 from tkpattern_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1 PATTERN(A B) SUBSET tkpattern_S=(B) DEFINE A as A.c1 > count(tkpattern_S.*), B as B.c1 = 10) as T  ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q58 as select T.secondW,T.secondLastZ from tkpattern_S11 MATCH_RECOGNIZE ( MEASURES first(W.c1, 2) as secondW, last(Z.c1,2) as secondLastZ PATTERN(A W+ X+ Y+ Z+) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+
+<!-- BEA algotrading example starts -->
+
+<CEP_DDL> <![CDATA[ create view tkpattern_S(clientTimestamp bigint, symbol char(20), lastPrice double) as select *  from tkpattern_StockTick ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create function tkpattern_trend(c1 double) return int aggregate using "oracle.cep.test.userfunctions.TkTrend" ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ 
+        create query tkpattern_qperc as
+        select  symbol, lastPrice, percLastPrice, clientTimestamp
+	    from tkpattern_S MATCH_RECOGNIZE (
+	      PARTITION BY symbol
+	      MEASURES
+	         B.symbol as symbol,
+	         B.lastPrice as lastPrice,
+	         100*(B.lastPrice - A.lastPrice)/A.lastPrice as percLastPrice,
+	         B.clientTimestamp as clientTimestamp
+	      ALL MATCHES
+	      PATTERN (A B)
+	      DEFINE
+	         B AS (100*(B.lastPrice - A.lastPrice)/A.lastPrice > 2.0
+	               or   100*(B.lastPrice - A.lastPrice)/A.lastPrice < -2.0
+	               )
+	    ) as T
+      ]]>
+</CEP_DDL>
+<!-- tkpattern_trend query with TkTrend UDF -->
+<CEP_DDL><![CDATA[ 
+		 create query tkpattern_qtrend1 as
+		 select  symbol, lastPrice, percLastPrice, clientTimestamp
+		 from tkpattern_S MATCH_RECOGNIZE (
+           PARTITION BY symbol
+           MEASURES
+             A.symbol as symbol,
+             A.lastPrice as lastPrice,
+             tkpattern_trend(A.lastPrice) as percLastPrice,
+             A.clientTimestamp as clientTimestamp
+           ALL MATCHES
+           PATTERN (A A A A A)
+           DEFINE
+             A AS (count(A.*) < 5 OR tkpattern_trend(A.lastPrice) > 2)
+          ) as T
+      ]]>
+</CEP_DDL>
+<CEP_DDL><![CDATA[
+                 create view tkpattern_vTrend(symbol char(20), lastPrice double, trendLastPrice integer, clientTimestamp bigint, ts timestamp)
+                 as 
+                 select  symbol, lastPrice, trendLastPrice, clientTimestamp, timestamp1
+                 from tkpattern_S MATCH_RECOGNIZE (
+                     PARTITION BY symbol
+                     MEASURES
+                                    Z.symbol as symbol,
+                                    Z.lastPrice as lastPrice,
+                                    count(A.*)-count(B.*) as trendLastPrice,
+                                    Z.clientTimestamp as clientTimestamp,
+                                    to_timestamp(Z.element_time) as timestamp1
+                      ALL MATCHES
+                      PATTERN (X (A|B|C) (A|B|C) (A|B|C) (A|B|C) )
+                      SUBSET Z = (A, B, C)
+                      DEFINE
+                                A AS (A.lastPrice > PREV(A.lastPrice)),  
+                                B AS (B.lastPrice < PREV(B.lastPrice)),
+                                C AS (C.lastPrice = PREV(C.lastPrice))
+) as T
+]]>
+</CEP_DDL>
+<!-- tkpattern_trend query without User Defined function -->
+<CEP_DDL><![CDATA[ create query tkpattern_qtrend2 as select symbol,lastPrice,trendLastPrice,clientTimestamp from tkpattern_vTrend where trendLastPrice > 2  ]]> </CEP_DDL>
+
+<!-- New Perc Query -->
+<CEP_DDL><![CDATA[  
+            create query tkpattern_qperc2 as
+            select symbol, lastPrice, percLastPrice
+	    from tkpattern_MyStockTick MATCH_RECOGNIZE (
+	      PARTITION BY symbol
+	      MEASURES
+	        B.symbol as symbol,
+	        B.lastPrice as lastPrice,
+	        100*(B.lastPrice - A.lastPrice)/A.lastPrice as percLastPrice
+              ALL MATCHES
+	      PATTERN (A B)
+	      DEFINE
+	        B AS (100*(B.lastPrice - A.lastPrice)/A.lastPrice > 2.0
+	              or   100*(B.lastPrice - A.lastPrice)/A.lastPrice < -2.0
+	             )
+            ) as T
+       ]]>
+</CEP_DDL>
+
+<!-- New Trend query -->
+<CEP_DDL><![CDATA[
+           create query tkpattern_qtrend3 as
+           select symbol, lastPrice, trendLastPrice
+           from tkpattern_MyStockTick MATCH_RECOGNIZE (
+             PARTITION BY symbol
+             MEASURES
+               symbol as symbol,
+               C.lastPrice as lastPrice,
+               case 
+                 when count(C.*) > 5 then 5
+                 else count(C.*)
+               end as trendLastPrice
+             ALL MATCHES
+             PATTERN (A B C+)
+             DEFINE
+               A AS ((A.lastPrice > PREV(A.lastPrice, 1)) AND
+                     (NOT(PREV(A.lastPrice, 1) > PREV(A.lastPrice, 2)))
+                    ),
+               B AS (B.lastPrice > PREV(B.lastPrice, 1)),
+               C AS (C.lastPrice > PREV(C.lastPrice, 1))
+           ) as T
+         ]]>
+</CEP_DDL>
+
+<!-- BEA algotrading example ends -->
+<!-- non event detection case -->
+<CEP_DDL><![CDATA[ create query tkpattern_q59 as select T.p1, T.p2 from tkpattern_S19 MATCH_RECOGNIZE ( MEASURES A.c1 as p1, B.c1 as p2 include timer events PATTERN(A B*) duration 10 DEFINE A as A.c1 = 10, B as B.c1 != A.c1) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q60 as select T.p1, T.p2 from tkpattern_S19 MATCH_RECOGNIZE ( MEASURES A.c1 as p1, B.c1 as p2 include timer events PATTERN(A B+) duration 10 DEFINE A as A.c1 = 10, B as B.c1 != A.c1) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q61 as select T.p1, T.p2 from tkpattern_S19 MATCH_RECOGNIZE ( MEASURES A.c1 as p1, B.c1 as p2 include timer events PATTERN(A B*?) duration 10 DEFINE A as A.c1 = 10, B as B.c1 != A.c1) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q62 as select T.c2, T.p1, T.p2 from tkpattern_S20 MATCH_RECOGNIZE ( PARTITION BY c2 MEASURES A.c1 as p1, B.c1 as p2, A.c2 as c2 include timer events PATTERN(A B*) duration 10 DEFINE A as A.c1 = 10, B as B.c1 != A.c1) as T]]> </CEP_DDL>
+
+<!-- Support for referencing fields without correlation variables. Makes use of default subset -->
+<CEP_DDL><![CDATA[ create query tkpattern_q63 as select T.firstW,T.lastZ,T.sumDecrArm,T.sumIncrArm,T.overallAvg from tkpattern_S11 MATCH_RECOGNIZE ( MEASURES tkpattern_S2.c1 as firstW, last(tkpattern_S1.c1) as lastZ, sum(tkpattern_S3.c2) as sumDecrArm, sum(tkpattern_S4.c2) as sumIncrArm, avg(c2) as overallAvg PATTERN(A W+ X+ Y+ Z+) SUBSET tkpattern_S1 = (Z) tkpattern_S2 = (A) tkpattern_S3 = (A,W,Y) tkpattern_S4 = (X,Z) tkpattern_S6 = (Y) DEFINE W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as tkpattern_S6.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q64 as select T.Ac1,T.Bc1,T.Dc1 from tkpattern_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN(A B C* D) DEFINE A as A.c1 = 30, B as (B.c2 = 10.0 AND c1 > 4), C as C.c1 = 7, D as (D.c1 = 40 AND sum(c2) > 23)) as T  ]]> </CEP_DDL>
+
+<!-- greedy quantifiers over grouping -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q65 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN((A?? B* C* D*?)*) DEFINE A as A.c1 = 10, B as B.c1 > 10 , C as (C.c2 =3.2 or C.c2=3.3 or C.c2=4.1 or C.c2=5.8), D as D.c1 > 40) as T ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q66 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN((A?? B C*?)*) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > 40) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q67 as select T.Ac1, T.countB, T.sumC, T.countC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC, count(C.c1) as countC PATTERN((A* B*? C*)+) DEFINE A as (A.c1 = 10 or A.c2=3.2 or A.c2=4.1), B as B.c1 > A.c1 , C as (C.c1 > 20 or C.c1 = 4)) as T  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkpattern_q68 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN((A B+ | C)?) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as (C.c1 > 40 or C.c2=3.2 or C.c2=9.9)) as T  ]]> </CEP_DDL>
+
+<!-- lazy quantifiers over grouping -->
+<!-- case from preferment rules doc. L(R) contains epsilon. final trans present at the first position in start state -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q69 as select T.Ac1, T.Bc1, T.Cc1 from tkpattern_S17 MATCH_RECOGNIZE( MEASURES A.c1 as Ac1, B.c1 as Bc1, C.c1 as Cc1 PATTERN((A?? B??) *? C) DEFINE A as (A.c1 = 10 or A.c1= 3), B as (B.c2 > 5 or B.c1 = 25), C as (C.c2 = 3.3 or C.c2 = 8.8)) as T  ]]> </CEP_DDL>
+<!-- L(R) contains epsilon, final trans not present at first position in start state -->
+<CEP_DDL><![CDATA[ create query tkpattern_q70 as select T.Ac1, T.Bc1, T.Cc1 from tkpattern_S17 MATCH_RECOGNIZE( MEASURES A.c1 as Ac1, B.c1 as Bc1, C.c1 as Cc1 PATTERN((A* B*) *? C) DEFINE A as (A.c1 = 10 or A.c1 = 20), B as (B.c2 < 5.8 or B.c2 between 8 and 12), C as (C.c2 = 5.8 or C.c2=9.9 or C.c2 = 14.5)) as T]]> </CEP_DDL>
+<!-- lazy + with greedy inside, L(R) contains epsilon-->
+<CEP_DDL><![CDATA[ create query tkpattern_q71 as select T.Ac1, T.Bc1 from tkpattern_S17 MATCH_RECOGNIZE( MEASURES A.c1 as Ac1, B.c1 as Bc1  PATTERN((A?)+? B) DEFINE A as (A.c1 = 10 or A.c1 = 20), B as (B.c2 < 5.8)) as T]]> </CEP_DDL>
+<!-- lazy ? with L(R) does not contain epsilon -->
+<CEP_DDL><![CDATA[ create query tkpattern_q72 as select T.CountAc1, T.Bc1 from tkpattern_S17 MATCH_RECOGNIZE( MEASURES count(A.c1) as CountAc1, B.c1 as Bc1  PATTERN((A+)?? B) DEFINE A as (A.c1 < 45), B as (B.c2 = 3.3 or B.c2 = 1.3)) as T]]> </CEP_DDL>
+
+<!-- Test of xmlagg in MEASURES clause -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q73 as select T.Ac1, T.xmlaggB, T.Cc1 from tkpattern_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, xmlagg(xmlelement("bc1",B.c1)) as xmlaggB, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T  ]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ create query tkpattern_q74 as select T.Ac1, T.xmlaggB, T.Cc1 from tkpattern_S21 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, xmlagg(B.c2) as xmlaggB, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T ]]>  </CEP_DDL>
+
+<!-- returrning non event detection -->
+<CEP_DDL><![CDATA[ create query tkpattern_q75 as select T.p1, T.p2, T.p3 from tkpattern_S23 MATCH_RECOGNIZE ( MEASURES A.c1 as p1, B.c1 as p2, sum(B.c1) as p3 ALL MATCHES include timer events PATTERN(A B*) duration multiples of 10 DEFINE A as A.c1 = 10, B as B.c1 != A.c1) as T]]> </CEP_DDL>
+
+<!--negative test case. To check that a correlation attr defined in DEFINE clause but not used in PATTERN clause is caught -->
+<CEP_DDL><![CDATA[ create query tkpattern_q76 as select T.Ac1, T.countB, T.sumC from tkpattern_S17 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, count(B.c1) as countB, sum(C.c1) as sumC PATTERN((A?? B* D*)*) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , E as E.c1=100, C as (C.c1 > 40 or C.c2=3.2 or C.c2=9.9)) as T]]> </CEP_DDL> 
+
+<!--Test of xmlagg with orderby in pattern queries -->
+<CEP_DDL><![CDATA[ create query tkpattern_q77 as select  Ac1, xmlaggBAsc, xmlaggBDesc, countC1 from tkpattern_S21 MATCH_RECOGNIZE(MEASURES A.c1 as Ac1, xmlagg(B.c2 order by B.c1) as xmlaggBAsc, xmlagg(B.c2 order by B.c1 desc) as xmlaggBDesc, count(C.c1) as countC1 PATTERN(A B+ C+) DEFINE A as A.c1=10, B as B.c1 > A.c1, C as C.c1 > B.c1) as T ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q78 as select Ac1, xmlaggA, Bc2 from tkpattern_S24 MATCH_RECOGNIZE(MEASURES A.c1 as Ac1, xmlAgg(A.c3 order by A.c1 desc) as xmlaggA, B.c2 as Bc2 PATTERN(A+ B) DEFINE A as A.c1=10, B as B.c1 > A.c1) as T ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpattern_q79 as select xmlaggA1, xmlaggA2, xmlaggB, Cc1 from tkpattern_S24 MATCH_RECOGNIZE(MEASURES xmlagg(A.c3 order by A.c1 desc) as xmlaggA1, xmlagg(A.c3 order by A.c2) as xmlaggA2, xmlagg(B.c3 order by B.c1 desc) as xmlaggB, C.c1 as Cc1 PATTERN(A* B+ C) DEFINE A as A.c1=10, B as ((B.c1 > A.c1) or (B.c1 = 10)), C as C.c1 > B.c1) as T ]]></CEP_DDL>
+
+<!-- Test Case for select * in pattern . Bug No: 7693965 -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q80 as select * from tkpattern_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN(A B C* D) DEFINE A as A.c1 = 30, B as B.c2 = 10.0, C as C.c1 = 7, D as D.c1 = 40) as T ]]> </CEP_DDL>
+
+<!-- tests for DURATION arith_expr clause -->
+<CEP_DDL><![CDATA[ create query tkpattern_q81 as select T.c2, T.p1, T.p2 from tkpattern_S20 MATCH_RECOGNIZE ( PARTITION BY c2 MEASURES A.c1 as p1, B.c1 as p2, A.c2 as c2 include timer events PATTERN(A B*) duration c1+4 DEFINE B as B.c1 != A.c1) as T]]> </CEP_DDL>
+
+<!-- test to check prev(X) and prev(X,n) in same query -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q82 as select T.Ac1,T.Ac2 from tkpattern_S15 MATCH_RECOGNIZE ( PARTITION BY c2 MEASURES A.c1 as Ac1, A.c2 as Ac2 PATTERN(A) DEFINE A as ((A.c1 = PREV(A.c1,3)) AND (A.c1 = PREV(A.c1,2)) AND (A.c1 = PREV(A.c1)) )) as T ]]> </CEP_DDL>
+
+<!-- test to check prev tuple ordering in presence of partn by -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q83 as select T.Ac3 from tkpattern_S15 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.c3 as Ac3 PATTERN(A) DEFINE A as (A.c3 = PREV(A.c3,3) )) as T ]]> </CEP_DDL>
+
+<!-- test for partnby w/o all matches..testing the readytooutputlist usage -->
+<CEP_DDL> <![CDATA[ create query tkpattern_q84 as select T.Ac1, T.cBc1, T.cc1 from tkpattern_S25 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.c1 as Ac1, count(B.c1) as cBc1, C.c1 as cc1  PATTERN(A B* C) DEFINE A as (A.c1 = 10) , B as (B.c1 > A.c1 AND B.c1 < 20), C as (C.c1 = 15 or C.c1 = 25)) as T ]]> </CEP_DDL>
+
+<!-- tests for prev with range with and without partition -->
+<CEP_DDL><![CDATA[ create query tkpattern_q85 as select orders.Ac1,orders.Ac2,orders.Bc1,orders.Bc2 from tkpattern_S26 MATCH_RECOGNIZE(MEASURES A.c1 AS Ac1, A.c2 AS Ac2, B.c1 AS Bc1, B.c2 AS Bc2 PATTERN (A B) DEFINE A AS (A.c1 < prev(A.c1,3,3500000000L)), B AS (B.c1 > prev(B.c1, 1, 5000000000L)+3)) AS orders ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q86 as select orders.Ac1,orders.Ac2,orders.Bc1,orders.Bc2 from tkpattern_S26 MATCH_RECOGNIZE(PARTITION BY c2 MEASURES A.c1 AS Ac1, A.c2 AS Ac2, B.c1 AS Bc1, B.c2 AS Bc2 PATTERN (A B) DEFINE A AS (A.c1 < prev(A.c1,3,9500000000L)), B AS (B.c1 > prev(B.c1, 1, 5000000000L)+3)) AS orders ]]></CEP_DDL>
+
+<!-- non-event detection with all matches with partn -->
+<CEP_DDL><![CDATA[ create query tkpattern_q87 as select T.p1, T.p2, T.p3 from tkpattern_S27 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, A.c2 as p3 ALL MATCHES include timer events PATTERN(A B+) duration 6 DEFINE A as (A.c1 = 10 or A.c1 = 15), B as (B.c1 = 15 or B.c1 = 20)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q88 as select T.p1, T.p2 from tkpattern_S30 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2 ALL MATCHES include timer events PATTERN(A (C | B*D)) duration 10 DEFINE A as (A.c1 = 10), B as (B.c1 = 25 or B.c1 = 20), C as (C.c1 = 25 or C.c1 = 30), D as (D.c1 = 35)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q89 as select T.p1, T.p2 from tkpattern_S31 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2 ALL MATCHES include timer events PATTERN(A B*) duration 7 DEFINE A as (A.c1 = 10), B as (B.c1 = 20)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q90 as select T.p1  from tkpattern_S29 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1 ALL MATCHES include timer events PATTERN(A) duration 6 DEFINE A as (A.c1 = 10 or A.c1 = 15)) as T]]> </CEP_DDL>
+
+<!-- non-event detection without all matches with partn -->
+<CEP_DDL><![CDATA[ create query tkpattern_q91 as select T.p1, T.p2 from tkpattern_S28 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2 include timer events PATTERN(A B+) duration 6 DEFINE A as (A.c1 = 10 or A.c1 = 15), B as (B.c1 = 15 or B.c1 = 20)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q92 as select T.p1, T.p2 from tkpattern_S30 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2 include timer events PATTERN(A (C | B*D)) duration 10 DEFINE A as (A.c1 = 10), B as (B.c1 = 25 or B.c1 = 20), C as (C.c1 = 25 or C.c1 = 30), D as (D.c1 = 35)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q93 as select T.p1, T.p2 from tkpattern_S31 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2 include timer events PATTERN(A B*) duration 7 DEFINE A as (A.c1 = 10), B as (B.c1 = 20)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q94 as select T.p1  from tkpattern_S29 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1 include timer events PATTERN(A) duration 6 DEFINE A as (A.c1 = 10 or A.c1 = 15)) as T]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q95 as select T.p1, T.p2, T.p3 from tkpattern_S32 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(A.c1) as p2, first(A.c1) as p3 ALL MATCHES include timer events PATTERN(A+) duration 6 DEFINE A as (A.c1 > prev(A.c1, 2, 5000000000L)) ) as T ]]> </CEP_DDL>
+
+<!-- Recurring non-event test -->
+<CEP_DDL><![CDATA[ create query tkpattern_q96 as select T.p1, T.p2, T.p3 from tkpattern_S33 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.c1 as p1, B.c1 as p2, sum(B.c1) as p3 ALL MATCHES include timer events PATTERN(A B*) duration multiples of 10 DEFINE A as A.c1 = 10, B as B.c1 != A.c1) as T]]> </CEP_DDL>
+
+<!-- count(*) usage in pattern -->
+<CEP_DDL><![CDATA[ create query tkpattern_q97 as SELECT T.firstSequence, T.lastSequence, T.substation FROM tkpattern_InboundSubstationStatus MATCH_RECOGNIZE( PARTITION BY substation MEASURES F.sequence AS firstSequence, L.sequence AS lastSequence, F.substation AS substation PATTERN (F Nth+? L) DEFINE Nth AS Nth.status >= F.status, L AS ((L.status >= F.status) AND (count(*)=5))) as T ]]></CEP_DDL>
+
+<!-- Test for piggybacking -->
+<CEP_DDL><![CDATA[ create query tkpattern_q98 as select T.p1, T.p2 from tkpattern_S33 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.c1 as p1, B.c1 as p2 ALL MATCHES include timer events PATTERN(A B*) duration 10 DEFINE A as A.c1 = 10, B as B.c1 != A.c1) as T]]> </CEP_DDL>
+
+<!-- Test for checking the non-event boundary case behavior when an event that expires a previous match starts a new one -->
+<CEP_DDL><![CDATA[ create query tkpattern_q99 as select T.p1, T.p2 from tkpattern_S34 MATCH_RECOGNIZE (MEASURES A.c1 as p1, B.c1 as p2 include timer events PATTERN(A B*) duration 5 DEFINE A as A.c1 = 10, B as B.c1 = 20) as T]]> </CEP_DDL>
+
+<!-- additional tests for non-event -->
+<!-- The all matches version of below query is q87 -->
+<CEP_DDL><![CDATA[ create query tkpattern_q100 as select T.p1, T.p2, T.p3 from tkpattern_S27 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, A.c2 as p3 include timer events PATTERN(A B+) duration 6 DEFINE A as (A.c1 = 10 or A.c1 = 15), B as (B.c1 = 15 or B.c1 = 20)) as T]]> </CEP_DDL>
+
+<!-- w/o partn by , with all matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q101 as select T.p1, T.p2, T.p3 from tkpattern_S27 MATCH_RECOGNIZE (MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, A.c2 as p3 ALL MATCHES include timer events PATTERN(A B+) duration 6 DEFINE A as (A.c1 = 10 or A.c1 = 15), B as (B.c1 = 15 or B.c1 = 20)) as T]]> </CEP_DDL>
+
+<!-- w/o partn by , without all matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q102 as select T.p1, T.p2, T.p3 from tkpattern_S27 MATCH_RECOGNIZE (MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, A.c2 as p3 include timer events PATTERN(A B+) duration 6 DEFINE A as (A.c1 = 10 or A.c1 = 15), B as (B.c1 = 15 or B.c1 = 20)) as T]]> </CEP_DDL>
+
+<!-- variable non-event detection test cases -->
+<!-- partitions, skip past last row. tells why we need to maintain unsureItem. -->
+<CEP_DDL><![CDATA[ create query tkpattern_q103 as select T.p1, T.p2, T.p3 from tkpattern_S35 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, C.ELEMENT_TIME as p3 include timer events PATTERN(A B* C) duration c3 DEFINE A as (A.c1=10), B as (B.c1=15 or B.c1=20), C as (C.c1=20 or C.c1=30)) as T ]]> </CEP_DDL>
+
+<!-- this test stresses the necessity of maintaining the active bindings in target time order even for skip past last row  -->
+<CEP_DDL><![CDATA[ create query tkpattern_q104 as select T.p1, T.p2, T.p3 from tkpattern_S37 MATCH_RECOGNIZE (PARTITION BY c2 MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, B.ELEMENT_TIME as p3 include timer events PATTERN(A B*) duration c3 DEFINE A as (A.c1=10 or A.c1=15), B as (B.c1=15 or B.c1=20)) as T ]]> </CEP_DDL>
+
+<!-- no partitions, all matches. necessary to maintain in target time order to avoid out-of-order matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q105 as select T.p1, T.p2, T.p3 from tkpattern_S36 MATCH_RECOGNIZE (MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, C.ELEMENT_TIME as p3 ALL MATCHES include timer events PATTERN(A B* C) duration c2 DEFINE A as (A.c1=10 or A.c1=15), B as (B.c1=15 or B.c1=20 or B.c1=25), C as (C.c1=25 or C.c1=30)) as T ]]> </CEP_DDL>
+
+<!-- skip past last row, without partition. Also tells why it is necessary to process through all active bindings even if  we find one unsure -->
+<CEP_DDL><![CDATA[ create query tkpattern_q106 as select T.p1, T.p2, T.p3 from tkpattern_S38 MATCH_RECOGNIZE (MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2, C.ELEMENT_TIME as p3 include timer events PATTERN((A+|B)C) duration c2 DEFINE A as (A.c1=10 or A.c1=15), B as (B.c1=15), C as (C.c1=25)) as T ]]> </CEP_DDL>
+
+<!-- skip past last row, without partition. minActiveIndex cannot be the startIndex of first active binding -->
+<CEP_DDL><![CDATA[ create query tkpattern_q107 as select T.p1, T.p2 from tkpattern_S39 MATCH_RECOGNIZE (MEASURES A.ELEMENT_TIME as p1, count(B.c1) as p2 include timer events PATTERN(A B*) duration c2 DEFINE A as (A.c1=10 or A.c1=15), B as (B.c1=15 or B.c1=20)) as T ]]> </CEP_DDL>
+
+<!-- Pattern with xmlelement -->
+<CEP_DDL><![CDATA[ create query tkpattern_q108 as SELECT  T.totalCount, T.bCount, T.lin FROM tkpattern_S40 MATCH_RECOGNIZE( MEASURES COUNT(*) AS totalCount, COUNT(B.*) AS bCount, XMLELEMENT ("parent", XMLAGG(XMLELEMENT("value", val))) AS lin PATTERN (A B+ C) DEFINE B AS (B.val = 2*A.val), C AS (C.val = 3*A.val)) AS T ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q109 as SELECT  T.totalCount, T.bCount, T.lin FROM tkpattern_S40 MATCH_RECOGNIZE( MEASURES COUNT(*) AS totalCount, COUNT(B.*) AS bCount, XMLELEMENT ("parent", C.val) AS lin PATTERN (A B+ C) DEFINE B AS (B.val = 2*A.val), C AS (C.val = 3*A.val)) AS T ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkpattern_q110 as SELECT concat(T.firstt, T.lastt) as ne FROM tkpattern_S20 MATCH_RECOGNIZE( MEASURES first(A.c2) as firstt, last(A.c2) as lastt PATTERN (A+) DEFINE A as (A.c2='ORCL')) as T ]]></CEP_DDL>
+
+<!-- WITHIN clause tests -->
+<!-- partn by, skip past last row -->
+<CEP_DDL><![CDATA[ create query tkpattern_q111 as SELECT T.Ac1, T.Ac3, T.Dc3, T.Ec3 FROM tkpattern_S41 MATCH_RECOGNIZE(PARTITION BY c1 MEASURES A.c1 as Ac1, A.c3 as Ac3, D.c3 as Dc3, E.c3 as Ec3 PATTERN (A (B C D | E)) within 3 DEFINE A as A.c2=10, B as B.c2=20 , C as C.c2=30, D as D.c2=40, E as E.c2=20) as T ]]></CEP_DDL>
+<!-- partn by, all matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q112 as SELECT T.Ac1, T.Ac3, T.Dc3, T.Ec3 FROM tkpattern_S41 MATCH_RECOGNIZE(PARTITION BY c1 MEASURES A.c1 as Ac1, A.c3 as Ac3, D.c3 as Dc3, E.c3 as Ec3 ALL MATCHES PATTERN (A (B C D | E)) within 3 DEFINE A as A.c2=10, B as B.c2=20 , C as C.c2=30, D as D.c2=40, E as E.c2=20) as T ]]></CEP_DDL>
+<!-- no partn, skip past last row -->
+<CEP_DDL><![CDATA[ create query tkpattern_q113 as SELECT T.Ac2, T.Bc2, T.Cc2 FROM tkpattern_S42 MATCH_RECOGNIZE(MEASURES A.c2 as Ac2, B.c2 as Bc2, C.c2 as Cc2 PATTERN (A (B+ | C)) within 3000 milliseconds DEFINE A as A.c1=10 or A.c1=25, B as B.c1=20 or B.c1=15 or B.c1=25, C as C.c1=15) as T ]]></CEP_DDL>
+<!-- no partn, all matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q114 as SELECT T.Ac2, T.Bc2, T.Cc2 FROM tkpattern_S42 MATCH_RECOGNIZE(MEASURES A.c2 as Ac2, B.c2 as Bc2, C.c2 as Cc2 ALL MATCHES PATTERN (A (B+ | C)) within 3000 milliseconds DEFINE A as A.c1=10 or A.c1=25, B as B.c1=20 or B.c1=15 or B.c1=25, C as C.c1=15) as T ]]></CEP_DDL>
+
+<!-- WITHIN INCLUSIVE tests -->
+<!-- partn by, skip past last row -->
+<CEP_DDL><![CDATA[ create query tkpattern_q115 as SELECT T.Ac1, T.Ac3, T.Dc3, T.Ec3 FROM tkpattern_S41 MATCH_RECOGNIZE(PARTITION BY c1 MEASURES A.c1 as Ac1, A.c3 as Ac3, D.c3 as Dc3, E.c3 as Ec3 PATTERN (A (B C D | E)) within inclusive 3 DEFINE A as A.c2=10, B as B.c2=20 , C as C.c2=30, D as D.c2=40, E as E.c2=20) as T ]]></CEP_DDL>
+<!-- partn by, all matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q116 as SELECT T.Ac1, T.Ac3, T.Dc3, T.Ec3 FROM tkpattern_S41 MATCH_RECOGNIZE(PARTITION BY c1 MEASURES A.c1 as Ac1, A.c3 as Ac3, D.c3 as Dc3, E.c3 as Ec3 ALL MATCHES PATTERN (A (B C D | E)) within inclusive 3 DEFINE A as A.c2=10, B as B.c2=20 , C as C.c2=30, D as D.c2=40, E as E.c2=20) as T ]]></CEP_DDL>
+<!-- no partn, skip past last row -->
+<CEP_DDL><![CDATA[ create query tkpattern_q117 as SELECT T.Ac2, T.Bc2, T.Cc2 FROM tkpattern_S42 MATCH_RECOGNIZE(MEASURES A.c2 as Ac2, B.c2 as Bc2, C.c2 as Cc2 PATTERN (A (B+ | C)) within inclusive 3000 milliseconds DEFINE A as A.c1=10 or A.c1=25, B as B.c1=20 or B.c1=15 or B.c1=25, C as C.c1=15) as T ]]></CEP_DDL>
+<!-- no partn, all matches -->
+<CEP_DDL><![CDATA[ create query tkpattern_q118 as SELECT T.Ac2, T.Bc2, T.Cc2 FROM tkpattern_S42 MATCH_RECOGNIZE(MEASURES A.c2 as Ac2, B.c2 as Bc2, C.c2 as Cc2 ALL MATCHES PATTERN (A (B+ | C)) within inclusive 3000 milliseconds DEFINE A as A.c1=10 or A.c1=25, B as B.c1=20 or B.c1=15 or B.c1=25, C as C.c1=15) as T ]]></CEP_DDL>
+
+<!-- Derived timestamped stream with pattern -->
+<CEP_DDL><![CDATA[ create query tkpattern_q119 as SELECT T.Ac2 FROM tkpattern_S43 MATCH_RECOGNIZE(MEASURES A.c2 as Ac2 ALL MATCHES include timer events PATTERN (A) duration 1000 nanoseconds DEFINE A as A.c2 > 1) as T ]]></CEP_DDL>
+
+<!-- A late arriving tuple triggering multiple outputs for each binding. Test to check no out-of-order matches are generated in this scenario -->
+<CEP_DDL><![CDATA[ create query tkpattern_q120 as SELECT T.Ac1 FROM tkpattern_S44 MATCH_RECOGNIZE(MEASURES A.c1 as Ac1 ALL MATCHES include timer events PATTERN(A B*) duration multiples of 10  DEFINE B as B.c1 != A.c1) as T ]]></CEP_DDL>
+
+<!-- test for multiple partition attributes -->
+<CEP_DDL><![CDATA[ create query tkpattern_q121 as SELECT T.Ac1, T.Ac2, T.countC3 FROM tkpattern_S45 MATCH_RECOGNIZE(PARTITION BY c1, c2 MEASURES A.c1 as Ac1, A.c2 as Ac2, count(c3) as countC3 ALL MATCHES PATTERN(A B+) DEFINE A as A.c3=10, B as B.c3 > A.c3) as T ]]></CEP_DDL>
+
+<!-- Need to check manually, for the memory reclaim of empty partition list in the presence of partition attribute along with prev index & prev range -->
+<CEP_DDL><![CDATA[ create query tkpattern_q122 as SELECT T.pkey, T.sumb FROM tkpattern_S46 MATCH_RECOGNIZE (PARTITION BY pkey MEASURES A.pkey as pkey, SUM(b) as sumb ALL MATCHES PATTERN (A B*) DEFINE A AS PREV(A.pkey, 1) is null, B AS B.expire = false) as T ]]></CEP_DDL>
+
+<!-- test interval -->
+<CEP_DDL><![CDATA[ create query tkpattern_q123 as SELECT T.c1, T.etime FROM tkpattern_S47 MATCH_RECOGNIZE ( PARTITION BY c1 MEASURES A.c1 as c1,A.element_time as etime PATTERN (A B*) DEFINE A AS (A.c2 >= 25), B AS ((B.c2 >= 25) and (to_timestamp(B.element_time) - to_timestamp(A.element_time) < INTERVAL "0-1" YEAR TO MONTH))) as T]]></CEP_DDL>
+
+<!-- bug 17238144 : null variable duration. negative test case. -->
+<CEP_DDL><![CDATA[ create query tkpattern_q124 as SELECT T.c1 FROM tkpattern_S48 MATCH_RECOGNIZE ( MEASURES A.c1 as c1 include timer events PATTERN (A) duration c1 DEFINE A AS (A.c1 = 25)) as T]]></CEP_DDL>
+
+<!-- bug 17787379 : range slide window on top of pattern -->
+<CEP_DDL><![CDATA[ create query tkpattern_q125 as select * from (select T.id from tkpattern_S49 MATCH_RECOGNIZE(MEASURES A.id as id ALL MATCHES INCLUDE TIMER EVENTS PATTERN(A B*) DURATION 10 seconds DEFINE B as NOT(B.status=3)) as T)[range 1 minutes slide 1 minutes] as T1]]></CEP_DDL>
+
+<!-- bug 17787450 : range window on top of pattern -->
+<CEP_DDL><![CDATA[ create query tkpattern_q126 as select * from (select T.id from tkpattern_S50 MATCH_RECOGNIZE(MEASURES A.id as id ALL MATCHES INCLUDE TIMER EVENTS PATTERN(A B*) DURATION 10 SECONDS DEFINE B as NOT(B.status=3)) as T) [range 1 minutes] as T1 ]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkpattern_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q18 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q19 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q20 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q21 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q22 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout22.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q23 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout23.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q24 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout24.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q25 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout25.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q26 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout26.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q27 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout27.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q28 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout28.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q29 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout29.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q30 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout30.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q31 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout31.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q32 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout32.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q33 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout33.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q34 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout34.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q35 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout35.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q36 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout36.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q37 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout37.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q38 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout38.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q39 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout39.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q40 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout40.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q41 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout41.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q42 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout42.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q43 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout43.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q44 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout44.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q45 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout45.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q46 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout46.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q47 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout47.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q48 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout48.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q49 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout49.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q50 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q51 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout51.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q52 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout52.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q53 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout53.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q54 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout54.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q55 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout55.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q56 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout56.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q57 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout57.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q58 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout58.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_qperc add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outagperc.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_qtrend1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outagtrend1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_qtrend2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outagtrend2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_qperc2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outagperc2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_qtrend3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outagtrend3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q59 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout59.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q60 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout60.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q61 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout61.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q62 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout62.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkpattern_q63 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout63.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q64 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout64.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q65 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout65.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q66 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout66.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q67 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout67.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q68 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout68.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q69 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout69.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q70 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout70.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q71 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout71.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q72 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout72.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q73 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout73.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q74 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout74.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q75 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout75.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q77 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout77.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q78 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout78.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q79 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout79.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q80 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout80.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q81 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout81.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q82 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout82.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q83 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout83.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q84 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout84.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q85 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout85.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q86 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout86.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q87 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout87.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q88 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout88.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q89 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout89.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q90 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout90.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q91 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout91.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q92 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout92.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q93 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout93.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q94 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout94.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q95 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout95.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q96 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout96.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q97 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout97.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q98 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout98.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q99 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout99.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q100 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout100.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q101 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout101.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q102 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout102.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q103 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout103.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q104 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout104.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q105 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout105.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q106 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout106.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q107 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout107.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q108 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout108.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q109 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout109.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q110 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout110.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q111 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout111.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q112 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout112.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q113 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout113.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q114 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout114.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q115 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout115.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q116 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout116.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q117 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout117.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q118 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout118.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q119 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout119.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q120 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout120.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q121 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout121.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q122 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout122.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q123 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout123.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q124 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout124.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q125 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout125.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpattern_q126 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternout126.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkpattern_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q16 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q17 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q18 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q19 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q20 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q21 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q22 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q23 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q24 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q25 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q26 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q27 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q28 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q29 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q30 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q31 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q32 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q33 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q34 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q35 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q36 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q37 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q38 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q39 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q40 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q41 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q42 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q43 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q44 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q45 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q46 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q47 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q48 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q49 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q50 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q51 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q52 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q53 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q54 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q55 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q56 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q57 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q58 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_qperc start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_qtrend1 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_qtrend2 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_qperc2 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_qtrend3 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q59 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q60 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q61 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q62 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q63 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q64 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q65 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q66 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q67 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q68 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q69 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q70 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q71 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q72 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q73 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q74 start </CEP_DDL> 
+<CEP_DDL> alter query tkpattern_q75 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q77 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q78 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q79 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q80 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q81 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q82 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q83 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q84 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q85 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q86 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q87 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q88 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q89 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q90 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q91 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q92 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q93 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q94 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q95 start </CEP_DDL> 
+<CEP_DDL> alter query tkpattern_q96 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q97 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q98 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q99 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q100 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q101 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q102 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q103 start </CEP_DDL> 
+<CEP_DDL> alter query tkpattern_q104 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q105 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q106 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q107 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q108 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q109 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q110 start </CEP_DDL> 
+<CEP_DDL> alter query tkpattern_q111 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q112 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q113 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q114 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q115 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q116 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q117 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q118 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q119 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q120 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q121 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q122 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q123 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q124 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q125 start </CEP_DDL>
+<CEP_DDL> alter query tkpattern_q126 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

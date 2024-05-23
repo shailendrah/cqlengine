@@ -1,0 +1,27 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17710958_S1 (product_id integer, product_type_id integer, price double) </CEP_DDL>
+<CEP_DDL> create stream tk17710958_S2 (eventTime bigint, product_id integer, product_type_id integer, price double) derived timestamped eventTime</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk17710958_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17710958_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17710958_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17710958_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+  create query tk17710958_q1 as IStream(select product_id, product_type_id, price 
+  from tk17710958_S1[partition by product_type_id rows 3 range 3 second slide 2 seconds]
+  where price > 99) ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+  create query tk17710958_q2 as IStream(select product_id, product_type_id, price 
+  from tk17710958_S2[partition by product_type_id rows 3 range 3 second slide 2 seconds]
+  where price > 99) ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17710958_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17710958_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk17710958_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17710958_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17710958_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk17710958_q2 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

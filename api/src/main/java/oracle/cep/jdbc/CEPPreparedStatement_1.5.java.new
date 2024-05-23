@@ -1,0 +1,743 @@
+/* $Header: pcbpel/cep/common/src/oracle/cep/jdbc/CEPPreparedStatement_1.5.java.new /main/13 2009/02/25 14:23:51 hopark Exp $ */
+
+/* Copyright (c) 2007, 2009, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+ DESCRIPTION
+ <short description of component this file declares/defines>
+
+ PRIVATE CLASSES
+ <list of private classes defined - with one-line descriptions>
+
+ NOTES
+ <other useful comments, qualifications, etc.   >
+
+ MODIFIED    (MM/DD/YY)
+ hopark      02/17/09 - support boolean as external datatype
+ skmishra    10/14/08 - fixing schema support, tuple
+ sbishnoi    09/10/08 - support for schema
+ hopark      07/22/08 - add execDML
+ hopark      04/23/08 - remove unnecessary log
+ mthatte     04/16/08 - bug
+ mthatte     03/14/08 - jdbc re-org
+ parujain    02/12/08 - no severe msg to customer
+ udeshmuk    02/01/08 - support for double data type.
+ udeshmuk    01/17/08 - change in the data type of time field in TupleValue.
+ mthatte     12/06/07 - adding bLengthSet with bValueSAet
+ mthatte     09/13/07 - Adding methods to make compliant with Java 6
+ mthatte     09/05/07 - Adding heartbeat support & setInt, setTimestamp for timestamp column
+ hopark      07/13/07 - dump stack trace on exception
+ sbishnoi    05/27/07 - 
+ parujain    05/09/07 - 
+ najain      04/27/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/common/src/oracle/cep/jdbc/CEPPreparedStatement_1.5.java.new /main/13 2009/02/25 14:23:51 hopark Exp $
+ *  @author  najain  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jdbc;
+
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.Calendar;
+import java.util.logging.Level;
+
+import oracle.cep.common.Constants;
+import oracle.cep.common.Datatype;
+import oracle.cep.dataStructures.external.AttributeValue;
+import oracle.cep.dataStructures.external.BigintAttributeValue;
+import oracle.cep.dataStructures.external.BooleanAttributeValue;
+import oracle.cep.dataStructures.external.ByteAttributeValue;
+import oracle.cep.dataStructures.external.CharAttributeValue;
+import oracle.cep.dataStructures.external.DoubleAttributeValue;
+import oracle.cep.dataStructures.external.FloatAttributeValue;
+import oracle.cep.dataStructures.external.IntAttributeValue;
+import oracle.cep.dataStructures.external.TimestampAttributeValue;
+import oracle.cep.dataStructures.external.XmltypeAttributeValue;
+import oracle.cep.dataStructures.external.TupleValue;
+import oracle.cep.exceptions.CEPException;
+import oracle.cep.jdbc.parser.CEPInsertNode;
+import oracle.cep.jdbc.parser.CEPParseTreeNode;
+import oracle.cep.logging.LogUtil;
+import oracle.cep.logging.LoggerType;
+import oracle.cep.server.CEPServerXface;
+
+/**
+ * This is CEP's implementation of the jdbc Statement class. We only allow DDLs
+ * and DMLs to be processed. Note that DDLs can be in the form of registering a
+ * query. There is a dummy SELECT implemented in order to always return an empty
+ * ResultSet with associated ResultSetMetadata.
+ * 
+ * @author najain
+ */
+
+public class CEPPreparedStatement extends CEPStatement
+    implements PreparedStatement
+{
+  private static Calendar  calendar;
+
+  static
+  {
+    calendar = Calendar.getInstance();
+  }
+
+  private String           ddl;
+
+  private boolean          isddl;
+
+  private CEPResultSet     result = null;
+
+  private CEPParseTreeNode node   = null;
+
+  CEPPreparedStatement()
+  {
+		
+  }
+
+  CEPPreparedStatement(String sql, CEPConnection conn)
+  {
+    super(conn);
+    //LogUtil.info(LoggerType.TRACE, "SQL received: " + sql);
+    tuple = new TupleValue();
+    try
+    {
+      node = parser.parseCommand(sql);
+      isddl = false;
+      ddl = null;
+      node.prepareStatement(this);
+    }catch(SQLException sqe) 
+    {
+		LogUtil.logStackTrace(LoggerType.TRACE, Level.SEVERE, sqe);
+		return;
+    }
+    catch (Exception e)
+    {
+      // This is not an insert statement.
+      // Assume it is a DDL and send it to server.
+      isddl = true;
+      ddl = sql;
+      tuple = null;
+    }
+  }
+
+  public void addBatch() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement:addBatch() unsupported");
+  }
+
+  public void clearParameters() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement:clearParameters() unsupported");
+  }
+
+  /**
+   * Creates attrVal based on args. Args are passed in by CEPInsertNode.
+   * 
+   * @param args
+   */
+  public void createAttrVal(String[] args)
+  {
+    int colCount = 0;
+    attrval = new AttributeValue[args.length];
+    isSet = new boolean[args.length];
+    for (String colType : args)
+    {
+      for (Datatype dt : Datatype.getPublicTypes())
+      {
+        if (colType.equalsIgnoreCase(dt.toString()))
+        {
+          String className = dt.getAttrValClass();
+          try
+          {
+            attrval[colCount++] = (AttributeValue) Class.forName(className)
+                .newInstance();
+          } catch (InstantiationException e)
+          {
+            e.printStackTrace();
+          } catch (IllegalAccessException e)
+          {
+            e.printStackTrace();
+          } catch (ClassNotFoundException e)
+          {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+
+  }
+
+  public boolean execute() throws SQLException
+  {
+    executeUpdate();
+    return false;
+  }
+
+  public ResultSet executeQuery() throws SQLException
+  {
+    if (result == null)
+      throw new SQLException("ResultSet does not exist");
+    return result;
+  }
+
+  public int executeUpdate() throws SQLException
+  {
+    if (isddl)
+    {
+      assert tuple == null;
+      try
+      {
+        return conn.getCEPServer().executeDDL(ddl, conn.getUser());
+      } catch (RemoteException e)
+      {
+        throw new SQLException(e.getMessage());
+      }
+    } else
+    {
+      assert ddl == null;
+      try
+      
+      {
+      	
+      	for(boolean setField:isSet) {
+      		if(!setField)
+      			throw new SQLException("All fields not set!");
+      	}
+        tuple.setAttrs(attrval);
+        return conn.getCEPServer().executeDML(tuple, conn.getUser());
+      } catch (RemoteException e)
+      {
+        throw new SQLException(e.getMessage());
+      }
+    }
+  }
+
+  public TupleValue getTuple()
+  {
+    return this.tuple;
+  }
+
+  public ResultSetMetaData getMetaData() throws SQLException
+  {
+    if (result == null)
+      throw new SQLException("No resultSet");
+    else
+      return result.getMetaData();
+  }
+
+  public ParameterMetaData getParameterMetaData() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement:getParameterMetaData() unsupported");
+  }
+
+  public void setArray(int i, Array x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement:setArray(int, Array) unsupported");
+  }
+
+  public void setAsciiStream(int parameterIndex, InputStream x, int length)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement:setAsciiStream(int, InputStream, int) unsupported");
+  }
+
+  public void setBigDecimal(int parameterIndex, BigDecimal x)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setBigDecimal(int, BigDecimal) unsupported");
+  }
+
+  public void setBinaryStream(int parameterIndex, InputStream x, int length)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setBinaryStream(int, InputStream, int) unsupported");
+  }
+
+  public void setBlob(int i, Blob x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setBlob(int, Blob) unsupported");
+  }
+
+  public void setBoolean(int parameterIndex, boolean x) throws SQLException
+  {
+    if(((CEPInsertNode)node).isHeartbeat())
+  		throw new SQLException("Heartbeats can only take integer or long values");
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+    try
+    {
+      ((BooleanAttributeValue) attrval[parameterIndex - 1]).boolValueSet(x);
+      isSet[parameterIndex - 1] = true;
+    } catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("setBoolean broke with CEPException"
+          + ce.getMessage());
+    } catch (Exception e)
+    {
+      throw new SQLException(e.getMessage());
+    }
+  }
+
+  public void setByte(int parameterIndex, byte x) throws SQLException
+  {
+    byte[] xArr = new byte[1];
+    xArr[0] = x;
+    setBytes(parameterIndex, xArr);
+  }
+
+  public void setBytes(int parameterIndex, byte[] x) throws SQLException
+  {
+  
+  	if(((CEPInsertNode)node).isHeartbeat())
+  		throw new SQLException("Heartbeats can only take integer or long values");
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+    try
+    {
+      ((ByteAttributeValue) attrval[parameterIndex - 1]).bValueSet(x);
+      ((ByteAttributeValue) attrval[parameterIndex - 1]).bLengthSet(x.length);
+      isSet[parameterIndex - 1] = true;
+    } catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("setBytes broke with CEPException"
+          + ce.getMessage());
+    }catch(Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  public void setCharacterStream(int parameterIndex, Reader reader, int length)
+      throws SQLException
+  {
+    
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setCharacterStream(int, Reader, int) unsupported");
+  }
+
+  public void setClob(int i, Clob x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setClob(int, Clob) unsupported");
+  }
+
+  public void setDate(int parameterIndex, Date x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setDate(int, Date) unsupported");
+  }
+
+  public void setDate(int parameterIndex, Date x, Calendar cal)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setDate(int, Date, Calendar) unsupported");
+  }
+
+  public void setDouble(int parameterIndex, double x) throws SQLException
+  {
+  	if(((CEPInsertNode)node).isHeartbeat())
+  		throw new SQLException("Heartbeats can only take integer or long values");
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+    try
+    {
+      ((DoubleAttributeValue) attrval[parameterIndex - 1]).dValueSet(x);
+      isSet[parameterIndex - 1] = true;
+    } catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("setDouble broke with CEPException"
+          + ce.getMessage());
+    } catch (Exception e)
+    {
+      throw new SQLException(e.getMessage());
+    }
+  }
+
+  public void setFloat(int parameterIndex, float x) throws SQLException
+  {
+  	if(((CEPInsertNode)node).isHeartbeat())
+  		throw new SQLException("Heartbeats can only take integer or long values");
+    
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+    try
+    {
+      ((FloatAttributeValue) attrval[parameterIndex - 1]).fValueSet(x);
+      isSet[parameterIndex - 1] = true;
+    } catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("setFloat broke with CEPException"
+          + ce.getMessage());
+    }catch(Exception e)
+    {
+      throw new SQLException(e.getMessage());
+    }
+  }
+
+  public void setInt(int parameterIndex, int x) throws SQLException
+  {
+  	if(((CEPInsertNode)node).isHeartbeat())
+  	{
+  		if(parameterIndex!=1)
+  			throw new SQLException("parameterIndex out of range: " + parameterIndex);
+  		this.tuple.setTime(x);
+	  	isSet = new boolean[1];
+		isSet[0] = true;  	
+  		return;
+  	}
+    
+    if(parameterIndex == 1) {
+    if (((CEPInsertNode) (node)).isClientTimeStamped())
+    {
+      tuple.setTime(x);
+      return;
+    }
+    }
+              
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+    try
+    {
+      ((IntAttributeValue) attrval[parameterIndex - 1]).iValueSet(x);
+      isSet[parameterIndex - 1] = true;
+    } catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("setInt broke with CEPException"
+          + ce.getMessage());
+    }catch(Exception e)
+    {
+	  isSet[parameterIndex - 1] = false;
+	  throw new SQLException("setInt broke with CEPException"
+          + e.getMessage());    
+    }
+  }
+
+  public void setLong(int parameterIndex, long x) throws SQLException
+  {
+  	if(((CEPInsertNode)node).isHeartbeat())
+  	{
+  		if(parameterIndex!=1)
+  			throw new SQLException("parameterIndex out of range: " + parameterIndex);
+  		
+  		this.tuple.setTime(x);
+  		isSet = new boolean[1];
+		isSet[0] = true;  	
+  		return;
+  	}
+  	
+  	if(parameterIndex == 1) 
+  	{
+    if (((CEPInsertNode) (node)).isClientTimeStamped())
+    {
+      tuple.setTime(x);
+      return;
+    }
+    }
+              
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+    try
+    {
+      ((BigintAttributeValue) attrval[parameterIndex - 1]).lValueSet(x);
+      isSet[parameterIndex - 1] = true;
+    } catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("setInt broke with CEPException"
+          + ce.getMessage());
+    }catch(Exception e)
+    {
+      throw new SQLException(e.getMessage());
+    }
+    
+  }
+
+  /**
+   * Allows user to set int,float,double,char, timestamp as null.
+   * TODO: What about Xmltype, Interval, Byte?
+   */
+  public void setNull(int parameterIndex, int sqlType) throws SQLException
+  {
+  	if(((CEPInsertNode)node).isHeartbeat())
+  		throw new SQLException("Cannot have null heartbeat.");
+  		
+    if ((sqlType == Types.ARRAY) || (sqlType == Types.BINARY)
+        || (sqlType == Types.BIT) || (sqlType == Types.BLOB)
+        || (sqlType == Types.CLOB) || (sqlType == Types.DISTINCT)
+        || (sqlType == Types.JAVA_OBJECT) || (sqlType == Types.LONGVARBINARY)
+        || (sqlType == Types.LONGVARCHAR) || (sqlType == Types.NULL)
+        || (sqlType == Types.NUMERIC) || (sqlType == Types.OTHER)
+        || (sqlType == Types.REAL) || (sqlType == Types.REF)
+        || (sqlType == Types.STRUCT) || (sqlType == Types.VARBINARY)
+        || (sqlType == Types.VARCHAR) || (sqlType == Types.DATE)
+        || (sqlType == Types.SMALLINT) || (sqlType == Types.TIME)
+        || (sqlType == Types.DECIMAL) || (sqlType == Types.TINYINT))
+      throw new SQLException("sqlType not supported");
+
+    if ((parameterIndex == 1) && (sqlType != Types.TIMESTAMP) && ((CEPInsertNode)node).isClientTimeStamped())
+      throw new SQLException("First field denotes timestamp: Long to bind");
+
+    else if (parameterIndex==1 && ((CEPInsertNode)node).isClientTimeStamped() && sqlType==Types.TIMESTAMP) {
+      tuple.setTime(Constants.NULL_TIMESTAMP);
+      return;
+    }
+      
+    else if (((CEPInsertNode)node).isClientTimeStamped())  
+      parameterIndex--;
+     try {
+    switch (sqlType)
+      {
+      case Types.INTEGER:
+          ((IntAttributeValue)attrval[parameterIndex - 1]).setBNull(true);
+          isSet[parameterIndex - 1] = true;
+          break;
+
+      case Types.BOOLEAN:
+        ((BooleanAttributeValue) attrval[parameterIndex - 1]).setBNull(true);
+        isSet[parameterIndex - 1] = true;
+        break;
+
+      case Types.BIGINT:
+          ((BigintAttributeValue)attrval[parameterIndex - 1]).setBNull(true);
+          isSet[parameterIndex - 1] = true;
+          break;
+
+      case Types.FLOAT:
+          ((FloatAttributeValue)attrval[parameterIndex - 1]).setBNull(true);
+          isSet[parameterIndex - 1] = true;
+          break;
+
+      case Types.DOUBLE:
+          ((DoubleAttributeValue)attrval[parameterIndex - 1]).setBNull(true);
+          isSet[parameterIndex - 1] = true;
+          break;
+
+      case Types.CHAR:
+          ((CharAttributeValue)attrval[parameterIndex - 1]).setBNull(true);
+          isSet[parameterIndex - 1] = true;
+          break;
+
+      case Types.TIMESTAMP:
+          ((TimestampAttributeValue)attrval[parameterIndex - 1]).setBNull(true);
+          isSet[parameterIndex - 1] = true;
+          break;
+      default:
+          assert false;
+      }
+    }catch(Exception e) {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException(e.getMessage());
+    }
+  }
+  
+  public void setNull(int paramIndex, int sqlType, String typeName)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setNull(int, int, String) unsupported");
+  }
+
+  public void setObject(int parameterIndex, Object x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setObject(int, Object) unsupported");
+  }
+
+  public void setObject(int parameterIndex, Object x, int targetSqlType)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setObject(int, Object, int) unsupported");
+  }
+
+  public void setObject(int parameterIndex, Object x, int targetSqlType,
+      int scale) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setObject(int, Object, int, int) unsupported");
+  }
+
+  public void setRef(int i, Ref x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setRef(int, Ref) unsupported");
+  }
+
+  // This is NOT a JDBC method, it is a CEP special...
+  public void setResultSet(CEPResultSet rs)
+  {
+    this.result = rs;
+  }
+
+  public void setShort(int parameterIndex, short x) throws SQLException
+  {
+    setInt(parameterIndex, (int) x);
+  }
+
+  public void setString(int parameterIndex, String x) throws SQLException
+  {
+  	if(((CEPInsertNode)node).isHeartbeat()) 
+  	{
+  		try
+  		{
+			long time = CEPInsertNode.getTime(x);
+			this.tuple.setTime(time);
+		}	
+		catch(Exception e)
+		{
+			throw new SQLException(e.getMessage());
+		}
+		isSet = new boolean[1];
+		isSet[0] = true;  	
+		return;
+  	}
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+    try
+    {
+      if(attrval[parameterIndex - 1] instanceof CharAttributeValue)		
+      {
+	      ((CharAttributeValue) attrval[parameterIndex - 1]).cValueSet(x.toCharArray());
+	      ((CharAttributeValue) attrval[parameterIndex - 1]).cLengthSet(x.length());
+      }
+      else if(attrval[parameterIndex - 1] instanceof XmltypeAttributeValue)
+      {
+	      ((XmltypeAttributeValue) attrval[parameterIndex - 1]).xValueSet(x.toCharArray());
+	      ((XmltypeAttributeValue) attrval[parameterIndex - 1]).xLengthSet(x.length());
+      }
+      else 
+		throw new Exception("Attribute can not take String values");
+      isSet[parameterIndex - 1] = true;
+    } catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("setString broke with CEPException"
+          + ce.getMessage());
+    } catch (Exception e)
+    {
+      throw new SQLException(e.getMessage());
+    }
+  }
+
+  public void setTime(int parameterIndex, Time x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setTime(int, Time) unsupported");
+  }
+
+  public void setTime(int parameterIndex, Time x, Calendar cal)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setTime(int, Time, Calendar) unsupported");
+  }
+
+  public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException
+  {
+    if (parameterIndex == 1)
+  	{
+    	if (((CEPInsertNode) (node)).isClientTimeStamped())
+    	{
+      		tuple.setTime(x.getTime());
+      		return;
+    	}
+  	}
+  	          
+    if (((CEPInsertNode) node).isClientTimeStamped())
+      parameterIndex--;
+      
+    try
+    {
+      ((TimestampAttributeValue) (attrval[parameterIndex-1])).tValueSet(x.getTime());
+      isSet[parameterIndex - 1] = true;
+    }catch (CEPException ce)
+    {
+      isSet[parameterIndex - 1] = false;
+      throw new SQLException("Error setting Long", ce.getMessage());
+    }catch(Exception e)
+    {
+      isSet[parameterIndex - 1] = false;;
+      throw new SQLException(e.getMessage());
+    }
+  }
+
+  public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal)
+      throws SQLException
+  {
+    Timestamp target = new Timestamp(0);
+    long ms = x.getTime();
+    calendar.clear();
+    calendar.setTimeInMillis(ms);
+    target.setTime(calendar.getTimeInMillis());
+    setTimestamp(parameterIndex, target);
+  }
+
+  public void setUnicodeStream(int parameterIndex, InputStream x, int length)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setUnicodeStream(int, InputStream, int) unsupported");
+  }
+
+  public void setURL(int parameterIndex, URL x) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPPreparedStatement: setURL(int, URL) unsupported");
+  }
+
+
+  /*
+    This method is intentionally designed to execute concurrently.
+    The concurrency is supposed to be handled by cepServr.     
+  */
+  public int executeDML(TupleValue cepDMLStr) throws SQLException
+  {
+    CEPServerXface cepServer = conn.getCEPServer();
+    if (cepServer == null) 
+    {
+      throw new SQLException("Invalid connection");
+    }
+    try
+    {
+      return cepServer.executeDML(cepDMLStr, conn.getUser());
+    } 
+    catch (RemoteException e)
+    {
+      throw new SQLException(e.getLocalizedMessage());
+    }
+  } 
+}
+	

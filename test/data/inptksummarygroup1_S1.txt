@@ -1,0 +1,12 @@
+i, c 100, c 30, c 30, d
+1000 1001, "Market St, San Francisco", Morning, Gifts, 0.50
+2000 1002, "Mission St, San Francisco", Evening, Health, 1.00
+3000 1003, "Financial Distt, San Francisco", Morning, Stationary, 0.50
+4000 1004, "Pier 39, San Francisco", Evening, Gifts, 0.50
+5000 1005, "Pier 32, San Francisco", Evening, Gifts, 0.50
+6000 1006, "Embarcadero, San Francisco", Morning, Health, 1.00
+7000 1007, "Golden Gate Bridge, San Francisco", Morning, Gifts, 1.50
+8000 1008, "Market St, San Francisco", Evening, Health, 1.50
+9000 1009, "Pier 39, San Francisco", Evening, Gifts, 2.00
+10000 1010, "Mission St, San Francisco", Morning, Stationary, 2.00
+h 21000

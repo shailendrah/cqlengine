@@ -1,0 +1,8 @@
+dependencies
+{
+    compile project(':modules:spark-cql:cqlengine:logging')
+    compile project(":modules:spark-cql:cqlengine:server")
+    compile project(":modules:spark-cql:cqlengine:cartridges:java")
+    compile project(":modules:spark-cql:cqlengine:cartridges:spatial")
+}
+

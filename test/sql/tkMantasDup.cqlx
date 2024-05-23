@@ -1,0 +1,155 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tkMantasDup_Acct(ACCT_INTRL_ID CHAR(50), MANTAS_ACCT_BUS_TYPE_CD CHAR(20), ACCT_EFCTV_RISK_NB INTEGER) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkMantasDup_Acct add source "<EndPointReference><Address>file://@TEST_DATA@/inpMantasAcct.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register relation tkMantasDup_AcctAddr(ACCT_INTRL_ID CHAR(50), ADDR_CNTRY_CD CHAR(2)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkMantasDup_AcctAddr add source "<EndPointReference><Address>file://@TEST_DATA@/inpMantasAcctAddr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register stream tkMantasDup_CashTrxn(TxnId integer, ACCT_INTRL_ID CHAR(50), TRXN_BASE_AM integer, CSTM_1_TX CHAR(2), DBT_CDT_CD CHAR(20), MANTAS_TRXN_CHANL_CD CHAR(20), TRXN_LOC_ADDR_SEQ_ID integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkMantasDup_CashTrxn add source "<EndPointReference><Address>file://@TEST_DATA@/inpMantasCashTrxn.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_ValidAccounts(ACCT_INTRL_ID) as select ACCT_INTRL_ID from tkMantasDup_Acct where (((MANTAS_ACCT_BUS_TYPE_CD = "RBK") OR (MANTAS_ACCT_BUS_TYPE_CD = "RBR")) AND (ACCT_EFCTV_RISK_NB != 2))</CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view0 as select * from tkMantasDup_ValidAccounts</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view0 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_ValidCashTrxn(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID) as select TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_CashTrxn where DBT_CDT_CD = "D" and MANTAS_TRXN_CHANL_CD = "ATM"</CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view1 as select * from tkMantasDup_ValidCashTrxn</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view1 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_ValidCashTrxn1(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID) as select tkMantasDup_ValidCashTrxn.TxnId, tkMantasDup_ValidCashTrxn.ACCT_INTRL_ID, tkMantasDup_ValidCashTrxn.TRXN_BASE_AM, tkMantasDup_ValidCashTrxn.CSTM_1_TX, tkMantasDup_ValidCashTrxn.TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidCashTrxn[NOW], tkMantasDup_ValidAccounts where tkMantasDup_ValidCashTrxn.ACCT_INTRL_ID = tkMantasDup_ValidAccounts.ACCT_INTRL_ID </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view2 as select * from tkMantasDup_ValidCashTrxn1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view2 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_ValidCashTrxn2(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID) as IStream(select TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidCashTrxn1) </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view3 as select * from tkMantasDup_ValidCashTrxn2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view3 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_Dummy1(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID) as select tkMantasDup_ValidCashTrxn2.TxnId, tkMantasDup_ValidCashTrxn2.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidCashTrxn2[range 48 hours], tkMantasDup_AcctAddr where tkMantasDup_ValidCashTrxn2.ACCT_INTRL_ID = tkMantasDup_AcctAddr.ACCT_INTRL_ID</CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view4 as select * from tkMantasDup_Dummy1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view4 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_Dummy2(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID) as select TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidCashTrxn2[range 48 hours] </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view5 as select * from tkMantasDup_Dummy2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view5 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_ValidCashForeignTxn(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID) as tkMantasDup_Dummy2 except tkMantasDup_Dummy1</CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view6 as select * from tkMantasDup_ValidCashForeignTxn</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view6 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_viewq1(ACCT_INTRL_ID, sumForeignTxns) as IStream(select ACCT_INTRL_ID, sum(TRXN_BASE_AM) as frgnTxn from tkMantasDup_ValidCashForeignTxn group by ACCT_INTRL_ID having sum(TRXN_BASE_AM) > 1000) </CEP_DDL>
+
+<CEP_DDL>create query tkMantasDup_q1 as select * from tkMantasDup_viewq1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDupQ1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_q1 start </CEP_DDL>
+
+<CEP_DDL>create query tkMantasDup_q1Txns as IStream(select TxnId, tkMantasDup_ValidCashForeignTxn.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_viewq1[NOW], tkMantasDup_ValidCashForeignTxn where tkMantasDup_viewq1.ACCT_INTRL_ID = tkMantasDup_ValidCashForeignTxn.ACCT_INTRL_ID)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_q1Txns add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDupQ1Txns.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_q1Txns start </CEP_DDL>
+
+
+<CEP_DDL>create view tkMantasDup_q2Cond1(ACCT_INTRL_ID, sumForeign) as select ACCT_INTRL_ID, sum(TRXN_BASE_AM) from tkMantasDup_ValidCashForeignTxn group by ACCT_INTRL_ID having (sum(TRXN_BASE_AM) * 100) >= (1000 * 60) </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view7 as select * from tkMantasDup_q2Cond1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view7 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q2Cond2_1(countForeign, ACCT_INTRL_ID) as select distinct ADDR_CNTRY_CD, ACCT_INTRL_ID from tkMantasDup_ValidCashForeignTxn </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view8 as select * from tkMantasDup_q2Cond2_1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view8 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q2Cond2(ACCT_INTRL_ID, countForeign) as select ACCT_INTRL_ID, count(*) from tkMantasDup_q2Cond2_1 group by ACCT_INTRL_ID having count(*) >= 2 </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view9 as select * from tkMantasDup_q2Cond2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view9 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q2Cond3_1(ACCT_INTRL_ID, foreignLocn) as select distinct ACCT_INTRL_ID, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidCashForeignTxn </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view10 as select * from tkMantasDup_q2Cond3_1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view10 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q2Cond3(ACCT_INTRL_ID, countForeignLocn) as select ACCT_INTRL_ID, count(foreignLocn) from tkMantasDup_q2Cond3_1 group by ACCT_INTRL_ID </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view11 as select * from tkMantasDup_q2Cond3</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view11 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q2Cond12(ACCT_INTRL_ID, sumForeign, countForeign) as select tkMantasDup_q2Cond1.ACCT_INTRL_ID, tkMantasDup_q2Cond1.sumForeign, tkMantasDup_q2Cond2.countForeign from tkMantasDup_q2Cond1, tkMantasDup_q2Cond2 where tkMantasDup_q2Cond1.ACCT_INTRL_ID = tkMantasDup_q2Cond2.ACCT_INTRL_ID </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view12 as select * from tkMantasDup_q2Cond12</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view12 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_viewq2(ACCT_INTRL_ID, sumForeign, countForeign, countForeignLocn) as IStream(select tkMantasDup_q2Cond12.ACCT_INTRL_ID, tkMantasDup_q2Cond12.sumForeign, tkMantasDup_q2Cond12.countForeign, tkMantasDup_q2Cond3.countForeignLocn from tkMantasDup_q2Cond12, tkMantasDup_q2Cond3 where tkMantasDup_q2Cond12.ACCT_INTRL_ID = tkMantasDup_q2Cond3.ACCT_INTRL_ID) </CEP_DDL>
+
+<CEP_DDL>create query tkMantasDup_q2 as select * from tkMantasDup_viewq2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDupQ2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_q2 start </CEP_DDL>
+
+<CEP_DDL>create query tkMantasDup_q2Txns as IStream(select TxnId, tkMantasDup_ValidCashForeignTxn.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_viewq2[NOW], tkMantasDup_ValidCashForeignTxn where tkMantasDup_viewq2.ACCT_INTRL_ID = tkMantasDup_ValidCashForeignTxn.ACCT_INTRL_ID)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_q2Txns add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDupQ2Txns.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_q2Txns start </CEP_DDL>
+
+
+<CEP_DDL>create view tkMantasDup_LoopDummy1(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID) as select tkMantasDup_ValidCashTrxn2.TxnId, tkMantasDup_ValidCashTrxn2.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidCashTrxn2[range 60 minutes], tkMantasDup_AcctAddr where tkMantasDup_ValidCashTrxn2.ACCT_INTRL_ID = tkMantasDup_AcctAddr.ACCT_INTRL_ID</CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view13 as select * from tkMantasDup_LoopDummy1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view13 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_LoopDummy2(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID) as select TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidCashTrxn2[range 60 minutes] </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view14 as select * from tkMantasDup_LoopDummy2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view14 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_ValidLoopCashForeignTxn(TxnId, ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID) as tkMantasDup_LoopDummy2 except tkMantasDup_LoopDummy1</CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view15 as select * from tkMantasDup_ValidLoopCashForeignTxn</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view15 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q3Cond1(ACCT_INTRL_ID, sumForeign) as select ACCT_INTRL_ID, sum(TRXN_BASE_AM) from tkMantasDup_ValidLoopCashForeignTxn group by ACCT_INTRL_ID having (sum(TRXN_BASE_AM) * 100) >= (500 * 60) </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view16 as select * from tkMantasDup_q3Cond1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view16 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q3Cond2_1(countForeign, ACCT_INTRL_ID) as select distinct ADDR_CNTRY_CD, ACCT_INTRL_ID from tkMantasDup_ValidLoopCashForeignTxn </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view17 as select * from tkMantasDup_q3Cond2_1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view17 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q3Cond2(ACCT_INTRL_ID, countForeign) as select ACCT_INTRL_ID, count(*) from tkMantasDup_q3Cond2_1 group by ACCT_INTRL_ID having count(*) >= 2 </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view18 as select * from tkMantasDup_q3Cond2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view18 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view18 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q3Cond12(ACCT_INTRL_ID, sumForeign, countForeign) as select tkMantasDup_q3Cond1.ACCT_INTRL_ID, tkMantasDup_q3Cond1.sumForeign, tkMantasDup_q3Cond2.countForeign from tkMantasDup_q3Cond1, tkMantasDup_q3Cond2 where tkMantasDup_q3Cond1.ACCT_INTRL_ID = tkMantasDup_q3Cond2.ACCT_INTRL_ID </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view19 as select * from tkMantasDup_q3Cond12</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view19 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view19 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q3Cond3_1(ACCT_INTRL_ID, TRXN_LOC_ADDR_SEQ_ID) as select distinct ACCT_INTRL_ID, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_ValidLoopCashForeignTxn </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view20 as select * from tkMantasDup_q3Cond3_1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view20 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view20 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_q3Cond3(ACCT_INTRL_ID, countForeignLocn) as select ACCT_INTRL_ID, count(TRXN_LOC_ADDR_SEQ_ID) from tkMantasDup_q3Cond3_1 group by ACCT_INTRL_ID </CEP_DDL>
+<CEP_DDL>create query tkMantasDup_view21 as select * from tkMantasDup_q3Cond3</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_view21 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDup_view21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_view21 start </CEP_DDL>
+
+<CEP_DDL>create view tkMantasDup_viewq3(ACCT_INTRL_ID, sumForeign, countForeign, countForeignLocn) as IStream(select tkMantasDup_q3Cond12.ACCT_INTRL_ID, tkMantasDup_q3Cond12.sumForeign, tkMantasDup_q3Cond12.countForeign, tkMantasDup_q3Cond3.countForeignLocn from tkMantasDup_q3Cond12, tkMantasDup_q3Cond3 where tkMantasDup_q3Cond12.ACCT_INTRL_ID = tkMantasDup_q3Cond3.ACCT_INTRL_ID) </CEP_DDL>
+
+<CEP_DDL>create query tkMantasDup_q3  as select * from tkMantasDup_viewq3 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDupQ3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_q3 start </CEP_DDL>
+
+<CEP_DDL>create query tkMantasDup_q3Txns as IStream(select TxnId, tkMantasDup_ValidLoopCashForeignTxn.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID from tkMantasDup_viewq3[NOW], tkMantasDup_ValidLoopCashForeignTxn where tkMantasDup_viewq3.ACCT_INTRL_ID = tkMantasDup_ValidLoopCashForeignTxn.ACCT_INTRL_ID)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMantasDup_q3Txns add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMantasDupQ3Txns.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_q3Txns start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+<CEP_DDL> alter query tkMantasDup_q3Txns stop </CEP_DDL>
+</CEP>

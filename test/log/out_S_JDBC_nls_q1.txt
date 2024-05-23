@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rule root="3">
+<Operator ID="1" type="Source"><cql-property> select * from  日本語文字列 </cql-property>
+	<source-name>日本語文字列</source-name><source-type>Stream</source-type></Operator>
+<Operator ID="2" type="Window"><inputs>
+		<input>1</input></inputs>
+
+	<cql-property> select * from  日本語文字列  [ range 1 ]</cql-property>
+		<type>range-time</type>
+	<range-params><timevalue>1</timevalue>
+		<timeunit/></range-params></Operator>
+<Operator ID="3" type="Output"><inputs>
+		<input>2</input></inputs>
+	<output-type>Query</output-type>
+	<cql-property>select * from 日本語文字列 [range 1]</cql-property>
+	<output-name>tknls_q1</output-name></Operator>
+</Rule>
+

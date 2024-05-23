@@ -1,0 +1,53 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- timestamp column of bigint type and replay clause uses rows -->
+<CEP_DDL>CREATE ARCHIVED STREAM tkArchivedStream_S1(c1 int, c2 float, c3 bigint, c4 timestamp) archiver BIArchiver entity "soainfra.stream_do" timestamp column c3 replay last 10 rows</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkArchivedStream_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpArchivedS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[create query tkArchivedStream_q1 as select c1, c3 from tkArchivedStream_S1[range 500 milliseconds]]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedStream_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedStream1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedStream_q1 start</CEP_DDL>
+
+<!-- timestamp column of bigint type and replay clause uses range -->
+<CEP_DDL>CREATE ARCHIVED STREAM tkArchivedStream_S2(c1 int, c2 float, c3 bigint, c4 timestamp) archiver BIArchiver entity "soainfra.stream_do" timestamp column c3 replay last 400 milliseconds</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkArchivedStream_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpArchivedS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[create query tkArchivedStream_q2 as select c1,c2,c3 from tkArchivedStream_S2]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedStream_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedStream2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedStream_q2 set start_time 1100000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedStream_q2 start</CEP_DDL>
+
+<!-- timestamp column of timestamp type and replay clause uses rows -->
+<CEP_DDL>CREATE ARCHIVED STREAM tkArchivedStream_S3(c1 int, c2 float, c3 bigint, c4 timestamp) archiver BIArchiver entity "soainfra.stream_do" timestamp column c4 replay last 3 rows</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkArchivedStream_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpArchivedS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[create query tkArchivedStream_q3 as select max(c2) from tkArchivedStream_S3]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedStream_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedStream3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedStream_q3 start</CEP_DDL>
+
+<!-- timestamp column of timestamp type and replay clause uses range -->
+<CEP_DDL>CREATE ARCHIVED STREAM tkArchivedStream_S4(c1 int, c2 float, c3 bigint, c4 timestamp) archiver BIArchiver entity "soainfra.stream_do" timestamp column c4 replay last 2 hours</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkArchivedStream_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpArchivedS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[create query tkArchivedStream_q4 as select c1+10, c3 from tkArchivedStream_S4]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedStream_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedStream4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedStream_q4 set start_time 1327593916000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedStream_q4 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

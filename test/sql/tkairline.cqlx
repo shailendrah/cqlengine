@@ -1,0 +1,472 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<!-- BEGIN: Definitions of all the input streams -->
+
+<CEP_DDL>register stream BaggageTrackingEvent(bagId char(100), location char(100), cTimeStamp bigint)</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream BaggageTrackingEvent add source "<EndPointReference><Address>file://@TEST_DATA@/BaggageTrackingEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream BaggageInContainerEvent(containerId char(100), bagId char(100), location char(100), cTimeStamp bigint)</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream BaggageInContainerEvent add source "<EndPointReference><Address>file://@TEST_DATA@/BaggageInContainerEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream ContainerOnPlaneEvent(cTimeStamp bigint, location char(100), containerId char(100), flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream ContainerOnPlaneEvent add source "<EndPointReference><Address>file://@TEST_DATA@/ContainerOnPlaneEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream BagCheckEvent(cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream BagCheckEvent add source "<EndPointReference><Address>file://@TEST_DATA@/BagCheckEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream PassengerCheckInEvent(cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100), passengerName char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream PassengerCheckInEvent add source "<EndPointReference><Address>file://@TEST_DATA@/PassengerCheckInEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream PassengerEnterSecurityEvent(cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream PassengerEnterSecurityEvent add source "<EndPointReference><Address>file://@TEST_DATA@/PassengerEnterSecurityEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream PassengerExitSecurityEvent(cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream PassengerExitSecurityEvent add source "<EndPointReference><Address>file://@TEST_DATA@/PassengerExitSecurityEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream PassengerOnPlaneEvent(cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream PassengerOnPlaneEvent add source "<EndPointReference><Address>file://@TEST_DATA@/PassengerOnPlaneEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream PassengerOffPlaneEvent(cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream PassengerOffPlaneEvent add source "<EndPointReference><Address>file://@TEST_DATA@/PassengerOffPlaneEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream FlightScheduleEvent(cTimeStamp bigint, flightNumber integer, flightSegment char(100), departureGate char(100), departureTime bigint)</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream FlightScheduleEvent add source "<EndPointReference><Address>file://@TEST_DATA@/FlightScheduleEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream FlightBoardingEvent(cTimeStamp bigint, location char(100), traceEnabled integer, flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream FlightBoardingEvent add source "<EndPointReference><Address>file://@TEST_DATA@/FlightBoardingEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream FlightBoardingFinalEvent(cTimeStamp bigint, location char(100), traceEnabled integer, flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream FlightBoardingFinalEvent add source "<EndPointReference><Address>file://@TEST_DATA@/FlightBoardingFinalEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream FlightOpenEvent(cTimeStamp bigint, location char(100), traceEnabled integer, flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream FlightOpenEvent add source "<EndPointReference><Address>file://@TEST_DATA@/FlightOpenEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream FlightCloseEvent(cTimeStamp bigint, location char(100), traceEnabled integer, flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream FlightCloseEvent add source "<EndPointReference><Address>file://@TEST_DATA@/FlightCloseEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream FlightDepartureEvent(cTimeStamp bigint, location char(100), traceEnabled integer, flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream FlightDepartureEvent add source "<EndPointReference><Address>file://@TEST_DATA@/FlightDepartureEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>register stream FlightTakeOffEvent(cTimeStamp bigint, location char(100), traceEnabled integer, flightNumber integer, flightSegment char(100))</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream FlightTakeOffEvent add source "<EndPointReference><Address>file://@TEST_DATA@/FlightTakeOffEvent.txt</Address></EndPointReference>"</CEP_DDL>
+
+<!-- END: Definitions of all the input streams -->
+
+<!-- BEGIN: Rules in "BaggageEventsProcessor" -->
+
+<!-- BEGIN: Rule: MissedBagScan -->
+
+<CEP_DDL> register view bt1(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100)) as SELECT 1, cTimeStamp, location, null, bagId, "", null, "" FROM BaggageTrackingEvent
+</CEP_DDL>
+
+<CEP_DDL> register view bc1(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100)) as SELECT 0, cTimeStamp, location, traceEnabled, bagId, reservationLocator, flightNumber, flightSegment FROM BagCheckEvent
+</CEP_DDL>
+
+<CEP_DDL> register view bc_u_bt(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100)) as bc1 union all bt1
+</CEP_DDL>
+
+<CEP_DDL>register view non_scanned_bag(reservationLocator, bagId, flightNumber, flightSegment) as SELECT
+         	    T.reservationLocator AS reservationLocator,
+		    T.bagId AS bagId,
+		    T.flightNumber AS flightNumber,  
+	            T.flightSegment AS flightSegment
+	FROM bc_u_bt MATCH_RECOGNIZE (
+	    MEASURES
+		  A.reservationLocator AS reservationLocator,
+		  A.bagId AS bagId,
+		  A.flightNumber AS flightNumber,  
+		  A.flightSegment AS flightSegment
+            ALL MATCHES
+	    PATTERN (A B*)
+            DURATION 10 SECONDS
+	    DEFINE
+	      A AS (A.cType = 0),
+	      B AS (B.cType = 0 OR A.bagId != B.bagId)
+	) as T
+</CEP_DDL>
+
+<CEP_DDL> create view mbs1(reservationLocator, bagId, flightNumber, flightSegment) as RSTREAM( 
+  SELECT 
+       bag.reservationLocator AS reservationLocator,
+       bag.bagId AS bagId,
+       bag.flightNumber AS flightNumber,
+       bag.flightSegment AS flightSegment
+  FROM
+    non_scanned_bag[now] as bag,
+    FlightOpenEvent [range 1 MINUTES] as flight 
+  WHERE
+    bag.flightNumber = flight.flightNumber AND
+    flight.traceEnabled = 1        		
+)
+</CEP_DDL>	
+
+
+<CEP_DDL> create query MissedBagScanEvent as RSTREAM(
+  SELECT
+    bag.reservationLocator AS reservationLocator,
+    bag.bagId AS bagId, bag.flightNumber AS flightNumber,
+    bag.flightSegment AS flightSegment,
+    passenger.passengerName AS passengerName 
+  FROM
+    mbs1[now] as bag,
+    PassengerCheckInEvent [range 1 MINUTES] as passenger
+  WHERE
+    passenger.reservationLocator = bag.reservationLocator)
+</CEP_DDL>	
+
+
+<CEP_DDL> create query mbsq0 as select * from BaggageTrackingEvent </CEP_DDL>
+<CEP_DDL> create query mbsq1 as select * from bt1 </CEP_DDL>
+<CEP_DDL> create query mbsq2 as select * from bc1 </CEP_DDL>
+<CEP_DDL> create query mbsq3 as select * from bc_u_bt </CEP_DDL>
+<CEP_DDL> create query mbsq4 as select * from non_scanned_bag </CEP_DDL>
+<CEP_DDL> create query mbsq5 as select * from mbs1 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query MissedBagScanEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/MissedBagScanEvent.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query mbsq0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/mbsq0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query mbsq1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/mbsq1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query mbsq2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/mbsq2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query mbsq3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/mbsq3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query mbsq4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/mbsq4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query mbsq5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/mbsq5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query MissedBagScanEvent start </CEP_DDL>
+<CEP_DDL> alter query mbsq0 start </CEP_DDL>
+<CEP_DDL> alter query mbsq1 start </CEP_DDL>
+<CEP_DDL> alter query mbsq2 start </CEP_DDL>
+<CEP_DDL> alter query mbsq3 start </CEP_DDL>
+<CEP_DDL> alter query mbsq4 start </CEP_DDL>
+<CEP_DDL> alter query mbsq5 start </CEP_DDL>
+
+<!-- END: Rule: MissedBagScan -->
+
+<!-- BEGIN: Rule: LostBag -->
+
+<CEP_DDL> register view bc2(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100), containerId char(100)) as SELECT 0, cTimeStamp, location, traceEnabled, bagId, reservationLocator, flightNumber, flightSegment, "" FROM BagCheckEvent
+</CEP_DDL>
+
+<CEP_DDL> register view bic2(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100), containerId char(100)) as SELECT 1, cTimeStamp, location, null, bagId, "", null, "", containerId FROM BaggageInContainerEvent
+</CEP_DDL>
+
+<CEP_DDL> register view cop2(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100), containerId char(100)) as SELECT 2, cTimeStamp, location, null, "", "", flightNumber, flightSegment, containerId FROM  ContainerOnPlaneEvent
+</CEP_DDL>
+
+<CEP_DDL> register view fd2(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100), containerId char(100)) as SELECT 3, cTimeStamp, location, traceEnabled, "", "", flightNumber, flightSegment, "" FROM  FlightDepartureEvent
+</CEP_DDL>
+
+<CEP_DDL> register view bc_bic(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100), containerId char(100)) as bc2 union all bic2
+</CEP_DDL>
+
+<CEP_DDL> register view bc_bic_cop(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100), containerId char(100)) as bc_bic union all cop2
+</CEP_DDL>
+
+<CEP_DDL> register view bc_bic_cop_fd(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, bagId char(100), reservationLocator char(100), flightNumber integer, flightSegment char(100), containerId char(100)) as bc_bic_cop union all fd2
+</CEP_DDL>
+
+
+<CEP_DDL> register view v_lost_bag(reservationLocator, bagId, flightNumber, flightSegment) as SELECT 
+               T.reservationLocator AS reservationLocator, 
+               T.bagId AS bagId, 
+               T.flightNumber AS flightNumber,
+               T.flightSegment AS flightSegment
+             FROM bc_bic_cop_fd MATCH_RECOGNIZE (
+              
+                MEASURES 
+                   A.reservationLocator AS reservationLocator,
+                   A.bagId AS bagId,
+                   A.flightNumber AS flightNumber,
+                   A.flightSegment AS flightSegment
+                ALL MATCHES
+                PATTERN ( (A X* B) | (A X* Z Y* B) )
+                DEFINE 
+                   A AS (A.cType = 0),
+                   B AS (B.cType = 3 AND B.flightNumber = A.flightNumber),
+                   X AS ( (X.cType != 1 OR X.bagId != A.bagId) AND 
+                          (NOT(X.cType = 3 AND X.flightNumber = A.flightNumber))
+                        ),
+                   Z AS (Z.cType = 1 AND Z.bagId = A.bagId),
+                   Y AS ( ( Y.cType != 2 OR 
+                            (NOT(Y.flightNumber = A.flightNumber AND
+                                 Y.containerId = Z.containerId))
+                          ) AND
+                          ( NOT (Y.cType = 3 AND
+                                 Y.flightNumber = A.flightNumber)
+                          )
+                        )
+             ) as T
+</CEP_DDL>
+
+<CEP_DDL> create view lb(reservationLocator, bagId, flightNumber, flightSegment) as RSTREAM( 
+  SELECT 
+       bag.reservationLocator AS reservationLocator,
+       bag.bagId AS bagId,
+       bag.flightNumber AS flightNumber,
+       bag.flightSegment AS flightSegment
+  FROM
+    v_lost_bag[now] as bag,
+    FlightOpenEvent [range 1 MINUTES] as flight
+  WHERE
+    bag.flightNumber = flight.flightNumber AND
+    flight.traceEnabled = 1        		
+)
+</CEP_DDL>	
+
+
+<CEP_DDL> create query MissingBagEvent as RSTREAM(
+  SELECT
+    bag.reservationLocator AS reservationLocator,
+    bag.bagId AS bagId, bag.flightNumber AS flightNumber,
+    bag.flightSegment AS flightSegment,
+    passenger.passengerName AS passengerName 
+  FROM
+    lb[now] as bag,
+    PassengerCheckInEvent [range 1 MINUTES] as passenger
+  WHERE
+    passenger.reservationLocator = bag.reservationLocator)
+</CEP_DDL>	
+
+<CEP_DDL> create query lb_q1 as select * from bc2 </CEP_DDL>
+<CEP_DDL> create query lb_bic2 as select * from bic2 </CEP_DDL>
+<CEP_DDL> create query lb_cop2 as select * from cop2 </CEP_DDL>
+<CEP_DDL> create query lb_fd2 as select * from fd2 </CEP_DDL>
+<CEP_DDL> create query lb_bc_bic as select * from bc_bic </CEP_DDL>
+<CEP_DDL> create query lb_bc_bic_cop as select * from bc_bic_cop </CEP_DDL>
+<CEP_DDL> create query lb_bc_bic_cop_fd as select * from bc_bic_cop_fd </CEP_DDL>
+<CEP_DDL> create query lb_v_lost_bag as select * from v_lost_bag </CEP_DDL>
+<CEP_DDL> create query lb_lb as select * from lb </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query MissingBagEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/MissingBagEvent.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_bic2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_bic2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_cop2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_cop2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_fd2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_fd2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_bc_bic add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_bc_bic.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_bc_bic_cop add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_bc_bic_cop.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_bc_bic_cop_fd add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_bc_bic_cop_fd.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_v_lost_bag add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_v_lost_bag.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query lb_lb add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lb_lb.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query MissingBagEvent start </CEP_DDL>
+<CEP_DDL> alter query lb_q1 start </CEP_DDL>
+<CEP_DDL> alter query lb_bic2 start </CEP_DDL>
+<CEP_DDL> alter query lb_cop2 start </CEP_DDL>
+<CEP_DDL> alter query lb_fd2 start </CEP_DDL>
+<CEP_DDL> alter query lb_bc_bic start </CEP_DDL>
+<CEP_DDL> alter query lb_bc_bic_cop start </CEP_DDL>
+<CEP_DDL> alter query lb_bc_bic_cop_fd start </CEP_DDL>
+<CEP_DDL> alter query lb_v_lost_bag start </CEP_DDL>
+<CEP_DDL> alter query lb_lb start </CEP_DDL>
+
+<!-- END: Rule: LostBag -->
+
+<!-- END: Rules in "BaggageEventsProcessor" -->
+
+
+<!-- BEGIN: Rules in "OperationalEventsProcessor" -->
+
+<!-- BEGIN: Rule: PassengerStuckInSecurity -->
+
+<CEP_DDL> register view penter(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100)) as SELECT 0, cTimeStamp, location, traceEnabled, reservationLocator, flightNumber, flightSegment from PassengerEnterSecurityEvent
+</CEP_DDL>
+
+<CEP_DDL> register view pexit(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100)) as SELECT 1, cTimeStamp, location, traceEnabled, reservationLocator, flightNumber, flightSegment from PassengerExitSecurityEvent
+</CEP_DDL>
+
+<CEP_DDL> register view fbfe3(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100)) as SELECT 2, cTimeStamp, location, traceEnabled, "", flightNumber, flightSegment from FlightBoardingFinalEvent
+</CEP_DDL>
+
+<CEP_DDL> register view penter_pexit(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100)) as penter union all pexit
+</CEP_DDL>
+
+<CEP_DDL> register view penter_pexit_fbfe3(cType integer, cTimeStamp bigint, location char(100), traceEnabled integer, reservationLocator char(100), flightNumber integer, flightSegment char(100)) as penter_pexit union all fbfe3
+</CEP_DDL>
+
+<CEP_DDL> register view security (enterSecurityTimestamp, reservationLocator, securityLocation, flightNumber, flightSegment)
+ as SELECT
+      T.cTimeStamp AS enterSecurityTimestamp,
+      T.reservationLocator AS reservationLocator,
+      T.location AS securityLocation,
+      T.flightNumber AS flightNumber,
+      T.flightSegment AS flightSegment
+    FROM penter_pexit_fbfe3 MATCH_RECOGNIZE (
+            MEASURES
+                  A.cTimeStamp AS cTimeStamp,
+                  A.reservationLocator AS reservationLocator,
+                  A.location AS location,
+                  A.flightNumber AS flightNumber,
+                  A.flightSegment AS flightSegment
+            ALL MATCHES
+            PATTERN (A B* C)
+            DEFINE
+              A AS (A.cType = 0),
+              C AS (C.cType = 2 AND C.flightNumber = A.flightNumber),
+              B AS ( (B.cType != 1 OR 
+                      B.reservationLocator != A.reservationLocator) AND
+                     (NOT (B.cType = 2 AND B.flightNumber = A.flightNumber))
+                   )
+    ) as T
+</CEP_DDL>
+
+<CEP_DDL> create view psis(enterSecurityTimestamp, reservationLocator, securityLocation, flightNumber, flightSegment) as RSTREAM( 
+  SELECT 
+       resLoc.enterSecurityTimestamp AS enterSecurityTimestamp,
+       resLoc.reservationLocator AS reservationLocator,
+       resLoc.securityLocation AS securityLocation,
+       resLoc.flightNumber AS flightNumber,
+       resLoc.flightSegment AS flightSegment
+  FROM
+    security[now] as resLoc,
+    FlightOpenEvent[range 1 MINUTES] as flight
+  WHERE
+    resLoc.flightNumber = flight.flightNumber AND
+    flight.traceEnabled = 1        		
+)
+</CEP_DDL>	
+
+
+<CEP_DDL> create query PassengerStuckInSecurityEvent as RSTREAM(
+  SELECT
+       resLoc.reservationLocator AS reservationLocator,
+       resLoc.flightNumber AS flightNumber,
+       resLoc.flightSegment AS flightSegment,
+       resLoc.enterSecurityTimestamp AS enterSecurityTimestamp,
+       resLoc.securityLocation AS securityLocation,
+       passenger.passengerName AS passengerName 
+  FROM
+    psis[now] as resLoc,
+    PassengerCheckInEvent[range 1 MINUTES] as passenger
+  WHERE
+    passenger.reservationLocator = resLoc.reservationLocator
+)
+</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query PassengerStuckInSecurityEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/PassengerStuckInSecurityEvent.txt</Address></EndPointReference>"</CEP_DDL>
+<CEP_DDL> alter query PassengerStuckInSecurityEvent start </CEP_DDL>	
+
+<!-- END: Rule: PassengerStuckInSecurity -->
+
+<!-- BEGIN: Rule: SecurityWaitTimeSummaryEvent -->
+
+<CEP_DDL> <![CDATA[ create view swtse(location, timeSpent) 
+as SELECT
+      T.enterLocation AS location,
+      T.timeSpent as timeSpent
+   FROM penter_pexit MATCH_RECOGNIZE (
+        MEASURES
+           A.location as enterLocation,
+           C.cTimeStamp - A.cTimeStamp as timeSpent
+        ALL MATCHES
+        PATTERN (A B* C)
+        DEFINE
+           A AS (A.cType = 0),
+           C AS (C.cType = 1 AND C.reservationLocator = A.reservationLocator),
+           B AS (B.cType != 1 OR B.reservationLocator != A.reservationLocator)
+   ) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL> register query SecurityWaitTimeSummaryEvent as ISTREAM(
+     SELECT 
+        location,
+        min(timeSpent) as minTime,
+        max(timeSpent) as maxTime,
+        avg(timeSpent) as avgTime
+     FROM swtse[range 1 slide 1]
+     GROUP BY location
+)
+</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query SecurityWaitTimeSummaryEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/SecurityWaitTimeSummaryEvent.txt</Address></EndPointReference>"</CEP_DDL>
+<CEP_DDL> alter query SecurityWaitTimeSummaryEvent start </CEP_DDL>
+
+<!-- END: Rule: SecurityWaitTimeSummaryEvent -->
+
+<!-- BEGIN: RULE: PassengerActivitySummary -->
+
+<CEP_DDL>register view vBagCheckCount (bagCheckCount) as SELECT COUNT(*) AS bagCheckCount  FROM BagCheckEvent [range 1 SECONDS slide 1]
+</CEP_DDL>
+
+<CEP_DDL>register view vPassengerCheckInCount (passengerCheckInCount) as SELECT COUNT(*) AS passengerCheckInCount FROM PassengerCheckInEvent [range 1 SECONDS slide 1]
+</CEP_DDL>
+
+<CEP_DDL>register view vPassengerEnterSecurityCount (passengerEnterSecurityCount) as SELECT COUNT(*) AS passengerEnterSecurityCount FROM PassengerEnterSecurityEvent [range 1 SECONDS slide 1]
+</CEP_DDL>
+
+<CEP_DDL>register view vPassengerExitSecurityCount (passengerExitSecurityCount) as SELECT COUNT(*) AS passengerExitSecurityCount FROM PassengerExitSecurityEvent [range 1 SECONDS slide 1]
+</CEP_DDL>
+
+<CEP_DDL>register view vPassengerBoardingCount (passengerBoardingCount) as SELECT COUNT(*) AS passengerBoardingCount FROM PassengerOnPlaneEvent [range 1 SECONDS slide 1]
+</CEP_DDL>
+
+<CEP_DDL>register query PassengerActivitySummaryEvent as ISTREAM(
+                SELECT 
+    			bagCheckCount,
+    			passengerCheckInCount,
+    			passengerEnterSecurityCount,
+    			passengerExitSecurityCount,
+    			passengerBoardingCount
+  		FROM 
+                  vBagCheckCount AS bagCheckCount, 
+    		  vPassengerCheckInCount AS passengerCheckInCount, 
+    		  vPassengerEnterSecurityCount AS passengerEnterSecurityCount,
+    		  vPassengerExitSecurityCount AS passengerExitSecurityCount, 
+    		  vPassengerBoardingCount AS passengerBoardingCount 
+    	)
+</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query PassengerActivitySummaryEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/PassengerActivitySummaryEvent.txt</Address></EndPointReference>"</CEP_DDL>
+<CEP_DDL> alter query PassengerActivitySummaryEvent start </CEP_DDL>
+
+<!-- END: RULE: PassengerActivitySummary -->
+
+<!-- BEGIN rules related to FlightOperationEvent -->
+
+<CEP_DDL> register view foe_open(cTimeStamp, flightNumber, eventType) as SELECT cTimeStamp,flightNumber,"Open" as eventType FROM FlightOpenEvent WHERE traceEnabled = 1
+</CEP_DDL>
+
+<CEP_DDL> register view foe_boarding(cTimeStamp, flightNumber, eventType) as SELECT cTimeStamp,flightNumber,"Boarding" as eventType FROM FlightBoardingEvent WHERE traceEnabled = 1
+</CEP_DDL>
+
+<CEP_DDL> register view foe_final(cTimeStamp, flightNumber, eventType) as SELECT cTimeStamp,flightNumber,"Final" as eventType FROM FlightBoardingFinalEvent WHERE traceEnabled = 1
+</CEP_DDL>
+
+<CEP_DDL> register view foe_closed(cTimeStamp, flightNumber, eventType) as SELECT cTimeStamp,flightNumber,"Closed" as eventType FROM FlightCloseEvent WHERE traceEnabled = 1
+</CEP_DDL>
+
+<CEP_DDL> register view foe_bags_loaded(cTimeStamp, flightNumber, eventType)
+ as RSTREAM( SELECT 
+                container.cTimeStamp as cTimeStamp,
+                container.flightNumber as flightNumber,
+                "Bags Loaded" as eventType
+             FROM ContainerOnPlaneEvent[now] AS container, 
+                  FlightOpenEvent [range 1 MINUTES] AS flight
+             WHERE
+                container.flightNumber = flight.flightNumber AND 
+                flight.traceEnabled = 1)
+</CEP_DDL>
+
+<CEP_DDL> register view foe_departed(cTimeStamp, flightNumber, eventType) as SELECT cTimeStamp,flightNumber,"Departed" as eventType FROM FlightDepartureEvent WHERE traceEnabled = 1
+</CEP_DDL>
+
+<CEP_DDL> register view foe_takeoff(cTimeStamp, flightNumber, eventType) as SELECT cTimeStamp,flightNumber,"Take-off" as eventType FROM FlightTakeOffEvent WHERE traceEnabled = 1
+</CEP_DDL>
+
+<CEP_DDL>register view foe_m1 (cTimeStamp, flightNumber, eventType) as foe_open union all foe_boarding</CEP_DDL>
+<CEP_DDL>register view foe_m2 (cTimeStamp, flightNumber, eventType) as foe_final union all foe_closed</CEP_DDL>
+<CEP_DDL>register view foe_m3 (cTimeStamp, flightNumber, eventType) as foe_bags_loaded union all foe_departed</CEP_DDL>
+<CEP_DDL>register view foe_m4 (cTimeStamp, flightNumber, eventType) as foe_m1 union all foe_m2</CEP_DDL>
+<CEP_DDL>register view foe_m5 (cTimeStamp, flightNumber, eventType) as foe_m3 union all foe_takeoff</CEP_DDL>
+
+
+<CEP_DDL>create query FlightOperationEvent as foe_m4 union all foe_m5</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query FlightOperationEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/FlightOperationEvent.txt</Address></EndPointReference>"</CEP_DDL>
+<CEP_DDL> alter query FlightOperationEvent start </CEP_DDL>
+
+<!-- END rules related to FlightOperationEvent -->
+
+<!-- END: Rules in "OperationalEventsProcessor" -->
+
+<!-- Remaining system level commands -->
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

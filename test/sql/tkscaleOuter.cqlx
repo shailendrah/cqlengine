@@ -1,0 +1,10 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkscaleOuter_S0 (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscaleOuter_S0 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register stream tkscaleOuter_S1 (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscaleOuter_S1 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkscaleOuter_q1 as select tkscaleOuter_S0.c1,tkscaleOuter_S0.c2,tkscaleOuter_S0.c3,tkscaleOuter_S1.c1,tkscaleOuter_S1.c2,tkscaleOuter_S1.c3 from tkscaleOuter_S0[range 10],tkscaleOuter_S1[range 5] where tkscaleOuter_S0.c4=tkscaleOuter_S1.c4 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkscaleOuter_q1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outSOuterJoin@RANGE@Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkscaleOuter_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,24 @@
+1:+ <column name="c1_int">1</column>
+<column name="abcab">abc</column>
+
+2:+ <column name="c1_int">2</column>
+<column name="abab">ab</column>
+
+3:+ <column name="c1_int">3</column>
+<column name="abcab">abc</column>
+
+4:+ <column name="c1_int">4</column>
+<column name="aab">a</column>
+
+1001:- <column name="c1_int">1</column>
+<column name="abcab">abc</column>
+
+1002:- <column name="c1_int">2</column>
+<column name="abab">ab</column>
+
+1003:- <column name="c1_int">3</column>
+<column name="abcab">abc</column>
+
+1004:- <column name="c1_int">4</column>
+<column name="aab">a</column>
+

@@ -1,0 +1,15 @@
+<project name="build-parser" default="gen.msgcat" basedir=".">
+
+    <!-- FIXME needs to be rewritten as a plugin -->
+    <!-- wlevs props -->
+    <property file="${wlevs.home}/build.properties" />
+
+    <target name="gen.msgcat">
+        <java fork="true" classname="oracle.cep.tools.MessageGenerator"
+            classpath="${maven.compile.classpath}">
+            <arg file="${project.build.msgcat}"/>
+            <arg value="-wlevs" />
+            <assertions><enable /></assertions>
+        </java>
+    </target>
+</project>

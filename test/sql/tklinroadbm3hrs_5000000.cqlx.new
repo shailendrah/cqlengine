@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP>
+<CEP_DDL>create stream CarLocStr (car_id integer, speed integer, exp_way integer, lane integer, dir integer, x_pos integer) </CEP_DDL>
+<CEP_DDL>alter stream CarLocStr add source "<EndPointReference><Address>file://@TEST_DATA@/CarLocStr3hours.dat.5000000</Address></EndPointReference>" </CEP_DDL>                
+
+<CEP_DDL>create relation AllSeg (exp_way integer, lane integer, dir integer, seg integer) </CEP_DDL>
+<CEP_DDL>alter stream AllSeg add source "<EndPointReference><Address>file://@TEST_DATA@/AllSeg.dat</Address></EndPointReference>" </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view CarSegStr (car_id integer, speed integer, exp_way integer, lane integer, dir integer, seg integer) as select car_id, speed, exp_way, lane, dir, x_pos / 5280 as seg from CarLocStr  ]]></CEP_DDL>
+<CEP_DDL>register view CurCarSeg(car_id, exp_way, lane, dir, seg) as select car_id, exp_way, lane, dir, seg from CarSegStr [partition by car_id rows 1 range 35 seconds] </CEP_DDL>
+<CEP_DDL>register view CarSegEntryStr(car_id, exp_way, lane, dir, seg) as IStream(select car_id, exp_way, lane, dir, seg from CurCarSeg) </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view SegAvgSpeed (exp_way integer, lane integer, dir integer, seg integer, avg_speed float) as select exp_way, lane, dir, seg, avg(speed) as avg_speed from CarSegStr [range 5 minutes] group by exp_way, lane, dir, seg having avg(speed) < 50 ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ register view SegVol (exp_way integer, lane integer, dir integer, seg integer, volume integer) as select exp_way, lane, dir, seg, count(*) as volume from CurCarSeg group by exp_way, lane, dir, seg having count(*) > 50 ]]> </CEP_DDL>
+
+<CEP_DDL>register view AccCars(car_id integer, acc_loc int) as select car_id, max(x_pos) as acc_loc from CarLocStr [partition by car_id rows 4 range 120 seconds] group by car_id having max(x_pos) = min(x_pos) and count(car_id) = 4 </CEP_DDL>
+<CEP_DDL>register view AccSeg(exp_way integer, lane integer, dir integer, seg integer, acc_loc integer) as select distinct exp_way, lane, dir, seg, acc_loc from CurCarSeg, AccCars where CurCarSeg.car_id = AccCars.car_id </CEP_DDL>
+<CEP_DDL><![CDATA[ register view dummy1(exp_way integer, lane integer, dir integer, seg integer) as select A.exp_way, A.lane, A.dir, A.seg from AllSeg AS A, AccSeg AS S where (A.exp_way = S.exp_way AND A.lane = S.lane AND A.dir = 0 AND S.dir = 0 AND A.seg <= S.seg AND A.seg > S.seg - 10) OR (A.exp_way = S.exp_way AND A.lane = S.lane AND A.dir = 1 AND S.dir = 1 AND A.seg >= S.seg AND A.seg < S.seg + 10) ]]> </CEP_DDL>
+<CEP_DDL>register view dummy2(exp_way integer, lane integer, dir integer, seg integer, acc_loc integer) as DStream(select exp_way, lane, dir, seg, acc_loc from AccSeg) </CEP_DDL>
+<CEP_DDL>register view dummy3(exp_way integer, lane integer, dir integer, seg integer, acc_loc integer) as select exp_way, lane, dir, seg, acc_loc from dummy2[range 20 minutes] </CEP_DDL>
+<CEP_DDL> <![CDATA[ register view dummy4(exp_way integer, lane integer, dir integer, seg integer) as select A.exp_way, A.lane, A.dir, A.seg from AllSeg AS A, dummy3 AS S where (A.exp_way = S.exp_way AND A.lane = S.lane AND A.dir = 0 AND S.dir = 0 AND A.seg <= S.seg AND A.seg > S.seg - 10) OR (A.exp_way = S.exp_way AND A.lane = S.lane AND A.dir = 1 AND S.dir = 1 AND A.seg >= S.seg AND A.seg < S.seg + 10)  ]]> </CEP_DDL>
+<CEP_DDL>register view AccAffectedSeg(exp_way integer, lane integer, dir integer, seg integer) as dummy1 union dummy4 </CEP_DDL>
+<CEP_DDL><![CDATA[ register view SegTollNoAcc (exp_way integer, lane integer, dir integer, seg integer, toll integer) as select SegAvgSpeed.exp_way, SegAvgSpeed.lane, SegAvgSpeed.dir, SegAvgSpeed.seg, 2*(SegVol.volume-50)*(SegVol.volume-50) from SegAvgSpeed, SegVol where SegAvgSpeed.exp_way = SegVol.exp_way and SegAvgSpeed.lane = SegVol.lane and SegAvgSpeed.dir = SegVol.dir and SegAvgSpeed.seg = SegVol.seg ]]> </CEP_DDL>
+
+<CEP_DDL>register view SegToll (exp_way integer, lane integer, dir integer, seg integer, toll integer) as SegTollNoAcc NOT IN AccAffectSeg</CEP_DDL>
+
+<CEP_DDL>create query QTollStr as RSTREAM(select cars.car_id, SegToll.toll from CarSegEntryStr[now] as cars, SegToll where (cars.exp_way = SegToll.exp_way and cars.lane = SegToll.lane and cars.dir = SegToll.dir and cars.seg = SegToll.seg)) </CEP_DDL>
+
+<CEP_DDL>alter query QTollStr add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/TollStr_CarLoc5000000.txt</Address></EndPointReference>" </CEP_DDL>
+
+<CEP_DDL>alter query QTollStr start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+
+</CEP>

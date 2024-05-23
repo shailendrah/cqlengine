@@ -1,0 +1,32 @@
+<definitions
+     name="CEPOrderBooking"
+     targetNamespace="http://www.globalcompany.com/ns/CEP"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:client="http://www.globalcompany.com/ns/CEP"
+     xmlns:cep="http://www.oracle.com/cep"
+    >
+    <types>
+        <schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.globalcompany.com/ns/CEP"
+             xmlns="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/"
+             xmlns:po="http://www.globalcompany.com/ns/order" xmlns:client="http://www.globalcompany.com/ns/OrderBooking">
+            <import namespace="http://www.oracle.com/cep" schemaLocation="order.xsd"/>
+            <element name="SOAOrderBookingProcessRequest">
+                <complexType>
+                    <sequence>
+                        <element ref="cep:ComplexEvent"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </types>
+    <message name="SOAOrderBookingRequestMessage">
+        <part name="payload" element="client:SOAOrderBookingProcessRequest"/>
+    </message>
+
+    <portType name="CEPOrder">
+        <operation name="initiate">
+            <input message="client:SOAOrderBookingRequestMessage"/>
+        </operation>
+    </portType>
+    
+</definitions>

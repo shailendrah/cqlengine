@@ -1,0 +1,9 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkscale25_S1 (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscale25_S1 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create function tkscale25_var(c1 int) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation </CEP_DDL>
+<CEP_DDL> create query tkscale25_q1 as select max(c1), tkscale25_var(c2) from tkscale25_S1[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkscale25_q1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outStrmSrcVar@RANGE@Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkscale25_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

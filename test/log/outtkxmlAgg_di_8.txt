@@ -1,0 +1,406 @@
+6000:+ val1,val2,val3,3,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+9000:- val1,val2,val3,3,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+9000:+ val1,val2,val3,4,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+12000:- val1,val2,val3,4,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+12000:+ val1,val2,val3,5,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+15000:- val1,val2,val3,5,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+15000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+18000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+18000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+21000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+21000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+21000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+21000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+23000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+23000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+24000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+24000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+26000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+26000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+27000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+27000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+29000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+29000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+30000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+30000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+32000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+32000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+33000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+33000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+35000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+35000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+36000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+36000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+38000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+38000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+39000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+39000:+ val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+41000:- val1,val2,val3,7,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+41000:+ val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+44000:- val1,val2,val3,6,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+44000:+ val1,val2,val3,5,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+47000:- val1,val2,val3,5,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+47000:+ val1,val2,val3,4,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+50000:- val1,val2,val3,4,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+50000:+ val1,val2,val3,3,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+
+53000:- val1,val2,val3,3,<XYZ>
+   <c5>val5</c5>
+   <c5>val5</c5>
+   <c5>val5</c5>
+</XYZ>
+

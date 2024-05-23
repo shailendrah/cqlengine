@@ -1,0 +1,64 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/SystemStatsRowManager.java /main/8 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/07/08 - use execContext to remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    09/12/07 - 
+    skmishra    06/22/07 - 
+    parujain    05/31/07 - cep-em integration
+    parujain    04/26/07 - System related statistics Manager
+    parujain    04/26/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/SystemStatsRowManager.java /main/8 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.statsmgr;
+
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.statistics.IStats;
+
+public class SystemStatsRowManager extends StatsManager 
+{
+  public SystemStatsRowManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+  
+  public void close() {}
+
+  public IStats getNext() {
+    if(factory == null)
+      return null;
+    
+    IStats stats = 
+      factory.createSystemStat(cepMgr.getSystemMgr().getFreeMemory(),
+          cepMgr.getSystemMgr().getMaxMemory(),
+          cepMgr.getSystemMgr().getTime(),
+          cepMgr.getSystemMgr().getTotalMemory(),
+          cepMgr.getSystemMgr().getUsedMemory(),
+          execContext.getSchedMgr().getNumThreads());
+   
+    return stats;
+  }
+
+  public void init() {}
+}

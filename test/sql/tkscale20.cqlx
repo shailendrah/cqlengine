@@ -1,0 +1,11 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkscale20_S1 (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscale20_S1 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register stream tkscale20_S2 (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscale20_S2 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkscale20_v1 (c1 integer, c2 integer, c3 float, c4 float) as tkscale20_S1 union all tkscale20_S2 </CEP_DDL>
+<CEP_DDL> create query tkscale20_q1 as select * from tkscale20_v1 [range @RANGE@] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkscale20_q1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outViewStrmSrcRng@RANGE@Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkscale20_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

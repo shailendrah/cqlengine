@@ -1,0 +1,8 @@
+1000:+ -0300,valid format
+2000:+ +1000,valid format
+3000:+ GMT+1100,valid format
+4000:+ Asia/Katmandu,valid format
+5000:+ Asia/Rangoon,valid format
+6000:+ Australia/Sydney,valid format
+7000:+ GMT,valid format
+8000:+ GMT-0300,valid format

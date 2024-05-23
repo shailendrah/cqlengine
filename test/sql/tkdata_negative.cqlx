@@ -1,0 +1,10 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata_negative_S8 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata_negative_S9 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_negative_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_negative_S9 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata_negative_S8(c1 integer, c2 float) as select * from tkdata_negative_S9 </CEP_DDL>
+<CEP_DDL> create query tkdata_negative_q201 as DStream(select (c1+10)*2, c2+1.5 from tkdata_negative_S8[range unbounded] where c1 > 10) </CEP_DDL>
+<CEP_DDL> alter query tkdata_negative_q201 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

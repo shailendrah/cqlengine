@@ -1,0 +1,51 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create relation tkdata143_R143_1(c1 integer primary key, c2 float)</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_3(c1 integer primary key, c2 integer primary key)</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_4(c1 integer , primary key(c1))</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_5(c1 integer , c2 integer, primary key(c3))</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_6(c1 integer , c2 integer, primary key(c1), primary key(c2))</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_7(primary key(c1,c1,c2), c1 integer , c2 integer)</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_8(c1 integer primary key, c2 float)</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_9(c1 integer , c2 float)</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_10(c1 integer , c2 float, primary key(c1,c1,c2))</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_11(c1 integer primary key, c2 float)</CEP_DDL>
+<CEP_DDL> create relation tkdata143_R143_12(c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata143_R143_1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata143_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata143_R143_8 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata143_8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata143_R143_9 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata143_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata143_R143_11 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata143_2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata143_R143_12 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata143_3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_1 as select c1,c2 from tkdata143_R143_1</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_2 as select c1,c2 from tkdata143_R143_9</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_3 as select c1,c2 from tkdata143_R143_1 primary key(c2,c1)</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_4 as select c1,c2 from tkdata143_R143_1 </CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_5 as select c1,c2 from tkdata143_R143_8 primary key(c1)</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_6 as select c1,c2 from tkdata143_R143_1 primary key(c1,c3)</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_7 as select c1,c2 from tkdata143_R143_8</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_8 as select c1,c2 from tkdata143_R143_9 primary key(c1)</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_9 as IStream(select c1,c2 from tkdata143_R143_9) primary key(c1)</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_10 as select c1,c2 from tkdata143_R143_9 primary key(c1,c1,c2)</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_11 as select c1,c2 from tkdata143_R143_11 primary key(c1)</CEP_DDL>
+<CEP_DDL> create query tkdata143_Q143_12 as select c1,c2 from tkdata143_R143_12</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_3.txt</Address></EndPointReference>" use update semantics ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_4.txt</Address></EndPointReference>" use update semantics ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_5a.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_5b.txt</Address></EndPointReference>" use update semantics ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_5c.txt</Address></EndPointReference>" batch output , use update semantics ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_7.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_7b.txt</Address></EndPointReference>" batch output]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_8.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_11.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata143_Q143_12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata143_12.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_3 start</CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_5 start</CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_7 start</CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_8 start</CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_11 start</CEP_DDL>
+<CEP_DDL> alter query tkdata143_Q143_12 start</CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

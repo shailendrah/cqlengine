@@ -1,0 +1,101 @@
+<project name="build-colt" default="gen.colt" basedir="." >
+
+<!-- FIXME needs to be rewritten as a plugin -->
+<!-- properties related to generatea files -->
+<property name="colt.functions.xmlfile" value="${project.build.generatedsrc}/oracle/cep/colt/coltFunctions.xml"/>
+<property name="colt.aggr.functions.xmlfile" value="${project.parent.basedir}/colt/src/oracle/cep/tools/colt/aggr/coltAggrFunctions.xml"/>
+<property name="colt.dir.functions" value="${project.build.generatedsrc}/oracle/cep/colt/functions"/>
+<property name="colt.aggr.dir.functions" value="${project.build.generatedsrc}/oracle/cep/colt/aggr"/>
+<property name="colt.dir.install" value="${project.build.generatedsrc}/oracle/cep/colt/install"/>
+
+
+<!-- move generated colt files to server/generated -->
+<!--target name="copy.to.server">
+	
+	<mkdir dir="${cqlengine.dir}/server/generated/oracle/cep/colt/functions"/>
+	<mkdir dir="${cqlengine.dir}/server/generated/oracle/cep/colt/aggr"/>
+	
+	<copy todir="${cqlengine.dir}/server/generated/oracle/cep/colt/functions"
+	    	overwrite="true">
+		<fileset dir="${build.generated.dir}/oracle/cep/colt/functions">
+			<include name="**/*.java"/>
+		</fileset>
+	</copy>
+	<copy todir="${cqlengine.dir}/server/generated/oracle/cep/colt/aggr"
+			overwrite="true">
+		<fileset dir="${build.generated.dir}/oracle/cep/colt/aggr">
+			<include name="**/*.java"/>
+		</fileset>
+	</copy>
+</target-->
+	
+<!-- Generate colt library functions and Install file -->
+<target name="gen.colt"
+  depends="gen.colt.xml, gen.colt.functions, gen.colt.aggr.functions, gen.colt.installer, gen.colt.aggr.installer"/>
+
+<!-- Generate colt xml file -->
+<target name="gen.colt.xml">
+  <echo message="Generating Colt Functions xml file : ${colt.functions.xmlfile}"/>
+  <java fork="true" classname="oracle.cep.tools.colt.functions.XMLColtFuncGenerator"
+    classpath="${maven.compile.classpath}">
+    <arg file="${colt.functions.xmlfile}"/>
+    <assertions> <enable/> </assertions>
+  </java>
+</target>  
+  
+<!-- BEGIN: Generate colt functions -->
+<target name="gen.colt.functions">
+  <echo message="Generating Colt Functions into ${colt.dir.functions}"/>
+  <java fork="true" classname="oracle.cep.tools.colt.functions.XML2ColtFunction"
+    classpath="${maven.compile.classpath}">
+    <arg file="${project.parent.basedir}/colt/src/oracle/cep/tools/colt/functions/XML2ColtFunction.xsl"/>
+    <arg file="${colt.functions.xmlfile}"/>
+    <arg file="${colt.dir.functions}"/>
+    <assertions> <enable/> </assertions>
+  </java>
+  <!-- remove functions from java8. This is required to compile it for java7 for SparkCQL -->
+  <delete verbose="true">
+    <fileset dir="${colt.dir.functions}" includes="CEPAddExact*.java,CEPDecrementExact*.java,CEPFloorDiv*.java,CEPFloorMod*.java,CEPIncrementExact*.java,CEPMultiplyExact*.java,CEPNegateExact*.java,CEPNextDown*.java,CEPSubtractExact*.java,CEPToIntExact.java" />
+  </delete>
+</target>
+
+<target name="gen.colt.aggr.functions">
+  <echo message="Generating Colt Aggregate Functions into ${colt.aggr.dir.functions}"/>
+  <java fork="true" classname="oracle.cep.tools.colt.aggr.XML2ColtAggrFunction"
+    classpath="${maven.compile.classpath}">
+    <arg file="${project.parent.basedir}/colt/src/oracle/cep/tools/colt/aggr/XML2ColtAggrFunction.xsl"/>
+    <arg file="${colt.aggr.functions.xmlfile}"/>
+    <arg file="${colt.aggr.dir.functions}"/>
+    <assertions><enable/></assertions>  
+  </java>
+</target>
+
+<!--BEGIN: Generate Colt Install files -->
+<!-- Generate Simple Colt Install File-->
+<target name="gen.colt.installer">
+   <echo message="Generating Install file for Simple Colt Functions : ${colt.dir.install}/ColtInstall.java"/>
+   <java fork="true" classname="oracle.cep.tools.colt.functions.XML2ColtInstaller"
+    classpath="${maven.compile.classpath}">
+     <arg file="${project.parent.basedir}/colt/src/oracle/cep/tools/colt/functions/XML2ColtInstall.xsl"/>
+     <arg file="${colt.functions.xmlfile}"/>
+     <arg file="${colt.dir.install}/ColtInstall.java"/>
+     <assertions> <enable/> </assertions>
+   </java>
+</target>
+	 
+<!-- Generate Colt Aggregate Install file-->
+<target name="gen.colt.aggr.installer">
+   <echo message="Generating Install file for Colt Aggregate Functions: ${colt.dir.install}/ColtAggrInstall.java"/>
+   <java fork="true" classname="oracle.cep.tools.colt.aggr.XML2ColtAggrInstaller"
+    classpath="${maven.compile.classpath}">
+     <arg file="${project.parent.basedir}/colt/src/oracle/cep/tools/colt/aggr/XML2ColtAggrInstall.xsl"/>
+     <arg file="${colt.aggr.functions.xmlfile}"/>
+     <arg file="${colt.dir.install}/ColtAggrInstall.java"/>
+     <assertions><enable/></assertions>
+   </java>
+  
+</target>
+<!-- END: Generate Colt Install files-->
+<!-- END: Generate colt functions-->
+	
+</project>

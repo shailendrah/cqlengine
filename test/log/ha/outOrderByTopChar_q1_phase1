@@ -1,0 +1,7 @@
+100:+ 10,test string1
+100:+ 20,test string2
+100:+ 30,test string3
+1000:- 30,test string3
+1000:+ 40,oracle
+1000:- 20,test string2
+1000:+ 50,good

@@ -1,0 +1,100 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/Plan.java /main/2 2008/10/24 15:50:13 hopark Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+ All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    hopark      10/07/08 - use execContext to remove statics
+    hopark      06/26/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/Plan.java /main/2 2008/10/24 15:50:13 hopark Exp $
+ *  @author  hopark  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import oracle.cep.logging.LogUtil;
+import oracle.cep.logging.LoggerType;
+import oracle.cep.metadata.MetadataException;
+import oracle.cep.metadata.Query;
+import oracle.cep.metadata.QueryManager;
+import oracle.cep.planmgr.PlanManager;
+import oracle.cep.server.CEPServer;
+import oracle.cep.server.CEPServerRegistryImpl;
+import oracle.cep.service.CEPManager;
+import oracle.cep.service.ExecContext;
+
+public class Plan implements PlanMBean
+{
+  CEPManager cepMgr;
+  public Plan(CEPManager cepMgr)
+  {
+    this.cepMgr = cepMgr;
+  }
+  
+  public void createVisPlan(String serviceName, String path) throws Exception
+  {
+    CEPServerRegistryImpl serverReg = cepMgr.getServerRegistry();
+    CEPServer server = serverReg.getServer(serviceName);
+    ExecContext ec = server.getExecContext();
+    QueryManager queryMgr = ec.getQueryMgr();
+    String s = queryMgr.getXMLPlan2();
+    PrintWriter xml = null;
+    try
+    {
+      xml = new PrintWriter(path);
+      xml.append(s);
+      xml.flush();
+    }
+    finally
+    {
+      if (xml != null)
+        xml.close();
+    }
+  }
+
+  public String[] getQueries(String serviceName)
+  {
+    CEPServerRegistryImpl serverReg = cepMgr.getServerRegistry();
+    CEPServer server = serverReg.getServer(serviceName);
+    ExecContext ec = server.getExecContext();
+    PlanManager pm = ec.getPlanMgr();
+    QueryManager qm = ec.getQueryMgr();
+    ArrayList<Integer> qids= pm.getRootQueryIds();
+    String[] res = new String[qids.size()];
+    for (int i = 0; i < qids.size(); i++) 
+    {
+      Integer qid = qids.get(i);
+      Query q = null;
+      try 
+      {
+        q = qm.getQuery(qid);
+      }
+      catch(MetadataException e)
+      {
+        LogUtil.fine(LoggerType.TRACE, e.toString());
+      }
+      String r = qid + " : " + q.getName();
+      res[i] = r;
+    }
+    return res;
+  }
+}
+

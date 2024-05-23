@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Mediator name="OrderMediator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+	<operation name="initiate" deliveryPolicy="AllOrNothing" priority="0">
+		<switch>
+		     <case  name="OrderEvent" executionType="direct">
+			<action>
+			   <transform>
+		             <part name="$out.Order" function="xsl(OrderTransform.xsl,$in.payload)"/>
+   			   </transform>
+			   <raise xmlns:Order="http://www.globalcompany.com/ns/CEP/" event="Order:OrderEvent" />
+			</action>
+                     </case >
+		</switch>
+	</operation>
+</Mediator>

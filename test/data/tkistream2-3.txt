@@ -1,0 +1,10 @@
+i, f, c 32, s
+1000 + 10, 0.0, "Oracle Complex Event Processing"
+1001 + 11, 0.1, "Oracle Complex Event Processing"
+1002 + 12, 0.1, "Oracle Complex Event Processing"
+1002 + 12, 0.0, "Oracle Complex Event Processing - II"
+1003 - 10, 0.0, "Oracle Complex Event Processing"
+1003 - 11, 0.1, "Oracle Complex Event Processing"
+1003 - 12, 0.1, "Oracle Complex Event Processing"
+1004 + 14, 0.0, "Oracle Complex Event Processing - II"
+h 200000000

@@ -1,0 +1,7 @@
+1000:+ false
+2000:+ false
+3000:+ false
+4000:+ false
+5000:+ true
+6000:+ false
+7000:+ true

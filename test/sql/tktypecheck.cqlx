@@ -1,0 +1,30 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tktypecheck_S1 (c1 interval) </CEP_DDL>
+<CEP_DDL> create stream tktypecheck_S2 (c1 int, c2 float) </CEP_DDL>
+
+<CEP_DDL> create function tktypecheck_foo1( i1 integer, f2 float, f3 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo12" </CEP_DDL>
+<CEP_DDL> create function tktypecheck_foo1( f1 float, i2 integer, f3 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo12" </CEP_DDL>
+<CEP_DDL> create function tktypecheck_foo1( i1 integer, i2 integer, f3 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo12" </CEP_DDL>
+<CEP_DDL> create function tktypecheck_foo31( f1 float, i2 integer) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo31" </CEP_DDL>
+<CEP_DDL> create function tktypecheck_foo31( i1 integer, f2 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo31" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tktypecheck_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tktypecheckInp.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tktypecheck_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS100.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_no_equal_args as select tktypecheck_foo1(1,2) from tktypecheck_S1[range 2] </CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_no_coversion as select c1*c1 from tktypecheck_S1[range 2] </CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_ambiguous as select tktypecheck_foo31(1,2) from tktypecheck_S1[range 2] </CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_temp_ambiguous as select tktypecheck_foo1(1,1,1) from tktypecheck_S1[range 2] </CEP_DDL>
+
+<CEP_DDL> create query tktypecheck_test_sum_notallowed as select sum(c1) from tktypecheck_S1[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_sum_allowed as select sum(c1) from tktypecheck_S2[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_max_notallowed as select max(c1) from tktypecheck_S1[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_max_allowed as select max(c1) from tktypecheck_S2[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_min_notallowed as select min(c1) from tktypecheck_S1[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_min_allowed as select min(c1) from tktypecheck_S2[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_avg_notallowed as select avg(c1) from tktypecheck_S1[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_avg_allowed as select avg(c1) from tktypecheck_S2[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_count_notallowed as select count(c1) from tktypecheck_S1[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_count_allowed as select count(c1) from tktypecheck_S2[range 2]</CEP_DDL>
+<CEP_DDL> create query tktypecheck_test_count_star as select count(*) from tktypecheck_S1[range 2]</CEP_DDL> 
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>
+

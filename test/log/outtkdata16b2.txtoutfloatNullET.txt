@@ -1,0 +1,20 @@
+/
+/ $Header: outtkdata16b2.txtoutfloatNullET.txt 19-jan-2007.14:17:19 parujain Exp $
+/
+/ outtkdata16b2.txtoutfloatNullET.txt
+/
+/ Copyright (c) 2007, Oracle. All Rights Reserved.
+/
+/   NAME
+/     outtkdata16b2.txtoutfloatNullET.txt - <one-line expansion of the name>
+/
+/   DESCRIPTION
+/     <short description of component this file declares/defines>
+/
+/   NOTES
+/     <other useful comments, qualifications, etc.>
+/
+/   MODIFIED   (MM/DD/YY)
+/   parujain    01/19/07 - Creation
+/
+

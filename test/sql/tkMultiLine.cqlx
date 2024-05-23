@@ -1,0 +1,40 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkMultiLine_S1 (c1 float, c2 char(100), c3 integer) </CEP_DDL>
+<CEP_DDL> register stream tkMultiLine_S2 (c1 float, c2 char(100), c3 integer) </CEP_DDL>
+<CEP_DDL> register stream tkMultiLine_S3 (c1 float, c2 char(100), c3 integer) is system timestamped</CEP_DDL>
+<CEP_DDL> register relation tkMultiLine_R1 (c1 byte(15), c2 char(100), c3 double, c4 timestamp) </CEP_DDL>
+<CEP_DDL> register relation tkMultiLine_R2 (c1 byte(15), c2 char(100), c3 double, c4 timestamp) </CEP_DDL>
+<CEP_DDL> register relation tkMultiLine_R3 (c1 byte(15), c2 char(100), c3 double, c4 timestamp) is system timestamped</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter stream tkMultiLine_S1 add source "<EndPointReference><Address>mlffile://@TEST_DATA@/tkMultiLine.txt</Address></EndPointReference>"]]>  </CEP_DDL>  
+
+<CEP_DDL><![CDATA[ alter relation tkMultiLine_R1 add source "<EndPointReference><Address><Type>mlffile</Type><FileName>//@TEST_DATA@/tkMultiLine1.txt</FileName><Arguments><fs>;</fs><ec>$</ec></Arguments></Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter stream tkMultiLine_S2 add source "<EndPointReference><Address>mlffile://@TEST_DATA@/tkMultiLine2.txt?fs=;%26ec=$</Address></EndPointReference>"]]>  </CEP_DDL>  
+
+<CEP_DDL><![CDATA[ alter relation tkMultiLine_R2 add source "<EndPointReference><Address><Type>mlffile</Type><FileName>//@TEST_DATA@/tkMultiLine3.txt</FileName></Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter stream tkMultiLine_S3 add source "<EndPointReference><Address>mlffile://@TEST_DATA@/tkMultiLine4.txt</Address></EndPointReference>"]]>  </CEP_DDL>  
+
+<CEP_DDL><![CDATA[ alter relation tkMultiLine_R3 add source "<EndPointReference><Address><Type>mlffile</Type><FileName>//@TEST_DATA@/tkMultiLine5.txt</FileName></Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> create query tkMultiLine_q1 as select * from tkMultiLine_S1 </CEP_DDL>
+<CEP_DDL> create query tkMultiLine_q2 as select * from tkMultiLine_R1 </CEP_DDL>
+<CEP_DDL> create query tkMultiLine_q3 as select * from tkMultiLine_S2 </CEP_DDL>
+<CEP_DDL> create query tkMultiLine_q4 as select * from tkMultiLine_R2 </CEP_DDL>
+<CEP_DDL> create query tkMultiLine_q5 as select * from tkMultiLine_S3 </CEP_DDL>
+<CEP_DDL> create query tkMultiLine_q6 as select * from tkMultiLine_R3 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMultiLine_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMultiline1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMultiLine_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMultiline2.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkMultiLine_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMultiline3.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkMultiLine_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMultiline4.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkMultiLine_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMultiline5.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkMultiLine_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMultiline6.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> alter query tkMultiLine_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkMultiLine_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkMultiLine_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkMultiLine_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkMultiLine_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkMultiLine_q6 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

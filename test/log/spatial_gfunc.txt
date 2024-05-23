@@ -1,0 +1,2 @@
+/ade/hopark_cep14/cep/wlevs_cql/modules/cqlengine/test/log/spatial_gfunc.txt does not exist
+/ade/hopark_cep14/cep/wlevs_cql/modules/cqlengine/test/log/spatial_gfunc.txt does not exist

@@ -1,0 +1,24 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> 
+         register stream tk8536565_S1 (c1 integer, c2 integer, c3 integer, c4 integer, c5 integer,
+                                       c6 integer, c7 integer, c8 integer, c9 integer, c10 integer,
+                                       c11 integer, c12 integer,c13 integer, c14 integer, c15 integer,
+                                       c16 integer, c17 integer,c18 integer, c19 integer, c20 integer,
+                                       c21 integer, c22 integer,c23 integer, c24 integer, c25 integer,
+                                       c26 integer)
+</CEP_DDL>
+<CEP_DDL> 
+         register stream tk8536565_S2 (d1 integer, d2 integer, d3 integer, d4 integer, d5 integer,
+                                       d6 integer, d7 integer, d8 integer, d9 integer, d10 integer,
+                                       d11 integer, d12 integer,d13 integer, d14 integer, d15 integer,
+                                       d16 integer, d17 integer,d18 integer, d19 integer, d20 integer,
+                                       d21 integer, d22 integer,d23 integer, d24 integer, d25 integer,
+                                       d26 integer)
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk8536565_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inp8536565.txt</Address></EndPointReference>"]]></CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tk8536565_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inp8536565.txt</Address></EndPointReference>"]]></CEP_DDL>                
+<CEP_DDL> create query tk8536565_q1 as select * from tk8536565_S1[NOW], tk8536565_S2[NOW]</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk8536565_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8536565.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tk8536565_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

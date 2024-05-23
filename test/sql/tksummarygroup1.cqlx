@@ -1,0 +1,226 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tksummarygroup1_S1 (ad_id integer, location char(100), time_of_day char(30), ad_category char(30), revenue double) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tksummarygroup1_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptksummarygroup1_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<!--
+#####################################################
+Summary Group#1: Compute following summary groups:
+1) Running count all ad_id by ad_category
+2) Running sum of Revenue by time_of_day
+=====================================================
+-->
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v1 as IStream(select count(ad_id) as totalads_by_ad_category, ad_category as ad_category
+ from tksummarygroup1_S1 
+ group by ad_category
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v2 as IStream(select sum(revenue) as sumrevenue_by_timeofday, time_of_day as time_of_day
+ from tksummarygroup1_S1
+ group by time_of_day
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tksummarygroup1_q1 as
+IStream(
+select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+       R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day
+ from tksummarygroup1_v1[now] as R1 
+      left outer join tksummarygroup1_v2[now] as R2 on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+union
+select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+       R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day
+ from tksummarygroup1_v1[now] as R1 
+      right outer join tksummarygroup1_v2[now] as R2 on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+)
+]]></CEP_DDL>
+
+<!--
+#####################################################
+Summary Group#2: Compute following summary groups:
+1) Count all ad_id by ad_category in last 5 seconds
+2) Sum of Revenue by time_of_day in last 5 seconds
+#####################################################
+-->
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v3 as IStream(select count(ad_id) as totalads_by_ad_category, ad_category as ad_category
+ from tksummarygroup1_S1[range 5 seconds] 
+ group by ad_category
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v4 as IStream(select sum(revenue) as sumrevenue_by_timeofday, time_of_day as time_of_day
+ from tksummarygroup1_S1[range 5 seconds] 
+ group by time_of_day
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tksummarygroup1_q2 as
+IStream(
+select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+       R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day
+ from tksummarygroup1_v3[now] as R1 left outer join tksummarygroup1_v4[now] as R2
+ on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+union
+select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+       R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day
+ from tksummarygroup1_v3[now] as R1 right outer join tksummarygroup1_v4[now] as R2
+ on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+)
+]]></CEP_DDL>
+
+<!--
+#####################################################
+  Summary Group#3: Compute following summary groups:
+  1) Count all ad_id by ad_category in last 4 seconds
+  2) Sum of Revenue by time_of_day in last 8 seconds
+#####################################################
+-->
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v5 as IStream(select count(ad_id) as totalads_by_ad_category, ad_category as ad_category
+ from tksummarygroup1_S1[range 4 seconds] 
+ group by ad_category
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v6 as IStream(select sum(revenue) as sumrevenue_by_timeofday, time_of_day as time_of_day
+ from tksummarygroup1_S1[range 8 seconds] 
+ group by time_of_day
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tksummarygroup1_q3 as
+IStream(
+select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+       R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day
+ from tksummarygroup1_v5[now] as R1 left outer join tksummarygroup1_v6[now] as R2
+ on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+union
+select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+       R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day
+ from tksummarygroup1_v5[now] as R1 right outer join tksummarygroup1_v6[now] as R2
+ on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+)
+]]></CEP_DDL>
+
+
+
+
+<!--
+#####################################################
+Summary Group#4: Compute following summary groups:
+1) Running count all ad_id by ad_category
+2) Running sum of Revenue by time_of_day
+3) Running Count of ad_id by location
+=====================================================
+-->
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v7 as IStream(select count(ad_id) as totalads_by_ad_category, ad_category as ad_category
+ from tksummarygroup1_S1 
+ group by ad_category
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v8 as IStream(select sum(revenue) as sumrevenue_by_timeofday, time_of_day as time_of_day
+ from tksummarygroup1_S1
+ group by time_of_day
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v9 as IStream(select count(ad_id) as totalads_by_location, location as location
+ from tksummarygroup1_S1
+ group by location
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tksummarygroup1_q4 as
+IStream(
+  select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+         R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day,
+         R3.totalads_by_location as totalads_by_location, R3.location as location
+ from tksummarygroup1_v7[now] as R1 
+      left outer join tksummarygroup1_v8[now] as R2  on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+      left outer join tksummarygroup1_v9[now] as R3  on R2.ELEMENT_TIME = R3.ELEMENT_TIME  
+union
+  select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+         R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day,
+         R3.totalads_by_location as totalads_by_location, R3.location as location
+  from tksummarygroup1_v7[now] as R1 
+      right outer join tksummarygroup1_v8[now] as R2  on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+      right outer join tksummarygroup1_v9[now] as R3  on R2.ELEMENT_TIME = R3.ELEMENT_TIME
+)
+]]></CEP_DDL>
+
+#####################################################
+Summary Group#5: Compute following summary groups:
+1) Count all ad_id by ad_category in last 5 seconds
+2) Running Sum of Revenue by time_of_day
+3) Running Global Average Revenue
+=====================================================
+-->
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v10 as IStream(select count(ad_id) as totalads_by_ad_category, ad_category as ad_category
+ from tksummarygroup1_S1[range 5 seconds] 
+ group by ad_category
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v11 as IStream(select sum(revenue) as sumrevenue_by_timeofday, time_of_day as time_of_day
+ from tksummarygroup1_S1
+ group by time_of_day
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tksummarygroup1_v12 as IStream(select avg(revenue) as avg_revenue
+ from tksummarygroup1_S1
+)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tksummarygroup1_q5 as
+IStream(
+  select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+         R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day,
+         R3.avg_revenue as avg_revenue
+ from tksummarygroup1_v10[now] as R1 
+      left outer join tksummarygroup1_v11[now] as R2  on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+      left outer join tksummarygroup1_v12[now] as R3  on R2.ELEMENT_TIME = R3.ELEMENT_TIME  
+union
+  select R1.totalads_by_ad_category as totalads_by_ad_category, R1.ad_category as ad_category, 
+         R2.sumrevenue_by_timeofday as sumrevenue_by_timeofday, R2.time_of_day as time_of_day,
+         R3.avg_revenue as avg_revenue
+  from tksummarygroup1_v10[now] as R1 
+      right outer join tksummarygroup1_v11[now] as R2  on R1.ELEMENT_TIME = R2.ELEMENT_TIME
+      right outer join tksummarygroup1_v12[now] as R3  on R2.ELEMENT_TIME = R3.ELEMENT_TIME
+)
+]]></CEP_DDL>
+<!-- Temporary Queries to check intermediate output.
+<CEP_DDL><![CDATA[ create query tksummarygroup1_r1 as select * from tksummarygroup1_v10 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tksummarygroup1_r2 as select * from tksummarygroup1_v11 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tksummarygroup1_r3 as select * from tksummarygroup1_v12 ]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_r1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_r1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_r2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_r2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_r3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_r3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>alter query tksummarygroup1_r1 start</CEP_DDL>
+<CEP_DDL>alter query tksummarygroup1_r2 start</CEP_DDL>
+<CEP_DDL>alter query tksummarygroup1_r3 start</CEP_DDL>
+-->
+
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_q3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_q4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksummarygroup1_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksummarygroup1_q5.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tksummarygroup1_q1 start</CEP_DDL>
+<CEP_DDL>alter query tksummarygroup1_q2 start</CEP_DDL>
+<CEP_DDL>alter query tksummarygroup1_q3 start</CEP_DDL>
+<CEP_DDL>alter query tksummarygroup1_q4 start</CEP_DDL>
+<CEP_DDL>alter query tksummarygroup1_q5 start</CEP_DDL>
+
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

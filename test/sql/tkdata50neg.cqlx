@@ -1,0 +1,10 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata50neg_S50_neg(c1 integer, c2 integer) derived timestamped to_float(c1)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file:///@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkdata50neg_S50_neg(c1 integer, c2 integer) derived timestamped to_float(c1)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata50neg_S50_neg add source "<EndPointReference><Address>file:///@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata50neg_q50_neg as select c1 from tkdata50neg_S50_neg</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata50neg_q1 add destination "<EndPointReference><Address>file:///@TEST_OUTPUT@/outderivedS50neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata50neg_q50_neg start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,12 @@
+25000:- 180,phase2batch1
+25000:- 190,phase2batch1
+25000:- 200,phase2batch1
+25000:+ 230,phase3
+25000:+ 240,phase3
+25000:+ 250,phase3
+30000:- 230,phase3
+30000:- 240,phase3
+30000:- 250,phase3
+30000:+ 280,phase3
+30000:+ 290,phase3
+30000:+ 300,phase3

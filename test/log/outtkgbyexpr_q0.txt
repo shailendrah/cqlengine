@@ -1,0 +1,20 @@
+/
+/ $Header: cep/wlevs_cql/modules/cqlengine/test/log/outtkgbyexpr_q0.txt /main/1 2012/05/02 03:06:15 pkali Exp $
+/
+/ outtkgbyexpr_q0.txt
+/
+/ Copyright (c) 2012, Oracle. All Rights Reserved.
+/
+/   NAME
+/     outtkgbyexpr_q0.txt - <one-line expansion of the name>
+/
+/   DESCRIPTION
+/     <short description of component this file declares/defines>
+/
+/   NOTES
+/     <other useful comments, qualifications, etc.>
+/
+/   MODIFIED   (MM/DD/YY)
+/   pkali       04/11/12 - Creation
+/
+

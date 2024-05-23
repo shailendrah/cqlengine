@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright 2006 BEA Systems, Inc. -->
+
+<!DOCTYPE message_catalog PUBLIC "weblogic-message-catalog-dtd"  "http://www.bea.com/servers/wls710/dtd/msgcat.dtd">
+
+<message_catalog
+  i18n_package="com.oracle.cep.cartridge.jdbc"
+  l10n_package="com.oracle.cep.cartridge.jdbc"
+  subsystem="JdbcCartridge"
+  version="1.0"
+  baseid="2080000"
+  endid ="2080099"
+  loggables="true"
+  prefix="BEA">
+
+    <logmessage messageid="2080000" severity="error" methodtype="getter"
+                method="nullDataSourceValue()">
+
+        <messagebody>
+	    Data source value is null.
+        </messagebody>
+        <messagedetail>
+	    Data source value is null.
+        </messagedetail>
+        <cause>
+	    Null or empty datasource value provided in the context configuration.
+        </cause>
+        <action>
+	    Change the value for the datasource property to be a configured data-source name.
+        </action>
+    </logmessage>
+
+    <logmessage messageid="2080001" severity="error" methodtype="getter"
+                method="invalidReturnComponentType(String typeName, String funcName)">
+
+	<messagebody>
+	    Invalid return component type "{0}" specified for function "{1}". Cannot be found.
+	</messagebody>
+	<messagedetail>
+	    Invalid return component type "{0}" specified for function "{1}". Cannot be found.
+	</messagedetail>
+	<cause>
+	    The specified return component type is either an invalid type or is not accessible.
+	</cause>
+	<action>
+	    Specify a valid return component type. A return component type can either be a native CQL type or java extensible type.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080002" severity="error" methodtype="getter"
+                method="ambiguousReturnComponentType(String typeName, String funcName)">
+
+	<messagebody>
+	    Ambiguous return component type "{0}" specified for function "{1}". 
+	</messagebody>
+	<messagedetail>
+	    Ambiguous return component type "{0}" specified for function "{1}". 
+	</messagedetail>
+	<cause>
+	    The specified return component type cannot be unambiguously inferred.
+	</cause>
+	<action>
+            Correct the  return component type to remove the ambiguity. Ensure the name and link (in case of extensible type) is correct.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080003" severity="error" methodtype="getter"
+                method="duplicateFunctionSignature(String funcName)">
+
+	<messagebody>
+            Function with the same signature already exists in the context. Cannot process "{0}".
+	</messagebody>
+	<messagedetail>
+            Function with the same signature already exists in the context. Cannot process "{0}".
+	</messagedetail>
+	<cause>
+            A function with identical signature is already defined in the same context.
+	</cause>
+	<action>
+            Change the function name or input parameter types to ensure a different signature.
+	</action>
+    </logmessage>		
+
+    <logmessage messageid="2080004" severity="error" methodtype="getter"
+                method="missingFieldInReturnCompType(String fieldName, String funcName)">
+
+	<messagebody>
+            "{0}" not found in the specified return-component-type for function "{1}".
+	</messagebody>
+	<messagedetail>
+            "{0}" not found in the specified return-component-type for function "{1}".            
+	</messagedetail>
+	<cause>
+            A field/alias in the SELECT list of the SQL query defining the function was not found in the return-component-type for that function.
+	</cause>
+	<action>
+            Ensure that the return-component-type has a field corresponding to every field/alias in the SELECT list of the SQL query defining the function. Also ensure that the field is declared as public.
+	</action>
+    </logmessage>
+		
+    <logmessage messageid="2080005" severity="error" methodtype="getter"
+                method="ambiguousFieldInReturnCompType(String funcName, String fieldName)">
+
+	<messagebody>
+            Specified return-component-type for function "{0}" contains multiple fields with name "{1}".
+	</messagebody>
+	<messagedetail>
+            Specified return-component-type for function "{0}" contains multiple fields with name "{1}".
+	</messagedetail>
+	<cause>
+            The return-component-type for a function has multiple fields that have name corresponding to a SELECT list field/alias in the SQL query defining the function.
+	</cause>
+	<action>
+            Ensure that the return-component-type has exactly one field corresponding to every field/alias in the SELECT list of the SQL query defining the function. Also ensure that the field is declared as public.
+	</action>
+    </logmessage>		
+
+    <logmessage messageid="2080006" severity="error" methodtype="getter"
+                method="unsupportedSQLTypeForSelectAlias(String typename, String propName, String funcName)">
+
+	<messagebody>
+            Invalid/unsupported SQL type "{0}" of a select list field/alias  "{1}" in the SQL defining the function "{2}".
+	</messagebody>
+	<messagedetail>
+            Invalid/unsupported SQL type "{0}" of a select list field/alias  "{1}" in the SQL defining the function "{2}".
+	</messagedetail>
+	<cause>
+            Type of a SELECT list field/alias used in the SQL query defining a function is not supported.
+	</cause>
+	<action>
+            Use only supported SQL types in the SELECT list of SQL query that defines a jdbc cartridge context function.
+	</action>
+    </logmessage> 
+
+    <logmessage messageid="2080007" severity="error" methodtype="getter"
+                method="mismatchedTypesForSelectAlias(String expectedKind, String argumentKind, String propName, String funcName)">
+
+	<messagebody>
+            Type mismatch : expected "{0}" found "{1}", for field "{2}" in return-component-type of function "{3}".
+	</messagebody>
+	<messagedetail>
+            Type mismatch : expected "{0}" found "{1}", for field "{2}" in return-component-type of function "{3}".
+	</messagedetail>
+	<cause>
+            The type of the SELECT list field/alias in the SQL query defining the function is not compatible with the type of the corresponding/matching field in the return-component-type for that function.
+	</cause>
+	<action>
+            Ensure that the types are compatible.
+	</action>
+    </logmessage> 
+
+    <logmessage messageid="2080008" severity="error" methodtype="getter"
+                method="incorrectUsageOfNativeCQLType(String funcName)">
+
+	<messagebody>
+            SQL query for function "{0}" has more than one field in SELECT list but the return-component-type specified is a native CQL type.
+	</messagebody>
+	<messagedetail>
+            SQL query for function "{0}" has more than one field in SELECT list but the return-component-type specified is a native CQL type.
+	</messagedetail>
+	<cause>
+            A native CQL type was specified as a return-component-type for a function even though the SELECT list has more than one field.
+ 	</cause>
+	<action>
+            Use properly defined java extensible type as a return-component-type for the function.
+	</action>
+    </logmessage> 
+
+    <logmessage messageid="2080009" severity="error" methodtype="getter"
+                method="typeMismatchForSelectListAlias(String expectedKind, String argumentKind, String funcName">
+
+	<messagebody>
+            Type mismatch : expected (return-component-type) "{0}" found (select list field type) "{1}" for function "{2}".
+	</messagebody>
+	<messagedetail>
+            Type mismatch : expected (return-component-type) "{0}" found (select list field type) "{1}" for function "{2}".
+	</messagedetail>
+	<cause>
+            The type of the SELECT list field/alias in the SQL query defining a function is not compatible with the specified native CQL return component type for that function.
+ 	</cause>
+	<action>
+            Ensure that the types are compatible.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080010" severity="error" methodtype="getter"
+                method="invalidParamName(String paramName, String funcName)">
+
+	<messagebody>
+            Invalid parameter name "{0}" provided for function "{1}".
+	</messagebody>
+	<messagedetail>
+            Invalid parameter name "{0}" provided for function "{1}".
+	</messagedetail>
+	<cause>
+            Parameter name provided is not a valid parameter name.
+ 	</cause>
+	<action>
+            Ensure that the parameter name is valid. Valid parameter names are made using A-Z, a-z, 0-9 and _.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080011" severity="error" methodtype="getter"
+                method="invalidParamType(String typeName, String funcName)">
+
+	<messagebody>
+            Invalid or unsupported parameter type "{0}" provided for function "{1}".
+	</messagebody>
+	<messagedetail>
+            Invalid or unsupported parameter type "{0}" provided for function "{1}".
+	</messagedetail>
+	<cause>
+            Parameter type provided is not a valid or supported parameter type.
+ 	</cause>
+	<action>
+            Use supported native CQL type as the parameter type.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080012" severity="error" methodtype="getter"
+                method="invalidParamInSQL(String funcName, String paramName)">
+
+	<messagebody>
+            SQL for function "{0}" refers "{1}", which is not among valid parameter names for this function.
+	</messagebody>
+	<messagedetail>
+            SQL for function "{0}" refers "{1}", which is not among valid parameter names for this function.
+	</messagedetail>
+	<cause>
+            The parameter name used in the SQL query is not valid/defined for that function.
+ 	</cause>
+	<action>
+            Ensure that the SQL for a function refers only the parameter names that the function defines.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080013" severity="error" methodtype="getter"
+                method="noParamReferred(String funcName, int numArgs)">
+
+	<messagebody>
+            Function "{0}" expects "{1}" parameters but the corresponding SQL provided does not have any reference to parameters.
+	</messagebody>
+	<messagedetail>
+            Function "{0}" expects "{1}" parameters but the corresponding SQL provided does not have any reference to parameters.
+	</messagedetail>
+	<cause>
+            SQL query that defines a function which is declared to have parameters, does not refer them.
+ 	</cause>
+	<action>
+            Ensure that if a function is declared to have parameter(s), then these parameter(s) should be used in the SQL query defining that function.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080014" severity="error" methodtype="getter"
+                method="invalidDataSourceValue(String dataSourceName)">
+
+	<messagebody>
+            Invalid data source name "{0}" provided. Cannot find the data source.	
+	</messagebody>
+	<messagedetail>
+            Invalid data source name "{0}" provided. Cannot find the data source.
+	</messagedetail>
+	<cause>
+            Data source with the provided name could not be found.
+      	</cause>
+	<action>
+            Ensure that the provided data source name is correct and it refers to some valid data source.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080015" severity="error" methodtype="getter"
+                method="nullConnectionObtained(String dataSourceName)">
+
+	<messagebody>
+            Connection object obtained from "{0}" is null.
+	</messagebody>
+	<messagedetail>
+            Connection object obtained from "{0}" is null.
+	</messagedetail>
+	<cause>
+            Connection object obtained from the provided data source is null.
+      	</cause>
+	<action>
+            Ensure that the provided data source is configured correctly and the referred database is accessible.
+	</action>
+    </logmessage>
+
+
+    <logmessage messageid="2080016" severity="error" methodtype="getter"
+                method="cartridgeRegistryNotFound()">
+
+	<messagebody>
+            Cartridge Registry not found.
+	</messagebody>
+	<messagedetail>
+            Cartridge Registry not found.
+	</messagedetail>
+	<cause>
+            Cartridge Registry could not be accessed while trying to add/delete the application context.
+      	</cause>
+	<action>
+            Ensure that Cartridge Registry service is available.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080017" severity="error" methodtype="getter"
+                method="noTableDataSource()">
+
+	<messagebody>
+            External source must have a datasource specified.
+	</messagebody>
+	<messagedetail>
+            External source must have a datasource specified.
+	</messagedetail>
+	<cause>
+            External source has no datasource configured.
+      	</cause>
+	<action>
+            Please configure a valid datasource in the table/cache stage configuration.
+	</action>
+    </logmessage>
+    
+    <logmessage messageid="2080018" severity="error" methodtype="getter"
+                method="invalidTableEventType()">
+
+	<messagebody>
+            External source {0} must be configured with invalid event type.
+	</messagebody>
+	<messagedetail>
+            External source {0} must be configured with invalid event type.
+	</messagedetail>
+	<cause>
+            External source {0} is configured with invalid event type {1}.
+      	</cause>
+	<action>
+            Please configure {0} with a valid event type. Current value - {1}.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080019" severity="error" methodtype="getter"
+                method="unsupportedTablePropType()">
+
+	<messagebody>
+            Property name {0} on event type {1} is of an unsupported type for table stages.
+	</messagebody>
+	<messagedetail>
+            Property name {0} on event type {1} is of an unsupported type for table stages.
+	</messagedetail>
+	<cause>
+            Property name {0} on event type {1} is of an unsupported type for table stages.
+      	</cause>
+	<action>
+            Reconfigure so that all properties on the specified event type are of supported types. Please refer to our documentation for more information about supported types.
+	</action>
+    </logmessage>
+
+    <logmessage messageid="2080020" severity="error" methodtype="getter"
+                method="invalidKeyProperty()">
+
+	<messagebody>
+            Key property {0} specified on table {1} is an invalid property.
+	</messagebody>
+	<messagedetail>
+            Key property {0} specified on table {1} is an invalid property.
+	</messagedetail>
+	<cause>
+            Invalid key property configuration {0} on table {1}.
+      	</cause>
+	<action>
+            Please configure correct key properties on table {1}.
+	</action>
+    </logmessage>
+    
+    <logmessage messageid="2080021" severity="error" methodtype="getter"
+                method="noTableTableName()">
+
+	<messagebody>
+            External source must have a table name specified.
+	</messagebody>
+	<messagedetail>
+            External source must have a table name specified.
+	</messagedetail>
+	<cause>
+            External source has no table name configured.
+      	</cause>
+	<action>
+            Please specify a valid table name in the table stage configuration.
+	</action>
+    </logmessage>        
+    
+    <logmessage messageid="2080022" severity="error" methodtype="getter"
+                method="invalidTableTableName()">
+
+	<messagebody>
+            Table {0} does not exists in data base
+	</messagebody>
+	<messagedetail>
+            Table {0} does not exists in data base
+	</messagedetail>
+	<cause>
+            Table {0} does not exists in data base
+      	</cause>
+	<action>
+            Please ensure that a table  with same as of "table-name" property value exists in database
+	</action>
+    </logmessage>      
+    
+    <logmessage messageid="2080023" severity="error" methodtype="getter"
+                method="invalidTableEventProperty()">
+
+	<messagebody>
+            Column {0} does not exists in database table {1}
+	</messagebody>
+	<messagedetail>
+            Column {0} does not exists in database table {1}
+	</messagedetail>
+	<cause>
+            Column {0} does not exists in database table {1}
+      	</cause>
+	<action>
+            Please ensure that column exists in database table  corresponding to each event property
+	</action>
+    </logmessage>            
+    
+    
+    <logmessage messageid="2080024" severity="warning" methodtype="getter"
+                method="invalidTableKeyPropertiesValue()">
+
+	<messagebody>
+            Table key-properties {0} does not match any primary key or unique index for database table {1}.
+	</messagebody>
+	<messagedetail>
+            Table key-properties {0} does not match any primary key or unique index for database table {1}.  Incorrect key-properties can potentially lead  to data corruption
+	</messagedetail>
+	<cause>
+            Table key-properties {0} does not match any primary key or unique index for database table {1}
+      	</cause>
+	<action>
+            Please specify a valid key-properties value corresponding to  primary key or unique index in database table {1}
+	</action>
+    </logmessage>        
+    
+    
+</message_catalog>

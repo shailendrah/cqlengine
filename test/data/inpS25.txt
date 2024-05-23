@@ -1,0 +1,7 @@
+i, l, c 10
+1000 1, 10, sachin
+2000 2, 20, fedrer
+3000 3, 30, nadal
+4000 4, 40, jokovic
+5000 5, 50, samprass
+h 200000000

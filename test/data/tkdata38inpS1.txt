@@ -1,0 +1,3 @@
+x
+3000 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ns2:XmlTest xmlns:ns2=\"http://www.oracle.com/cep/xml/example\"><attribute-values duration-attr=\"P0Y0M0DT0H0M30.000S\" dateTime-attr=\"2009-05-01T13:03:35.515-07:00\" date-attr=\"2009-05-01-07:00\" boolean-attr=\"true\" float-attr=\"67.89\" double-attr=\"45.67\" decimal-attr=\"12.34\" long-attr=\"200\" integer-attr=\"101\"  int-attr=\"100\" short-attr=\"2\" string-attr=\"A-String-Value\"/> </ns2:XmlTest> "
+h 4000

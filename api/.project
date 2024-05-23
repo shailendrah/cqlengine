@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>cqlengine.api</name>
+	<comment></comment>
+	<projects/>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments/>
+		</buildCommand>
+	</buildSpec>
+	<linkedResources>
+		<link>
+			<name>flex-generated</name>
+			<type>2</type>
+			<location>/home/hopark/gitlocal/soa-osa7/out/build/modules/spark-cql/cqlengine/api/flex-generated</location>
+		</link>
+		<link>
+			<name>yacc-generated</name>
+			<type>2</type>
+			<location>/home/hopark/gitlocal/soa-osa7/out/build/modules/spark-cql/cqlengine/api/yacc-generated</location>
+		</link>
+	</linkedResources>
+</projectDescription>

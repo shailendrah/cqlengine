@@ -1,0 +1,8 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkscale_S (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscale_S add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkscale_q1 as select * from tkscale_S [range @RANGE@] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkscale_q1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outSRng@RANGE@Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>alter query tkscale_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,12 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkscale17_S1 (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscale17_S1 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register stream tkscale17_S2 (c1 integer, c2 integer, c3 float, c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkscale17_S2 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkscale17_v1 (c1 integer, c2 integer, c3 float, c4 float) as select * from tkscale17_S1[range @RANGE@] </CEP_DDL>
+<CEP_DDL> register view tkscale17_v2 (c1 integer, c2 integer, c3 float, c4 float) as select * from tkscale17_S2[range @RANGE@] </CEP_DDL>
+<CEP_DDL> create query tkscale17_q1 as DStream(select * from tkscale17_v1, tkscale17_v2 where tkscale17_v1.c1 = tkscale17_v2.c1) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkscale17_q1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outDStreamJoinViewRng@RANGE@Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkscale17_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

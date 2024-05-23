@@ -1,0 +1,75 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream PriceEvent(cusip char(100), srcId char(100), bid double, bidQty integer, ask double, askQty integer, seq bigint, sector char(100), tsNs bigint) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream PriceEvent add source "<EndPointReference><Address>file://@TEST_DATA@/inpCiti.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>register view Yr3Sector(cusip char(100), bid Double, srcId char(100), bidQty integer, ask Double, askQty integer, seq bigint) as select cusip, bid, srcId, bidQty, ask, askQty, seq from PriceEvent where sector="3_YEAR" </CEP_DDL>
+
+<CEP_DDL>register view lastEvents(cusip char(100), bid Double, srcId char(100), bidQty integer, ask Double, askQty integer, seq bigint) as select * from Yr3Sector[partition by srcId, cusip rows 1] </CEP_DDL>
+
+<CEP_DDL>register view BIDMAX(cusip char(100), seq bigint, srcId char(100), bid double, bidQty integer) as select e.cusip, e.seq, e.srcId, e.bid, e.bidQty from lastEvents as e order by bid desc rows 1 partition by cusip </CEP_DDL>
+
+<CEP_DDL> register view ASKMIN(cusip char(100), seq bigint, srcId char(100), ask double, askQty integer) as select e.cusip, e.seq, e.srcId, e.ask, e.askQty from lastEvents as e order by ask asc rows 1 partition by cusip </CEP_DDL>
+
+<CEP_DDL>create view MAXBIDMINASK(cusip char(100), bidseq bigint, bidSrcId char(100), bid double, askseq bigint, askSrcId char(100), ask double, bidQty integer, askQty integer) as select bid.cusip, bid.seq, bid.srcId as bidSrcId, bid.bid, ask.seq, ask.srcId as askSrcId, ask.ask, bid.bidQty, ask.askQty from BIDMAX as bid, ASKMIN as ask where bid.cusip = ask.cusip </CEP_DDL>
+
+<!-- BBA Processor -->
+
+<CEP_DDL>create view BBAQuery (cusip char(100), bidseq bigint, bidSrcId char(100), bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority int) as 
+RSTREAM(
+select a.cusip, a.bidseq, a.bidSrcId, a.bid as bid, a.askseq, a.askSrcId, a.ask as ask, a.bidQty, a.askQty, "BBAStrategy" as intermediateStrategy, p.seq as correlationId, 1 as priority
+from MAXBIDMINASK as a, Yr3Sector[now] as p
+where a.cusip = p.cusip
+)
+</CEP_DDL>
+
+<CEP_DDL> create query bbaq as select * from BBAQuery </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query bbaq add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcitipattern_bbaq.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query bbaq start </CEP_DDL>
+
+<!-- Analytics Processor -->
+
+<CEP_DDL>create view AnalyticsQuery (cusip char(100), bidseq bigint, bidSrcId char(100), bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority int) as
+RSTREAM (
+select a.cusip, a.bidseq, a.bidSrcId, case p.seq when 3L then a.bid+1 when 9L then a.bid+1 else a.bid-1 end, a.askseq, a.askSrcId, case p.seq when 6L then a.ask-1 when 9L then a.ask-1 else a.ask+1 end, a.bidQty, a.askQty, "ANALYTICSStrategy" as intermediateStragtegy, p.seq as correlationId, 2 as priority
+from MAXBIDMINASK as a, Yr3Sector[now] as p
+where a.cusip = p.cusip
+)
+</CEP_DDL>
+
+<!-- Final Order Event Processing -->
+<!-- take union of the two - bbaquery and analytics query -->
+<CEP_DDL>create view unionOfTwo(cusip char(100), bidseq bigint, bidSrcId char(100), bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority int) as BBAQuery UNION ALL AnalyticsQuery</CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query finalOrderEvent as 
+          select T.cusip, T.bidseq, T.bidSrcId, T.bid, T.bidQty, T.bidSourceStrategy, T.askseq, T.askSrcId, T.ask, T.askQty, T.askSourceStrategy, T.correlationId from unionOfTwo
+        MATCH_RECOGNIZE (
+          PARTITION BY correlationId
+          MEASURES    
+            A.cusip AS cusip,
+            case when A.bid > B.bid then A.bidseq else B.bidseq end AS bidseq,
+            case when A.bid > B.bid then A.bidSrcId else B.bidSrcId end AS bidSrcId,
+            case when A.bid > B.bid then A.bid else B.bid end AS bid,
+            case when A.bid > B.bid then A.bidQty else B.bidQty end AS bidQty,
+            case when A.bid > B.bid then A.intermediateStrategy else B.intermediateStrategy end AS bidSourceStrategy,
+            case when A.ask < B.ask then A.askseq else B.askseq end AS askseq,
+            case when A.ask < B.ask then A.askSrcId else B.askSrcId end AS askSrcId,
+            case when A.ask < B.ask then A.ask else B.ask end AS ask,
+            case when A.ask < B.ask then A.askQty else B.askQty end AS askQty,
+            case when A.ask < B.ask then A.intermediateStrategy else B.intermediateStrategy end AS askSourceStrategy,
+            A.correlationId AS correlationId
+          PATTERN (A B)   
+          DEFINE
+            A as (1=1)
+        ) as T
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query finalOrderEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcitipattern_FOE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query finalOrderEvent start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+
+</CEP>

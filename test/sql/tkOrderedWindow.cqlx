@@ -1,0 +1,83 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkOrderedWindow_S0 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkOrderedWindow_S1 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkOrderedWindow_S2 (symbol char(4), val bigint) </CEP_DDL>
+<CEP_DDL> create stream tkOrderedWindow_S3 (symbol char(4), val bigint, category char(8)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkOrderedWindow_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkOrderedWindow_S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkOrderedWindow_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkOrderedWindow_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkOrderedWindow_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkOrderedWindow_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkOrderedWindow_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkOrderedWindow_S3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create view tkOrderedWindow_v0(d1 integer, d2 integer) as select c1,c2 from tkOrderedWindow_S0 order by c1,c2 rows 5</CEP_DDL>
+<CEP_DDL> create view tkOrderedWindow_v1(d1 integer, d2 integer) as select c1,c2 from tkOrderedWindow_S1 order by c1,c2 rows 5</CEP_DDL>
+
+<CEP_DDL> create query tkOrderedWindow_q1 as select c1 ,c2 from tkOrderedWindow_S0 order by c1,c2 rows 5</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q2 as select c1 ,c2 from tkOrderedWindow_S0 order by c1 asc,c2 desc rows 5</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q3 as select c1 ,c2 from tkOrderedWindow_S1 order by c1 asc nulls first,c2 desc nulls last rows 5</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q4 as select * from tkOrderedWindow_S0[rows 2] order by c1,c2 desc rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q5 as select * from tkOrderedWindow_S0[rows 2] order by c1,c2 desc rows 5 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q6 as select * from tkOrderedWindow_S0[rows 5] order by c1 nulls first,c2 desc nulls first rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q7 as select c1 as d1, c2 as d2 from tkOrderedWindow_S0[range 2] order by c1 desc, c2 asc rows 4</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q8 as select c1,c2 from tkOrderedWindow_S0[rows 2] order by c1 * 2 desc, c2 desc rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q9 as select * from tkOrderedWindow_S0[rows 2] order by c1,c2,c3 rows 3</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q10 as select c1 as d1, c2 as d2 from tkOrderedWindow_S0 order by d1 desc, d2 asc rows 3</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q11 as select d1 * 2, d2 + 5 from tkOrderedWindow_v0 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q12 as select table1.d1, table2.d1, table1.d2 from tkOrderedWindow_v0 as table1 , tkOrderedWindow_v1 as table2 where table1.d2 = table2.d2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q13 as select max(d1), min(d2) from tkOrderedWindow_v0 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q14 as select symbol, val from tkOrderedWindow_S2 partition by symbol order by val desc rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q15 as select symbol, val from tkOrderedWindow_S2 partition by symbol order by val asc rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q16 as select symbol, val from tkOrderedWindow_S2[range 1] partition by symbol order by val asc rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q17 as select symbol, category, val from tkOrderedWindow_S3 partition by symbol, category order by val asc rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q18 as select symbol, category, val from tkOrderedWindow_S3 partition by symbol,category order by val desc rows 2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q19 as select val from tkOrderedWindow_S2  partition by symbol order by val rows 2</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q20 as select c1 as col1  from tkOrderedWindow_S0 partition by 1 order by c2 rows 5</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q21 as select c1,c2 * 1 as col2  from tkOrderedWindow_S0 order by col2,c1 rows 5</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q22 as select c1,c2 * 1 as col2 from tkOrderedWindow_S0 order by c1,c2 rows 5</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q23 as select c1,c2 * 1 as col2 from tkOrderedWindow_S0 order by null </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q24 as select c1 * 2 as col1 ,c2 as col2 from tkOrderedWindow_S0 order by c1,2 rows 5 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q25 as select c1  as col1 ,c2 as col2 from tkOrderedWindow_S0[rows 2] order by element_time rows 1</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q26 as select c1 from tkOrderedWindow_S0[rows 2] group by c2 order by c1 rows 2 partition by c2 </CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q27 as select c1 from tkOrderedWindow_S0[rows 2] group by c2 order by c1</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q28 as select sum(c1) from tkOrderedWindow_S0[rows 2] group by c2 order by c1 rows 5</CEP_DDL>
+<CEP_DDL> create query tkOrderedWindow_q29 as select c2 from tkOrderedWindow_S0[rows 2] group by c2 having sum(c1) > 20 order by c1 rows 5</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q18 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q19 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q22 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q22.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q24 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q24.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderedWindow_q25 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderedWindow_q25.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkOrderedWindow_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q2 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q3 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q4 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q5 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q6 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q7 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q11 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q12 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q13 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q14 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q15 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q16 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q17 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q18 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q19 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q22 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q24 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderedWindow_q25 start</CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

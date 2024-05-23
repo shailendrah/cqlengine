@@ -1,0 +1,16 @@
+Bundle-Version: ${wlevs.version}
+Bundle-SymbolicName: com.oracle.cep.cartridge.java
+Bundle-Description: OCEP Data Cartridge for Java
+Extension-Name: oep.cartridge.java
+Export-Package: com.oracle.cep.cartridge.java;version=${oracle.cep.version}
+Import-Package: oracle.cep.*;version=${oracle.cep.version},\
+  com.bea.wlevs.spring.support;version=${oracle.cep.version},\
+  org.apache.commons.logging;version=${apache.logging.version},\
+  org.osgi.framework,\
+  org.springframework.osgi*;version=${spring.osgi.version},\
+  org.springframework*;version=${spring.version},\
+  org.springframework.osgi.service.exporter.support;version=${spring.osgi.version},\
+  org.springframework.osgi.service.importer.support;version=${spring.osgi.version},\
+  weblogic.logging,\
+  weblogic.i18n.logging
+

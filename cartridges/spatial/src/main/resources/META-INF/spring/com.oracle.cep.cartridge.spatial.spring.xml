@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--  $Header: cep/wlevs_cql/modules/cqlengine/cartridges/spatial/src/main/resources/META-INF/spring/com.oracle.cep.cartridge.spatial.spring.xml /main/2 2009/11/23 21:04:56 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2009, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     com.oracle.cep.cartridge.spatial.spring.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      09/03/09 - Creation
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+  
+  <osgi:reference id="cartridgeMgr" interface="oracle.cep.service.ICartridgeRegistry" />
+  
+  <bean class="com.oracle.cep.cartridge.spatial.SpatialCartridge" 
+    factory-method="createInstance">
+    <constructor-arg ref="cartridgeMgr" />
+  </bean>
+    
+</beans>

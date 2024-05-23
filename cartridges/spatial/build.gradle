@@ -1,0 +1,172 @@
+applyTemplate 'msgcat'
+applyTemplate 'jaxb'
+applyTemplate 'jacoco'
+
+
+//Disable BDB Usage
+sourceSets.main.java.excludes += '**/NWS**'
+sourceSets.test.java.excludes += '**/TestNWS**'
+
+dependencies
+{
+    compile project(":modules:common-util")
+    compile project(":modules:spark-cql:cqlengine:server")
+    compile project(":modules:spark-cql:cqlengine:logging")
+    compile project(":modules:spark-cql:cqlengine:cartridges:java")
+    compile project(":modules:spark-cql:cqlengine:cartridges:geocodedb")
+    compile libraries.cep_sdo_api
+    compile libraries.cep_sdo_topo
+    compile libraries.cep_sdo_utl
+    compile libraries.cep_google_gson
+    //compile libraries.xerces
+    testCompile project(":modules:spark-cql:cqlengine:server").sourceSets.test.output
+    testCompile "commons-io:commons-io:+"
+}
+
+ext { 
+    spark_master_url = 'spark://'+System.getenv('IPADDR')+':7077'
+    spark_rest_url = System.getenv('IPADDR')+':6066'
+    kafka_brokers = System.getenv('KAFKA_HOST')+':9092'
+    zookeeper_connect = System.getenv('KAFKA_HOST')+':2181'
+    //TODO examples should not be added to extraClassPath
+    //It should be in "-Dspark.jars"
+    //Currently, we get classNotFoundException withtout it.
+    spark_executor_extraClasspath = System.getenv('SPARKCQL_CORE_SJAR')+System.getenv('PATH_SPLIT')+System.getenv('SPARKCQL_EXAMPLE_JAR')
+    spark_driver_extraClasspath =  System.getenv('SPARKCQL_CORE_SJAR')+System.getenv('PATH_SPLIT')+System.getenv('SPARKCQL_EXAMPLE_JAR')
+    spark_app_jar = System.getenv('SPARKCQL_EXAMPLE_JAR')
+    spark_no_cqlengine = '2'
+    kafka_src_topics = 'ITsparkcqlsrc'
+    kafka_src2_topics = 'ITsparkcqlsrc2'
+    kafka_dest_topic = 'ITsparkcqldest'
+    kafka_monitor_topic = 'ITsparkcqlmonitor'
+    acks = '1'
+    buffer_memory = '7108864'
+    batch_size = '8196'
+    request_required_acks = '1'
+    key_serializer = 'org.apache.kafka.common.serialization.StringSerializer'
+    value_serializer = 'org.apache.kafka.common.serialization.StringSerializer'
+    consumer_timeout_ms = '30000'
+    hadoop_home_dir = System.getenv('HADOOP_HOME')
+    docker_systemProperties = [
+        'spark.master.url': '',
+        'spark.rest.url': '',
+        'spark.executor.extraClasspath': System.getProperty('spark.executor.extraClasspath', spark_executor_extraClasspath),
+        'spark.driver.extraClasspath': System.getProperty('spark.driver.extraClasspath', spark_driver_extraClasspath),
+        'spark.app.jar': System.getProperty('spark.app.jar', spark_app_jar),
+        'spark.executor.extraJavaOptions': '-Dhadoop.home.dir='+System.getenv('HADOOP_HOME')+' -Ddb.properties='+System.getenv('OUT_ROOT')+System.getenv('PATH_SPLIT')+'db.properties',
+        'spark.driver.extraJavaOptions': '-Ddb.properties='+System.getenv('OUT_ROOT')+System.getenv('PATH_SPLIT')+'db.properties',
+        'spark.streaming.receiver.writeAheadLogs.enable': 'true',
+        'spark.streaming.snapshot.hdfs.dir': '/tmp',
+        'zookeeper.connect': '',
+        'kafka.brokers': '',
+        'kafka.src.topics': System.getProperty('kafka.src.topics', kafka_src_topics),
+        'kafka.src2.topics': System.getProperty('kafka.src2.topics', kafka_src2_topics),
+        'kafka.dest.topic': System.getProperty('kafka.dest.topic', kafka_dest_topic),
+        'kafka.monitor.topic': System.getProperty('kafka.monitor.topic', kafka_monitor_topic),
+        'acks': System.getProperty('acks', acks),
+        'buffer.memory': System.getProperty('buffer.memory', buffer_memory),
+        'batch.size': System.getProperty('batch.size', batch_size),
+        'request.required.acks': System.getProperty('request.required.acks', request_required_acks),
+        'key.serializer': System.getProperty('key.serializer', key_serializer),
+        'value.serializer': System.getProperty('value.serializer', value_serializer),
+        'consumer.timeout.ms': System.getProperty('consumer.timeout.ms', consumer_timeout_ms),
+        'hadoop.home.dir': hadoop_home_dir
+    ]
+}
+
+
+// JAXB configuration
+jaxb.schemaDir=file('src/main/resources/schema')
+jaxb.bindingDir=file('src/main/resources')
+jaxb.sets.req = [
+        schemaInclude:  [ '**/osrxml_req.xsd' ],
+        bindingInclude: [ '**/osrxml_req.xjb' ],
+        packageName:    'com.oracle.cep.cartridge.spatial.router.osrxml.req'
+]
+jaxb.sets.resp = [
+        schemaInclude:  [ '**/osrxml_resp.xsd' ],
+        bindingInclude: [ '**/osrxml_resp.xjb' ],
+        packageName:    'com.oracle.cep.cartridge.spatial.router.osrxml.resp'
+]
+jaxb.sets.georeq = [
+        schemaInclude:  [ '**/geocoder_request.xsd' ],
+        bindingInclude: [ '**/geocoder_request.xjb' ],
+        packageName:    'com.oracle.cep.cartridge.spatial.geocode.osgxml.req'
+]
+jaxb.sets.georesp = [
+        schemaInclude:  [ '**/geocoder_resp.xsd' ],
+        bindingInclude: [ '**/geocoder_resp.xjb' ],
+        packageName:    'com.oracle.cep.cartridge.spatial.geocode.osgxml.resp'
+]
+
+test{
+    outputs.upToDateWhen {false}
+    include "**/spatial/*.class"
+    include "**/geocode/*.class"
+    include "**/geodesic/*"
+    include "**/rcs/*"
+    include "**/rtreeindex/*"
+
+    systemProperty 'http.proxyHost', 'www-proxy-hqdc.us.oracle.com'
+    systemProperty 'http.proxyPort', '80'
+    systemProperty 'osa.spatial.url', 'http://elocation.oracle.com/geocoder/gcserver'
+
+}
+
+task testSpatial(type: Test) {
+    outputs.upToDateWhen {false}
+    useJUnit()
+
+    systemProperty 'http.proxyHost', 'www-proxy-hqdc.us.oracle.com'
+    systemProperty 'http.proxyPort', '80'
+    systemProperty 'osa.spatial.url', 'http://elocation.oracle.com/geocoder/gcserver'
+    systemProperty 'ade.view.root', "${rootDir}"
+    systemProperty 'test.inputFolder', '../../test/data'
+    systemProperty 'test.outputFolder', "${buildDir}"
+    systemProperty 'twork', "${buildDir}"
+
+    exclude "**/TestGeometryGeodetic.java"
+    exclude "**/TestJsonUtil.java"
+    exclude "**/HATest*"
+}
+
+task testHaSpatial(type: Test) {
+    outputs.upToDateWhen {false}
+    useJUnit()
+
+    systemProperty 'http.proxyHost', 'www-proxy-hqdc.us.oracle.com'
+    systemProperty 'http.proxyPort', '80'
+    systemProperty 'osa.spatial.url', 'http://elocation.oracle.com/geocoder/gcserver'
+    systemProperty 'ade.view.root', "${rootDir}"
+    systemProperty 'test.inputFolder', 'src/test/resources/data/ha'
+    systemProperty 'test.outputFolder', "${buildDir}"
+    systemProperty 'test.logFolder', 'src/test/resources/log/ha'
+    systemProperty 'twork', "${buildDir}"
+
+    include "**/HATest*"
+}
+
+task testQaSpatial(type: Test) {
+    outputs.upToDateWhen {false}
+    useJUnit()
+
+    classpath = sourceSets.test.output + project(":modules:spark-cql:test").sourceSets.integrationtest.runtimeClasspath
+
+    include "**/geostream/*"
+
+    systemProperty 'http.proxyHost', 'www-proxy-hqdc.us.oracle.com'
+    systemProperty 'http.proxyPort', '80'
+    systemProperty 'osa.spatial.url', 'http://elocation.oracle.com/geocoder/gcserver'
+    systemProperties = docker_systemProperties
+    testLogging {
+    events "passed", "skipped", "failed" //, "standardOut", "standardError"
+    afterSuite { desc, result ->
+        if (!desc.parent) { // will match the outermost suite
+            def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+            def startItem = '|  ', endItem = '  |'
+            def repeatLength = startItem.length() + output.length() + endItem.length()
+            println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+        }
+    }
+}
+}

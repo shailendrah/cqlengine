@@ -1,0 +1,19 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkdata61_S (c1 char(30))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkdata61_S add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata61inpS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkdata61_q1 as select XMLCONCAT(XMLPARSE(CONTENT c1), xmlcomment("this is a test")) from tkdata61_S</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ create query tkdata61_q2 as select XMLCONCAT(XMLPARSE(DOCUMENT '<this>is</this>'),xmlcomment(c1), xmlcdata("the quick brown fox jumps over the lazy dog")) from tkdata61_S]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata61_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata61_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata61_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata61_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkdata61_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata61_q2 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

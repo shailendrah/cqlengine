@@ -1,0 +1,12 @@
+1000000000:+ <column name="K">10.3</column>
+
+1000000000:+ <column name="K">20.7</column>
+
+1200000000:+ <column name="K">20.5</column>
+
+1200000000:+ <column name="K">15.9</column>
+
+1200000000:+ <column name="K">20.9</column>
+
+1300000000:+ <column name="K">20.6</column>
+

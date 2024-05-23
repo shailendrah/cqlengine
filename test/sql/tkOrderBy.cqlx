@@ -1,0 +1,29 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkOrderBy_S0 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkOrderBy_S1 (c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkOrderBy_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkOrderBy_S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkOrderBy_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkOrderBy_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkOrderBy_q1 as select c1,c2 from tkOrderBy_S0 order by 1 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q2 as select c1, c2 from tkOrderBy_S0 order by 5 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q3 as select c1, c2, c2 from tkOrderBy_S1 order by c1 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q4 as select c1, c2 from tkOrderBy_S0 order by c1 * 4 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q5 as select c1, c2 * 4 from tkOrderBy_S0 order by c2 * -1 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q6 as select c1, c2 * -1 as d1 from tkOrderBy_S0 order by d1 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q7 as select c1 as d1, c2 as d2 from tkOrderBy_S0 order by c1 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q8 as select c1 * 2 as d1, c2 from tkOrderBy_S0 order by c1 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q9 as select c1 * 2 as d1, c2 from tkOrderBy_S0 order by d1 * -1</CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q10 as select c1 as d1 from tkOrderBy_S0 order by c2 </CEP_DDL>
+<CEP_DDL> create query tkOrderBy_q11 as select c1 as d1 from tkOrderBy_S0 order by d1 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkOrderBy_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderBy_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderBy_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderBy_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkOrderBy_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkOrderBy_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkOrderBy_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderBy_q3 start</CEP_DDL>
+<CEP_DDL> alter query tkOrderBy_q7 start</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

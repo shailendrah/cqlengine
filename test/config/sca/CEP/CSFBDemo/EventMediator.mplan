@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Mediator name="EventMediator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.oracle.com/sca/1.0/mediator">
+	<eventHandler xmlns:Order="http://www.globalcompany.com/ns/CEP/" event="Order:OrderAlert" >
+		<switch>
+		     <case  name="OrderAlert" executionType="direct">
+			<action>
+			   <invoke operation="sendMessage" reference="OrderAlertProcessor" />
+			</action>
+                     </case >
+		</switch>
+	</eventHandler>
+</Mediator>

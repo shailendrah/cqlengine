@@ -1,0 +1,100 @@
+<bindings xmlns="http://java.sun.com/xml/ns/jaxb"
+          xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+          xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance"
+          xmlns:xs="http://www.w3.org/2001/XMLSchema"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          version="2.1">
+  
+  <!-- 
+   in order to create XmlRootElement for route_response
+   Without this, we get 
+   javax.xml.bind.UnmarshalException: unexpected element (uri:"", local:"route_response"). 
+   Expected elements are (none)
+  -->
+  <globalBindings>
+    <xjc:simple/>
+  </globalBindings>
+    
+     <bindings schemaLocation="osrxml_resp.xsd" node="//xs:complexType[@name='routeType']" >
+          <bindings node=".//xs:attribute[@name='start_location']">
+              <property name="routeStartLocation"/>
+          </bindings>
+          <bindings node=".//xs:attribute[@name='end_location']">
+              <property name="routeEndLocation"/>
+          </bindings>
+    </bindings>
+<!--    
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/geometryPrimitives.xsd" node="//xs:element[@name='Arc']" >
+        <class name="GmlArc" />
+        <factoryMethod name="GmlArcFactory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/geometryPrimitives.xsd" node="//xs:complexType[@name='ArcType']" >
+        <class name="GmlArcType" />
+        <factoryMethod name="GmlArcTypeFactory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/geometryPrimitives.xsd"  node="//xs:element[@name='_Solid']" >
+        <factoryMethod name="Solid2Factory"/>
+    </bindings>
+
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/defaultStyle.xsd"  node="//xs:element[@name='_Style']" >
+        <factoryMethod name="Style2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/defaultStyle.xsd"  node="//xs:element[@name='featureStyle']" >
+        <factoryMethod name="FeatureStyle2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/defaultStyle.xsd"  node="//xs:element[@name='geometryStyle']" >
+        <factoryMethod name="GeometryStyle2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/defaultStyle.xsd"  node="//xs:element[@name='topologyStyle']" >
+        <factoryMethod name="TopologyStyle2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/defaultStyle.xsd"  node="//xs:element[@name='labelStyle']" >
+        <factoryMethod name="LabelStyle2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/defaultStyle.xsd"  node="//xs:element[@name='graphStyle']" >
+        <factoryMethod name="GraphStyle2Factory"/>
+    </bindings>
+    
+
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"  node="//xs:element[@name='_FeatureCollection']" >
+        <factoryMethod name="FeatureCollection2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/geometryBasic0d1d.xsd"  node="//xs:element[@name='_Curve']" >
+        <factoryMethod name="Curve2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/geometryBasic2d.xsd"  node="//xs:element[@name='_Surface']" >
+        <factoryMethod name="Surface2Factory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/geometryBasic2d.xsd"  node="//xs:element[@name='_Ring']" >
+        <factoryMethod name="Ring2Factory"/>
+    </bindings>
+
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/smil/smil20.xsd"  node="//xs:element[@name='set']" >
+        <factoryMethod name="SmilSetFactory"/>
+    </bindings>
+   
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/smil/smil20.xsd"  node="//xs:element[@name='animateColor']" >
+        <factoryMethod name="SmilAnimateColorFactory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/smil/smil20.xsd"  node="//xs:element[@name='animateMotion']" >
+        <factoryMethod name="SmilAnimateMotionFactory"/>
+    </bindings>
+    <bindings schemaLocation="http://schemas.opengis.net/gml/3.1.1/smil/smil20.xsd"  node="//xs:element[@name='animate']" >
+        <factoryMethod name="SmilAnimateFactory"/>
+    </bindings>
+    
+    <bindings schemaLocation="http://www.w3.org/1999/xlink.xsd">
+        <bindings node="//xs:attributeGroup[@name='locatorAttrs']">
+            <bindings node=".//xs:attribute[@ref='xlink:title']">
+                <property name="locatorTitle"/>
+            </bindings>
+        </bindings>
+        <bindings node="//xs:attributeGroup[@name='arcAttrs']">
+            <bindings node=".//xs:attribute[@ref='xlink:title']">
+                <property name="arcTitle"/>
+            </bindings>
+        </bindings>
+    </bindings>
+-->
+    
+</bindings>

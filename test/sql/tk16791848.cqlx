@@ -1,0 +1,10 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk16791848_S1 (product_id integer, product_type_id integer, name char(20), price double) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk16791848_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16791848_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Negative Test: Check that short is not allowed in the variable range expression. -->
+<CEP_DDL> create query tk16791848_qNeg1 as select product_id, product_type_id, name from tk16791848_S1[range java.lang.Short("2")]</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

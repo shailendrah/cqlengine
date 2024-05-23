@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> alter system time_slice = 7 </CEP_DDL>
+<CEP_DDL> register stream tkdata12_S (c1 integer, c2 float)  </CEP_DDL>
+<CEP_DDL> register relation tkdata12_R (d1 integer, d2 float) is silent</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata12_S add source "<EndPointReference><Address>file://@TEST_DATA@/inpS100.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata12_R add source "<EndPointReference><Address>file://@TEST_DATA@/inpR2-static.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata12_v1 (c1 integer, c2 float) as IStream(select * from tkdata12_R) </CEP_DDL>
+<CEP_DDL> register view tkdata12_v2 (c1 integer, c2 float) as select * from tkdata12_v1[range 1] </CEP_DDL>
+<CEP_DDL> register view tkdata12_v3 (c1 integer, c2 float) as select * from tkdata12_S[now] </CEP_DDL>
+<CEP_DDL> create query tkdata12_q1 as  tkdata12_v3  union all tkdata12_v2 </CEP_DDL> 
+<CEP_DDL> create query tkdata12_q2 as tkdata12_S union all tkdata12_v1 </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkdata12_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out-slide-static.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata12_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

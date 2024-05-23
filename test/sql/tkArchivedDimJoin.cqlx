@@ -1,0 +1,789 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- ************************** -->
+<!--        FACT tables         -->
+<!-- ************************** -->
+
+<CEP_DDL>
+CREATE ARCHIVED RELATION 
+tkArchivedRelBinOp_LeftRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3
+</CEP_DDL>
+
+<CEP_DDL>
+CREATE ARCHIVED RELATION 
+tkArchivedRelBinOp_LeftRel1a(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3
+</CEP_DDL>
+
+<!-- This is to test first tuple which is -ve after snapshot -->
+<CEP_DDL>
+CREATE ARCHIVED RELATION 
+tkArchivedRelBinOp_LeftRel_del(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3
+</CEP_DDL>
+
+
+<!-- ********************************* -->
+<!--         DIMENSION tables          -->
+<!-- ********************************* -->
+
+
+<!-- dimension table but without the dimension flag -->
+<CEP_DDL>
+CREATE ARCHIVED RELATION 
+tkArchivedRelBinOp_RightRel3z(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3
+</CEP_DDL>
+
+<!-- NO DATA dimension tables -->
+
+<!-- first dimension table -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel1(c1 integer, c2 float, c3 bigint, c4 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+</CEP_DDL>
+
+<!-- second dimension table -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel2(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+</CEP_DDL>
+
+<!-- third dimension table -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel3(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+</CEP_DDL>
+
+
+<!-- dimension tables WITH DATA  -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel1a(c1 integer, c2 float, c3 bigint, c4 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+</CEP_DDL>
+
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel2a(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+</CEP_DDL>
+
+<!-- ******************************************************************* -->
+<!-- Set up sources                                                      -->
+<!-- same as for RelBinOp but slightly modified to suit the task at hand -->
+<!-- ******************************************************************* -->
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_LeftRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft2.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_LeftRel1a add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_LeftRel_del add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft_del.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight2.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight2.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel3 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight2.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel1a add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel2a add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel3z add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+
+<!-- ***************************** -->
+<!-- Two way join                  -->
+<!-- ***************************** -->
+<CEP_DDL>
+<![CDATA[ 
+
+create archived view v0 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10))
+as
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1,
+q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel1 as q 
+where p.c1 = q.c1 and p.c2 = q.c2 and  (p.c4 = "second" and q.c4 = "second")
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q0 as select count(*) from v0
+]]>
+</CEP_DDL>
+
+<!-- **************************************** -->
+<!-- Multi-way join cases                     -->
+<!-- This view definition mimics BPM use case -->
+<!-- **************************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v1 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2 float, r_c3 bigint, r_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_LeftRel1 as p, 
+     tkArchivedRelBinOp_RightRel1 as q,
+     tkArchivedRelBinOp_RightRel2 as r
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+ event identifier p_c3
+]]>
+</CEP_DDL>
+
+<!-- First Query -->
+<CEP_DDL>
+<![CDATA[ 
+create query q1a as select count(*) from v1
+]]>
+</CEP_DDL>
+
+<!-- Second Query -->
+<CEP_DDL>
+<![CDATA[ 
+create query q1b as select sum(p_c1) from v1
+]]>
+</CEP_DDL>
+
+<!-- ************************************************** -->
+<!-- Join order: fact on right side                     -->
+<!-- -ve test now                                       -->
+<!-- June 14, 2013: This topology is not longer valid   -->
+<!-- will not throw exception                           -->
+<!-- ************************************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v2 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2 float, r_c3 bigint, r_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_RightRel1 as q,
+     tkArchivedRelBinOp_RightRel2 as r,
+     tkArchivedRelBinOp_LeftRel1 as p     
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+ event identifier p_c3
+]]>
+</CEP_DDL>
+
+<!-- First Query -->
+<CEP_DDL>
+<![CDATA[ 
+create query q2a as select count(*) from v2
+]]>
+</CEP_DDL>
+
+<!-- Second Query -->
+<CEP_DDL>
+<![CDATA[ 
+create query q2b as select sum(p_c1) from v2
+]]>
+</CEP_DDL>
+
+
+<!-- ************************************************** -->
+<!-- Join order: fact on right side                     -->
+<!-- June 14, 2013: This topology is not longer valid   -->
+<!-- -ve test now.                                      -->
+<!-- will not throw exception                           -->
+<!-- ************************************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v2a (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2 float, r_c3 bigint, r_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_RightRel1a as q,
+     tkArchivedRelBinOp_RightRel2a as r,
+     tkArchivedRelBinOp_LeftRel1 as p     
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+ event identifier p_c3
+]]>
+</CEP_DDL>
+
+<!-- First Query -->
+<CEP_DDL>
+<![CDATA[ 
+create query q2aa as select count(*) from v2a
+]]>
+</CEP_DDL>
+
+<!-- Second Query -->
+<CEP_DDL>
+<![CDATA[ 
+create query q2bb as select sum(p_c1) from v2a
+]]>
+</CEP_DDL>
+
+<!-- ******************************************************** -->
+<!-- -ve: join between a fact and dimension but not a view    -->
+<!--    a. Two way join                                       -->
+<!--    b. Three way join                                     -->
+<!-- ******************************************************** -->
+<CEP_DDL>
+<![CDATA[ 
+create query q3a
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4
+from tkArchivedRelBinOp_LeftRel1a as p, 
+     tkArchivedRelBinOp_RightRel1a as q
+where p.c1 = q.c1 and p.c2 = q.c2 and 
+     (p.c4 = "second" and q.c4 = "second")
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q3b
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_LeftRel1a as p,
+     tkArchivedRelBinOp_RightRel1a as q,
+     tkArchivedRelBinOp_RightRel2a as r
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+]]>
+</CEP_DDL>
+
+<!-- ******************************************************** -->
+<!-- Multi way join with change detection (BPM case)          -->
+<!--    (two queries on top of the view)                      -->
+<!-- ******************************************************** -->
+<CEP_DDL>
+<![CDATA[ 
+create archived view v3 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2 float, r_c3 bigint, r_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_LeftRel1 as p,
+     tkArchivedRelBinOp_RightRel1a as q,
+     tkArchivedRelBinOp_RightRel2a as r
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q4a as select count(*) from v3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q4b as select sum(p_c1) from v3
+]]>
+</CEP_DDL>
+
+<!-- ******************************************************** -->
+<!-- Two way join with change detection, one query            -->
+<!-- ******************************************************** -->
+<CEP_DDL>
+<![CDATA[ 
+
+create archived view v4 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10))
+as
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel1a as q 
+where p.c1 = q.c1 and p.c2 = q.c2 and  (p.c4 = "second" and q.c4 = "second")
+event identifier p_c3
+
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q5 as select sum(p_c1) from v4
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************************************** -->
+<!-- Two way join with change detection, one query            -->
+<!-- Test with JoinProject operator                           -->
+<!-- ******************************************************** -->
+<CEP_DDL>
+<![CDATA[ 
+
+create archived view v5 
+(p_c1 integer, p_c2 float, p_c3 bigint, q_c1 integer,
+q_c3 bigint, q_c4 char(10)) 
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, q.c1 as q_c1, q.c3 as q_c3, q.c4 as q_c4 
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel1a as q 
+where p.c1 = q.c1 and p.c3 = q.c3 and (q.c4 = "second") 
+event identifier p_c3
+
+]]>
+</CEP_DDL>
+ 
+<CEP_DDL>
+<![CDATA[ 
+create query q6 as select sum(p_c1) from v5
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************************************* -->
+<!-- F x D1 x D2                                             -->
+<!--    Only D2 changes                                      -->
+<!-- ******************************************************* -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v6 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2
+float, r_c3 bigint, r_c4 char(10)) as
+
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1,
+q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4, r.c1 as r_c1, r.c2 as r_c2, r.c3 as
+r_c3, r.c4 as p_c4 
+
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel2 as r,
+     tkArchivedRelBinOp_RightRel1a as q
+         
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q7 as select sum(p_c1) from v6
+]]>
+</CEP_DDL>
+
+<!-- ******************************************************* -->
+<!-- F x D1 x D2                                             -->
+<!--    Only D1 changes                                      -->
+<!-- ******************************************************* -->
+<CEP_DDL>
+<![CDATA[ 
+create archived view v6a (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2
+float, r_c3 bigint, r_c4 char(10)) as
+
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1,
+q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4, r.c1 as r_c1, r.c2 as r_c2, r.c3 as
+r_c3, r.c4 as p_c4 
+
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel2a as r,
+     tkArchivedRelBinOp_RightRel1 as q
+         
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+
+
+<CEP_DDL>
+<![CDATA[ 
+create query q7a as select sum(p_c1) from v6a
+]]>
+</CEP_DDL>
+
+<!-- ********************************************************** -->
+<!--                                                            -->
+<!-- TEST CASE WITH A MIX OF DIMENSION AND NON-DIMENSION TABLES -->
+<!-- June 17, 2013: This is no longer a valid special join      -->
+<!--                topology. It is a -ve test now.             -->
+<!--                                                            -->
+<!-- ********************************************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v7 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2
+float, r_c3 bigint, r_c4 char(10)) as
+
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1,
+q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4, r.c1 as r_c1, r.c2 as r_c2, r.c3 as
+r_c3, r.c4 as p_c4 
+
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel2a as r,
+     tkArchivedRelBinOp_RightRel3z as q
+         
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q8a as select sum(p_c1) from v7
+]]>
+</CEP_DDL>
+
+
+<!-- ********************************************************** -->
+<!-- TEST CASE WITH A MIX OF DIMENSION AND NON-DIMENSION TABLES -->
+<!-- June 17, 2013: This is no longer a valid special join      -->
+<!--                topology. It is a -ve test now.             -->
+<!-- ********************************************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v8 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2
+float, r_c3 bigint, r_c4 char(10)) as
+
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1,
+q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4, r.c1 as r_c1, r.c2 as r_c2, r.c3 as
+r_c3, r.c4 as p_c4 
+
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel3z as q,
+     tkArchivedRelBinOp_RightRel2a as r     
+         
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q9 as select sum(p_c1) from v8
+]]>
+</CEP_DDL>
+
+<!-- ***************************************************************** -->
+<!-- Test case for bug 16937761                                        -->
+<!-- First tuple to arrive after snapshot is a -ve tuple due either to -->
+<!-- delete or update                                                  -->
+<!-- ***************************************************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view delv (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2 float, r_c3 bigint, r_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_LeftRel_del as p,
+     tkArchivedRelBinOp_RightRel1 as q,
+     tkArchivedRelBinOp_RightRel2 as r
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q16937761 as select count(*) from delv
+]]>
+</CEP_DDL>
+
+
+<!-- *************************************** -->
+<!-- negative test case:                     -->
+<!--  join of two dimensions w/ data         -->
+<!--  should not throw exception             -->
+<!-- *************************************** -->
+<CEP_DDL>
+<![CDATA[ 
+
+create archived view v2dim (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10))
+as
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4
+from tkArchivedRelBinOp_RightRel1a as p, tkArchivedRelBinOp_RightRel1a as q 
+where p.c1 = q.c1 and p.c2 = q.c2 and  (p.c4 = "second" and q.c4 = "second")
+event identifier p_c3
+
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q10 as select sum(p_c1) from v2dim
+]]>
+</CEP_DDL>
+
+
+<!-- ****************************************** -->
+<!--                                            -->
+<!-- To Do:                                     -->
+<!--   * Include sharing test case              -->
+<!--                                            -->
+<!-- ****************************************** -->
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q0 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q0.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q1a add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q1a.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q1b add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q1b.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q2a add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q2a.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q2b add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q2b.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q2aa add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q2aa.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q2bb add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q2bb.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q3a add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q3a.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q3b add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q3b.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q4a add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q4a.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q4b add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q4b.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q5 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q5.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q6 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q6.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q7 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q7.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q7a add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q7a.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q8a add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q8a.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q9 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q9.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q16937761 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q169377619.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q10 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin_q10.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+
+<!-- start_time specified here is assumed to be in nanoseconds -->
+<CEP_DDL> alter query q0 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q1a set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q1b set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q2a set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q2b set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q2aa set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q2bb set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q3a set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q3b set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q4a set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q4b set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q5 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q6 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q7 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q7a set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q8a set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q9 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q10 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query q16937761 set start_time 1000000000L</CEP_DDL>
+
+<CEP_DDL> alter query q0 start </CEP_DDL> 
+<CEP_DDL> alter query q1a start </CEP_DDL> 
+<CEP_DDL> alter query q1b start </CEP_DDL> 
+<CEP_DDL> alter query q2a start </CEP_DDL>
+<CEP_DDL> alter query q2b start </CEP_DDL>
+<CEP_DDL> alter query q2aa start </CEP_DDL>
+<CEP_DDL> alter query q2bb start </CEP_DDL>
+<CEP_DDL> alter query q3a start </CEP_DDL>
+<CEP_DDL> alter query q3b start </CEP_DDL>
+<CEP_DDL> alter query q8a start </CEP_DDL>
+<CEP_DDL> alter query q9 start </CEP_DDL>
+<CEP_DDL> alter query q16937761 start </CEP_DDL>
+<CEP_DDL> alter query q10 start </CEP_DDL>
+
+<!-- ************** throws exception ***************** -->
+<!--               uncomment to verify                 -->
+<!-- verify each individually and then all together    -->
+<!-- ************************************************* -->
+<!--
+<CEP_DDL> alter query q4a start </CEP_DDL> 
+<CEP_DDL> alter query q4b start </CEP_DDL>
+<CEP_DDL> alter query q5 start </CEP_DDL> 
+<CEP_DDL> alter query q6 start </CEP_DDL> 
+<CEP_DDL> alter query q7 start </CEP_DDL> 
+<CEP_DDL> alter query q7a start </CEP_DDL>
+-->
+
+
+<CEP_DDL> alter system run </CEP_DDL>
+
+</CEP>

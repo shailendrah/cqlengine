@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0">
+    <reference name="OrderAlertProcessor">
+            <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/jms/OrderAlertProcessor/#wsdl.interface(sendMessage_ptt)"/>
+    </reference>
+</componentType>

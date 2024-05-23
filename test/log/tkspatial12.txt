@@ -1,0 +1,72 @@
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.
+ oracle.cep.logging.impl.ODLLoggerWrapper fatal
+1100: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch. : java.lang.IllegalStateException: [SpatialCartridge:2069004]The buffering operation has failed due to SRID mismatch.

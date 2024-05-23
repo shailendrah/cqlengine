@@ -1,0 +1,30 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata29_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata29_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create stream tkdata29_S10(c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata29_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkdata29_STs(c1 timestamp, c2 timestamp) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata29_STs add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkdata29_SByt(c1 integer, c2 byte(2)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata29_SByt add source "<EndPointReference><Address>file://@TEST_DATA@/inpSByt.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create function tkdata29_bytTest(c1 byte) return byte as language java name "oracle.cep.test.userfunctions.TkUsrBytManip" </CEP_DDL>
+<CEP_DDL> create query tkdata29_q1 as select * from tkdata29_S0 [range 1] where c1 between 15 and 30 </CEP_DDL>
+<CEP_DDL> create query tkdata29_q2 as select * from tkdata29_S0 [range 1] where c2 between 0.14 and 4 </CEP_DDL>
+<CEP_DDL> create query tkdata29_q3 as select * from tkdata29_S10 where concat(concat(c2, c2), c2) between "abc" and "abd" </CEP_DDL>
+<CEP_DDL> create query tkdata29_q4 as select * from tkdata29_STs where tkdata29_STs.c1 - tkdata29_STs.c2 between INTERVAL "700 1:03:45.100" DAY(3) TO SECOND and INTERVAL "1095 1:03:45.100" DAY(4) TO SECOND </CEP_DDL>
+<CEP_DDL> create query tkdata29_q5 as select * from tkdata29_STs where c2 between "08/07/2005 11:13:48" and c1 </CEP_DDL>
+<CEP_DDL> create query tkdata29_q6 as select * from tkdata29_SByt[range 2] where tkdata29_bytTest(c2) between hextoraw("5200") and hextoraw("5600") </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata29_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outIntBetween.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata29_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outFloatBetween.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata29_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCharBetween.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata29_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outIntervalBetween.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata29_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTsBetween.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata29_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outByteBetween.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata29_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata29_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata29_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata29_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkdata29_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkdata29_q6 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

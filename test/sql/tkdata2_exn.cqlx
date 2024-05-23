@@ -1,0 +1,39 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata2_exn_S2 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_exn_S3 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_exn_S8 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_exn_S9 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_exn_S10(c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_exn_SP1(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> create function tkdata2_exn_concat2(c1 char, c2 char) return char as language java name "oracle.cep.test.userfunctions.TkUsrConcat" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_exn_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_exn_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_exn_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_exn_S9 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_exn_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_exn_SP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata2_exn_v1(c1, name) as select * from tkdata2_exn_SP1 [partition by c1 rows 1] </CEP_DDL>
+<CEP_DDL> register view tkdata2_exn_v2(c1, name) as select * from tkdata2_exn_v1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_exn_q1 as select tkdata2_exn_S8.c1, tkdata2_exn_S9.c2 from tkdata2_exn_S8[range 1], tkdata2_exn_S9[range 1] where tkdata2_exn_S8.c1 > 11 OR tkdata2_exn_S9.c2 > 0.1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_exn_q2 as select tkdata2_exn_S8.c1, tkdata2_exn_S9.c2 from tkdata2_exn_S8[range 10], tkdata2_exn_S9[range 10] where (tkdata2_exn_S8.c1 = 100 and tkdata2_exn_S9.c2 = 0.14) OR (tkdata2_exn_S8.c1 = 11 and tkdata2_exn_S9.c2 = 0.14) </CEP_DDL>
+<CEP_DDL> create query tkdata2_exn_q3 as select * from tkdata2_exn_S10 where (concat(concat(c2, c2), c2) like "(abc)+") or (c1 &lt; 3) </CEP_DDL>
+<CEP_DDL> create query tkdata2_exn_q4 as select tkdata2_exn_S8.c1, tkdata2_exn_S9.c2 from tkdata2_exn_S8[range 1], tkdata2_exn_S9[range 1] where NOT((tkdata2_exn_S8.c1 > 11) OR (tkdata2_exn_S9.c2 > 0.1)) </CEP_DDL>
+<CEP_DDL> create query tkdata2_exn_q5 as select tkdata2_exn_S2.c1, tkdata2_exn_S3.c2 from tkdata2_exn_S2[range 1000], tkdata2_exn_S3[range 1000] where NOT((tkdata2_exn_S2.c1 = 20 and tkdata2_exn_S3.c2 = 100.1) OR (NOT(tkdata2_exn_S2.c1 = 15 and tkdata2_exn_S3.c2 = 0.14))) </CEP_DDL>
+<CEP_DDL> create query tkdata2_exn_q6 as select tkdata2_exn_S2.c1, tkdata2_exn_S3.c2 from tkdata2_exn_S2[range 1000], tkdata2_exn_S3[range 1000] where (tkdata2_exn_S2.c1 = 15 and tkdata2_exn_S3.c2 = 0.14) xor (tkdata2_exn_S2.c1 = 20 and tkdata2_exn_S3.c2 = 100.1) </CEP_DDL>
+<CEP_DDL> create query tkdata2_exn_q7 as select * from tkdata2_exn_v1,tkdata2_exn_v2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_exn_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOR1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_exn_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOR2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_exn_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOR3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_exn_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outNot1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_exn_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outNot2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_exn_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outXOR1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_exn_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMulView.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata2_exn_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_exn_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_exn_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_exn_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_exn_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_exn_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_exn_q7 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,23 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tksysts_S (c1 integer, c2 float) is system timestamped </CEP_DDL>
+<CEP_DDL> create relation tksysts_R (d1 integer, d2 char(10)) is system timestamped </CEP_DDL>
+<CEP_DDL> register stream tksysts_pushS (c1 integer, c2 byte(10)) is system timestamped</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tksysts_S add source "<EndPointReference><Address>file://@TEST_DATA@/inpS100systs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tksysts_R add source "<EndPointReference><Address>file://@TEST_DATA@/inpRsysts.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter stream tksysts_pushS add source push </CEP_DDL>
+
+<CEP_DDL> create query tksysts_q1 as select * from tksysts_S[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksysts_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out-stream-systs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tksysts_q1 start </CEP_DDL>
+<CEP_DDL> create query tksysts_q2 as select d2 from tksysts_R </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksysts_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out-rel-systs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tksysts_q2 start </CEP_DDL>
+<CEP_DDL> create query tksysts_qPush as select * from tksysts_pushS[range 2] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksysts_qPush add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out-push-systs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tksysts_qPush start </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tksysts_pushS add push source "<EndPointReference><Address>file://@TEST_DATA@/pushByte1systs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

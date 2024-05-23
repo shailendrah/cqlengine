@@ -1,0 +1,10 @@
+1000000000:+ 1,Gifts,0.5,Morning,1,Market St, San Francisco
+2000000000:+ 1,Health,1.0,Evening,1,Mission St, San Francisco
+3000000000:+ 1,Stationary,1.0,Morning,1,Financial Distt, San Francisco
+4000000000:+ 2,Gifts,1.5,Evening,1,Pier 39, San Francisco
+5000000000:+ 3,Gifts,2.0,Evening,1,Pier 32, San Francisco
+6000000000:+ 2,Health,2.0,Morning,1,Embarcadero, San Francisco
+7000000000:+ 4,Gifts,3.5,Morning,1,Golden Gate Bridge, San Francisco
+8000000000:+ 3,Health,3.5,Evening,2,Market St, San Francisco
+9000000000:+ 5,Gifts,5.5,Evening,2,Pier 39, San Francisco
+10000000000:+ 2,Stationary,5.5,Morning,2,Mission St, San Francisco

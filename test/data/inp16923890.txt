@@ -1,0 +1,8 @@
+i, i, c 30, d, l, l, d, TOF
+1000 T 1, 1, "Modern Science", 0, 4, 2, 0.5 
+2000 T 2, 1, "Modern Science", 1, 4, 2, 0.5 
+3000 T 3, 1, "Modern Science", 1, 4, 2, 0.5 
+4000 T 4, 1, "Modern Science", 1, 4, 2, 0.5 
+5000 T 5, 1, "Modern Science", 0, 4, 2, 0.5 
+6000 T 6, 1, "Modern Science", 1, 4, 2, 0.5
+7000 T 7, 1, "Modern Science", 0, 4, 2, 0.5

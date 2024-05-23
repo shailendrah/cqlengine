@@ -1,0 +1,43 @@
+
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tk7624300_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk7624300_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL>create view tk7624300_v1  as select c1, c2 from tk7624300_S1</CEP_DDL>
+<CEP_DDL>create view tk7624300_v2  as select c1+2 as a, c2-2 as b  from tk7624300_S1</CEP_DDL>
+<CEP_DDL>create view tk7624300_v3  as select c1+2 as a, c2-5 from tk7624300_S1</CEP_DDL>
+<CEP_DDL>create view tk7624300_v4  as select * from tk7624300_S1</CEP_DDL>
+<CEP_DDL>create view tk7624300_v5  as select a.c1, b.c1 from tk7624300_S1[range 2] as a, tk7624300_S1[range 2] as b</CEP_DDL>
+<CEP_DDL>create view tk7624300_v6  as select a.c1 , b.c1 as c2  from tk7624300_S1[range 2] as a, tk7624300_S1[range 2] as b</CEP_DDL>
+<CEP_DDL>create view tk7624300_v7  as tk7624300_S1 union all tk7624300_S1 </CEP_DDL>
+<CEP_DDL>create view tk7624300_v8  as istream(select * from  tk7624300_S1)</CEP_DDL>
+
+<CEP_DDL>create query tk7624300_q1 as select c2 from tk7624300_v1</CEP_DDL>
+<CEP_DDL>create query tk7624300_q2 as select b,a from tk7624300_v2</CEP_DDL>
+<CEP_DDL>create query tk7624300_q3 as select * from tk7624300_v3</CEP_DDL>
+<CEP_DDL>create query tk7624300_q4 as select c1, c2 from tk7624300_v4</CEP_DDL>
+<CEP_DDL>create query tk7624300_q5 as select c1, c2 from tk7624300_v5</CEP_DDL>
+<CEP_DDL>create query tk7624300_q6 as select c1, c2 from tk7624300_v6</CEP_DDL>
+<CEP_DDL>create query tk7624300_q7 as select c2 from tk7624300_v7</CEP_DDL>
+<CEP_DDL>create query tk7624300_q8 as select c2 from tk7624300_v8</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk7624300_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7624300_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7624300_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7624300_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7624300_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7624300_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7624300_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7624300_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7624300_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk7624300_q1 start </CEP_DDL>
+<CEP_DDL> alter query tk7624300_q2 start </CEP_DDL>
+<CEP_DDL> alter query tk7624300_q3 start </CEP_DDL>
+<CEP_DDL> alter query tk7624300_q4 start </CEP_DDL>
+<CEP_DDL> alter query tk7624300_q5 start </CEP_DDL>
+<CEP_DDL> alter query tk7624300_q6 start </CEP_DDL>
+<CEP_DDL> alter query tk7624300_q7 start </CEP_DDL>
+<CEP_DDL> alter query tk7624300_q8 start </CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+</CEP>

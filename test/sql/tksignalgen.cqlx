@@ -1,0 +1,66 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- time slice is set to 10000 so that we should get the entire output even when the situation of complete streaming side input getting buffered on the outer queue of the join arises-->
+<CEP_DDL>alter system time_slice = 10000</CEP_DDL>
+
+<CEP_DDL> create stream tksignalgen_StockTickStream(symbol char(10), lastPrice double, trendLastPrice bigint, startTimestamp double) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tksignalgen_StockTickStream add source "<EndPointReference><Address>file://@TEST_DATA@/inpsignalgen1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create relation tksignalgen_SymbolsRelation(symbol char(10)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tksignalgen_SymbolsRelation add source "<EndPointReference><Address>file://@TEST_DATA@/inpsignalgen2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[create view tksignalgen_S(symbol char(10), lastPrice double) as  RStream(select T.symbol, T.lastPrice from tksignalgen_StockTickStream[now] as T, tksignalgen_SymbolsRelation as R where T.symbol = R.symbol)]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[create query tksignalgen_viewContents as select * from tksignalgen_S]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tksignalgen_perc as select symbol, lastPrice, percLastPrice, startTimestamp
+	    from tksignalgen_S MATCH_RECOGNIZE (
+	      PARTITION BY symbol
+	      MEASURES
+	        B.symbol as symbol,
+	        B.lastPrice as lastPrice,
+	        100*(B.lastPrice - A.lastPrice)/A.lastPrice as percLastPrice,
+		B.ELEMENT_TIME as startTimestamp
+              ALL MATCHES
+	      PATTERN (A B)
+	      DEFINE
+	        B AS (100*(B.lastPrice - A.lastPrice)/A.lastPrice > 2.0
+	              or   100*(B.lastPrice - A.lastPrice)/A.lastPrice < -2.0
+	             )
+            ) as T ]]>
+</CEP_DDL>
+
+<CEP_DDL><![CDATA[create view tksignalgen_vtrend(symbol char(10), lastPrice double, trendLastPrice integer, startTimestamp bigint) as select symbol, lastPrice, trendLastPrice, startTimestamp
+           from tksignalgen_S MATCH_RECOGNIZE (
+             PARTITION BY symbol
+             MEASURES
+               C.symbol as symbol,
+               C.lastPrice as lastPrice,
+               count(C.*) as trendLastPrice,
+	       C.ELEMENT_TIME as startTimestamp
+             ALL MATCHES
+             PATTERN (A B C+)
+             DEFINE
+               A AS ((A.lastPrice > PREV(A.lastPrice, 1)) AND
+                     (NOT(PREV(A.lastPrice, 1) > PREV(A.lastPrice, 2)))
+                    ),
+               B AS (B.lastPrice > PREV(B.lastPrice, 1)),
+               C AS (C.lastPrice > PREV(C.lastPrice, 1))
+           ) as T]]>
+</CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tksignalgen_trend as select * from tksignalgen_vtrend]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tksignalgen_viewContents add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outsignalgenView.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksignalgen_perc add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outsignalgen1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tksignalgen_trend add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outsignalgen2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tksignalgen_viewContents start </CEP_DDL>
+<CEP_DDL> alter query tksignalgen_perc start </CEP_DDL>
+<CEP_DDL> alter query tksignalgen_trend start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+<!-- resetting after the run -->
+<CEP_DDL> alter system time_slice = 1000</CEP_DDL>
+</CEP>

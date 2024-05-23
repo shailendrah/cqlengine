@@ -1,0 +1,15 @@
+applyTemplate 'flex'
+applyTemplate 'yacc'
+
+yacc.include =  [ '**/jdbc*.yy' ]
+
+dependencies
+{
+    compile project(':modules:common-util')
+    compile project(':modules:spark-cql:cqlengine:logging')
+    compile project(':modules:spark-cql:extensibility:api')
+    compile libraries.wls_i18n
+    providedCompile libraries.wls_xmlparserv2
+    compile libraries.wls_coherence
+}
+

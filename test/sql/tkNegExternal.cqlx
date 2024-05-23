@@ -1,0 +1,19 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create external relation tkNegExternal_R5 (d1 integer, d2 float)</CEP_DDL>
+<CEP_DDL> create external relation tkNegExternal_R3 (d1 integer, d2 float)</CEP_DDL>
+<CEP_DDL> register stream tkNegExternal_S1 (c1 integer, c2 float)  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkNegExternal_R5 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkNegExternal_R3 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkNegExternal_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkNegExternal_q1 as RStream(select tkNegExternal_R5.d1, tkNegExternal_S1.c2 from tkNegExternal_R5, tkNegExternal_S1[NOW] where tkNegExternal_R5.d1*10 = tkNegExternal_S1.c1) </CEP_DDL> 
+<CEP_DDL> create query tkNegExternal_q2 as RStream(select * from tkNegExternal_R5, tkNegExternal_S1[NOW] where tkNegExternal_R5.d1 is null and tkNegExternal_S1.c1 is null) </CEP_DDL> 
+<CEP_DDL> create query tkNegExternal_q3 as RStream(select * from tkNegExternal_R3, tkNegExternal_S1[NOW] where tkNegExternal_R3.d1 is null or tkNegExternal_S1.c1 is null) </CEP_DDL> 
+<CEP_DDL> create query tkNegExternal_q4 as select * from tkNegExternal_R3 </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkNegExternal_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq1_negext.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkNegExternal_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq2_negext.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkNegExternal_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq3_negext.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkNegExternal_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkNegExternal_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkNegExternal_q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

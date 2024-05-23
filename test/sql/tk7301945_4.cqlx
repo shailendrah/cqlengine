@@ -1,0 +1,97 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream PriceEvent(cusip char(100), srcId char(100), bid 
+double, bidQty integer, ask double, askQty integer, seq bigint, sector 
+char(100), tsNs bigint) </CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter stream PriceEvent add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpCiti.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+
+<CEP_DDL>register view Yr3Sector(cusip char(100), bid Double, srcId 
+char(100), bidQty integer, ask Double, askQty integer, seq bigint) as select 
+cusip, bid, srcId, bidQty, ask, askQty, seq from PriceEvent where 
+sector="3_YEAR" </CEP_DDL> 
+
+<CEP_DDL>register view lastEvents(cusip char(100), bid Double, srcId 
+char(100), bidQty integer, ask Double, askQty integer, seq bigint) as select 
+* from Yr3Sector[partition by srcId, cusip rows 1]</CEP_DDL>
+
+
+<CEP_DDL>register view BBA(cusip char(100), bid Double, ask Double) as select 
+cusip, max(bid), min(ask) from lastEvents group by cusip </CEP_DDL> 
+
+<CEP_DDL> register view BBABID(cusip char(100), bid Double, seq bigint) as 
+select bba.cusip as cusip, bba.bid as bid, e.seq from BBA as bba, lastEvents 
+as e WHERE e.cusip = bba.cusip AND e.bid = bba.bid </CEP_DDL> 
+
+<CEP_DDL>register view BBABID1(cusip char(100), maxseq bigint) as select 
+bba.cusip, max(seq) as maxseq  from BBABID as bba group by bba.cusip 
+</CEP_DDL> 
+
+<CEP_DDL>register view BBABIDMAX(cusip char(100), seq bigint, srcId 
+char(100), bid double, bidQty integer) as select e.cusip, e.seq, e.srcId, 
+e.bid, e.bidQty from BBABID1 as bba, lastEvents as e where (e.seq = 
+bba.maxseq) </CEP_DDL> 
+
+<CEP_DDL>register view BBAASK(cusip char(100), ask Double, seq bigint) as 
+select bba.cusip as cusip, bba.ask as ask, e.seq from BBA as bba, lastEvents 
+as e WHERE e.cusip = bba.cusip AND e.ask = bba.ask </CEP_DDL> 
+
+<CEP_DDL> register view BBAASK1(cusip char(100), maxseq bigint) as select 
+bba.cusip, max(bba.seq) as maxseq from BBAASK as bba  group by cusip 
+</CEP_DDL> 
+
+<CEP_DDL> register view BBAASKMIN(cusip char(100), seq bigint, srcId 
+char(100), ask double, askQty integer) as select e.cusip, e.seq, e.srcId, 
+e.ask, e.askQty from BBAASK1 as bba, lastEvents as e where (e.seq = 
+bba.maxseq) </CEP_DDL> 
+
+
+<CEP_DDL>create query BBAQuery as select bid.cusip, p.seq as 
+correlationId, bid.bid, bid.srcId as bidSrcId, bid.bidQty,ask.ask, ask.srcId 
+as askSrcId, ask.askQty, "BBAStrategy" as intermediateStrategy, 1 as priority 
+ from BBABIDMAX as bid, BBAASKMIN as ask, Yr3Sector[rows 1] as p  where 
+bid.cusip = ask.cusip AND bid.cusip = p.cusip </CEP_DDL> 
+
+<CEP_DDL> register view Analytics(cusip char(100), bid Double, ask Double) as 
+  select cusip, max(bid), min(ask) from lastEvents group by cusip </CEP_DDL> 
+
+<CEP_DDL>register view AnalyticsBID(cusip char(100), bid Double, seq bigint) 
+as select a.cusip as cusip, (a.bid+1) as bid, e.seq from Analytics as a, 
+lastEvents as e WHERE e.cusip = a.cusip AND e.bid = a.bid </CEP_DDL> 
+
+<CEP_DDL>register view AnalyticsBID1(cusip char(100), maxseq bigint) as   
+select a.cusip, max(seq) as maxseq from AnalyticsBID as a group by a.cusip 
+</CEP_DDL> 
+
+<CEP_DDL>register view AnalyticsBIDMAX(cusip char(100), seq bigint, srcId 
+char(100), bid double, bidQty integer) as select e.cusip, e.seq, e.srcId, 
+e.bid, e.bidQty from AnalyticsBID1 as a, lastEvents as e where (e.seq = 
+a.maxseq) </CEP_DDL> 
+
+<CEP_DDL> register view AnalyticsASK(cusip char(100), ask Double, seq bigint) 
+as select a.cusip as cusip, (a.ask-1) as ask, e.seq from Analytics as a, 
+lastEvents as e WHERE e.cusip = a.cusip AND e.ask = a.ask </CEP_DDL> 
+
+<CEP_DDL>register view AnalyticsASK1(cusip char(100), maxseq bigint) as 
+select a.cusip, max(seq) as maxseq from AnalyticsASK as a group by a.cusip 
+</CEP_DDL> 
+
+<CEP_DDL> register view AnalyticsASKMIN(cusip char(100), seq bigint, srcId 
+char(100), ask double, askQty integer) as select e.cusip, e.seq, e.srcId, 
+e.ask, e.askQty from AnalyticsASK1 as a, lastEvents as e where (e.seq = 
+a.maxseq) </CEP_DDL> 
+
+<CEP_DDL>create query AnalyticsQuery as ISTREAM(select bid.cusip, p.seq as 
+correlationId, bid.bid, bid.srcId as bidSrcId, bid.bidQty,ask.ask, ask.srcId 
+as askSrcId, ask.askQty, "ANALYTICSStrategy" as intermediateStragtegy, 2 as 
+priority  from AnalyticsBIDMAX as bid, AnalyticsASKMIN as ask, Yr3Sector[rows 
+1] as p where bid.cusip = ask.cusip AND bid.cusip = p.cusip) </CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query BBAQuery  add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outBBAQuery.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query AnalyticsQuery add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAnalyticsQuery.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query BBAQuery start</CEP_DDL>
+<CEP_DDL>alter query AnalyticsQuery start</CEP_DDL>
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

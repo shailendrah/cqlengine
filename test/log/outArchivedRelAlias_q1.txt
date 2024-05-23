@@ -1,0 +1,17 @@
+1000:+ 14,first
+1000:+ 24,second
+1000:+ 34,third
+1000:+ 29,first
+1000:+ 39,third
+1000:+ 34,third
+1000:+ 29,first
+1000:+ 24,second
+1000:+ 14,first
+1050:- 39,third
+1100:+ 14,first
+2100:+ 54,second
+3100:+ 34,third
+3150:- 54,second
+4100:+ 24,second
+4100:+ 24,second
+6000:+ 16,fourth

@@ -1,0 +1,101 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+<xsd:include schemaLocation="geocoder_request.xsd" />
+
+<xsd:simpleType name="positiveDecimal">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minExclusive value="0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="distanceUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="mile"/>
+    <xsd:enumeration value="km"/>
+    <xsd:enumeration value="kilometer"/>
+    <xsd:enumeration value="meter"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="timeUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="minute"/>
+    <xsd:enumeration value="hour"/>
+    <xsd:enumeration value="second"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="unitType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="us"/>
+    <xsd:enumeration value="metric"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="roadPreference">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="highway"/>
+    <xsd:enumeration value="local"/>
+  </xsd:restriction>
+</xsd:simpleType>               
+ 
+<xsd:simpleType name="routePreference">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="shortest"/>
+    <xsd:enumeration value="fastest"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="truckType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="delivery"/>
+    <xsd:enumeration value="public"/>
+    <xsd:enumeration value="resident"/>
+    <xsd:enumeration value="trailer"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="vehicleType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="auto"/>
+    <xsd:enumeration value="truck"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:complexType name="routerInputLocation">
+  <xsd:choice>
+    <xsd:element name="router_input_location"  type="input_locationType"/>
+<!--    
+    <xsd:element name="router_pregeocoded_location" type="pregeocodedType"/>
+-->    
+  </xsd:choice>
+</xsd:complexType>
+ 
+<xsd:element name="batch_route_request" type="batch_route_requestType" />
+             
+<xsd:complexType name="batch_route_requestType">
+  <xsd:sequence>
+    <xsd:element name="start_location" type="routerInputLocation"
+                 minOccurs="1" maxOccurs="1"/>
+    <xsd:element name="end_location" type="routerInputLocation"
+                 minOccurs="1" maxOccurs="unbounded"/>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+  <xsd:attribute name="pre_geocoded_locations" type="xsd:boolean" use="optional"/>
+  <xsd:attribute name="route_preference" type="routePreference"  use="optional"/>
+  <xsd:attribute name="road_preference" type="roadPreference" use="optional"/>
+  <xsd:attribute name="distance_unit" type="distanceUnit" use="optional"/>
+  <xsd:attribute name="length_unit" type="unitType" use="optional"/>
+  <xsd:attribute name="time_unit" type="timeUnit" use="optional"/>
+  <xsd:attribute name="weight_unit" type="unitType" use="optional"/>
+  <xsd:attribute name="vehicle_type" type="vehicleType" use="optional"/>
+  <xsd:attribute name="truck_type" type="truckType" use="optional"/>
+  <xsd:attribute name="truck_height" type="positiveDecimal" use="optional"/>
+  <xsd:attribute name="truck_length" type="positiveDecimal" use="optional"/>
+  <xsd:attribute name="truck_per_axle_weight" type="positiveDecimal" use="optional"/>
+  <xsd:attribute name="truck_weight" type="positiveDecimal" use="optional"/>
+  <xsd:attribute name="truck_width" type="positiveDecimal" use="optional"/>
+  <xsd:attribute name="cutoff_distance" type="positiveDecimal" use="optional"/>
+  <xsd:attribute name="sort_by_distance" type="xsd:boolean" use="optional"/>
+</xsd:complexType>
+</xsd:schema>

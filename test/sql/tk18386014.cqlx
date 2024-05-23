@@ -1,0 +1,32 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk18386014_S1 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk18386014_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk18386014_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>
+<![CDATA[
+create query tk18386014_q1 as select DECODE(c1+c2, 20, c1+c2+5, 15, c1+c2+20, c1+c2), count(*) from tk18386014_S1
+    group by DECODE(c1+c2, 20, c1+c2+5, 15, c1+c2+20, c1+c2)
+]]>
+</CEP_DDL>
+<CEP_DDL>
+<![CDATA[
+create query tk18386014_q2 as select case c1 when 10 then "ten" when 11 then "eleven" end, count(*) from tk18386014_S1
+    group by case c1 when 10 then "ten" when 11 then "eleven" end
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+create query tk18386014_q3 as select case when c1=10 then "ten" when c1=11 then "eleven" end, count(*) from tk18386014_S1
+    group by case when c1=10 then "ten" when c1=11 then "eleven" end
+]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk18386014_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk18386014_q1.txt/</Address></EndPointReference>" ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk18386014_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk18386014_q2.txt/</Address></EndPointReference>" ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk18386014_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk18386014_q3.txt/</Address></EndPointReference>" ]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk18386014_q1 start </CEP_DDL>
+<CEP_DDL> alter query tk18386014_q2 start </CEP_DDL>
+<CEP_DDL> alter query tk18386014_q3 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

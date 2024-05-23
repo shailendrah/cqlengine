@@ -1,0 +1,44 @@
+***Do not save the excel any time.. ***
+Reason: If you save the excel, some of the calculated data might be saved and the chart may not be shown correctly.
+        If by mistake you saved it.. get the previous original version and try it again.
+
+***Do not start the excel file before you start the query and make sure the scheduler started running.(after you see the "alter system run" command on screen) ***
+Reason: Tables won't refresh if they find no output files exist.
+        If by mistake you have dont it, close the excel and re do.
+
+One time Setup
+---------------
+On Windows machine
+
+** For Office 2000
+Tools -> Macro -> Security -> Select Low option in security level
+
+** For Office 2007
+Click on windows logo on Top Left. Select Excel options. Select Trust Center -> Trust Center Settings ->
+	a) Macro Settings -> Select Enable all macros...
+	b) External Content -> Select Enable all Data connections..
+
+This is one time job and is a global excel setting and is independent of individual file.
+
+Disclaimer: Kindly be noted that these are very low security settings and enabled only for this demo. Kindly revert back to previous settings for your security. These low security settings may be hazardous if you run some malicious code. :)
+
+Demo1 is for Class A patterns with W detections.
+Demo2 is for Class B patterns with non event detection.
+
+.xls is for Office 2000 and .xlsm is for Office 2007
+---------------
+
+On Linux machine
+1) Run "ant patternDemo1" for demo1 or "ant patternDemo2" for demo2.
+2) After system starts running(after you see "alter system run"), go back to windows machine.
+
+On Windows machine
+3) Open the flickering file.
+4) Switch to Chart1 tab at the bottom..and leave it for a while to see the dynamic updata viz. flickering.
+
+
+For closing the excel,
+If you cannot close it, go to task manager and go to process tab, right click on excel.exe and select "end process tree".
+
+
+----------------

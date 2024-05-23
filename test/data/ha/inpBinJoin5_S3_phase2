@@ -1,0 +1,6 @@
+i,c 20, TOF
+5000 F 50, R3Phase2 
+6000 F 60, R3Phase2
+7000 F 70, R3Phase2
+8000 F 80, R3Phase2
+9000 F 90, R3Phase2

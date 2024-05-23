@@ -1,0 +1,47 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkopaqobj_S1(c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkopaqobj_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tkopaqobj_S2(c1 integer, c2 oracle.cep.test.userfunctions.TkUserObj) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkopaqobj_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpZ10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- test obj as where condition, test method overloading -->
+<CEP_DDL> create query tkopaqobj_quobj as select c1, c2 from tkopaqobj_S1 where java.lang.String("ab").equals(c2) = true</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj_quobj add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq_uobj.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj_quobj start </CEP_DDL>
+
+<!-- test compareTo method -->
+<CEP_DDL> <![CDATA[ create query tkopaqobj_quobj1 as select c1, c2 from tkopaqobj_S1 where java.lang.String("abc").compareTo(c2) = 0]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj_quobj1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq_uobj1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj_quobj1 start </CEP_DDL>
+
+<!-- constructor -->
+<CEP_DDL> create query tkopaqobj_qctor as select c1, c2, java.lang.String(c2) from tkopaqobj_S1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj_qctor add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq_ctor.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj_qctor start </CEP_DDL>
+
+<!-- static -->
+<CEP_DDL> create query tkopaqobj_qstatic as select c1, java.lang.String.valueOf(c1) from tkopaqobj_S1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj_qstatic add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq_static.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj_qstatic start </CEP_DDL>
+
+<!-- tuple object -->
+<CEP_DDL> create view tkopaqobj_v1(c1 integer, c2 java.lang.String) as select c1, java.lang.String(c2) from tkopaqobj_S1 </CEP_DDL>
+<CEP_DDL> create query tkopaqobj_qtobj as select c1, c2, c2.length(), c2.replace('a', 'z') from tkopaqobj_v1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj_qtobj add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq_tobj.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj_qtobj start </CEP_DDL>
+
+<!-- tuple object -->
+<CEP_DDL> create query tkopaqobj_qtobj2 as select c1, c2, c2.getMessage() from tkopaqobj_S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj_qtobj2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq_tobj2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj_qtobj2 start </CEP_DDL>
+
+<!-- tuple object -->
+<CEP_DDL> create query tkopaqobj_qtobj3 as select c1, c2 from tkopaqobj_v1 where c2.matches("a*b") = true</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj_qtobj3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq_tobj3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj_qtobj3 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+
+</CEP>

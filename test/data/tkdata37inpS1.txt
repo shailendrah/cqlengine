@@ -1,0 +1,3 @@
+x
+3000 "<FIXML><ORDER ID=\"A2006101\"><FILL ExecType=\"partial\" Sym=\"IBM\" LastShares=\"300\" LastPx=\"81.92\"/><FILL ExecType=\"partial\" Sym=\"IBM\" LastShares=\"900\" LastPx=\"81.90\"/><FILL ExecType=\"full\" Sym=\"IBM\" LastShares=\"800\" LastPx=\"81.96\"/></ORDER></FIXML>"
+h 4000

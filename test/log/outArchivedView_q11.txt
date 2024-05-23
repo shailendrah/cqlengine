@@ -1,0 +1,13 @@
+1000:+ firstchanged
+1000:+ secondchanged
+1000:+ thirdchanged
+1000:+ firstchanged
+1000:+ fourthchanged
+1000:+ thirdchanged
+1100:+ firstchanged
+1500:- thirdchanged
+2100:+ secondchanged
+3100:+ thirdchanged
+4100:+ secondchanged
+4100:+ secondchanged
+4700:- firstchanged

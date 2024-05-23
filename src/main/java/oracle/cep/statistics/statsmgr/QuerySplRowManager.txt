@@ -1,0 +1,189 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/QuerySplRowManager.java /main/5 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle and/or its affiliates.All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    03/27/08 - special case query stats mgr
+    parujain    03/27/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/QuerySplRowManager.java /main/5 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.statsmgr;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import oracle.cep.phyplan.PhyOpt;
+import oracle.cep.planmgr.PlanManager;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.execution.operators.ExecOpt;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.FilterCondition;
+
+public class QuerySplRowManager extends QueryStatsManager 
+{
+  Iterator<Integer> iter = null;
+  LinkedList<Integer> l1 = new LinkedList<Integer>();  //list for op_id filter
+  LinkedList<Integer> l2 = new LinkedList<Integer>(); // list for user_func_filter
+  // This is the final list
+  LinkedList<Integer> qryIdList = new LinkedList<Integer>(); 
+
+  public QuerySplRowManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+  
+  @Override
+  public void close() {
+    qryIdList.clear();
+    l1.clear();
+    l2.clear();
+    iter = null;  	
+  }
+
+  @Override
+  public IStats getNext() {
+    if(factory == null)
+      return null;
+    
+    if (iter == null)
+      return null;
+    
+    ExecOpt rootOp;
+    boolean found = false;
+    IStats queryStat = null;
+  
+    PlanManager planMgr = execContext.getPlanMgr();
+    while(!found && iter.hasNext())
+    {
+      rootOp = null;
+      int id;
+     
+      id = iter.next().intValue();
+            
+      PhyOpt opt = planMgr.getQueryRootOpt(id);
+      if(opt != null)
+        rootOp = opt.getInstOp();
+      
+      if(rootOp == null)
+        continue;
+      
+      queryStat = getQueryStatsRow(id, opt, rootOp);     
+      
+      if(hasFilters)
+      {
+        found = processFilter(queryStat, (FilterCondition[])qFilters.toArray(new FilterCondition[0]), types); 
+      }
+      else
+        found = true;
+    }  
+   
+    if(found)
+      return queryStat;
+    
+    return null;
+  }
+	
+  
+  public void init(FilterCondition[] filters)
+  {
+    super.init(filters);
+	qryIdList.clear();
+	l1.clear();
+	l2.clear();
+    iter = null;
+    if(op_id_filter)
+    { 
+      ExecOpt opt = null;
+       Iterator<ExecOpt> itr = execContext.getExecMgr().getExecOpIterator();
+        while(itr.hasNext())
+        {
+          opt = itr.next();
+          if(opt.getId() != op_id)
+            opt = null;
+          else
+            break;
+          
+        }
+     
+      int phyid = -1;
+      if(opt != null)
+    	phyid = opt.getPhyOptId();
+      if(phyid >= 0)
+      {
+        l1.addAll(execContext.getPlanMgr().getQueryIds(phyid));
+      }
+    }
+    if(user_func_filter)
+    {    
+      l2.addAll(execContext.getQueryMgr().getAllFunctionIdQueries(func_id));
+    }
+
+    // After getting l1 and l2 now we will find out the common elements
+    if(op_id_filter && user_func_filter)
+    { // proceed only if both lists are non-empty
+      if((!l1.isEmpty()) && (!l2.isEmpty()))
+      {
+        Iterator<Integer> l1_iter = l1.iterator();
+        while(l1_iter.hasNext())
+        {
+          Integer id = l1_iter.next();
+          // add in qryIdList only if it is common element
+          if(ifPresentInList(id.intValue(), l2))
+            qryIdList.add(id);
+        }
+      }
+    }
+    else if(op_id_filter)
+    {
+      qryIdList.addAll(l1);
+    }
+    else if(user_func_filter)
+    {
+      qryIdList.addAll(l2);
+    }
+    
+    // Get the iterator from consolidated list.
+    if(!qryIdList.isEmpty())
+      iter = qryIdList.iterator();
+   
+  }
+  
+	@Override
+  public void init() {
+  }
+	
+  // If an id is already present in the list
+  private boolean ifPresentInList(int id, List<Integer> list)
+  {
+    Iterator<Integer> iter = list.iterator();
+    while(iter.hasNext())
+    {
+      int qid = iter.next().intValue();
+      if(qid == id)
+       return true;
+    }
+      return false;
+  }
+	
+}

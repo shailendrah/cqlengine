@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<References xmlns="http://xmlns.oracle.com/adf/jndi">
+   <Reference name="CEPAppFileStore"
+              className="oracle.mds.internal.connection.MDSConnectionProvider"
+              xmlns="">
+      <Factory className="oracle.mds.internal.connection.MDSConnectionProviderFactory"/>
+      <RefAddresses>
+         <XmlRefAddr addrType="mdsRepository">
+            <Contents>
+            <metadata-store
+                  xmlns="http://xmlns.oracle.com/mds/config_10_1_3_001"
+                  class-name="oracle.mds.persistence.stores.file.FileMetadataStore">
+                <property name="metadata-path" value="samples/CEP"/>
+            </metadata-store>
+            </Contents>
+         </XmlRefAddr>
+      </RefAddresses>
+   </Reference>
+</References>

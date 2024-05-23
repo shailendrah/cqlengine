@@ -1,0 +1,227 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/SystemStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/12/08 - support runtime MBeans
+    parujain    10/05/07 - ordering
+    parujain    09/12/07 - remove logging
+    hopark      07/13/07 - dump stack trace on exception
+    parujain    05/31/07 - cep-em integration
+    parujain    04/26/07 - System related statistics
+    parujain    04/26/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/SystemStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+
+import oracle.cep.statistics.IStats;
+
+
+/**
+ * Statistics for System: This can be thought of a fixed table with the
+ * following columns:
+ *
+ * freeMemory      : Amount of free memory
+ * MaxMemory       : Max amt of memory allowed to allocate
+ * Time            : Amount of time CEP process is running for
+ * TotalMemory     : Total amt of memory available
+ * UsedMemory      : Total amt of memory currently in use
+ * NumberOfThreads : Number of threads in CEP process 
+ *
+ */
+
+public class SystemStatsRow extends StatsRow implements IStats
+{
+  private long freeMemory;
+  private long maxMemory;
+  private long time;
+  private long totalMemory;
+  private long usedMemory;
+  private int numberOfThreads;
+  
+  /** 
+   * Construct a SystemStatsRow instance. 
+   * The PropertyNames annotation is used 
+   * to be able to construct a SystemStatsRow instance out of a CompositeData
+   * instance. See MXBeans documentation for more details.
+   */ 
+   @ConstructorProperties({"freeMemory", "maxMemory", "time", 
+                          "totalMemory", "usedMemory", "numOfThreads"})
+  public SystemStatsRow(long free, long max, long tim, long total, long used, int num)
+  { 
+    freeMemory = free;
+    maxMemory = max;
+    time = tim;
+    totalMemory = total;
+    usedMemory = used;
+    numberOfThreads = num;
+  }
+  
+  public long getFreeMemory()
+  {
+    return freeMemory;
+  }
+  
+  public long getMaxMemory()
+  {
+    return maxMemory;
+  }
+  
+  public long getTime()
+  {
+    return time;
+  }
+  
+  public long getTotalMemory()
+  {
+    return totalMemory;
+  }
+  
+  public long getUsedMemory()
+  {
+    return usedMemory;
+  }
+  
+  public int getNumberOfThreads()
+  {
+    return numberOfThreads;
+  }
+  
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+    sb.append("<SystemStatistics>");
+    sb.append("<Free Memory =\"" + freeMemory + "\" >");
+    sb.append("<Max Memory =\"" + maxMemory + "\" >");
+    sb.append("<Time =\"" + time + "\" >");
+    sb.append("<Total Memory =\"" + totalMemory + "\" >" );
+    sb.append("<Used Memory =\"" + usedMemory + "\" >");
+    sb.append("<Number of Threads =\"" + numberOfThreads + "\" >");
+    sb.append("</SystemStatistics>");
+    return sb.toString();
+  }
+  
+  /*
+   * JDK 5.0 manual conversion methods. The code
+   * below would not be required if we could
+   * rely on the MXBean framework
+   * 
+   * THE REQUIRED METHODS ARE:
+   *
+   *  public static CompositeType toCompositeType();
+   *  public CompositeData toCompositeData(CompositeType ct);
+   *  public static SystemStatsRow from(CompositeData cd);
+   *
+   */
+
+  // The corresponding CompositeType for this class
+  private static CompositeType cType_= null;
+
+  private static final String[] itemNames_= {"freeMemory", "maxMemory", "time", "totalMemory",
+                                             "usedMemory", "numOfThreads"};
+  
+  static{
+    try 
+    {
+       OpenType[] itemTypes = {SimpleType.LONG,
+                               SimpleType.LONG,
+                               SimpleType.LONG,
+                               SimpleType.LONG,
+                               SimpleType.LONG,
+                               SimpleType.INTEGER};
+        
+         cType_ = new CompositeType("oracle.cep.statistics.SystemStatsRow",
+                                    "oracle.cep.statistics.SystemStatsRow",
+                                    itemNames_,
+                                    itemNames_,
+                                    itemTypes);
+    }
+    catch( OpenDataException ode) 
+    {
+      
+    }
+  }
+  
+  /**
+   * Returns the CompositeType that describes this model
+   * specific class
+   */
+  public static CompositeType toCompositeType() {
+      return cType_;
+  }
+  
+    /**
+      * Convert an instance of this model specific type to 
+      * a CompositeData. This ensure that clients that do not
+      * have access to the model specific class can still
+      * use the MBean. The MXBean framework can perform this
+      * conversion automatically. However MXBeans are part of
+      * JDK 6.0 and AS11g is required to support JDK 5.0 
+      * 
+      * @param ct - This parameter is there only for future compatibility reasons
+      *             with JDK 6.0. It can be ignored at this point.
+      */
+      public CompositeData toCompositeData(CompositeType ct) {
+         Object[] itemValues = {new Long(this.getFreeMemory()),
+                                new Long(this.getMaxMemory()),
+                                new Long(this.getTime()),
+                                new Long(this.getTotalMemory()),
+                                new Long(this.getUsedMemory()),
+                                new Integer(this.getNumberOfThreads())};
+         
+         CompositeData cData= null;
+         try 
+         {
+            cData= new CompositeDataSupport(cType_, itemNames_, itemValues);
+
+         }
+         catch( OpenDataException ode) 
+         {
+      
+         }
+         return cData;
+      }
+      
+      /**
+       * Create an instance of the model specific class out of
+       * an associated CompositeData instance
+       */
+       public static SystemStatsRow from(CompositeData cd) {
+         if (cd==null)
+           return null;
+         
+         return new SystemStatsRow(((Long)cd.get("freeMemory")).longValue(),
+                                   ((Long)cd.get("maxMemory")).longValue(),
+                                   ((Long)cd.get("time")).longValue(),
+                                   ((Long)cd.get("totalMemory")).longValue(),
+                                   ((Long)cd.get("usedMemory")).longValue(),
+                                   ((Integer)cd.get("numOfThreads")).intValue());
+       }
+
+
+}

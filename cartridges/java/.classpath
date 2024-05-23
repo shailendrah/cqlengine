@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry path="bin" kind="output"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="i18n-generated"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
+	<classpathentry kind="src" path="/cqlengine.api"/>
+	<classpathentry kind="src" path="/cqlengine.logging"/>
+	<classpathentry kind="src" path="/extensibility.api"/>
+	<classpathentry kind="src" path="/cqlengine.server"/>
+	
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/com.bea.core/apache.commons.logging.api/1.0.0.0_1-1-1/e5b41cc43c5b93465910aa0c40e1a6438d4dd54c/apache.commons.logging.api-1.0.0.0_1-1-1.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/3.1.1.RELEASE/419e9233c8d55f64a0c524bb94c3ba87e51e7d95/spring-core-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/3.1.1.RELEASE/83d0e5adc98714783f0fb7d8a5e97ef4cf08da49/spring-beans-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/junit/junit/4.11/4e031bb61df09069aeb2bffb4019e7a5034a4ee0/junit-4.11.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/com.esotericsoftware/kryo/4.0.0/9f5c64c1315ec79bee0f56bb88e4ae94b65048ce/kryo-4.0.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.apache/bcel/5.1/213a47e18f92dcfd3b8370ad0fdaef90414af308/bcel-5.1.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-csv/1.5/e10f140af5b82167640f254fa9d88e35ad74329c/commons-csv-1.5.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/com.oracle/bdb.je/3.3.69/5910360fd1bbeaabea466456c47609a6f32319f0/bdb.je-3.3.69.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/com.oracle.cep.cql/colt/1.2.0/bd919f9d7f9874632d13c35d4945bb2f30158725/colt-1.2.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/ojdbc6/ojdbc6/1.0/86e6061c8c688b1f12a2d571ee74ecffafcdc212/ojdbc6-1.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/dms/dms/1.0/20493228f952d5c6cf0f07f8033c6b946ffd6851/dms-1.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.springframework/spring-asm/3.1.1.RELEASE/8717ad8947fcada5c55da89eb474bf053c30e57/spring-asm-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.1.1/5043bfebc3db072ed80fbd362e7caf00e885d8ae/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/ojdl/ojdl/1.0/b43eb6bbe2cc4d52a882563e53e1e9f9ccc0f2ab/ojdl-1.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/xmlparserv2/xmlparserv2/1.0/e86c6f0391ee05f7e372443e8d3e70ac57073b7/xmlparserv2-1.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/com.esotericsoftware/reflectasm/1.11.3/8b102eed2f12412b254946811111ea48bc03a266/reflectasm-1.11.3.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/com.esotericsoftware/minlog/1.3.0/ff07b5f1b01d2f92bb00a337f9a94873712f0827/minlog-1.3.0.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/2.2/3fb533efdaa50a768c394aa4624144cf8df17845/objenesis-2.2.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/env/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/5.0.4/da08b8cce7bbf903602a25a3a163ae252435795/asm-5.0.4.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/out/install/oracle-middleware-12.2.1.2.0/coherence/lib/coherence.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/out/install/oracle-middleware-12.2.1.2.0/oracle_common/modules/com.bea.core.i18n.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/out/install/oracle-middleware-12.2.1.2.0/oracle_common/modules/oracle.xdk/xmlparserv2_sans_jaxp_services.jar"/>
+	<classpathentry kind="var" path="OSA_HOME/out/install/oracle-middleware-12.2.1.2.0/oracle_common/modules/oracle.xdk/xquery.jar"/>
+</classpath>

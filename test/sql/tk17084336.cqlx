@@ -1,0 +1,22 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17084336_S1 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tk17084336_S2 (c1 interval) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17084336_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17084336_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17084336_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17084336_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk17084336_q1 as select INTERVAL "400 5:12" DAY TO MINUTE from tk17084336_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk17084336_q2 as select INTERVAL "400 5:12" DAY(3) TO MINUTE from tk17084336_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk17084336_q3 as select INTERVAL "400 5:12" DAY TO MINUTE from tk17084336_S1 ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk17084336_q4 as select c1 from tk17084336_S2 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17084336_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17084336_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk17084336_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17084336_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17084336_q2 start</CEP_DDL>
+<CEP_DDL>alter query tk17084336_q4 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

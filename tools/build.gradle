@@ -1,0 +1,47 @@
+
+sourceSets.main.java.srcDirs += file("src")
+
+dependencies
+{
+    compile project(":modules:spark-cql:cqlengine:api")
+    compile libraries.cep_apache_logging
+//    compile libraries.cep_i18n
+    providedCompile libraries.wls_xmlparserv2
+}
+
+// special task to collect and compile exceptions from other modules
+def exceptionSources = file("${buildDir}/exception-generated")
+task compileExceptions {
+
+    def apiSrcDir = file("${projectDir.parent}/api/src/main/java")
+    def serverSrcDir = file("${projectDir.parent}/server/src/main/java")
+    def coreSrcDir = file("${projectDir.parent}/../core/src/main/java")
+
+    inputs.dir apiSrcDir
+    inputs.dir serverSrcDir
+    inputs.dir coreSrcDir
+    outputs.dir exceptionSources
+
+    doLast {
+        delete(exceptionSources)
+        mkdir(exceptionSources)
+        copy {
+            from apiSrcDir
+            from serverSrcDir
+            from coreSrcDir
+            into exceptionSources
+            include "**/exceptions/*"
+            exclude "**/exceptions/StaleTableSourceException.java"
+        }
+    }
+}
+
+compileL10n.dependsOn compileExceptions
+sourceSets.main.java.srcDirs += exceptionSources
+
+
+
+
+
+
+

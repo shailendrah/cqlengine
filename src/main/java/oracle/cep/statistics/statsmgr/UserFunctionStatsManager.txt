@@ -1,0 +1,179 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/UserFunctionStatsManager.java /main/4 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle and/or its affiliates.All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    hopark      10/07/08 - use execContext to remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    04/03/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/UserFunctionStatsManager.java /main/4 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+package oracle.cep.statistics.statsmgr;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import oracle.cep.common.Datatype;
+import oracle.cep.metadata.MetadataException;
+import oracle.cep.metadata.UserFunction;
+import oracle.cep.metadata.cache.CacheObjectType;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.Column;
+import oracle.cep.jmx.stats.FilterCondition;
+import oracle.cep.jmx.stats.UserFuncStats;
+
+public abstract class UserFunctionStatsManager extends StatsManager 
+{
+ protected Iterator<Integer> iter;
+ protected UserFuncStats fnStat;
+ protected boolean hasFilters = false;
+ protected ArrayList<FilterCondition> uFilters;
+ protected Datatype[] types;
+ protected boolean query_id_filter;
+ protected int query_id;
+ 
+ public UserFunctionStatsManager(ExecContext ec, IStatsFactory factory)
+ {
+   super(ec, factory);
+ }
+  
+  public static boolean isSpecialCase(FilterCondition[] filters)
+  {
+    if(filters != null)
+    {
+      for(int i=0; i<filters.length; i++)
+      {
+        if(filters[i].getColName().colCode == Column.FUNCTION_QUERY_ID.colCode)
+          return true;
+      }
+    }
+    return false;
+  }
+ 
+  public void init(FilterCondition[] filters)
+  {
+	uFilters = new ArrayList<FilterCondition>();
+	query_id_filter = false;
+	query_id= -1;
+    fnStat = new UserFuncStats();
+    if(filters != null)
+    {
+      for(int i=0; i<filters.length; i++)
+      {
+        if(filters[i].getColName().colCode == Column.FUNCTION_QUERY_ID.colCode)
+        {
+          query_id_filter = true;
+          query_id = Integer.parseInt(filters[i].getColVal());
+        }
+        else
+        {
+          hasFilters = true;
+          uFilters.add(filters[i]);
+        }
+      }
+    }
+    else
+    {
+      hasFilters = false;
+      uFilters = null;
+      types = null;
+    }
+    
+    if(hasFilters)
+    {
+      types = new Datatype[uFilters.size()];
+      for(int i=0; i<uFilters.size(); i++)
+        types[i] = getDatatype(uFilters.get(i).getColName());
+    }
+  }
+  
+  public void init()
+  {
+    hasFilters = false;
+    query_id_filter = false;
+    query_id = -1;
+    types = null;
+    uFilters = null;
+    fnStat = new UserFuncStats();
+    iter = null;
+  }
+  
+  public void close() {
+    iter = null;
+    hasFilters = false;
+    types = null;
+    uFilters = null;
+    query_id_filter = false;
+    query_id = -1;
+  }
+  
+  public IStats getNext() throws MetadataException{
+    if(factory == null)
+      return null;
+    
+    if(iter == null)
+      return null;
+
+    IStats stats = null;
+	     
+    boolean found = false;
+	     
+    while(!found && iter.hasNext())
+    {
+       Integer fnId = iter.next();
+	       
+       if(fnId == null)
+         return null;
+	       
+       stats = getFunctionStatsRow(fnId);
+	       
+       if(hasFilters)
+       {
+         found = processFilter(stats, (FilterCondition[])uFilters.toArray((new FilterCondition[0])), types);
+       }
+       else
+         found = true;
+     }
+
+    if(found)
+      return stats;
+    else
+      return null;
+  }
+
+  
+  protected IStats getFunctionStatsRow(Integer fnId) throws MetadataException
+  {
+    UserFunction fn = execContext.getUserFnMgr().getSimpleOrAggFunction(fnId.intValue());
+    execContext.getExecStatsMgr().getFunctionStats(fnId, fnStat);
+      
+    boolean isAggr = (fn.getType() == CacheObjectType.AGGR_FUNCTION);
+      
+    return factory.createUserFunctionStat(fn.getName(), fnId.intValue(), 
+                         isAggr, fn.getCreationText(), fn.getImplClassName(),
+                               fnStat.getNumInvokations(), fnStat.getTime());
+  }
+
+	
+}

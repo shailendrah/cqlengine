@@ -1,0 +1,101 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xsd:complexType name="address_lineType">
+    <xsd:attribute name="value" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="address_listType">
+    <xsd:sequence>
+      <xsd:element name="input_location" type="input_locationType"
+         maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="gdf_formType">
+    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="street" type="xsd:string"/>
+    <xsd:attribute name="intersecting_street" type="xsd:string"/>
+    <xsd:attribute name="builtup_area" type="xsd:string"/>
+    <xsd:attribute name="order8_area" type="xsd:string"/>
+    <xsd:attribute name="order2_area" type="xsd:string"/>
+    <xsd:attribute name="order1_area" type="xsd:string"/>
+    <xsd:attribute name="country" type="xsd:string"/>
+    <xsd:attribute name="postal_code" type="xsd:string"/>
+    <xsd:attribute name="postal_addon_code" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:complexType name="gen_formType">
+    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="street" type="xsd:string"/>
+    <xsd:attribute name="intersecting_street" type="xsd:string"/>
+    <xsd:attribute name="sub_area" type="xsd:string"/>
+    <xsd:attribute name="city" type="xsd:string"/>
+    <xsd:attribute name="region" type="xsd:string"/>
+    <xsd:attribute name="country" type="xsd:string"/>
+    <xsd:attribute name="postal_code" type="xsd:string"/>
+    <xsd:attribute name="postal_addon_code" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:element name="geocode_request">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="address_list" type="address_listType"/>
+      </xsd:sequence>
+      <xsd:attribute name="vendor" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="input_addressType">
+    <xsd:choice>
+      <xsd:element name="us_form1" type="us_form1Type"/>
+      <xsd:element name="us_form2" type="us_form2Type"/>
+      <xsd:element name="gdf_form" type="gdf_formType"/>
+      <xsd:element name="gen_form" type="gen_formType"/>
+      <xsd:element name="unformatted" type="unformattedType"/>
+    </xsd:choice>
+    <xsd:attribute name="match_mode" default="relax_postal_code">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="exact"/>
+          <xsd:enumeration value="relax_street_type"/>
+          <xsd:enumeration value="relax_poi_name"/>
+          <xsd:enumeration value="relax_house_number"/>
+          <xsd:enumeration value="relax_base_name"/>
+          <xsd:enumeration value="relax_postal_code"/>
+          <xsd:enumeration value="relax_builtup_area"/>
+          <xsd:enumeration value="relax_all"/>
+          <xsd:enumeration value="DEFAULT"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="input_locationType">
+    <xsd:sequence>
+      <xsd:element name="input_address" type="input_addressType"
+         minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string"/>
+    <xsd:attribute name="country" type="xsd:string"/>
+    <xsd:attribute name="longitude" type="xsd:string"/>
+    <xsd:attribute name="latitude" type="xsd:string"/>
+    <xsd:attribute name="x" type="xsd:string"/>
+    <xsd:attribute name="y" type="xsd:string"/>
+    <xsd:attribute name="srid" type="xsd:string"/>
+    <xsd:attribute name="multimatch_number" type="xsd:string" default="1000"/>
+  </xsd:complexType>
+  <xsd:complexType name="unformattedType">
+    <xsd:sequence>
+      <xsd:element name="address_line" type="address_lineType"
+         maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="country" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:complexType name="us_form1Type">
+    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="street" type="xsd:string"/>
+    <xsd:attribute name="intersecting_street" type="xsd:string"/>
+    <xsd:attribute name="lastline" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:complexType name="us_form2Type">
+    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="street" type="xsd:string"/>
+    <xsd:attribute name="intersecting_street" type="xsd:string"/>
+    <xsd:attribute name="city" type="xsd:string"/>
+    <xsd:attribute name="state" type="xsd:string"/>
+    <xsd:attribute name="zip_code" type="xsd:string"/>
+  </xsd:complexType>
+</xsd:schema>

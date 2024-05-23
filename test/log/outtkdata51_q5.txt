@@ -1,0 +1,40 @@
+1:+ <S10 C1="1" abc="abc">
+   <c1>1</c1>
+   <abcab>abc</abcab>
+</S10>
+
+2:+ <S10 C1="2" ab="ab">
+   <c1>2</c1>
+   <abab>ab</abab>
+</S10>
+
+3:+ <S10 C1="3" abc="abc">
+   <c1>3</c1>
+   <abcab>abc</abcab>
+</S10>
+
+4:+ <S10 C1="4" a="a">
+   <c1>4</c1>
+   <aab>a</aab>
+</S10>
+
+1001:- <S10 C1="1" abc="abc">
+   <c1>1</c1>
+   <abcab>abc</abcab>
+</S10>
+
+1002:- <S10 C1="2" ab="ab">
+   <c1>2</c1>
+   <abab>ab</abab>
+</S10>
+
+1003:- <S10 C1="3" abc="abc">
+   <c1>3</c1>
+   <abcab>abc</abcab>
+</S10>
+
+1004:- <S10 C1="4" a="a">
+   <c1>4</c1>
+   <aab>a</aab>
+</S10>
+

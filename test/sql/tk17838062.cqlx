@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17838062_S1 (c1 integer, c2 integer, c3 double) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk17838062_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17838062_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk17838062_q1 as DStream(select c1, c2, c3 from tk17838062_S1 [partition by c1, c2 rows 3] where c3 > 0 )]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17838062_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17838062_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17838062_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

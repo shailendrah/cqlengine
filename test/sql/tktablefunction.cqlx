@@ -1,0 +1,164 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tktablefunction_S1(c1 integer, c2 char(10))</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tktablefunction_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tktablefunction_S2(c1 integer, c2 oracle.cep.test.TestTableFunction)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tktablefunction_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpZ10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create function getCQLInteger(c1 java.lang.Integer) return integer as language java name "oracle.cep.test.userfunctions.TkUsrConvert"</CEP_DDL>
+
+<CEP_DDL> create function tktablefunction_f1(c1 integer) return java.util.LinkedList as language java name "oracle.cep.test.userfunctions.TkUsrList" </CEP_DDL>
+
+<!-- NEGATIVE TEST: Table function returns an ARRAY-LIST of java.lang.Integer but expected type is CQL's INTEGER -->
+<!--        Output: Empty File -->
+<CEP_DDL> create query tktablefunction_q1Neg as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of integer) as S2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q1Neg add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q1Neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q1Neg start</CEP_DDL>
+
+
+
+<!-- TEST: Table function returns an ARRAY-LIST of java.lang.Integer -->
+<CEP_DDL> create query tktablefunction_q1 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q1 start</CEP_DDL>
+
+
+
+<!-- TEST: Table function returns an ARRAY-LIST of complex type oracle.cep.test.TableFunctionTestData  -->
+<CEP_DDL> create query tktablefunction_q1_v1 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testComplexArrayList() as c1 of oracle.cep.test.TableFunctionTestData) as S2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q1_v1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q1_v1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q1_v1 start</CEP_DDL>
+
+
+
+<!--TEST: Table function returns an ARRAY-LIST of java.lang.Integer; A StreamJoin Test -->
+<CEP_DDL> create query tktablefunction_q2 as RStream(select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q2 start</CEP_DDL>
+
+
+
+<!--TEST: Table function returns a COLLECTION of java.lang.String; A StreamJoin Test -->
+<CEP_DDL> create query tktablefunction_q3 as RStream(select S1.c1, S2.c1 from tktablefunction_S2[now] as S1, table(S1.c2.getEmployees(S1.c1) as c1 of char) as S2)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q3NameChanged.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q3 start</CEP_DDL>
+
+
+
+<!-- TEST: Table function returns an ARRAY-LIST by calling a nonstatic java method -->
+<CEP_DDL> create query tktablefunction_q4 as RStream(select S1.c1, S2.c1 from tktablefunction_S2[now] as S1, table(S1.c2.testNonStaticArrayList2() as c1 of java.lang.Integer) as S2) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q4 start</CEP_DDL>
+
+
+
+<!-- NEGATIVE TEST: Table function return type is mentioned as CQL's integer but it is java.lang.Integer -->
+<CEP_DDL> create query tktablefunction_q5Neg as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table(oracle.cep.test.TestTableFunction.testArray(S1.c1) as c1 of integer) as S2 </CEP_DDL>
+
+
+
+<!--TEST: Table function returns a PLAIN JAVA AARRAY of type java.lang.Integer -->
+<CEP_DDL> create query tktablefunction_q5_v1 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table(oracle.cep.test.TestTableFunction.testArray(S1.c1) as c1 of java.lang.Integer) as S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q5_v1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q5_v1 start</CEP_DDL>
+
+
+
+<!--TEST: Table function returns a PLAIN JAVA ARRAY with no type specified -->
+<CEP_DDL> create query tktablefunction_q5_v2 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table(oracle.cep.test.TestTableFunction.testArray(S1.c1) as c1) as S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q5_v2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q5_v2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q5_v2 start</CEP_DDL>
+
+
+
+<!--TEST: Table function returns a PLAIN JAVA ARRAY with complex type specified -->
+<CEP_DDL> create query tktablefunction_q5_v3 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q5_v3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q5_v3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q5_v3 start</CEP_DDL>
+
+
+<!--TEST: Test for Sharing of Table function source operator (the query is similar to tktablefunction_q5_v3 -->
+<CEP_DDL> create query tktablefunction_q5_v4 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q5_v4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q5_v4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q5_v4 start</CEP_DDL>
+
+
+<!--TEST: Test for multiple table functions -->
+<CEP_DDL> create query tktablefunction_q6 as select S1.c1, S1.c2, S2.c1, S3.c1 from tktablefunction_S1[now] as S1, 
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S2,
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S3 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q6 start</CEP_DDL>
+
+
+<CEP_DDL> create query tktablefunction_q7 as select S1.c1, S1.c2, S2.c1, S3.c1, S4.c1 from tktablefunction_S1[now] as S1, table(oracle.cep.test.TestTableFunction.testArray(S1.c1) as c1) as S2,
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S3,
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S4 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q7 start</CEP_DDL>
+
+
+<CEP_DDL> create query tktablefunction_q8 as select S1.c1, S1.c2, S2.c1, S3.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2,
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S3</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q8 start</CEP_DDL>
+
+<!-- NEGATIVE TEST : Table functions can refer to attributes of only those sources which are declared before itself in the from clause, ie, sources that appear on the left hand side to the given table function in the from clause  -->
+<CEP_DDL> create query tktablefunction_q8Neg as select S1.c1, S1.c2, S2.c1 from
+table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2,
+tktablefunction_S1[now] as S1,
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S3</CEP_DDL>
+
+<CEP_DDL> create query tktablefunction_q9Neg as select S1.c1, S1.c2, S2.c1 from
+tktablefunction_S1 as S1,
+table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2,
+table(oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S3</CEP_DDL>
+
+<!-- NEGATIVE TEST: Table function returns a PLAIN JAVA ARRAY with wrong type specified -->
+<CEP_DDL> create query tktablefunction_q5Neg as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table(oracle.cep.test.TestTableFunction.testArray(S1.c1) as c1 of java.lang.Byte) as S2 </CEP_DDL>
+
+
+
+<!-- NEGATIVE TEST: Table function returns an Iterator of java.lang.Integer; But Iterator is not ITERABLE -->
+<!-- Reason: Iterable object should return an Iterator -->
+<CEP_DDL> create query tktablefunction_qNeg1 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testIterator() as c1 of java.lang.Integer) as S2</CEP_DDL>
+
+
+
+<!-- NEGATIVE TEST: Table function returns a non iterable object; -->
+<CEP_DDL> create query tktablefunction_qNeg2 as select S1.c1, S1.c2, S2.c1 from 
+           tktablefunction_S1 as S1, 
+           table(oracle.cep.test.TestTableFunction.testNonIterable(S1.c1) as c1) as S2
+</CEP_DDL> 
+
+
+
+<!-- NEGATIVE TEST: Table function should be joined with NOW Window -->
+<CEP_DDL> create query tktablefunction_qNeg3 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[rows 3] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2</CEP_DDL>
+
+<CEP_DDL> create query tktablefunction_q10 as
+select S1.c1, S2.c1 from tktablefunction_S2[now] as S1, table(S1.c2.testNonStaticArrayList2() as c1 of java.lang.Integer) as S2  where S1.c1 + getCQLInteger(S2.c1) = 101 OR S1.c1 + getCQLInteger(S2.c1) = 102 </CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tktablefunction_q10 start</CEP_DDL>
+
+<!--TEST for Query Sharing: Table function returns a PLAIN JAVA ARRAY of Integers -->
+<CEP_DDL> create query tktablefunction_q10_v1 as select S1.c1, S2.c1 from tktablefunction_S1[now] as S1, table(tktablefunction_f1(S1.c1) as c1) as S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q10_v1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q10_v1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q10_v1 start</CEP_DDL>
+
+
+<!--TEST: Test for Sharing of Table function source operator (the query is similar to tktablefunction_q10_v1 -->
+<CEP_DDL> create query tktablefunction_q10_v2 as select S1.c1, S2.c1 from tktablefunction_S1[now] as S1, table(tktablefunction_f1(S1.c1) as c1) as S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q10_v2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q10_v2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q10_v2 start</CEP_DDL>
+
+<CEP_DDL> create query tktablefunction_q11Neg as select * from table ( oracle.cep.test.TestTableFunction.testComplexArray() as c1 of oracle.cep.test.TableFunctionTestData) as S1</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+
+
+</CEP>

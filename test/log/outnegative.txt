@@ -1,0 +1,17 @@
+here 1..
+here 2..
+here 3..
+Executed "register stream S8 (c1 integer, c2 float);"
+Tableid: 0
+Executed "register stream S9 (c1 integer, c2 float);"
+Tableid: 1
+oracle.cep.metadata.MetadataException: oracle.cep.exceptions.metadataerror_view_already_exists
+	at oracle.cep.metadata.ViewManager.registerView(ViewManager.java:158)
+	at oracle.cep.server.CommandInterpreter.execute(CommandInterpreter.java:114)
+	at CmdNegative.main(CmdNegative.java:107)
+Executed "register view S8 as select * from S9;"
+Error: oracle.cep.exceptions.metadataerror_view_already_exists
+Executed "DStream(select (c1+10)*2, c2+1.5 from S8[range unbounded] where c1 > 10);"
+Queryid: 3
+Files outnegative.txt and /ade/rpoliset_cep1/work/cep/outfiles/outnegative.txt differ
+cmdnegative.sh: line 52: /work/cep/outnegative.txt.dif: No such file or directory

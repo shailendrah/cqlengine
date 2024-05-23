@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tktimestamp_S0 (c1 char(20))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tktimestamp_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/tktimestampzone.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tktimestamp_q1 as select c1, "valid format" from tktimestamp_S0 where systimestamp(c1) > to_timestamp("01/01/0001 00:00:01") </CEP_DDL>
+
+<CEP_DDL><![CDATA[alter query tktimestamp_q1 add destination "<EndPointReference><Address>file:///@TEST_OUTPUT@/outtktimestampzone.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL>alter query tktimestamp_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run</CEP_DDL>
+
+</CEP>

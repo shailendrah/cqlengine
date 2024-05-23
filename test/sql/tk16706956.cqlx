@@ -1,0 +1,13 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk16706956_S1 (product_id integer, product_type_id integer, name char(20), price double, firstExpiredinterval bigint, secExpiredinterval bigint, variableRate double) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk16706956_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16706956_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tk16706956_q1 as select product_type_id, count(product_id) from tk16706956_S1[partition by product_type_id rows 1000 range (firstExpiredinterval+1)*2] group by product_type_id</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16706956_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16706956_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk16706956_q1 start</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

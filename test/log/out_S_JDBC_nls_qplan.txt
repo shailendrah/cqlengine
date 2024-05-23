@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan>
+
+<operator id = "0" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "8"/><property name = "Stream" value = "S_JDBC_1_1"/>
+</operator>
+
+<operator id = "1" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "8"/><input queue = "0"> 0 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "3" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "8"/><input queue = "1"> 1 </input>
+<query>8</query>
+<property name = "Query" value = "8 "/>
+<property name = "Query String" value = "create query q_JDBC_1_1 as select * from S_JDBC_1_1 [range 1]"/>
+</operator>
+
+<operator id = "4" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "10"/><property name = "Stream" value = "S_JDBC_2_1"/>
+</operator>
+
+<operator id = "65" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "113"/><input queue = "71"> 63 </input>
+<query>113</query>
+<property name = "Query" value = "113 "/>
+<property name = "Query String" value = "create query tknls_q4 as select c1, 日本語文字列 from tknls_str2 [range 1]"/>
+</operator>
+
+<operator id = "5" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "10"/><input queue = "4"> 4 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "7" stream = "1">
+<name> Istream </name>
+<lname> Istream </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "10"/><input queue = "5"> 5 </input>
+</operator>
+
+<operator id = "8" stream = "1">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "10"/><input queue = "7"> 7 </input>
+<query>10</query>
+<property name = "Query" value = "10 "/>
+<property name = "Query String" value = "create query q_JDBC_2_1 as istream(select * from S_JDBC_2_1[range 1])"/>
+</operator>
+
+<operator id = "9" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "12"/><property name = "Stream" value = "S_JDBC_3_1"/>
+</operator>
+
+<operator id = "10" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "12"/><input queue = "10"> 9 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "12" stream = "1">
+<name> Istream </name>
+<lname> Istream </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "12"/><input queue = "11"> 10 </input>
+</operator>
+
+<operator id = "13" stream = "1">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "12"/><input queue = "13"> 12 </input>
+<query>12</query>
+<property name = "Query" value = "12 "/>
+<property name = "Query String" value = "create query q_JDBC_3_1 as istream(select * from S_JDBC_3_1[range 1])"/>
+</operator>
+
+<operator id = "14" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "14"/><property name = "Stream" value = "S_JDBC_3_2"/>
+</operator>
+
+<operator id = "15" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "14"/><input queue = "16"> 14 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "17" stream = "1">
+<name> Istream </name>
+<lname> Istream </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "14"/><input queue = "17"> 15 </input>
+</operator>
+
+<operator id = "19" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "64, 65, 77, 78, 79"/><property name = "Stream" value = "S_JDBC_7_1"/>
+</operator>
+
+<operator id = "18" stream = "1">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "14"/><input queue = "19"> 17 </input>
+<query>14</query>
+<property name = "Query" value = "14 "/>
+<property name = "Query String" value = "create query q_JDBC_3_2 as istream(select * from S_JDBC_3_2[range 1])"/>
+</operator>
+
+<operator id = "20" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "64, 65"/><input queue = "22"> 19 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "22" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "64"/><input queue = "23"> 20 </input>
+<query>64</query>
+<property name = "Query" value = "64 "/>
+<property name = "Query String" value = "create query q_JDBC_7_1 as select * from S_JDBC_7_1 [range 1]"/>
+</operator>
+
+<operator id = "29" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "65"/><input queue = "26"> 28 </input>
+<query>65</query>
+<property name = "Query" value = "65 "/>
+<property name = "Query String" value = "create query q_JDBC_7_11 as select a.c2, b.c2 from S_JDBC_7_1 [range 1] as a, S_JDBC_7_1 [range 1] as b where a.c1 = b.c1"/>
+</operator>
+
+<operator id = "28" stream = "0">
+<name> Join </name>
+<lname> Binary Join </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "65"/><input queue = "23"> 20 </input>
+<input queue = "23"> 20 </input>
+<property name = "Join Predicate" value = "[0,0] = [1,0]"/>
+<property name = "Project List" value = "[0,1],[1,1]"/>
+</operator>
+
+<operator id = "31" stream = "0">
+<name> Project </name>
+<lname> Projection </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "77"/><input queue = "30"> 30 </input>
+<property name = "Project List" value = "[0,1],58([0,1])"/></operator>
+
+<operator id = "30" stream = "0">
+<name> RowWin </name>
+<lname> Row Window </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "77, 78, 79"/><input queue = "22"> 19 </input>
+<property name = "Num Rows" value = "5"/><property name = "Slide size" value = "1"/>
+</operator>
+
+<operator id = "34" stream = "0">
+<name> Aggr </name>
+<lname> Group By Aggregation </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "78"/><input queue = "30"> 30 </input>
+<property name = "Grouping Attrs" value = "[0,0]"/>
+<property name = "Aggrs" value = "USER_DEF([0,0]),COUNT_STAR([0,0])"/>
+</operator>
+
+<operator id = "32" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "77"/><input queue = "32"> 31 </input>
+<query>77</query>
+<property name = "Query" value = "77 "/>
+<property name = "Query String" value = "create query q_JDBC_7_2 as select c2, f_JDBC_Obj(c2) from S_JDBC_7_1 [rows 5]"/>
+</operator>
+
+<operator id = "38" stream = "0">
+<name> Aggr </name>
+<lname> Group By Aggregation </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "79"/><input queue = "30"> 30 </input>
+<property name = "Grouping Attrs" value = "[0,0]"/>
+<property name = "Aggrs" value = "USER_DEF([0,1]),COUNT_STAR([0,0])"/>
+</operator>
+
+<operator id = "36" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "78"/><input queue = "35"> 34 </input>
+<query>78</query>
+<property name = "Query" value = "78 "/>
+<property name = "Query String" value = "create query q_JDBC_7_3 as select c1, a_JDBC_Obj(c1) from S_JDBC_7_1 [rows 5]  group by c1"/>
+</operator>
+
+<operator id = "42" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "81"/><input queue = "41"> 41 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "40" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "79"/><input queue = "38"> 38 </input>
+<query>79</query>
+<property name = "Query" value = "79 "/>
+<property name = "Query String" value = "create query q_JDBC_7_4 as select c1, a1_JDBC_Obj(c2) from S_JDBC_7_1 [rows 5] group by c1"/>
+</operator>
+
+<operator id = "41" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "81"/><property name = "Stream" value = "SLogging"/>
+</operator>
+
+<operator id = "46" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "83"/><input queue = "45"> 45 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "44" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "81"/><input queue = "42"> 42 </input>
+<query>81</query>
+<property name = "Query" value = "81 "/>
+<property name = "Query String" value = "create query qLogging as select * from SLogging[range 1]"/>
+</operator>
+
+<operator id = "45" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "83, 111"/><property name = "Stream" value = "日本語文字列"/>
+</operator>
+
+<operator id = "51" stream = "1">
+<name> Project </name>
+<lname> Projection </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "85, 89"/><input queue = "50"> 50 </input>
+<property name = "Project List" value = "86([0,0]),86([0,0]),86([0,0])"/></operator>
+
+<operator id = "50" stream = "1">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "85, 89"/><input queue = "49"> 49 </input>
+</operator>
+
+<operator id = "49" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "85, 89"/><property name = "Stream" value = "tknls_xmlstream"/>
+</operator>
+
+<operator id = "48" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "83"/><input queue = "46"> 46 </input>
+<query>83</query>
+<property name = "Query" value = "83 "/>
+<property name = "Query String" value = "create query tknls_q1 as select * from 日本語文字列 [range 1]"/>
+</operator>
+
+<operator id = "55" stream = "0">
+<name> Project </name>
+<lname> Projection </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "89"/><input queue = "58"> 54 </input>
+<property name = "Project List" value = "[0,0],[0,1],[0,1]/96([0,2])"/></operator>
+
+<operator id = "54" stream = "0">
+<name> Aggr </name>
+<lname> Group By Aggregation </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "89"/><input queue = "56"> 53 </input>
+<property name = "Grouping Attrs" value = "[0,0]"/>
+<property name = "Aggrs" value = "SUM(96([0,1])*[0,2]),SUM([0,1]),COUNT_STAR([0,0])"/>
+</operator>
+
+<operator id = "53" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "89"/><input queue = "54"> 52 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1,1]"/>
+</operator>
+
+<operator id = "52" stream = "1">
+<name> ViewStrSrc </name>
+<lname> View Stream Source </lname>
+<property name = "Is View" value = "true"/><property name = "QryIdList" value = "89"/><input queue = "52"> 51 </input>
+<property name = "Stream" value = "tknls_v1"/>
+</operator>
+
+<operator id = "59" stream = "0">
+<name> Select </name>
+<lname> Selection </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "111"/><input queue = "65"> 58 </input>
+<property name = "Predicate" value = "[0,1] = 日本語文字列5"/>
+</operator>
+
+<operator id = "58" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "111"/><input queue = "45"> 45 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1,1]"/>
+</operator>
+
+<operator id = "57" stream = "1">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "89"/><input queue = "62"> 56 </input>
+<query>89</query>
+<property name = "Query" value = "89 "/>
+<property name = "Query String" value = "create query tknls_q2 as IStream(select orderId, sum(LastShares * LastPrice), sum(LastShares * LastPrice) / sum(LastShares) from tknls_v1[now] group by orderId)"/>
+</operator>
+
+<operator id = "56" stream = "1">
+<name> Istream </name>
+<lname> Istream </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "89"/><input queue = "60"> 55 </input>
+</operator>
+
+<operator id = "63" stream = "0">
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "113"/><input queue = "70"> 62 </input>
+<name> TimeWin </name>
+<lname> Time Based Window </lname>
+<property name = "Range" value = "[1000000000,1]"/>
+</operator>
+
+<operator id = "62" stream = "1">
+<name> StrSrc </name>
+<lname> Stream Source </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "113"/><property name = "Stream" value = "tknls_str2"/>
+</operator>
+
+<operator id = "61" stream = "0">
+<name> Output </name>
+<lname> Output </lname>
+<property name = "Is View" value = "false"/><property name = "QryIdList" value = "111"/><input queue = "67"> 59 </input>
+<query>111</query>
+<property name = "Query" value = "111 "/>
+<property name = "Query String" value = "create query tknls_q3 as select * from 日本語文字列[NOW] where c2 =&quot;日本語文字列5&quot;"/>
+</operator>
+
+<store id = "0">
+<owner> 0 </owner>
+<name> window </name>
+</store>
+
+<store id = "1">
+<owner> 4 </owner>
+<name> window </name>
+</store>
+
+<store id = "2">
+<owner> 7 </owner>
+<name> window </name>
+</store>
+
+<store id = "3">
+<owner> 7 </owner>
+<name> relation </name>
+</store>
+
+<store id = "4">
+<owner> 9 </owner>
+<name> window </name>
+</store>
+
+<store id = "5">
+<owner> 12 </owner>
+<name> window </name>
+</store>
+
+<store id = "6">
+<owner> 12 </owner>
+<name> relation </name>
+</store>
+
+<store id = "7">
+<owner> 14 </owner>
+<name> window </name>
+</store>
+
+<store id = "8">
+<owner> 17 </owner>
+<name> window </name>
+</store>
+
+<store id = "9">
+<owner> 17 </owner>
+<name> relation </name>
+</store>
+
+<store id = "10">
+<owner> 19 </owner>
+<name> window </name>
+</store>
+
+<store id = "11">
+<owner> 28 </owner>
+<name> lineage </name>
+</store>
+
+<store id = "12">
+<owner> 31 </owner>
+<name> lineage </name>
+</store>
+
+<store id = "13">
+<owner> 34 </owner>
+<name> relation </name>
+</store>
+
+<store id = "14">
+<owner> 38 </owner>
+<name> relation </name>
+</store>
+
+<store id = "15">
+<owner> 41 </owner>
+<name> window </name>
+</store>
+
+<store id = "17">
+<owner> 49 </owner>
+<name> window </name>
+</store>
+
+<store id = "16">
+<owner> 45 </owner>
+<name> window </name>
+</store>
+
+<store id = "19">
+<owner> 51 </owner>
+<name> window </name>
+</store>
+
+<store id = "18">
+<owner> 50 </owner>
+<name> window </name>
+</store>
+
+<store id = "21">
+<owner> 54 </owner>
+<name> relation </name>
+</store>
+
+<store id = "20">
+<owner> 52 </owner>
+<name> window </name>
+</store>
+
+<store id = "23">
+<owner> 56 </owner>
+<name> window </name>
+</store>
+
+<store id = "22">
+<owner> 55 </owner>
+<name> lineage </name>
+</store>
+
+<store id = "25">
+<owner> 59 </owner>
+<name> relation </name>
+</store>
+
+<store id = "24">
+<owner> 56 </owner>
+<name> relation </name>
+</store>
+
+<store id = "26">
+<owner> 62 </owner>
+<name> window </name>
+</store>
+
+<synopsis id = "0">
+<owner> 1 </owner>
+<source> 0 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "1">
+<owner> 5 </owner>
+<source> 1 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "2">
+<owner> 7 </owner>
+<source> 3 </source>
+<name> relation </name>
+<pos> right </pos></synopsis>
+
+<synopsis id = "3">
+<owner> 10 </owner>
+<source> 4 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "4">
+<owner> 12 </owner>
+<source> 6 </source>
+<name> relation </name>
+<pos> right </pos></synopsis>
+
+<synopsis id = "5">
+<owner> 15 </owner>
+<source> 7 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "6">
+<owner> 17 </owner>
+<source> 9 </source>
+<name> relation </name>
+<pos> right </pos></synopsis>
+
+<synopsis id = "7">
+<owner> 20 </owner>
+<source> 10 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "8">
+<owner> 28 </owner>
+<source> 10 </source>
+<name> relation </name>
+<pos> right </pos></synopsis>
+
+<synopsis id = "9">
+<owner> 28 </owner>
+<source> 10 </source>
+<name> relation </name>
+<pos> left </pos></synopsis>
+
+<synopsis id = "10">
+<owner> 28 </owner>
+<source> 11 </source>
+<name> lineage </name>
+<pos> output </pos></synopsis>
+
+<synopsis id = "11">
+<owner> 30 </owner>
+<source> 10 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "12">
+<owner> 31 </owner>
+<source> 12 </source>
+<name> lineage </name>
+<pos> output </pos></synopsis>
+
+<synopsis id = "13">
+<owner> 34 </owner>
+<source> 13 </source>
+<name> relation </name>
+<pos> output </pos></synopsis>
+
+<synopsis id = "14">
+<owner> 34 </owner>
+<source> 13 </source>
+<name> relation </name>
+<pos> left </pos></synopsis>
+
+<synopsis id = "15">
+<owner> 38 </owner>
+<source> 14 </source>
+<name> relation </name>
+<pos> output </pos></synopsis>
+
+<synopsis id = "17">
+<owner> 42 </owner>
+<source> 15 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "16">
+<owner> 38 </owner>
+<source> 14 </source>
+<name> relation </name>
+<pos> left </pos></synopsis>
+
+<synopsis id = "19">
+<owner> 53 </owner>
+<source> 20 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "18">
+<owner> 46 </owner>
+<source> 16 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "21">
+<owner> 54 </owner>
+<source> 21 </source>
+<name> relation </name>
+<pos> left </pos></synopsis>
+
+<synopsis id = "20">
+<owner> 54 </owner>
+<source> 21 </source>
+<name> relation </name>
+<pos> output </pos></synopsis>
+
+<synopsis id = "23">
+<owner> 56 </owner>
+<source> 24 </source>
+<name> relation </name>
+<pos> right </pos></synopsis>
+
+<synopsis id = "22">
+<owner> 55 </owner>
+<source> 22 </source>
+<name> lineage </name>
+<pos> output </pos></synopsis>
+
+<synopsis id = "25">
+<owner> 59 </owner>
+<source> 25 </source>
+<name> relation </name>
+<pos> right </pos></synopsis>
+
+<synopsis id = "24">
+<owner> 58 </owner>
+<source> 16 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+<synopsis id = "26">
+<owner> 63 </owner>
+<source> 26 </source>
+<name> window </name>
+<pos> center </pos></synopsis>
+
+</plan>

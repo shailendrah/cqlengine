@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> register stream tkbigint1_SBigInt2(c1 bigint, c2 float) </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter stream tkbigint1_SBigInt2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSBigInt-l-f3.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> create query tkbigint1_qBigInt_avg as select c2,avg(c1) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_avg add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-davg.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> alter query tkbigint1_qBigInt_avg start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

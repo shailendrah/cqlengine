@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk25370978_S1 (purchase_sum double, transaction_time timestamp, client_name char(20), card_number number(10,2), client_age integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk25370978_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk25370978_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk25370978_q1 as 
+SELECT client_name as client_name,  case ( mean(card_number*card_number*1.0d) -mean(card_number)*mean(card_number) ) * ( mean(purchase_sum*purchase_sum*1.0d) -mean(purchase_sum)*mean(purchase_sum)*1.0d ) when 0.0d then 0.0d else (mean(card_number*purchase_sum*1.0d) - mean(card_number)*mean(purchase_sum))/sqrt( ( mean(card_number*card_number*1.0d) -mean(card_number)*mean(card_number)*1.0d ) * ( mean(purchase_sum*purchase_sum*1.0d) -mean(purchase_sum)*mean(purchase_sum)*1.0d ) )  end  as correlationId 
+FROM tk25370978_S1[range 1 SECONDS slide 1 SECONDS]  GROUP BY client_name 
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk25370978_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk25370978_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk25370978_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

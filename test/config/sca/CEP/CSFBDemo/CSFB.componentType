@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ASCII"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0">
+    <!--  does not implement service , neither invokes a reference -->
+    <business-events>
+    	<raise xmlns:events="http://www.globalcompany.com/ns/CEP/" name="events:OrderAlert" />
+    </business-events>
+</componentType>

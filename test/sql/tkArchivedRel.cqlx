@@ -1,0 +1,32 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRel_CallCenterFact (OPTLOCK bigint,  ID bigint, HIERARCHY char(255), CUSTOMERLOCATIONID char(255), PRODUCTID char(255), CUSTOMERSTATUS char(255), CALLPRIORITY bigint, CALLWAITTIME bigint, callProcessingTime bigint, callStatus char(255), callClosedTime timestamp) archiver BIArchiver entity "soainfra.CallCenterFact_DO_VIEW" event identifier ID </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRel_CallCenterFact add source "<EndPointReference><Address>file://@TEST_DATA@/inpCallCenter.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tkArchivedRel_q1 as
+IStream(
+  select 
+    avg(callProcessingTime) as average_call_processing_time,
+    avg(callProcessingTime) - 90 as actual_deviation,
+    15 as allowed_deviation
+  from
+    tkArchivedRel_CallCenterFact[range 480 hour on callClosedTime]
+  where
+    callStatus = 'CLOSED'
+  having
+    avg(callProcessingTime) - 90 > 15
+)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRel_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRel1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- start_time specified here is assumed to be in nanoseconds -->
+<CEP_DDL> alter query tkArchivedRel_q1 set start_time 1305221050786000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedRel_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

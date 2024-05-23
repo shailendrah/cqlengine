@@ -1,0 +1,3 @@
+<CEP>
+<CEP_DDL> alter system sched_name = "oracle.cep.execution.scheduler.RoundRobinScheduler"</CEP_DDL>
+</CEP>

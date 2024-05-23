@@ -1,0 +1,51 @@
+<project name="build-parser" default="gen.parser" basedir=".">
+
+    <!-- FIXME needs to be rewritten as a plugin -->
+    <!-- wlevs props -->
+    <property file="${wlevs.home}/build.properties" />
+
+    <!-- set the operating system specific properties -->
+    <condition property="isMac">
+        <os family="mac" />
+    </condition>
+
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>
+
+    <condition property="isUnix">
+        <!-- mac ox x is also considered a unix OS, therefore we need to negate this condition -->
+        <and>
+            <os family="unix" />
+            <not>
+                <os family="mac" />
+            </not>
+        </and>
+    </condition>
+
+    <condition property="yacc.bin" value="${project.parent.basedir}/tools/yacc.linux">
+        <isset property="isUnix" />
+    </condition>
+
+    <condition property="yacc.bin" value="${project.parent.basedir}/tools/yacc.macosx">
+        <isset property="isMac" />
+    </condition>
+
+    <condition property="yacc.bin" value="${project.parent.basedir}/tools/yacc.exe">
+        <isset property="isWindows" />
+    </condition>
+
+    <target name="gen.parser">
+    <echo message="base: ${project.basedir}" />
+        <!-- Generate the Parser -->
+        <mkdir dir="${project.build.generatedsrc}/oracle/cep/jdbc/parser" />
+        <exec dir="${project.build.generatedsrc}/oracle/cep/jdbc/parser" executable="${yacc.bin}">
+            <arg value="-Jclass=Parser" />
+            <arg value="-Jpackage=oracle.cep.jdbc.parser" />
+            <arg value="-Jthrows=java.lang.Exception" />
+            <arg value="-Jnorun" />
+            <arg file="${project.basedir}/src/main/java/oracle/cep/jdbc/parser/jdbcclient.yy" />
+        </exec>
+    </target>
+
+</project>

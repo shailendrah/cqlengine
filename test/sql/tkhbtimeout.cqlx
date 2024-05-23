@@ -1,0 +1,20 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>create stream tkhbtimeout_s1 (c1 char(10)) is system timestamped</CEP_DDL>
+<CEP_DDL>create stream tkhbtimeout_s2 (c1 char(10), c2 integer, c3 integer) is system timestamped</CEP_DDL>
+<CEP_DDL>create stream tkhbtimeout_dummy (c1 char(10)) is system timestamped</CEP_DDL>
+<CEP_DDL>alter stream tkhbtimeout_s1 set heartbeat timeout 10000l nanoseconds</CEP_DDL>
+<CEP_DDL>alter stream tkhbtimeout_s2 set heartbeat timeout 10000 nanoseconds</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkhbtimeout_s1 add source  "<EndPointReference><Address>file://@TEST_DATA@/inphbtestsys.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkhbtimeout_dummy add source  "<EndPointReference><Address>file://@TEST_DATA@/inpdummysys.txt?delay=5000</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkhbtimeout_s2 add source  "<EndPointReference><Address>file://@TEST_DATA@/inppatternsys.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>create query tkhbtimeout_qAllDummy as select * from tkhbtimeout_dummy</CEP_DDL>
+<CEP_DDL>create query tkhbtimeout_q1 as select * from tkhbtimeout_s1[range 1 seconds]</CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkhbtimeout_qPattern as select T.ac1, T.bc1 from tkhbtimeout_s2 MATCH_RECOGNIZE(PARTITION BY c3 MEASURES A.c1 as ac1, B.c1 as bc1 INCLUDE TIMER EVENTS PATTERN (A B*) DURATION 1 SECONDS DEFINE A as (A.c2=10), B as (B.c2=20)) as T ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkhbtimeout_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outsyshbtimeout.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkhbtimeout_qAllDummy add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outsysqalldummy.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkhbtimeout_qPattern add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outsysqPattern.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query tkhbtimeout_q1 start</CEP_DDL>
+<CEP_DDL>alter query tkhbtimeout_qAllDummy start</CEP_DDL>
+<CEP_DDL>alter query tkhbtimeout_qPattern start</CEP_DDL>
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

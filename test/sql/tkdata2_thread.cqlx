@@ -1,0 +1,22 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata2_thread_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_thread_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_thread_S4 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_thread_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0-mth.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkdata2_thread_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1-mth.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_thread_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS4-mth.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata2_thread_v4 (a, b) as RStream(select (c1+10)*2, c2+1.5 from tkdata2_thread_S0[range 1000 nanoseconds] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_thread_q201 as RStream(select (c1+10)*2, c2+1.5 from tkdata2_thread_S0[range 1000 nanoseconds] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_thread_q202 as RStream(select (c1+10)*2, c2+1.5 from tkdata2_thread_S4[range 1000 nanoseconds] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_thread_q203 as RStream(select (a.c1+10)*2, a.c2+1.5 from tkdata2_thread_S0[NOW] as a, tkdata2_thread_S1[range 1000 nanoseconds] as b where a.c1 = b.c1) </CEP_DDL>
+<CEP_DDL> create query tkdata2_thread_q204 as select * from tkdata2_thread_v4[range 1000 nanoseconds] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_thread_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTS0R1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_thread_q202 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTS4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_thread_q203 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTS0S1R1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_thread_q204 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTV4Q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata2_thread_q201 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_thread_q202 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_thread_q203 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_thread_q204 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

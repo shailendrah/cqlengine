@@ -1,0 +1,18 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkpocbi_fact(perkey integer, prodkey integer, mktkey integer, units integer, dollars integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpocbi_fact add source "<EndPointReference> <Address>file://@TEST_DATA@/inpBIPOCFact.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register relation tkpocbi_market(mktkey integer, mktdesc CHAR(50), seq INTEGER, levelx CHAR(20), mk_short_id CHAR(20), district CHAR(40), region CHAR(20)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkpocbi_market add source "<EndPointReference> <Address>file://@TEST_DATA@/inpBIPOCMarket.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register relation tkpocbi_period(perkey INTEGER, perdesc CHAR(40), month_ TIMESTAMP, year_ CHAR(4), levelx CHAR(10), period_n CHAR(10), seq INTEGER, shortdesc CHAR(50), currentperiod CHAR(1), yago INTEGER, mago INTEGER, wago INTEGER) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkpocbi_period add source "<EndPointReference> <Address>file://@TEST_DATA@/inpBIPOCPeriod.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register relation tkpocbi_product(prodkey FLOAT, proddesc CHAR(510), levelx CHAR(510), color CHAR(510), finish CHAR(510), type_ CHAR(510), sizex CHAR(510), seq CHAR(510), brand CHAR(510)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkpocbi_product add source "<EndPointReference> <Address>file://@TEST_DATA@/inpBIPOCProduct.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkpocbi_v0(mktkey, prodkey, dollars, month_) as select tkpocbi_fact.mktkey, tkpocbi_fact.prodkey, tkpocbi_fact.dollars, tkpocbi_period.month_ from tkpocbi_fact[CurrentMonth], tkpocbi_period where tkpocbi_period.levelx = "WEEK" and tkpocbi_fact.perkey = tkpocbi_period.perkey</CEP_DDL>
+<CEP_DDL> register view tkpocbi_v1(region, prodkey, dollars, month_) as select tkpocbi_market.region, tkpocbi_v0.prodkey, tkpocbi_v0.dollars, tkpocbi_v0.month_ from tkpocbi_v0, tkpocbi_market where tkpocbi_market.levelx = "REGION" and tkpocbi_v0.mktkey = tkpocbi_market.mktkey </CEP_DDL>
+<CEP_DDL> register view tkpocbi_v2(region, dollars, month_) as select tkpocbi_v1.region, tkpocbi_v1.dollars, tkpocbi_v1.month_ from tkpocbi_v1, tkpocbi_product where tkpocbi_product.levelx = "BRAND" and tkpocbi_v1.prodkey = tkpocbi_product.prodkey </CEP_DDL>
+<CEP_DDL> register view tkpocbi_v3(region, month, dollars) as select region, month_, sum(tkpocbi_v2.dollars) from tkpocbi_v2 group by month_, region </CEP_DDL>
+<CEP_DDL> create query tkpocbi_q0 as IStream(select * from tkpocbi_v3 where dollars > 4000000) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpocbi_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outBIPOC1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkpocbi_q0 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

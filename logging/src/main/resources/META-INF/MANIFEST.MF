@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Specification-Title: 1.0.0.0
+Bundle-Classpath: .,
+     lib/ojdl.jar
+Export-Package: oracle.cep.logging;version=@oracle.cep.version@, 
+ oracle.cep.logging.impl;version=@oracle.cep.version@, 
+ oracle.cep.logging.dumper;version=@oracle.cep.version@, 
+ oracle.cep.logging.spring;version=@oracle.cep.version@ 
+Import-Package: 
+ org.apache.commons.logging
+Bundle-Version: @oracle.cep.version@
+Bundle-Copyright: Copyright (c) 2008 by Oracle Corp.
+Bundle-Description: CEP Logging
+Bundle-Name: com.oracle.cep.logging
+Build-Jdk: 1.5.0_06
+Bundle-Vendor: Oracle Corp.
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: com.oracle.cep.logging
+Implementation-Title: CEP Logging
+Specification-Vendor: Oracle Corp
+Extension-Name: CEP Logging
+Implementation-Version: @oracle.cep.version@
+Implementation-Vendor: Oracle Corp.
+

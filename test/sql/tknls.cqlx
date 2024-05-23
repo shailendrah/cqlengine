@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream 스트림 (c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream 스트림 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSnls.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tknls_q1 as select * from 스트림 where c2 = "에이비씨" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tknls_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outNLS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tknls_q1 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

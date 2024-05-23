@@ -1,0 +1,32 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdropddl3_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl3_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdropddl3_q0 as select c1 from tkdropddl3_S1 [range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl3_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL3Q0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl3_q0 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+<CEP_DDL> drop query tkdropddl3_q0 </CEP_DDL>
+<CEP_DDL> register stream tkdropddl3_S2 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl3_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> register view tkdropddl3_v1 (c1) as select c1 from tkdropddl3_S2 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdropddl3_q1 as select * from tkdropddl3_v1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl3_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL3Q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl3_q1 start </CEP_DDL>
+<CEP_DDL> create query tkdropddl3_q2 as select * from tkdropddl3_v1 where tkdropddl3_v1.c1 = 10 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl3_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL3Q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl3_q2 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+<CEP_DDL> drop query tkdropddl3_q1 </CEP_DDL>
+<CEP_DDL> drop query tkdropddl3_q2 </CEP_DDL>
+<CEP_DDL> register stream tkdropddl3_S3 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl3_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> register stream tkdropddl3_S4 (d1 integer, d2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl3_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> register view tkdropddl3_v2(c1) as select c1 from tkdropddl3_S3 [range 1] </CEP_DDL>
+<CEP_DDL> register view tkdropddl3_v3(d1) as select d1 from tkdropddl3_S4 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdropddl3_q3 as select * from tkdropddl3_v2, tkdropddl3_v3 where tkdropddl3_v2.c1 = tkdropddl3_v3.d1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl3_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL3Q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl3_q3 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+<CEP_DDL> drop query tkdropddl3_q3 </CEP_DDL>
+</CEP>

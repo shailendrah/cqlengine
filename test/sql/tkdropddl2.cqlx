@@ -1,0 +1,30 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdropddl2_SP1 (c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl2_SP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdropddl2_q0 as select * from tkdropddl2_SP1 [partition by c1 rows 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl2_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL2Q0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl2_q0 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+<CEP_DDL> drop query tkdropddl2_q0 </CEP_DDL>
+<CEP_DDL> register stream tkdropddl2_SP2 (c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl2_SP2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> register view tkdropddl2_v1 (c1, name) as select * from tkdropddl2_SP2 [partition by c1 rows 1] </CEP_DDL>
+<CEP_DDL> create query tkdropddl2_q1 as select * from tkdropddl2_v1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl2_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL2Q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl2_q1 start </CEP_DDL>
+<CEP_DDL> create query tkdropddl2_q2 as select * from tkdropddl2_v1 where tkdropddl2_v1.c1 = 10 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl2_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL2Q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl2_q2 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+<CEP_DDL> drop query tkdropddl2_q1 </CEP_DDL>
+<CEP_DDL> drop query tkdropddl2_q2 </CEP_DDL>
+<CEP_DDL> register stream tkdropddl2_SP3 (c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl2_SP3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> register stream tkdropddl2_SP4 (d1 integer, name2 char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdropddl2_SP4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdropddl2_q3 as select * from tkdropddl2_SP3 [partition by c1 rows 1], tkdropddl2_SP4 [partition by d1 rows 1] where c1 = d1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdropddl2_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDDL2Q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdropddl2_q3 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+<CEP_DDL> drop query tkdropddl2_q3 </CEP_DDL>
+</CEP>

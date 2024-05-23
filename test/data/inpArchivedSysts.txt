@@ -1,0 +1,9 @@
+No need for schema, using mlffile.
+-, 35, 5.75, third, 5
++, 10, 8.0, first, 10
++, 50, 5.0, second, 11
++, 30, 3.5, third, 12
+-, 50, 5.0, second, 11
++, 20, 4.25, second, 13
++, 20, 2.5, second, 14
++, 12, 7.5, fourth, 15

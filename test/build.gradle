@@ -1,0 +1,68 @@
+applyTemplate 'shaded'
+
+dependencies
+{
+    compile project(":modules:spark-cql:extensibility:api")
+    compile project(":modules:spark-cql:cqlengine:server")
+    compile project(":modules:spark-cql:cqlengine:cartridges:java")
+    compile project(":modules:spark-cql:cqlengine:cartridges:spatial")
+    compile libraries.cep_vwap_benchmark
+    compile libraries.spring_core
+    compile libraries.spring_beans
+    compile libraries.spring_context
+    //compile libraries.cep_bdb_je
+    compile libraries.apache_log4j
+    compile files("${System.properties['java.home']}/../lib/tools.jar")
+    compile 'junit:junit:' + vinfo.junit
+}
+
+task testJar(type: Jar) {
+ 	classifier = 'tests'
+	from sourceSets.test.output
+}
+
+build.dependsOn testJar
+
+task cqlxtest(type:Test) {
+    include '**/SrgDISuite.class'
+    include '**/SrgMTSuite.class'
+
+    maxParallelForks = 8
+}
+
+tasks.withType(Test) {
+    reports.html.destination = file("${reporting.baseDir}/${name}")
+
+    testLogging {
+        events "passed", "skipped", "failed" //, "standardOut", "standardError"
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
+
+sourceSets {
+    generatereport {
+        java.srcDir file('src/test/java')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+
+test{
+reports {
+        junitXml.enabled = true
+        html.enabled = true
+    }  
+}
+
+task generatereport (type:Test){
+	systemProperty 'test.outputFolder', System.getenv('OUT_ROOT')+'/oracle/work/cep'
+	include '**/*TestCqlx*.class' 
+}

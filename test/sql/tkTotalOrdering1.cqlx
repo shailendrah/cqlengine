@@ -1,0 +1,32 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tkTotalOrdering1_S1 (c1 integer)</CEP_DDL>
+<CEP_DDL> register relation tkTotalOrdering1_S2 (c1 integer)</CEP_DDL>
+<CEP_DDL> register relation tkTotalOrdering1_S3 (c1 integer)</CEP_DDL>
+<CEP_DDL> register relation tkTotalOrdering1_S4 (c1 integer)</CEP_DDL>
+<CEP_DDL> register stream tkTotalOrdering1_S5 (c1 integer)</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter relation tkTotalOrdering1_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering1_S1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>  
+<CEP_DDL><![CDATA[ alter relation tkTotalOrdering1_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering1_S2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>  
+<CEP_DDL><![CDATA[ alter relation tkTotalOrdering1_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering1_S3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>  
+<CEP_DDL><![CDATA[ alter relation tkTotalOrdering1_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering1_S4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>  
+<CEP_DDL><![CDATA[ alter stream tkTotalOrdering1_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering1_S5.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>  
+
+<CEP_DDL> create query tkTotalOrdering1_q1 as select R1.c1,R2.c1 from tkTotalOrdering1_S1 as R1, tkTotalOrdering1_S2 as R2 </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering1_q2 as select R1.c1,R2.c1 from tkTotalOrdering1_S1 as R1, tkTotalOrdering1_S3 as R2 </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering1_q3 as IStream(select R1.c1,R2.c1 from tkTotalOrdering1_S4 as R1, tkTotalOrdering1_S2 as R2) </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering1_q4 as IStream(select R1.c1,R2.c1 from tkTotalOrdering1_S4 as R1, tkTotalOrdering1_S3 as R2) </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering1_q5 as IStream(select R1.c1,R2.c1 from tkTotalOrdering1_S5[rows 3] as R1, tkTotalOrdering1_S4 as R2) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering1_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering1_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering1_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering1_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering1_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering1_q3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering1_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering1_q4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering1_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering1_q5.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkTotalOrdering1_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering1_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering1_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering1_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering1_q5 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

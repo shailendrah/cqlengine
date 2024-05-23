@@ -1,0 +1,16 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata32Neg_S1 (c1 char(5), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata32Neg_S2 (c1 char(5), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata32Neg_S3 (c1 char(5), c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata32Neg_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1_tk32Neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata32Neg_S2 add source "<EndPointReference><Address>file:///@TEST_DATA@/inpS2_tk32Neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata32Neg_S3 add source "<EndPointReference><Address>file:///@TEST_DATA@/inpS1_tk32.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create view  tkdata32Neg_v1 (c1 char(5), c2 integer) as tkdata32Neg_S1 union all tkdata32Neg_S2</CEP_DDL>
+<CEP_DDL> create query tkdata32Neg_q1 as select * from tkdata32Neg_v1 order by c1 </CEP_DDL>
+<CEP_DDL> create query tkdata32Neg_q2 as select * from tkdata32Neg_S3 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata32Neg_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq1_tk32Neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata32Neg_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq2_tk32Neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata32Neg_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata32Neg_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

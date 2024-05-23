@@ -1,0 +1,5 @@
+c 20, n 7 5, TOF
+1000 F "test string1", 63.00006
+2000 F "test string2", 80.00008
+3000 F "test string3", 60.00008
+4000 T "oracle", 38.00007

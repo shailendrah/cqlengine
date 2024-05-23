@@ -1,0 +1,5050 @@
+ oracle.cep.logging.LogUtil log
+CONFIG: Metadata storage : oracle/work/cep/storage
+ oracle.cep.logging.LogUtil log
+CONFIG: Spill storage : oracle/work/cep/storage/data
+ oracle.cep.logging.LogUtil log
+CONFIG: ===  QueueSrcPolicy 
+ oracle.cep.logging.LogUtil log
+CONFIG: normalThreshold ,partialSpillThreshold ,fullSpillThreshold ,syncSpillThreshold 
+ oracle.cep.logging.LogUtil log
+CONFIG: window = 5
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S (c1 integer, c2 float) is application timestamped 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S1 (c1 integer) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S5 (c1 integer, c2 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_SP3(c1 integer, name char(10)) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S3 (c1 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S12(c1 integer, c2 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_SP3 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpSP1.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S0 (c1 integer, c2 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S0 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpPattern0.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S5 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpPattern5.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S3 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/coverage3.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S12 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpS12.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create relation tklog_R (d1 integer, d2 char(10)) is silent 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create relation tklog_R1 (c1 integer, c2 float) is silent 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpS1000.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S1 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpS1_data1.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter relation tklog_R add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpR.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter relation tklog_R1 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpR-static.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create view tklog_v1 (c1 integer, c2 float) as select * from tklog_S[range 1] 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create view tklog_v2 (c1 integer) as IStream(select * from tklog_S1[range 10 slide 10]) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q1 as select * from tklog_R, tklog_S[range 1] where tklog_S.c1 = tklog_R.d1 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q2 as tklog_R1 union all tklog_v1 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q3 as tklog_R1 except tklog_v1 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q5 as select c1, element_time from tklog_v2 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 char) return char aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 byte) return byte aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 timestamp) return timestamp aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 interval) return interval aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_uda_float_float as select tklog_secondMax(c1) from tklog_S3[range 7] 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create window tklog_range_slide(winrange int, winslide int) implement using "oracle.cep.test.userfunctions.TkRangeSlide" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q79 as select * from tklog_S12 [tklog_range_slide(10,5)] 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_qp1 as select T.Ac1,T.Bc1,T.Dc1 from tklog_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN(A B C* D) DEFINE A as A.c1 = 30, B as B.c2 = 10.0, C as C.c1 = 7, D as D.c1 = 40) as T 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_qp10 as select T.Ac1, T.sumB, T.Cc1 from tklog_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, sum(B.c1) as sumB, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp1 add destination "<EndPointReference><Address>file://oracle/work/cep/patternout1.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp10 add destination "<EndPointReference><Address>file://oracle/work/cep/patternout10.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q1 add destination "<EndPointReference><Address>file://oracle/work/cep/outSR1-static.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q2 add destination "<EndPointReference><Address>file://oracle/work/cep/outSR1-union-static.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q3 add destination "<EndPointReference><Address>file://oracle/work/cep/outSR1-except-static.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q5 add destination "<EndPointReference><Address>file://oracle/work/cep/outq5_data1.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_uda_float_float add destination "<EndPointReference><Address>file://oracle/work/cep/outuda6_l.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q79 add destination "<EndPointReference><Address>file://oracle/work/cep/outS12great_rs_l.og</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q1 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpR.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpS1000.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outSR1-static.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q2 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpR-static.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outSR1-union-static.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q3 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outSR1-except-static.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q5 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpS1_data1.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outq5_data1.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp1 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpPattern0.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/patternout1.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp10 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpPattern5.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/patternout10.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_uda_float_float start
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/coverage3.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outuda6_l.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q79 start
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpS12.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outS12great_rs_l.og
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter system dump logging systemstate level 8 
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=SYSTEMSTATE event=DUMP target=SystemState levels=8 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="0" TargetName="SystemState">
+  <Level Name="SYSTEMSTATE_LOGLEVELS" Value="8">
+   <Levels>
+   </Levels>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter system run duration = 2 
+ oracle.cep.logging.LogUtil log
+INFO: Scheduler = oracle.cep.execution.scheduler.FIFOScheduler
+ oracle.cep.logging.LogUtil log
+INFO: Scheduler State : RUNNING
+ oracle.cep.logging.LogUtil log
+INFO: Scheduler State : STOPPED
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL = alter system dump logging store level 0,1,2,3,4,5,6
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=RelStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="0" TargetName="RelStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <RelStoreImpl PhyId="0">
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <RelStoreImpl PhyId="0">
+    <TupleDoublyList >
+    </TupleDoublyList>
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <RelStoreImpl>oracle/work/cep/diag/trc/RelStoreImpl1.xml</RelStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="1" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="1" NumStubs="2">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="1" NumStubs="2">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl2.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=LineageStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="2" TargetName="LineageStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <LineageStoreImpl PhyId="2">
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <LineageStoreImpl PhyId="2">
+    <TupleDoublyList >
+    </TupleDoublyList>
+    <HashIndex >
+    </HashIndex>
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <LineageStoreImpl>oracle/work/cep/diag/trc/LineageStoreImpl3.xml</LineageStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=LineageStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="3" TargetName="LineageStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <LineageStoreImpl PhyId="3">
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <LineageStoreImpl PhyId="3">
+    <TupleDoublyList >
+    </TupleDoublyList>
+    <HashIndex >
+    </HashIndex>
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <LineageStoreImpl>oracle/work/cep/diag/trc/LineageStoreImpl5.xml</LineageStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=RelStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="4" TargetName="RelStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <RelStoreImpl PhyId="4">
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <RelStoreImpl PhyId="4">
+    <TupleDoublyList >
+    </TupleDoublyList>
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <RelStoreImpl>oracle/work/cep/diag/trc/RelStoreImpl7.xml</RelStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=LineageStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="5" TargetName="LineageStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <LineageStoreImpl PhyId="5">
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <LineageStoreImpl PhyId="5">
+    <TupleDoublyList >
+    </TupleDoublyList>
+    <HashIndex >
+    </HashIndex>
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <LineageStoreImpl>oracle/work/cep/diag/trc/LineageStoreImpl8.xml</LineageStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=RelStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="6" TargetName="RelStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <RelStoreImpl PhyId="6">
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <RelStoreImpl PhyId="6">
+    <TupleDoublyList >
+    </TupleDoublyList>
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <RelStoreImpl>oracle/work/cep/diag/trc/RelStoreImpl10.xml</RelStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=RelStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="7" TargetName="RelStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <RelStoreImpl PhyId="7">
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <RelStoreImpl PhyId="7">
+    <TupleDoublyList >
+    </TupleDoublyList>
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <RelStoreImpl>oracle/work/cep/diag/trc/RelStoreImpl11.xml</RelStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="8" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="8" NumStubs="1">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="8" NumStubs="1">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl12.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=LineageStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="9" TargetName="LineageStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <LineageStoreImpl PhyId="9">
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <LineageStoreImpl PhyId="9">
+    <TupleDoublyList >
+    </TupleDoublyList>
+    <HashIndex >
+    </HashIndex>
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <LineageStoreImpl>oracle/work/cep/diag/trc/LineageStoreImpl13.xml</LineageStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="10" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="10" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="10" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl15.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=RelStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="11" TargetName="RelStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <RelStoreImpl PhyId="11">
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <RelStoreImpl PhyId="11">
+    <TupleDoublyList >
+    </TupleDoublyList>
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <RelStoreImpl>oracle/work/cep/diag/trc/RelStoreImpl16.xml</RelStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="12" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="12" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="12" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl17.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="13" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="13" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="13" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl18.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="14" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="14" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="14" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl19.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=BindStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="15" TargetName="BindingStore">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <BindStoreImpl PhyId="15">
+   </BindStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <BindStoreImpl PhyId="15">
+    <BindListSize>0</BindListSize>
+    <UnsureListSize>0</UnsureListSize>
+   </BindStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <ActiveBindList >
+   </ActiveBindList>
+   <UnsureList >
+   </UnsureList>
+   <BindStoreImpl>oracle/work/cep/diag/trc/BindStoreImpl20.xml</BindStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="16" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="16" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="16" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl21.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="17" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="17" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="17" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl22.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="18" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="18" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="18" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl23.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=BindStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="19" TargetName="BindingStore">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <BindStoreImpl PhyId="19">
+   </BindStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <BindStoreImpl PhyId="19">
+    <BindListSize>0</BindListSize>
+    <UnsureListSize>0</UnsureListSize>
+   </BindStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <ActiveBindList >
+   </ActiveBindList>
+   <UnsureList >
+   </UnsureList>
+   <BindStoreImpl>oracle/work/cep/diag/trc/BindStoreImpl24.xml</BindStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="20" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="20" NumStubs="0">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="20" NumStubs="0">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl25.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="21" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="21" NumStubs="2">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="21" NumStubs="2">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl26.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=RelStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="22" TargetName="RelStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <RelStoreImpl PhyId="22">
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <RelStoreImpl PhyId="22">
+    <TupleDoublyList >
+    </TupleDoublyList>
+   </RelStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <RelStoreImpl>oracle/work/cep/diag/trc/RelStoreImpl27.xml</RelStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=LineageStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="23" TargetName="LineageStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <LineageStoreImpl PhyId="23">
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <LineageStoreImpl PhyId="23">
+    <TupleDoublyList >
+    </TupleDoublyList>
+    <HashIndex >
+    </HashIndex>
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <LineageStoreImpl>oracle/work/cep/diag/trc/LineageStoreImpl28.xml</LineageStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=WinStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="24" TargetName="WinStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <WinStoreImpl PhyId="24" NumStubs="1">
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <WinStoreImpl PhyId="24" NumStubs="1">
+    <TimedTupleSinglyList >
+    </TimedTupleSinglyList>
+   </WinStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <WinStoreImpl>oracle/work/cep/diag/trc/WinStoreImpl30.xml</WinStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=STORE event=DUMP target=LineageStoreImpl levels=0 1 2 3 4 5 6 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="25" TargetName="LineageStoreImpl">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogHandler.handle
+	at oracle.cep.logging.PlanMonitor.processLogRequest
+	at oracle.cep.logging.PlanMonitor.dumpLog
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="STORE_INFO" Value="1">
+   <LineageStoreImpl PhyId="25">
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_STATS" Value="4">
+  </Level>
+  <Level Name="STORE_DUMP" Value="5">
+   <LineageStoreImpl PhyId="25">
+    <TupleDoublyList >
+    </TupleDoublyList>
+    <HashIndex >
+    </HashIndex>
+   </LineageStoreImpl>
+  </Level>
+  <Level Name="STORE_DUMPELEMS" Value="6">
+   <LineageStoreImpl>oracle/work/cep/diag/trc/LineageStoreImpl31.xml</LineageStoreImpl>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+LineageStoreImpl31
+<?xml version="1.0" encoding="utf-8" ?>
+ <LineageStoreImpl PhyId="25">
+  <ListStore>
+   <TupleDoublyList >
+   </TupleDoublyList>
+  </ListStore>
+  <Index>
+   <HashIndex>oracle/work/cep/diag/trc/HashIndex32.xml</HashIndex>
+  </Index>
+ </LineageStoreImpl>
+HashIndex32
+<?xml version="1.0" encoding="utf-8" ?>
+ <HashIndex >
+ </HashIndex>
+WinStoreImpl30
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="24" NumStubs="1">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+LineageStoreImpl28
+<?xml version="1.0" encoding="utf-8" ?>
+ <LineageStoreImpl PhyId="23">
+  <ListStore>
+   <TupleDoublyList >
+   </TupleDoublyList>
+  </ListStore>
+  <Index>
+   <HashIndex>oracle/work/cep/diag/trc/HashIndex29.xml</HashIndex>
+  </Index>
+ </LineageStoreImpl>
+HashIndex29
+<?xml version="1.0" encoding="utf-8" ?>
+ <HashIndex >
+ </HashIndex>
+RelStoreImpl27
+<?xml version="1.0" encoding="utf-8" ?>
+ <RelStoreImpl PhyId="22">
+  <TupleDoublyList >
+  </TupleDoublyList>
+ </RelStoreImpl>
+WinStoreImpl26
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="21" NumStubs="2">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+WinStoreImpl25
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="20" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+BindStoreImpl24
+<?xml version="1.0" encoding="utf-8" ?>
+ <BindStoreImpl PhyId="19">
+ </BindStoreImpl>
+WinStoreImpl23
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="18" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+WinStoreImpl22
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="17" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+WinStoreImpl21
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="16" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+BindStoreImpl20
+<?xml version="1.0" encoding="utf-8" ?>
+ <BindStoreImpl PhyId="15">
+ </BindStoreImpl>
+WinStoreImpl19
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="14" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+WinStoreImpl18
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="13" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+WinStoreImpl17
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="12" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+RelStoreImpl16
+<?xml version="1.0" encoding="utf-8" ?>
+ <RelStoreImpl PhyId="11">
+  <TupleDoublyList >
+  </TupleDoublyList>
+ </RelStoreImpl>
+WinStoreImpl15
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="10" NumStubs="0">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+LineageStoreImpl13
+<?xml version="1.0" encoding="utf-8" ?>
+ <LineageStoreImpl PhyId="9">
+  <ListStore>
+   <TupleDoublyList >
+   </TupleDoublyList>
+  </ListStore>
+  <Index>
+   <HashIndex>oracle/work/cep/diag/trc/HashIndex14.xml</HashIndex>
+  </Index>
+ </LineageStoreImpl>
+HashIndex14
+<?xml version="1.0" encoding="utf-8" ?>
+ <HashIndex >
+ </HashIndex>
+WinStoreImpl12
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="8" NumStubs="1">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+RelStoreImpl11
+<?xml version="1.0" encoding="utf-8" ?>
+ <RelStoreImpl PhyId="7">
+  <TupleDoublyList >
+  </TupleDoublyList>
+ </RelStoreImpl>
+RelStoreImpl10
+<?xml version="1.0" encoding="utf-8" ?>
+ <RelStoreImpl PhyId="6">
+  <TupleDoublyList >
+  </TupleDoublyList>
+ </RelStoreImpl>
+LineageStoreImpl8
+<?xml version="1.0" encoding="utf-8" ?>
+ <LineageStoreImpl PhyId="5">
+  <ListStore>
+   <TupleDoublyList >
+   </TupleDoublyList>
+  </ListStore>
+  <Index>
+   <HashIndex>oracle/work/cep/diag/trc/HashIndex9.xml</HashIndex>
+  </Index>
+ </LineageStoreImpl>
+HashIndex9
+<?xml version="1.0" encoding="utf-8" ?>
+ <HashIndex >
+ </HashIndex>
+RelStoreImpl7
+<?xml version="1.0" encoding="utf-8" ?>
+ <RelStoreImpl PhyId="4">
+  <TupleDoublyList >
+   <TupleDoublyListNode Prev="-1">
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode>
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+   <TupleDoublyListNode Next="-1">
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <float>0.3</float>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+  </TupleDoublyList>
+ </RelStoreImpl>
+LineageStoreImpl5
+<?xml version="1.0" encoding="utf-8" ?>
+ <LineageStoreImpl PhyId="3">
+  <ListStore>
+   <TupleDoublyList >
+   </TupleDoublyList>
+  </ListStore>
+  <Index>
+   <HashIndex>oracle/work/cep/diag/trc/HashIndex6.xml</HashIndex>
+  </Index>
+ </LineageStoreImpl>
+HashIndex6
+<?xml version="1.0" encoding="utf-8" ?>
+ <HashIndex >
+ </HashIndex>
+LineageStoreImpl3
+<?xml version="1.0" encoding="utf-8" ?>
+ <LineageStoreImpl PhyId="2">
+  <ListStore>
+   <TupleDoublyList >
+   </TupleDoublyList>
+  </ListStore>
+  <Index>
+   <HashIndex>oracle/work/cep/diag/trc/HashIndex4.xml</HashIndex>
+  </Index>
+ </LineageStoreImpl>
+HashIndex4
+<?xml version="1.0" encoding="utf-8" ?>
+ <HashIndex >
+ </HashIndex>
+WinStoreImpl2
+<?xml version="1.0" encoding="utf-8" ?>
+ <WinStoreImpl PhyId="1" NumStubs="2">
+  <TimedTupleSinglyList >
+   <TimedTupleSinglyListNode Next="-1">
+    <Tuple>null</Tuple>
+    <Ts>-1</Ts>
+    <Readers>0</Readers>
+   </TimedTupleSinglyListNode>
+  </TimedTupleSinglyList>
+ </WinStoreImpl>
+RelStoreImpl1
+<?xml version="1.0" encoding="utf-8" ?>
+ <RelStoreImpl PhyId="0">
+  <TupleDoublyList >
+   <TupleDoublyListNode Prev="-1" Next="-1">
+    <E>
+     <TuplePtr>
+      <Tuple>
+       <int>10</int>
+       <char>abc</char>
+       <byte>byte[1]</byte>
+       
+      </Tuple>
+     </TuplePtr>
+    </E>
+   </TupleDoublyListNode>
+  </TupleDoublyList>
+ </RelStoreImpl>

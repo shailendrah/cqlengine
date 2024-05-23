@@ -1,0 +1,12 @@
+i, c 20,  TOF
+10000 F 100, phase2
+11000 F 110, phase2
+12000 F 120, phase2
+13000 F 130, phase2
+14000 F 140, phase2
+15000 F 150, phase2
+16000 F 160, phase2
+17000 F 170, phase2
+18000 F 180, phase2
+19000 F 190, phase2
+h 21000

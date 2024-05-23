@@ -1,0 +1,84 @@
+/* $Header: pcbpel/cep/src/oracle/cep/jmx/stats/ColumnCodes.java /main/1 2008/08/06 14:24:44 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle. All rights reserved.  */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    04/01/08 - modify columns
+    parujain    03/20/08 - column codes
+    parujain    03/20/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/src/oracle/cep/jmx/stats/ColumnCodes.java /main/1 2008/08/06 14:24:44 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx.stats;
+
+public class ColumnCodes {
+  public static final int OPERATOR_TYPE_CODE = 1;
+  public static final int OPERATOR_ID_CODE = 2;
+  public static final int OPERATOR_NAME_CODE =3;
+  public static final int OPERATOR_NUM_OUT_MSGS_CODE = 4;
+  public static final int OPERATOR_NUM_OUT_MSGS_LATEST_CODE = 5;
+  public static final int OPERATOR_IN_MSGS_CODE = 6 ;
+  public static final int OPERATOR_IN_MSGS_LATEST_CODE = 7;
+  public static final int OPERATOR_TOTAL_TIME_CODE = 8;
+  public static final int OPERATOR_PERCENT_CODE = 9;
+  public static final int OPERATOR_START_TIME_CODE = 10;
+  public static final int OPERATOR_END_TIME_CODE = 11;
+  public static final int OPERATOR_QUEUE_ID_CODE = 12;
+  public static final int OPERATOR_NUM_EXECUTIONS_CODE = 13;
+  public static final int OPERATOR_QUERY_ID_CODE = 14;
+  public static final int OPERATOR_STREAM_ID_CODE = 16;
+
+  public static final int QUERY_TEXT_CODE = 17;
+  public static final int QUERY_ID_CODE = 18;
+  public static final int QUERY_OBJECT_NAME_CODE =19;
+  public static final int QUERY_IS_VIEW_CODE = 20;
+  public static final int QUERY_NUM_OUT_MSGS_CODE = 21;
+  public static final int QUERY_NUM_OUT_MSGS_LATEST_CODE = 22;
+  public static final int QUERY_TOTAL_TIME_CODE = 23;
+  public static final int QUERY_OPERATOR_ID_CODE = 24;
+  public static final int QUERY_NUM_EXECUTIONS_CODE = 25;
+  public static final int QUERY_PERCENT_CODE = 26;
+  public static final int QUERY_START_TIME_CODE = 27;
+  public static final int QUERY_END_TIME_CODE = 28;
+  public static final int QUERY_AVG_LATENCY_CODE = 29;
+  public static final int QUERY_USER_FUNC_ID_CODE = 30;
+
+  public static final int STREAM_TEXT_CODE = 31;
+  public static final int STREAM_ID_CODE = 32;
+  public static final int STREAM_NAME_CODE = 33;
+  public static final int STREAM_IS_STREAM_CODE = 34;
+  public static final int STREAM_AVG_LATENCY_CODE =35;
+  public static final int STREAM_NUM_IN_MSGS_LATEST_CODE = 36;
+  public static final int STREAM_NUM_IN_MSGS_CODE = 37;
+  public static final int STREAM_OPERATOR_ID_CODE = 38;
+  public static final int STREAM_INPUT_RATE_CODE = 39;
+  public static final int STREAM_PERCENT_CODE = 40;
+  public static final int STREAM_START_TIME_CODE = 41;
+  public static final int STREAM_END_TIME_CODE = 42;
+  public static final int STREAM_IS_PUSH_SRC_CODE = 43;
+  public static final int STREAM_TOTAL_TUPLES_IN_MEMORY_CODE = 44;
+  public static final int STREAM_TOTAL_TUPLES_ON_DISK_CODE = 45;
+  public static final int STREAM_HITRATIO_CODE = 46;
+ 
+  public static final int FUNCTION_ID_CODE = 47;
+  public static final int FUNCTION_QUERY_ID_CODE = 48;
+  public static final int FUNCTION_MAPPING_FUNCTION_CODE = 49;
+  public static final int FUNCTION_IS_AGGREGATE_CODE = 50;
+  public static final int FUNCTION_TEXT_CODE = 51;
+  public static final int FUNCTION_INVOKATIONS_CODE = 52;
+  public static final int FUNCTION_TOTAL_TIME_CODE = 53;
+}

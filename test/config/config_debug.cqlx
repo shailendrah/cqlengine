@@ -1,0 +1,164 @@
+<!--
+This cqlx is not used anywhere.
+It is kept in order to describe logging ddls and show examples for them.
+Whenever LogArea, LogEvent, LogLevel is changed, this file should also be changed accordingly.
+
+logging ddl format
+[enable/disable] logging [area] event [events] level [levels]
+[enable/disable] logging [area] type [types] event [events] level [levels]
+[enable/disable] logging [area] identified by [ids] event [events] level [levels]
+clear            logging
+dump             logging [area] event [events] level [levels]
+dump             logging [area] type [types] event [events] level [levels]
+dump             logging [area] identified by [ids] event [events] level [levels]
+
+area : systemstate, query, operator, queue, synopsis, store, index, spill, storage
+       (metadata_query, metadata_table, metadata_window, metadata_userfunc, metadata_view, metadata_system)
+
+systemstate
+types : not supported
+ids : not supported
+events : not supported
+levels : 
+1 - queries
+2 - tables
+3 - windows
+4 - user functions
+5 - views
+6 - operators
+7 - log levels
+
+query
+types : not supported
+ids : ids/names of queries
+events : all events for operator
+levels : all levels for operator
+
+index
+types : not supported
+ids : ids of indexes
+events : 
+61 - ddl
+62 - insert
+63 - delete
+64 - scan start
+65 - scan 
+66 - scan stop
+levels:
+1 - pinned insert/delete
+2 - unpinned insert/delete
+3 - show stack trace on insert/delete
+
+queue
+types : not supported
+ids : ids of queues
+events:
+21 - ddls
+22 - enqueue
+23 - dequeue
+24 - peek
+25 - get
+levels:
+1 - pinned enqueue/dequeue
+2 - unpinned enqueue/dequeue
+3 - stats
+4 - dump elements
+5 - show stack trace on insert/delete
+
+store
+types : lineage, partnwin, relation, window, external
+ids : ids of stores
+events:
+41 - ddl
+42 - insert
+43 - delete
+44 - get
+45 - scan start
+46 - scan
+47 - scan stop
+levels:
+1 - pinned insert/delete
+2 - unpinned insert/delete
+3 - stats
+4 - dump elements
+5 - show stack trace on insert/delete
+
+synopsis
+type : lineage, partnwin, relation, window, external
+ids : ids of synopsis
+events:
+81 - ddl
+82 - insert
+83 - delete
+84 - get
+85 - scan start
+86 - scan
+87 - scan stop
+levels:
+1 - pinned insert/delete
+2 - unpinned insert/delete
+3 - stats
+4 - dump elements
+
+operator 
+type : 
+   binjoin, binstreamjoin, distinct, dstream, except, groupaggr
+   istream, output, partitionwin, patternstrm, project, rangewin, relsrc
+   rowwin, rstream, select, sink, strmsrc, union, viewrelnsrc, viewstrmsrc   
+ids : ids of operators
+events:
+101 - ddl
+102 - run begin
+103 - run end
+104 - all events from underlying data structures
+105 - queue enqueue and dequeue
+106 - queue peek
+107 - synopsis insert and delete
+108 - synopsis scan
+109 - index scan
+levels:
+1 - operator info
+2 - operator stat
+3 - stats from underlying data structures
+4 - least info from underlying data structures
+5 - more info from underlying data structures
+6 - most info from underlying data structures
+7 - dump from operator
+8 - detailed dump from operaotr
+
+spill
+
+events:
+121 - gc
+122 - evict begin
+123 - evict end
+124 - individual factory evict begin
+125 - individual factory evict end
+
+levels:
+1 - evict info
+2 - statistics
+3 - refmap dump
+
+storage
+events:
+141 - open
+142 - close
+143 - read
+144 - write
+145 - delete
+146 - transaction begin
+147 - transaction end
+148 - query begin
+149 - quey
+levels:
+1 - db info
+2 - db stat
+
+-->
+<CEP>
+<CEP_DDL> alter system enable logging operator type binjoin level 2</CEP_DDL>
+<CEP_DDL> alter system enable logging operator identified by 12 level 2</CEP_DDL>
+<CEP_DDL> alter system disable logging storage level 3</CEP_DDL>
+<CEP_DDL> alter system run_time = 30000 </CEP_DDL>
+</CEP>

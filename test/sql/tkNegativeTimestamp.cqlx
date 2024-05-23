@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkNegativeTimestamp_S0 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkNegativeTimestamp_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkNegativeTimestamp_S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkNegativeTimestamp_q1 as select * from tkNegativeTimestamp_S0</CEP_DDL>
+<CEP_DDL> create query tkNegativeTimestamp_q2 as select * from tkNegativeTimestamp_S0 where c1 > 3</CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter query tkNegativeTimestamp_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkNegativeTimestamp_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkNegativeTimestamp_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkNegativeTimestamp_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkNegativeTimestamp_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkNegativeTimestamp_q2 start</CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

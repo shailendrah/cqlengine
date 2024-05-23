@@ -1,0 +1,19 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata_relstm_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata_relstm_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_relstm_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkdata_relstm_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata_relstm_v1 (c1 integer, c2 float) as RStream(select  (c1+10)*2, c2+1.5 from tkdata_relstm_S0[range 1000 nanoseconds] where c1 > 10) </CEP_DDL>
+<CEP_DDL> register view tkdata_relstm_v2 (c1 integer, c2 float) as IStream(select   * from tkdata_relstm_S1) </CEP_DDL>
+<CEP_DDL> register view tkdata_relstm_v3 (c1 integer, c2 float) as DStream(select  * from tkdata_relstm_S1) </CEP_DDL>
+<CEP_DDL> create query tkdata_relstm_q201 as select * from tkdata_relstm_v1[range 1000 nanoseconds] </CEP_DDL>
+<CEP_DDL> create query tkdata_relstm_q202 as select * from tkdata_relstm_v2[range 1000 nanoseconds] </CEP_DDL>
+<CEP_DDL> create query tkdata_relstm_q203 as select * from tkdata_relstm_v3[range 1000 nanoseconds] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_relstm_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outRSC1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_relstm_q202 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outRSC2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_relstm_q203 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outRSC3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_relstm_q201 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_relstm_q202 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_relstm_q203 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

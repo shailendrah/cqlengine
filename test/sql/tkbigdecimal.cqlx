@@ -1,0 +1,55 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkbigdecimal_S0 (c1 integer, c2 number(7,5)) </CEP_DDL>
+<CEP_DDL> create stream tkbigdecimal_S1 (c1 integer, c2 char(20)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkbigdecimal_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpbigdecimal0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkbigdecimal_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTs1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> register view tkbigdecimal_v0  as select  c1,c2 from  tkbigdecimal_S0 [range 2]  </CEP_DDL>
+<CEP_DDL> register view tkbigdecimal_v1  as select  c1,c2 from  tkbigdecimal_S1 [range 2]  </CEP_DDL>
+
+<CEP_DDL> create query tkbigdecimal_q0 as select c1,c2 from tkbigdecimal_v0</CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q1 as select c1,c2 from tkbigdecimal_S0[range 1]</CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q2 as select c1 + c2 as a from tkbigdecimal_S0[range 1]</CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q3 as select c2 + c2 as a, c1 + 2.444n, c2 + 1, c2-2.0198886f, c2 *(-3.000005d), c2/5l , 5.6669967n + c2, 8.34423532n * 9.63332n  from tkbigdecimal_S0[range 1]</CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q4 as select c1,c2 from tkbigdecimal_S0[range 1] where c2 in (50,30,4,22.6,1.11111,4.00) </CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q5 as select c1,c2 from tkbigdecimal_S0[range 1] where c2 not in (0.77,30,4,22.6,1.11111n, 4.000d) </CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q6 as select count(c2),sum(c2+2), avg(c2*3.0n), max(c2+2.3d) , min(c2+5.6f) from tkbigdecimal_S0[range 8] </CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q7 as select concat(c1,c2), concat("No:",c2), to_char(c2) from tkbigdecimal_S0[range 1] </CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q8 as select nvl(c2,c1) from tkbigdecimal_S0[range 3]</CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q9 as select distinct c2 from tkbigdecimal_S0[range 4] </CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q10  as select mod(c2, 2.0n) from tkbigdecimal_S0[range 3]</CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q11 as select to_number(c1), to_number(3l), to_number(9.55522255f), to_number(8.423423626612992d) from tkbigdecimal_S0[range 3] </CEP_DDL>
+<CEP_DDL> create query tkbigdecimal_q12 as select a.c1,a.c2, b.c2 from tkbigdecimal_S1[range 4] as a, tkbigdecimal_S0[range 4] as b where a.c1 = b.c1</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbigdecimal_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigdecimal_q12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkbigdecimal_q0 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q2 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q3 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q4 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q5 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q6 start</CEP_DDL>
+<!--
+<CEP_DDL> alter query tkbigdecimal_q7 start</CEP_DDL>
+-->
+<CEP_DDL> alter query tkbigdecimal_q8 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q9 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q10 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q11 start</CEP_DDL>
+<CEP_DDL> alter query tkbigdecimal_q12 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>
+

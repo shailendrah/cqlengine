@@ -1,0 +1,23 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>create stream tk18547041_S1 (c1 bigint, c2 integer) derived timestamped tk18547041_S1.c1</CEP_DDL>
+<CEP_DDL>create stream tk18547041_S2 (c1 bigint, c2 integer) derived timestamped tk18547041_S2.c1</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk18547041_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk18547041_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk18547041_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk18547041_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[create query tk18547041_q1 as select tk18547041_S1.c1, tk18547041_S1.c2 from tk18547041_S1 as A]]></CEP_DDL>
+<CEP_DDL><![CDATA[create query tk18547041_q2 as tk18547041_S1 union all tk18547041_S2 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[create query tk18547041_q3 as select * from tk18547041_S1 as A union all select * from tk18547041_S2 as B ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk18547041_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk18547041_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk18547041_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk18547041_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk18547041_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk18547041_q3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk18547041_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk18547041_q2 start</CEP_DDL>
+<CEP_DDL>alter query tk18547041_q3 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

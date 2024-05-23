@@ -1,0 +1,164 @@
+/* $Header: pcbpel/cep/src/oracle/cep/jmx/stats/FilterCondition.java /main/1 2008/08/06 14:24:44 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle. All rights reserved.  */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    03/12/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/src/oracle/cep/jmx/stats/FilterCondition.java /main/1 2008/08/06 14:24:44 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+import java.io.Serializable;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+
+public class FilterCondition implements Serializable {
+	
+  public static final String EQUAL = "EQUAL";
+  public static final String CONTAINS = "CONTAINS";
+  
+  private String      opKind;
+  private Column      colName;
+  private String      colVal;
+  
+  public FilterCondition()
+  {
+    this.opKind = new String("");
+    this.colName = new Column(); 
+    this.colVal = new String("");
+  }
+  
+  @ConstructorProperties({"opKind","colName","colVal"})
+  public FilterCondition(String opKind, Column colName, String colVal)
+  {
+    this.opKind = opKind;
+    this.colName = colName;
+    this.colVal = colVal;
+  }
+  
+  public String getOpKind()
+  {
+    return opKind;
+  }
+  
+  public String getColVal()
+  {
+    return colVal;
+  }
+  
+  public Column getColName()
+  {
+    return colName;
+  }
+  
+  public void setOpKind(String name)
+  {
+    this.opKind = name;
+  }
+  
+  public void setColVal(String name)
+  {
+    this.colVal = name;
+  }
+  
+  public void setColName(Column name)
+  {
+    this.colName = name;
+  }
+  
+  public String[] getOperatorKind()
+  {
+    return new String[]{EQUAL, CONTAINS};
+  }
+  
+  private static CompositeType cType_= null;
+  
+  private static final String[] itemNames_= {"opKind","colName","colVal" };
+  
+  static{
+	    try{
+	      OpenType[] itemTypes = {SimpleType.STRING,
+	                              Column.toCompositeType(),
+	                              SimpleType.STRING};
+	      cType_ = new CompositeType("FilterCondition",
+	                                 "FilterCondition",
+	                                 itemNames_,
+	                                 itemNames_,
+	                                 itemTypes);
+	    }
+	    catch(OpenDataException ode)
+	    {
+	      
+	    }
+	  }
+  
+  /**
+   * Returns the CompositeType that describes this model
+   * specific class
+   */
+  public static CompositeType toCompositeType() {
+      return cType_;
+  }
+  
+  public CompositeData toCompositeData(CompositeType ct) {
+	  
+	    CompositeData name = null;
+	    if(this.colName != null)
+	     name = this.colName.toCompositeData(null);
+	     Object[] itemValues = {new String(this.opKind),
+	                            name,
+	                            new String(this.colVal)};
+	     
+	     CompositeData cData= null;
+	     try 
+	     {
+	        cData= new CompositeDataSupport(cType_, itemNames_, itemValues);
+	     }
+	     catch( OpenDataException ode)
+	     {
+	       
+	     }
+	     return cData;
+	   }
+  
+  /**
+   * Create an instance of the model specific class out of
+   * an associated CompositeData instance
+   */
+   public static FilterCondition from(CompositeData cd) {
+     if (cd==null)
+       return null;
+     
+    Column base = new Column(((Integer)((CompositeData)cd.get("colName")).get("colCode")).intValue());
+     
+     //(Column)(((Column)cd.get("colName")).from((CompositeData)cd.get("colName"))),
+    		                     //((Column)cd.get("colName")),
+     return new FilterCondition(((String)cd.get("opKind")).toString(),
+                                 base,
+    		                     ((String)cd.get("colVal")).toString());
+
+   }
+  
+}

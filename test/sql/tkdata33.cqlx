@@ -1,0 +1,16 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata33_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata33_SinpByte1 (c1 integer, c2 byte(2)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata33_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata33inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata33_SinpByte1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata33inpByte1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata33_q13 as select c1 from tkdata33_S1[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata33_qb1 as select c1+1.2, rawtohex(c2) from tkdata33_SinpByte1 </CEP_DDL>
+<CEP_DDL> create query tkdata33_qb2 as select * from tkdata33_SinpByte1 where c2  &lt; hextoraw("22") </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata33_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata33_13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata33_qb1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata33_b1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata33_qb2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata33_b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata33_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkdata33_qb1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata33_qb2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!--  $Header: build.xml 13-may-2008.10:37:07 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, Oracle. All rights reserved.  
+
+   NAME
+     build.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      04/13/08 - Creation
+
+-->
+<EmptyNode/>
+

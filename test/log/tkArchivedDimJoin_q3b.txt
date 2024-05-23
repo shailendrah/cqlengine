@@ -1,0 +1,11 @@
+1000:+ 20,3.0,2,second,20,3.0,4,second,20,3.0,4,second
+2100:+ 50,5.0,8,second,50,5.0,7,second,50,5.0,7,second
+4100:+ 20,3.0,11,second,20,3.0,4,second,20,3.0,4,second
+4100:+ 20,3.0,2,second,20,3.0,10,second,20,3.0,4,second
+4100:+ 20,3.0,11,second,20,3.0,10,second,20,3.0,4,second
+4100:+ 20,4.25,10,second,20,4.25,9,second,20,4.25,9,second
+4100:+ 20,3.0,2,second,20,3.0,4,second,20,3.0,10,second
+4100:+ 20,3.0,11,second,20,3.0,4,second,20,3.0,10,second
+4100:+ 20,3.0,2,second,20,3.0,10,second,20,3.0,10,second
+4100:+ 20,3.0,11,second,20,3.0,10,second,20,3.0,10,second
+4500:- 20,4.25,10,second,20,4.25,9,second,20,4.25,9,second

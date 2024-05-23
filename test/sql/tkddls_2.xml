@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tkddls_2>
+	<CEP_TABLE>
+		<CEP_DDL>
+register stream S2 (c1 integer, c2 float)
+		</CEP_DDL>
+		<CEP_DDL>
+register stream S5 (c1 integer, c2 float)
+		</CEP_DDL>
+	</CEP_TABLE>
+	<CEP_SOURCE>
+		<CEP_DDL>
+alter stream S2 add source "&lt;EndPointReference&gt; &lt;Address&gt;file:///$TMPS$/inpS2.txt&lt;/Address&gt; &lt;/EndPointReference&gt;"
+		</CEP_DDL>
+		<CEP_DDL>
+alter stream S5 add source "&lt;EndPointReference&gt; &lt;Address&gt;file:///$TMPS$/inpS5.txt&lt;/Address&gt; &lt;/EndPointReference&gt;"
+		</CEP_DDL>
+	</CEP_SOURCE>
+	<CEP_DESTINATION>
+		<CEP_DDL>
+create query q11 as select * from S5
+		</CEP_DDL>
+		<CEP_DDL>
+create query q12 as select * from S2 [now]
+		</CEP_DDL>
+		<CEP_DDL>
+alter query q11 add destination "&lt;EndPointReference&gt; &lt;Address&gt;file:///$TMPD$/outCr11.txt&lt;/Address&gt; &lt;/EndPointReference&gt;"
+		</CEP_DDL>
+		<CEP_DDL>
+alter query q12 add destination "&lt;EndPointReference&gt; &lt;Address&gt;file:///$TMPD$/outCr12.txt&lt;/Address&gt; &lt;/EndPointReference&gt;"
+		</CEP_DDL>
+		<CEP_DDL>
+alter query q11 start
+		</CEP_DDL>
+		<CEP_DDL>
+alter query q12 start
+		</CEP_DDL>		
+	</CEP_DESTINATION>
+</tkddls_2>

@@ -1,0 +1,10 @@
+c 20
+1000 "-0300"
+2000 "+1000"
+3000 "GMT+1100"
+4000 "Asia/Katmandu"
+5000 "Asia/Rangoon"
+6000 "Australia/Sydney"
+7000 "GMT"
+8000 "GMT-0300"
+h 200000000

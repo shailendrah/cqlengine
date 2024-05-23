@@ -1,0 +1,998 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> register stream inptkgbyexpr_S0 (c1 integer, c2 float, c3 integer, c4 char(32)) </CEP_DDL>
+<CEP_DDL> create stream inptkgbyexpr_S1 (c1 integer, c2 double, c3 float) </CEP_DDL>
+<CEP_DDL> create stream inptkgbyexpr_S2 (c1 integer, c2 char(30), c3 integer, c4 xmltype) </CEP_DDL>
+<CEP_DDL> create stream inptkgbyexpr_S3 (c1 float, c2 char(2),c3 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream inptkgbyexpr_S0 add source
+"<EndPointReference><Address>file://@TEST_DATA@/inptkgbyexpr_S0.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter stream inptkgbyexpr_S1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/inptkgbyexpr_S1.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream inptkgbyexpr_S2 add source
+"<EndPointReference><Address>file://@TEST_DATA@/inptkgbyexpr_S2.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream inptkgbyexpr_S3 add source
+"<EndPointReference><Address>file://@TEST_DATA@/inptkgbyexpr_S3.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+
+<CEP_DDL> create function tkGbyExpr_secondMax(n int) return int aggregate using  "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+
+<!-- ***************************************************************** -->
+<!-- NEGATIVE test cases start here:                                   -->
+<!-- ***************************************************************** -->
+
+<!-- non GROUP BY in SELECT list                      -->
+<!-- c2 need to be in Group by or should be part of aggregate func -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY neg_q1 AS SELECT c2+1, avg(c2)+c2 FROM inptkgbyexpr_S0 GROUP BY c2+1
+]]>
+</CEP_DDL>
+
+<!-- expression in select list should match exactly in the group by list-->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY neg_q2 AS SELECT c1*50 FROM inptkgbyexpr_S0 GROUP BY c1*60
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY neg_q3 AS SELECT c1+c1, avg(c2)+c1+c1 FROM inptkgbyexpr_S0 GROUP BY c1+c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY neg_q4 AS SELECT c1+5, c2+10, avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now]  GROUP BY c1+5.0, c2+10
+]]>
+</CEP_DDL>
+
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY neg_q5 AS SELECT c3, avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY length(c3)
+]]>
+</CEP_DDL>
+
+<!-- GROUP BY function not allowed in group by clause -->
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY neg_q6 AS SELECT c2+1, avg(c2)+c2 FROM inptkgbyexpr_S0 GROUP BY max(c2)
+]]>
+</CEP_DDL>
+
+<!-- GROUP BY null is not allowed in group by clause -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY neg_q7 AS SELECT count(c1) FROM inptkgbyexpr_S0 GROUP BY null
+]]>
+</CEP_DDL>
+
+<!-- ***************************************************************** -->
+<!-- POSITIVE test cases start here:                                   -->
+<!-- ***************************************************************** -->
+
+<!-- Sharing of the project operator, test it with visualizer; 
+  s1 and s2 will share the inserted intermediate project operator;
+  to check that element_time is also being taken care of in the project list of the intermediate project -->
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY s1 AS SELECT c1+c2, max(c1+c2) FROM inptkgbyexpr_S0 GROUP BY c1+c2
+]]>
+</CEP_DDL>
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY s2 AS SELECT c1+c2, c1, c2, c3, c4, element_time FROM inptkgbyexpr_S0
+]]>
+</CEP_DDL>
+
+
+
+<!-- ******************************** -->
+<!-- RELATION: max                    -->
+<!-- ******************************** -->
+     
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY q1 AS SELECT c2+c2, max(c1+c2) FROM inptkgbyexpr_S0 [now] GROUP BY c2+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY q1a AS SELECT max(c1+c2) FROM inptkgbyexpr_S0 [now] GROUP BY c2+c2
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************** -->
+<!-- STREAM and max                   -->
+<!-- ******************************** -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY q2 AS SELECT c2+c2, max(c1+c2) FROM inptkgbyexpr_S0 GROUP BY c2+c2, 5+5
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY q2a AS SELECT c1+c3, max(c1+c2) FROM inptkgbyexpr_S0 GROUP BY c1+c3
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************** -->
+<!-- attributes only tests            -->
+<!-- ******************************** -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY q3 AS SELECT c2, c1, max(c1+c2) FROM inptkgbyexpr_S0 GROUP BY c2, c1
+]]>
+</CEP_DDL>
+
+
+<!-- All different expressions types -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e0 AS SELECT c1+c2, avg(c1+c2) FROM inptkgbyexpr_S0 GROUP BY c1, c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e1 AS SELECT c1+c1, avg(c1+c2) FROM inptkgbyexpr_S0 GROUP BY c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e2 AS SELECT avg(c1+c2) FROM inptkgbyexpr_S0 GROUP BY c2+c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e2a AS SELECT c1 * c3, avg(c2) FROM inptkgbyexpr_S0 GROUP BY c1 * c3
+]]>
+</CEP_DDL>
+
+<!-- Test with constants which get wrapped in FuncExpr -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e3 AS SELECT c1+5, avg(c1+c2)+5 FROM inptkgbyexpr_S0 GROUP BY c1
+]]>
+</CEP_DDL>
+
+<!-- Relation, constant expr, funcexpr -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e3a AS SELECT c1+c2, avg(c1+c2)+5 FROM inptkgbyexpr_S0 GROUP BY c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e3b AS SELECT c1+c2, avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY c1, c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e3c AS SELECT c1+c2, avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e3d AS SELECT c1+5.0, c2+10, avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY c1+5.0, c2+10
+]]>
+</CEP_DDL>
+
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e4 AS SELECT c1, c2, c2, c1 FROM inptkgbyexpr_S0 GROUP BY c1, c1, c2
+]]>
+</CEP_DDL>
+
+<!-- does not have to match prefix any key is fine -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e5 AS SELECT c1+c1 FROM inptkgbyexpr_S0 GROUP BY c2+c2, c1+c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e6 AS SELECT c2+avg(c2+c1) FROM inptkgbyexpr_S0 GROUP BY c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e7 AS SELECT c1 as a, c2 as b FROM inptkgbyexpr_S0 GROUP BY c2, c1
+]]>
+</CEP_DDL>
+
+
+<!-- Force precedence with parenthesis and it should match -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e9 AS SELECT c1+c3, avg(c2)+(c1+c3) FROM inptkgbyexpr_S0 GROUP BY c1+c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e10 AS SELECT c1*50  FROM inptkgbyexpr_S0 GROUP BY c1*50
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e11 AS SELECT c1*5, sum(ceil(c2)) FROM inptkgbyexpr_S0 GROUP BY c1*5
+]]>
+</CEP_DDL>
+
+<!-- function expression -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e12 AS SELECT c1+to_float(5), c2+10, avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY c1+to_float(5), c2+10
+]]>
+</CEP_DDL>
+
+<!-- constant expression -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13 AS SELECT avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY 5*23
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13a AS SELECT 5*45, avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13b AS SELECT length(c4), avg(c1+c2)+5 FROM inptkgbyexpr_S0 [now] GROUP BY length(c4)
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13c AS SELECT length(c4), avg(c1+c2)+5 FROM inptkgbyexpr_S0 GROUP BY length(c4)
+]]>
+</CEP_DDL>
+
+<!-- select has expressions containing group by -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13d AS SELECT floor(c2), ceil(c2) from inptkgbyexpr_S0 GROUP BY c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13e AS SELECT floor(c2), sum(ceil(c2)) FROM inptkgbyexpr_S0 GROUP BY floor(c2)
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13f AS SELECT floor(c2)+ceil(c2), count(*) FROM inptkgbyexpr_S0 GROUP BY floor(c2)+ceil(c2)
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13g AS SELECT floor(c2)+ceil(c2), floor(ceil(c2)), c2 FROM inptkgbyexpr_S0
+GROUP BY floor(ceil(c2)), c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e13h AS SELECT floor(c2)+ceil(c2), floor(ceil(c2)) FROM inptkgbyexpr_S0
+GROUP BY floor(c2), ceil(c2), floor(ceil(c2))
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e14 AS SELECT c1 * c3, max(c1+c2) * 50 FROM (select c1, c2, c3 from inptkgbyexpr_S0) as K GROUP BY c1 * c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e15 AS SELECT sum(c2) * c3 FROM inptkgbyexpr_S0 GROUP BY c1 + c1 * c2 / c3, c1, c2, c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e15a AS SELECT c1 * c2, count(c3) FROM inptkgbyexpr_S0 GROUP BY c1 + c3, c1 * c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e15b AS SELECT c1 * c2, c1 + c3, c2 + c2 FROM inptkgbyexpr_S0 GROUP BY c1 + c3, c1 * c2, c2 + c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e15c AS SELECT c1 * c2 FROM inptkgbyexpr_S0 GROUP BY c1, c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e16 AS SELECT c1 + c1 FROM inptkgbyexpr_S1[range 4 slide 2] GROUP BY c1 + c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17 AS SELECT count(c3), max(c2), min(c1) FROM inptkgbyexpr_S1[range 7] GROUP BY c1 + c3,c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17a AS SELECT min(distinct c3), sum(distinct c3) FROM inptkgbyexpr_S1[range 5] GROUP BY c1 * 10
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17b AS SELECT c3 * c1, min(distinct c2), sum(distinct c1), sum(c1) FROM inptkgbyexpr_S1[range 6] GROUP BY c3 * c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17c AS SELECT count(distinct c1), count(distinct c1) FROM inptkgbyexpr_S1 GROUP BY c2 + c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17d AS SELECT sum(distinct c1*2), min(distinct c1)*2 FROM inptkgbyexpr_S1[range 6] GROUP BY c1 + c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17e AS SELECT tkGbyExpr_secondMax(distinct c1) FROM inptkgbyexpr_S1[range 4] GROUP BY c1 + c1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17f AS SELECT R1.c2 FROM inptkgbyexpr_S3[now] as R1 GROUP BY R1.c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17g AS SELECT R1.c2 FROM inptkgbyexpr_S3[now] as R1, inptkgbyexpr_S3[range 1 hour slide 1 second] as R2 
+                      where R1.c2 = R2.c2 GROUP BY R1.c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e17h AS SELECT R1.c2 FROM inptkgbyexpr_S3[range 5] as R1 GROUP BY R1.c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e18 AS SELECT c2 + c3, count(c1) FROM inptkgbyexpr_S1[rows 3] GROUP BY c2 + c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e19 AS SELECT c1 + c3,sum(c2*30) FROM inptkgbyexpr_S1 GROUP BY c1 + c3 HAVING sum(c2*20) * (c1 + c3) > 1000.0
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e19a AS SELECT c1 + c3,sum(c1 + c3) FROM inptkgbyexpr_S1[range 4] GROUP BY c1 + c3 HAVING c1 + c3 >0 and sum(c1 + c3) > 1
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e19b AS SELECT min(distinct c1), sum(c2) FROM inptkgbyexpr_S1[range 4] GROUP BY c1 + c3 HAVING avg(distinct c2) > 7
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e20 AS SELECT sum(c1) FROM inptkgbyexpr_S1[rows 3] GROUP BY c1 * c3, c1 ORDER BY c1 rows 2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e20a AS SELECT c1 FROM inptkgbyexpr_S1[rows 3] GROUP BY c1 * c3, c1 HAVING sum(c1) > 5 ORDER BY c1 rows 2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e21 as select CASE when to_float(c1+c2) > 20.5 then to_float(count(c1)) else c1+c2 end from inptkgbyexpr_S0 GROUP BY c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e21a as select case to_float(c1+c2) when (c1+c2) then c1+c2 else 10.0 end from inptkgbyexpr_S0 GROUP BY c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e21b as select case c1 when c3 then c1+c3 else c1+c3+100 end from inptkgbyexpr_S0 GROUP BY c1,c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e21c as select DECODE(c1+c2, 20.7, c1+c2+5, 15.9, c1+c2+20.0, c1+c2-5.0) from inptkgbyexpr_S0 GROUP BY c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22 as select  XMLELEMENT(NAME "S0", XMLELEMENT(NAME "c1", c1), XMLELEMENT(NAME "c2", c2)) from inptkgbyexpr_S0 GROUP BY c1,c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22a as select  XMLELEMENT(NAME "S0", XMLELEMENT(NAME "c1addc2", c1+c2)) from inptkgbyexpr_S0 GROUP BY c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22b as select XMLAGG(XMLELEMENT("c1",c1)) from inptkgbyexpr_S0 GROUP BY c1+c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22c as select XMLFOREST(c1, c2) from inptkgbyexpr_S0 GROUP BY c1, c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22d as select XMLFOREST(length(c4) as "L") from inptkgbyexpr_S0 GROUP BY length(c4)
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22e as select XMLCOLATTVAL(c1, c2) from inptkgbyexpr_S0 GROUP BY c1, c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22f as select XMLCOLATTVAL(c1 + c2 as "K") from inptkgbyexpr_S0 GROUP BY c1 + c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22g as  select XMLPARSE(CONTENT c2) from inptkgbyexpr_S2 GROUP BY c2
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY e22h as select XMLCONCAT(XMLPARSE(CONTENT c2), xmlelement(NAME "c3",c3)) from inptkgbyexpr_S2 GROUP BY c3, c2
+]]>
+</CEP_DDL>
+
+<!-- TODO: PATTERN match  -->
+<!-- TODO: timestamp functions -->
+<!-- Heartbeat -->
+<!-- Operator sharing -->
+<!-- TODO: Paralleism? -->
+<!-- partition by expressoin -->
+
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query q1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_q1.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+<CEP_DDL>
+ <![CDATA[ 
+alter query q1a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_q1a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+<CEP_DDL>
+ <![CDATA[ 
+alter query q2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_q2.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+<CEP_DDL>
+ <![CDATA[ 
+alter query q2a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_q2a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+<CEP_DDL>
+ <![CDATA[ 
+alter query q3 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_q3.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+<CEP_DDL>
+ <![CDATA[ 
+alter query e0 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e0.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+<CEP_DDL>
+ <![CDATA[ 
+alter query e1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e1.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e2.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e3 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e3.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e3a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e3a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e3b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e3b.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e3c add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e3c.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e3d add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e3d.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e4 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e4.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e5 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e5.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e6 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e6.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e7 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e7.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e9 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e9.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e10 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e10.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e11 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e11.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e12 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e12.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13b.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13c add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13c.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13d add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13d.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13e add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13e.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13f add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13f.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13g add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13g.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e13h add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e13h.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e14 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e14.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e15 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e15.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e15a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e15a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e15b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e15b.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e15c add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e15c.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e16 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e16.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17b.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17c add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17c.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17d add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17d.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17e add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17e.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17f add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17f.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17g add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17g.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e17h add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e17h.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+<CEP_DDL>
+ <![CDATA[ 
+alter query e18 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e18.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e19 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e19.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e19a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e19a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e19b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e19b.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e20 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e20.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e20a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e20a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e21 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e21.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e21a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e21a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e21b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e21b.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e21c add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e21c.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22a.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22b.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22c add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22c.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22d add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22d.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22e add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22e.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22f add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22f.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22g add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22g.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+ <![CDATA[ 
+alter query e22h add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkgbyexpr_e22h.txt?convertTs=false</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q1a start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q2a start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter query e0 start </CEP_DDL>
+<CEP_DDL> alter query e1 start </CEP_DDL>
+<CEP_DDL> alter query e2 start </CEP_DDL>
+<CEP_DDL> alter query e3 start </CEP_DDL>
+<CEP_DDL> alter query e3a start </CEP_DDL>
+<CEP_DDL> alter query e3b start </CEP_DDL>
+<CEP_DDL> alter query e3c start </CEP_DDL>
+<CEP_DDL> alter query e3d start </CEP_DDL>
+<CEP_DDL> alter query e4 start </CEP_DDL>
+<CEP_DDL> alter query e5 start </CEP_DDL>
+<CEP_DDL> alter query e6 start </CEP_DDL>
+<CEP_DDL> alter query e7 start </CEP_DDL>
+
+<CEP_DDL> alter query e9 start </CEP_DDL>
+<CEP_DDL> alter query e10 start </CEP_DDL>
+<CEP_DDL> alter query e11 start </CEP_DDL>
+<CEP_DDL> alter query e12 start </CEP_DDL>
+<CEP_DDL> alter query e13 start </CEP_DDL>
+<CEP_DDL> alter query e13a start </CEP_DDL>
+<CEP_DDL> alter query e13b start </CEP_DDL>
+<CEP_DDL> alter query e13c start </CEP_DDL>
+<CEP_DDL> alter query e13d start </CEP_DDL>
+<CEP_DDL> alter query e13e start </CEP_DDL>
+<CEP_DDL> alter query e13f start </CEP_DDL>
+<CEP_DDL> alter query e13g start </CEP_DDL>
+<CEP_DDL> alter query e13h start </CEP_DDL>
+<CEP_DDL> alter query e14 start </CEP_DDL>
+<CEP_DDL> alter query e15 start </CEP_DDL>
+<CEP_DDL> alter query e15a start </CEP_DDL>
+<CEP_DDL> alter query e15b start </CEP_DDL>
+<CEP_DDL> alter query e15c start </CEP_DDL>
+<CEP_DDL> alter query e16 start </CEP_DDL>
+<CEP_DDL> alter query e17 start </CEP_DDL>
+<CEP_DDL> alter query e17a start </CEP_DDL>
+<CEP_DDL> alter query e17b start </CEP_DDL>
+<CEP_DDL> alter query e17c start </CEP_DDL>
+<CEP_DDL> alter query e17d start </CEP_DDL>
+<CEP_DDL> alter query e17e start </CEP_DDL>
+<CEP_DDL> alter query e17f start </CEP_DDL>
+<CEP_DDL> alter query e17g start </CEP_DDL>
+<CEP_DDL> alter query e17h start </CEP_DDL>
+<CEP_DDL> alter query e18 start </CEP_DDL>
+<CEP_DDL> alter query e19 start </CEP_DDL>
+<CEP_DDL> alter query e19a start </CEP_DDL>
+<CEP_DDL> alter query e19b start </CEP_DDL>
+<CEP_DDL> alter query e20 start </CEP_DDL>
+<CEP_DDL> alter query e20a start </CEP_DDL>
+<CEP_DDL> alter query e21 start </CEP_DDL>
+<CEP_DDL> alter query e21a start </CEP_DDL>
+<CEP_DDL> alter query e21b start </CEP_DDL>
+<CEP_DDL> alter query e21c start </CEP_DDL>
+<CEP_DDL> alter query e22 start </CEP_DDL>
+<CEP_DDL> alter query e22a start </CEP_DDL>
+<CEP_DDL> alter query e22b start </CEP_DDL>
+<CEP_DDL> alter query e22c start </CEP_DDL>
+<CEP_DDL> alter query e22d start </CEP_DDL>
+<CEP_DDL> alter query e22e start </CEP_DDL>
+<CEP_DDL> alter query e22f start </CEP_DDL>
+<CEP_DDL> alter query e22g start </CEP_DDL>
+<CEP_DDL> alter query e22h start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+
+</CEP>
+

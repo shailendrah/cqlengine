@@ -1,0 +1,94 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkcsfb2_TradeInputs(tradeId integer, tradeVolume integer, tradeSymbol char(4), tradeType integer) </CEP_DDL>
+<CEP_DDL> register stream tkcsfb2_TradeUpdates(tradeId integer, statusCode integer) </CEP_DDL>
+<CEP_DDL> register stream tkcsfb2_TradeMatched(tradeId integer) </CEP_DDL>
+<CEP_DDL> register relation tkcsfb2_TradeTypeCodes(tradeType char(10), code integer) </CEP_DDL>
+<CEP_DDL> register relation tkcsfb2_TradeStatusCodes(statusCode char(20), code integer) </CEP_DDL>
+<CEP_DDL> register relation tkcsfb2_Dual(c1 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcsfb2_TradeInputs add source "<EndPointReference><Address>file://@TEST_DATA@/inpTI1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkcsfb2_TradeUpdates add source "<EndPointReference><Address>file://@TEST_DATA@/inpTU1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcsfb2_TradeMatched add source "<EndPointReference><Address>file://@TEST_DATA@/inpTM1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkcsfb2_TradeTypeCodes add source "<EndPointReference><Address>file://@TEST_DATA@/inpTT1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkcsfb2_TradeStatusCodes add source "<EndPointReference><Address>file://@TEST_DATA@/inpTS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkcsfb2_Dual add source "<EndPointReference><Address>file://@TEST_DATA@/inpDual.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_CutOffTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as DStream(select * from tkcsfb2_TradeInputs[range 20 seconds]) </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_FineTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(select c.tradeId, c.tradeVolume, c.tradeSymbol, c.tradeType from tkcsfb2_CutOffTrades[now] as c, tkcsfb2_TradeMatched[range 20 seconds] as t where c.tradeId = t.tradeId) </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy1(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from tkcsfb2_CutOffTrades[NOW] </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy2(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from tkcsfb2_FineTrades[NOW] </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_FailedTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(tkcsfb2_Dummy1 except tkcsfb2_Dummy2) </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFineTrades(c1) as select count(*) from tkcsfb2_FineTrades[range 5 minutes slide 5 minutes] </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailedByNonZeroType(tradeType, total) as select tradeType, count(*) from tkcsfb2_FailedTrades[range 5 minutes slide 5 minutes] group by tradeType </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy6(tradeType) as select tradeType from tkcsfb2_TotalFailedByNonZeroType </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy7(tradeType) as select code from tkcsfb2_TradeTypeCodes </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy8(tradeType) as tkcsfb2_Dummy7 except tkcsfb2_Dummy6 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy9(tradeType, total) as select tradeType, 0 from tkcsfb2_Dummy8 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailedByType(tradeType, total) as tkcsfb2_TotalFailedByNonZeroType union all tkcsfb2_Dummy9 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailedTrades(total, dummy) as select sum(total), count(*) from tkcsfb2_TotalFailedByType </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalTrades(c1) as select fine.c1+failed.total from tkcsfb2_TotalFineTrades as fine, tkcsfb2_TotalFailedTrades as failed </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy4(buyCount, sellCount) as select a.total, b.total from tkcsfb2_TotalFailedByType as a, tkcsfb2_TotalFailedByType as b where a.tradeType = 0 and b.tradeType = 1 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailuresByTypes(buyCount, sellCount, exchgCount) as select b.buyCount, b.sellCount, a.total from tkcsfb2_TotalFailedByType as a, tkcsfb2_Dummy4 as b where a.tradeType = 2 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_FailedTradesStatus(tradeId, statusCode) as IStream(select f.tradeId, u.statusCode from tkcsfb2_FailedTrades[NOW] as f, tkcsfb2_TradeUpdates[partition by tradeId rows 1] as u where f.tradeId = u.tradeId) </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailedNonZeroByStatus12(statusCode, total) as select statusCode, count(*) from tkcsfb2_FailedTradesStatus[range 5 minutes slide 5 minutes] group by statusCode </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy10(statusCode) as select statusCode from tkcsfb2_TotalFailedNonZeroByStatus12 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy11(statusCode) as select code from tkcsfb2_TradeStatusCodes where code = 1 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy12(statusCode) as select code from tkcsfb2_TradeStatusCodes where code = 2 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy13(statusCode) as tkcsfb2_Dummy11 union all tkcsfb2_Dummy12 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy14(statusCode) as tkcsfb2_Dummy13 except tkcsfb2_Dummy10 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy15(statusCode, total) as select statusCode, 0 from tkcsfb2_Dummy14 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailedStatus12(statusCode, total) as tkcsfb2_TotalFailedNonZeroByStatus12 union all tkcsfb2_Dummy15 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy18(total, dummy) as select sum(total), count(*) from tkcsfb2_TotalFailedStatus12 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailedStatus0(statusCode, total) as select 0, allRec.total - status12.total from tkcsfb2_TotalFailedTrades as allRec, tkcsfb2_Dummy18 as status12 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailedByStatus(statusCode, total) as tkcsfb2_TotalFailedStatus0 union all tkcsfb2_TotalFailedStatus12 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Dummy5(status0, count0, status1, count1) as select a.statusCode, a.total, b.statusCode, b.total from tkcsfb2_TotalFailedByStatus as a, tkcsfb2_TotalFailedByStatus as b where a.statusCode = 0 and b.statusCode = 1 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailuresByStatus(status0, count0, status1, count1, status2, count2) as select b.status0, b.count0, b.status1, b.count1, a.statusCode, a.total from tkcsfb2_TotalFailedByStatus as a, tkcsfb2_Dummy5 as b where a.statusCode = 2 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailuresByStatusType(buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select a.buyCount, a.sellCount, a.exchgCount, b.count0, b.count1, b.count2 from tkcsfb2_TotalFailuresByTypes as a, tkcsfb2_TotalFailuresByStatus as b </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalReq1(totalCount, totalFailedCount, buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select t.c1, a.buyCount+a.sellCount+a.exchgCount, a.buyCount, a.sellCount, a.exchgCount, a.noackCount, a.recvdCount, a.processedCount from tkcsfb2_TotalFailuresByStatusType as a, tkcsfb2_TotalTrades as t </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TradeStatus0(tradeId, statusCode) as select tradeId, 0 from tkcsfb2_TradeInputs </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TradeStatus3(tradeId, statusCode) as select tradeId, 3 from tkcsfb2_TradeMatched </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TradeStatus03(tradeId, statusCode) as tkcsfb2_TradeStatus0 union all tkcsfb2_TradeStatus3 </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TradeStatusStreamDup(tradeId, statusCode) as tkcsfb2_TradeStatus03 union all tkcsfb2_TradeUpdates </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TradeStatus(tradeId, statusCode) as select * from tkcsfb2_TradeStatusStreamDup[partition by tradeId rows 1] </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TradeStatusStream(tradeId, statusCode) as IStream(select * from tkcsfb2_TradeStatus) </CEP_DDL>
+<CEP_DDL><![CDATA[ register view tkcsfb2_CutOff3(tradeId, statusCode) as DStream(select tradeId, statusCode from tkcsfb2_TradeStatusStream[range 3 seconds] where statusCode < 3) ]]> </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Failed3(tradeId, statusCode) as IStream(select a.tradeId, a.statusCode from tkcsfb2_CutOff3[NOW] as a, tkcsfb2_TradeStatus as b where a.tradeId = b.tradeId and a.statusCode = b.statusCode) </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalCutOff3(c1) as select count(*) from tkcsfb2_CutOff3[range 10 minutes slide 5 minutes] </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_TotalFailed3(c1) as select count(*) from tkcsfb2_Failed3[range 10 minutes slide 5 minutes] </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Req1(total, totalFailed, buy, sell, exchg, trade_noack, trade_recvd, trade_processing) as IStream(select * from tkcsfb2_TotalReq1) </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Req2(tickerSymbol, symbolCount) as IStream(select tradeSymbol, count(*) from tkcsfb2_FailedTrades[range 5 minutes slide 5 minutes] group by tradeSymbol) </CEP_DDL>
+<CEP_DDL><![CDATA[ register view tkcsfb2_Req3(totalCount, failedCount) as IStream(select t.c1, t.c1-f.c1 from tkcsfb2_TotalTrades as t, tkcsfb2_TotalFineTrades as f where f.c1*100 < 95*t.c1) ]]> </CEP_DDL>
+<CEP_DDL> register view tkcsfb2_Req4(totalCount, failedCount) as IStream(select t.c1, f.c1 from tkcsfb2_TotalCutOff3 as t, tkcsfb2_TotalFailed3 as f where f.c1*100 > 10*t.c1) </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q201 as select * from tkcsfb2_TotalFailuresByTypes </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q202 as select * from tkcsfb2_TotalFailuresByStatus </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q203 as select * from tkcsfb2_TotalFailuresByStatusType </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q204 as select * from tkcsfb2_TotalFailedByStatus </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q205 as select * from tkcsfb2_FailedTradesStatus </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q206 as select * from tkcsfb2_TotalFailedStatus12 </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q207 as select * from tkcsfb2_TotalFailedStatus0 </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q208 as select * from tkcsfb2_Req1 </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q209 as select * from tkcsfb2_Req2 </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q210 as select * from tkcsfb2_Req3 </CEP_DDL>
+<CEP_DDL> create query tkcsfb2_q211 as select * from tkcsfb2_Req4 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbq1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q202 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbq2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q203 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbq3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q204 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbq4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q205 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbq5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q206 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbq6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q207 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbq7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q208 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbr1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q209 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbr2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q210 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbr3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfb2_q211 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcsfbr4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q201 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q202 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q203 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q204 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q205 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q206 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q207 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q208 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q209 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q210 start </CEP_DDL>
+<CEP_DDL> alter query tkcsfb2_q211 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

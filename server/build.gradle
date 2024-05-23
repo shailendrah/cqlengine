@@ -1,0 +1,257 @@
+applyTemplate 'jaxb'
+applyTemplate 'msgcat'
+applyTemplate 'jacoco'
+//applyTemplate 'shaded'
+
+//Disable BDB Usage
+sourceSets.main.java.excludes += '**/BerkeleyDB/**'
+
+dependencies
+{
+    compile project(":modules:common-util")
+    compile project(":modules:spark-cql:cqlengine:api")
+    compile project(":modules:spark-cql:cqlengine:logging")
+    compile project(":modules:spark-cql:cqlengine:tools")
+    compile project(":modules:spark-cql:extensibility:api")
+    compile libraries.kryo
+    compile libraries.cep_apache_bcel
+    compile libraries.apache_commons_csv
+    //compile libraries.cep_bdb_je
+    compile libraries.cep_colt
+    compile libraries.wls_ojdbc
+    compile libraries.wls_xmlparserv2
+    compile libraries.cep_dms
+    compile libraries.wls_xquery
+    //compile libraries.xerces
+    testCompile "commons-io:commons-io:+"
+}
+
+task testJar(type: Jar) {
+        classifier = 'tests'
+        from sourceSets.test.output
+}
+
+build.dependsOn testJar
+
+test {
+
+    systemProperty 'db.properties', System.getenv('OSA_HOME')+'/infra/db.properties'
+    systemProperty 'test.inputFolder', '../test/data/ha'
+    systemProperty 'test.outputFolder', "${buildDir}"
+    systemProperty 'test.logFolder', '../test/log/ha'
+    systemProperty 'test.createSnapshot', 'false'
+
+    exclude '**/TestInterval.class' // broken, need to rewrite
+    exclude '**/TestStorageBase.class' // abstract class
+    exclude '**/TestDynTuple.class'
+    exclude '**/TestPageClassGen.class'
+    exclude '**/TestPagedTuple.class'
+    exclude '**/TestTuple.class'
+    exclude '**/TestTupleClassGen.class'
+    exclude '**/TestTupleClassGen1.class'
+    exclude '**/TestUnboundStream.class'
+    exclude '**/TestDropSchema.class'
+    exclude '**/TestDropSchema1.class'
+    exclude '**/TestSchema.class'
+    exclude '**/TestStore.class'
+    exclude '**/TestTable.class'
+    exclude '**/TestBigintSemantic.class'
+    exclude '**/TestObjSemantic.class'
+    exclude '**/TestStat.class'
+    exclude '**/TestLogging.class'
+    exclude '**/dataStructures/*.class'
+    exclude '**/pagedList/*.class'
+    exclude '**/TestMemStorage.class'
+    exclude '**/TestSFileStorage.class'
+    exclude '**/TestBDBStorage.class'
+    exclude '**/TestXMLSpill.class'
+    exclude '**/TestCustomerLog.class'
+    exclude '**/TestDump.class'
+    exclude '**/HATestSelect.class'
+    exclude '**/HATestPattern.class'
+    exclude '**/HATestUnion.class'
+    exclude '**/HATestBinStreamJoin.class'
+    exclude '**/HATestDStream.class'
+    exclude '**/HATestRelSource.class'
+    exclude '**/HATestOrderByTop.class'
+    exclude '**/HATestRowWindow.class'
+    exclude '**/HATestOrderBy.class'
+    exclude '**/HATestSelfJoin.class'
+    exclude '**/HATestRStream.class'
+    exclude '**/HATestView.class'
+    exclude '**/HATestGroupBy.class'
+    exclude '**/HATestRangeWindow.class'
+    exclude '**/HATestBinJoin.class'
+    exclude '**/HATestDistinct.class'
+    exclude '**/HATestProject.class'
+    exclude '**/HATestStreamSource.class'
+    exclude '**/HATestIStream.class'
+    exclude '**/SnapshotEvolutionTest.class'
+}
+
+task hatest(type:Test) {
+    systemProperty 'db.properties', System.getenv('OSA_HOME')+'/infra/db.properties'
+    systemProperty 'test.inputFolder', '../test/data/ha'
+    systemProperty 'test.outputFolder', "${buildDir}"
+    systemProperty 'test.logFolder', '../test/log/ha'
+    systemProperty 'test.createSnapshot', 'false'
+   
+ 
+    exclude '**/TestInterval.class' // broken, need to rewrite
+    exclude '**/TestStorageBase.class' // abstract class
+    exclude '**/TestDynTuple.class'
+    exclude '**/TestPageClassGen.class'
+    exclude '**/TestPagedTuple.class'
+    exclude '**/TestTuple.class'
+    exclude '**/TestTupleClassGen.class'
+    exclude '**/TestTupleClassGen1.class'
+    exclude '**/TestUnboundStream.class'
+    exclude '**/TestDropSchema.class'
+    exclude '**/TestDropSchema1.class'
+    exclude '**/TestSchema.class'
+    exclude '**/TestStore.class'
+    exclude '**/TestTable.class'
+    exclude '**/TestBigintSemantic.class'
+    exclude '**/TestObjSemantic.class'
+    exclude '**/TestStat.class'
+    exclude '**/TestLogging.class'
+    exclude '**/dataStructures/*.class'
+    exclude '**/pagedList/*.class'
+    exclude '**/TestMemStorage.class'
+    exclude '**/TestSFileStorage.class'
+    exclude '**/TestBDBStorage.class'
+    exclude '**/TestXMLSpill.class'
+    exclude '**/TestCustomerLog.class'
+    exclude '**/TestDump.class'
+    
+    include '**/HATestSelect.class'
+    include '**/HATestPattern.class'
+    include '**/HATestUnion.class'
+    include '**/HATestBinStreamJoin.class'
+    include '**/HATestDStream.class'
+    include '**/HATestRelSource.class'
+    include '**/HATestOrderByTop.class'
+    include '**/HATestRowWindow.class'
+    include '**/HATestOrderBy.class'
+    include '**/HATestSelfJoin.class'
+    include '**/HATestRStream.class'
+    include '**/HATestView.class'
+    include '**/HATestGroupBy.class'
+    include '**/HATestRangeWindow.class'
+    include '**/HATestBinJoin.class'
+    include '**/HATestDistinct.class'
+    include '**/HATestProject.class'
+    include '**/HATestStreamSource.class'
+    include '**/HATestIStream.class'
+    include '**/SnapshotEvolutionTest.class'
+}
+
+// colt specific code generation
+ext.colt = [
+        targetDir: "${buildDir}/colt-generated"
+]
+task compileColt {
+
+    inputs.dir file("${projectDir}")
+    inputs.dir file("${projectDir.parent}/colt")
+    outputs.dir file("${colt.targetDir}")
+
+    doLast {
+        delete(colt.targetDir)
+        mkdir(colt.targetDir)
+
+        def xmlFunc = "${colt.targetDir}/oracle/cep/colt/coltFunctions.xml"
+        def xmlAggr = "${projectDir.parent}/colt/src/oracle/cep/tools/colt/aggr/coltAggrFunctions.xml"
+        def xslDir = "${projectDir.parent}/colt/src/oracle/cep/tools/colt"
+        def genDir = "${colt.targetDir}/oracle/cep/colt"
+
+        // functions
+        javaexec {
+            classpath configurations.compile.files
+            main "oracle.cep.tools.colt.functions.XMLColtFuncGenerator"
+            args "${xmlFunc}"
+        }
+        javaexec {
+            classpath configurations.compile.files
+            main "oracle.cep.tools.colt.functions.XML2ColtFunction"
+            args "${xslDir}/functions/XML2ColtFunction.xsl",
+                    "${xmlFunc}",
+                    "${genDir}/functions"
+        }
+        javaexec {
+            classpath configurations.compile.files
+            main "oracle.cep.tools.colt.functions.XML2ColtInstaller"
+            args "${xslDir}/functions/XML2ColtInstall.xsl",
+                    "${xmlFunc}",
+                    "${genDir}/install/ColtInstall.java"
+        }
+
+        // aggregations
+        javaexec {
+            classpath configurations.compile.files
+            main "oracle.cep.tools.colt.aggr.XML2ColtAggrFunction"
+            args "${xslDir}/aggr/XML2ColtAggrFunction.xsl",
+                    "${xmlAggr}",
+                    "${genDir}/aggr"
+        }
+        javaexec {
+            classpath configurations.compile.files
+            main "oracle.cep.tools.colt.aggr.XML2ColtAggrInstaller"
+            args "${xslDir}/aggr/XML2ColtAggrInstall.xsl",
+                    "${xmlAggr}",
+                    "${genDir}/install/ColtAggrInstall.java"
+        }
+
+        // TODO: delete() "CEPAddExact*.java,CEPDecrementExact*.java,CEPFloorDiv*.java,CEPFloorMod*.java,CEPIncrementExact*.java,CEPMultiplyExact*.java,CEPNegateExact*.java,CEPNextDown*.java,CEPSubtractExact*.java,CEPToIntExact.java"
+    }
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/ha-test/java','src/test/java']
+        }
+    }
+}
+
+compileJava.dependsOn compileColt
+sourceSets.main.java.srcDirs += colt.targetDir
+
+/* temporarily disable.
+// configure msgcat using a different source folder
+msgcat.sourceDir=file("${buildDir}/msgxml-generated")
+
+// prepare message catalog files generated from exceptions
+task prepareMsgCat {
+
+    dependsOn ":modules:spark-cql:cqlengine:tools:build"
+    outputs.dir msgcat.sourceDir
+    inputs.files configurations.compile.files
+
+    doLast {
+        def xmlDir = msgcat.sourceDir
+        delete(xmlDir)
+        mkdir(xmlDir)
+        javaexec {
+            classpath configurations.compile.files
+            main "oracle.cep.tools.MessageGenerator"
+            args "${xmlDir}", '-wlevs'
+        }
+    }
+}
+
+compileMsgCat.dependsOn prepareMsgCat
+compileL10n.dependsOn compileMsgCat
+*/
+
+task genParser(type: Exec) {
+    // Generate Parser.java
+    workingDir "$projectDir.parent/utl"
+    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        commandLine 'cmd', '/c', 'echo "Parser generating is not supported for Windows platform"'
+    } else {
+        commandLine 'sh', 'genParser.sh'
+    }
+}
+
+

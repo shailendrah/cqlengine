@@ -1,0 +1,110 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tknarysetop_R1 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+<CEP_DDL> register relation tknarysetop_R2 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+<CEP_DDL> register relation tknarysetop_R3 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+
+<!-- Negative test cases -->
+<CEP_DDL> register stream tknarysetop_S1 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+<CEP_DDL> register relation tknarysetop_R11 (c1 integer, c2 float, c3 xmltype) </CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tknarysetop1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R2 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tknarysetop2.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R3 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tknarysetop3.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<!-- -ve test cases -->
+<CEP_DDL> <![CDATA[ alter stream tknarysetop_S1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tknarysetop1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R11 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tknarysetop1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+
+<!-- VIEW definitions used for negative test cases -->
+<CEP_DDL> CREATE VIEW v4 AS SELECT * FROM tknarysetop_S1 </CEP_DDL>
+<CEP_DDL> CREATE VIEW v5 AS SELECT c1, c2 FROM tknarysetop_R1 </CEP_DDL>
+<CEP_DDL> CREATE VIEW v6 AS SELECT c1 as a, c1 as b, c1 as c FROM tknarysetop_R1 </CEP_DDL>
+<CEP_DDL> CREATE VIEW v7 AS SELECT c3 FROM tknarysetop_R11 </CEP_DDL>
+<CEP_DDL> CREATE VIEW v8 AS SELECT c3 FROM tknarysetop_R11 </CEP_DDL>
+
+
+<CEP_DDL> CREATE VIEW v1 AS SELECT c1, c2, c3 from tknarysetop_R1 as R1 </CEP_DDL>
+<CEP_DDL> CREATE VIEW v2 AS SELECT c1, c2, c3 from tknarysetop_R2 as R2 </CEP_DDL>
+<CEP_DDL> CREATE VIEW v3 AS SELECT c1, c2, c3 from tknarysetop_R3 as R3 </CEP_DDL>
+
+<!-- (ve) test case #1: ALL operands have to be relations -->
+<CEP_DDL> CREATE QUERY q0 AS v1 UNION v2 UNION v4 </CEP_DDL>
+<CEP_DDL> CREATE QUERY q0 AS v4 UNION v1 UNION v2 </CEP_DDL>
+
+<!-- -ve: number of attributes don't match -->
+<CEP_DDL> CREATE QUERY q0 AS v1 UNION v2 UNION v5 </CEP_DDL>
+<!-- -ve: types don't match -->
+<CEP_DDL> CREATE QUERY q0 AS v1 UNION v2 UNION v6 </CEP_DDL>
+
+<!-- -ve: xmltype not allowed for anything other than UNION ALL -->
+<CEP_DDL> CREATE QUERY q0 AS v7 UNION v8 </CEP_DDL>
+
+<!-- -ve: for UNION ALL all operands must evaluate to the same type, stream or
+relation -->
+<CEP_DDL> CREATE QUERY q0 AS v1 UNION ALL v4 </CEP_DDL>
+
+<!-- *************************** -->
+<!-- BEGIN: positive test cases  -->
+<!-- *************************** -->
+
+<!-- 1. Binary UNION -->
+<CEP_DDL> CREATE QUERY q0 AS v1 UNION v2 </CEP_DDL>
+<!-- 2. Binary UNION ALL -->
+<CEP_DDL> CREATE QUERY q1 AS v1 UNION ALL v2 </CEP_DDL>
+
+<!-- 3. N-ary UNION/ALL -->
+<CEP_DDL> CREATE QUERY q2 AS RSTREAM(v1 UNION v2 MINUS v3) </CEP_DDL>
+<!-- 4. N-ary UNION -->
+<CEP_DDL> CREATE QUERY q3 AS RSTREAM(v1 INTERSECT v2) </CEP_DDL>
+
+<!-- *************************** -->
+<!-- END: positive test cases    -->
+<!-- *************************** -->
+
+<CEP_DDL> 
+<![CDATA[ 
+ALTER QUERY q0 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tknarysetopq0.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+
+<CEP_DDL> 
+<![CDATA[ 
+ALTER QUERY q1 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tknarysetopq1.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+
+<CEP_DDL> 
+<![CDATA[ 
+ALTER QUERY q2 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tknarysetopq2.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+
+<CEP_DDL> 
+<![CDATA[ 
+ALTER QUERY q3 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tknarysetopq3.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL> 
+
+<CEP_DDL> alter query q0 start </CEP_DDL>
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

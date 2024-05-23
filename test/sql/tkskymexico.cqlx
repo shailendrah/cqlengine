@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkskymexico_S1 (c1 char(100), c2 bigint)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkskymexico_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkskymexico_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkskymexico_q1 as select * from tkskymexico_S1 where ((case when ((118=to_number(to_char(to_timestamp(c2), 'DDD')))) then(1) else (0) end=1) and (c1 is not null))  ]]></CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter query tkskymexico_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkskymexico_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tkskymexico_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

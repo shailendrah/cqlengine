@@ -1,0 +1,337 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/WriterQueueStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2006, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/12/08 - support runtime MBeans
+    parujain    07/16/08 - 
+    najain      04/25/08 - add more fields
+    parujain    10/05/07 - ordering
+    parujain    09/12/07 - remove logging
+    najain      07/23/07 - move stats to SharedQueueWriter
+    hopark      07/13/07 - dump stack trace on exception
+    parujain    05/31/07 - cep-em integration
+    najain      10/17/06 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/WriterQueueStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $
+ *  @author  najain  
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+
+import oracle.cep.statistics.IStats;
+
+
+/**
+ * Statistic for the SharedQueueWriter. This can be thought of a fixed table 
+ * with the following columns:
+ *
+ * QueueId: Queue Identifier
+ * Execution Operator Identifier
+ * NumberOfMessagesPresent
+ * NumberOfPositivePresent
+ * NumberOfNegativePresent
+ * NumberOfHeartbeatsPresent
+ * TotalNumberOfMessagesEnqueued
+ * TotalNumberOfPositiveEnqueued
+ * TotalNumberOfNegativeEnqueued
+ * TotalNumberOfHeartbeatsEnqueued
+ * TimeStampLastEnqueued
+ * TimeStampLastPositiveEnqueued
+ * TimeStampLastNegativeEnqueued
+ * TimeStampLastHeartbeatEnqueued
+ */
+
+public class WriterQueueStatsRow extends StatsRow implements IStats
+{
+  private int queueId;
+  private int execOperatorId;
+  private int numMessagesPresent;
+  private int numPositivePresent;
+  private int numNegativePresent;
+  private int numHeartbeatsPresent;
+  private int numMessagesEnqueued;
+  private int numPositiveEnqueued;
+  private int numNegativeEnqueued;
+  private int numHeartbeatsEnqueued;
+  private long timeStampLastEnqueued;
+  private long timeStampLastPositiveEnqueued;
+  private long timeStampLastNegativeEnqueued;
+  private long timeStampLastHeartbeatEnqueued;
+  
+  /** 
+   * Construct a UserFunctionRow instance. 
+   * The PropertyNames annotation is used 
+   * to be able to construct a UserFunctionRow instance out of a CompositeData
+   * instance. See MXBeans documentation for more details.
+   */ 
+  @ConstructorProperties({"queueId", "operatorId", "messagesPresent", 
+                          "positivePresent", "negativePresent", 
+                          "heartbeatsPresent", "messagesEnqueued", 
+                          "positiveEnqueued", "negativeEnqueued", 
+                          "heartbeatsEnqueued", "lastEnqueued", 
+                          "lastPositiveEnqueued", 
+                          "lastNegativeEnqueued", "lastHeatbeatEnqueued"})
+  public WriterQueueStatsRow(int id, int opId, int msgsPres, int positivePres, 
+                             int negativePres, int hbPres, int msgs, 
+                             int positive, int negative, int hb, long lastenq, 
+                             long lastpos, long lastneg, long lasthb)
+  {
+    queueId = id;
+    execOperatorId = opId;
+    numMessagesPresent = msgsPres;
+    numPositivePresent = positivePres;
+    numNegativePresent = negativePres;
+    numHeartbeatsPresent = hbPres;
+    numMessagesEnqueued = msgs;
+    numPositiveEnqueued = positive;
+    numNegativeEnqueued = negative;
+    numHeartbeatsEnqueued = hb;
+    timeStampLastEnqueued = lastenq;
+    timeStampLastPositiveEnqueued = lastpos;
+    timeStampLastNegativeEnqueued = lastneg;
+    timeStampLastHeartbeatEnqueued = lasthb;
+  }
+
+   
+  public int getNumHeartbeatsPresent()
+  {
+    return numHeartbeatsPresent;
+  }
+  
+  public int getNumMessagesPresent()
+  {
+    return numMessagesPresent;
+  }
+  
+  public int getNumNegativePresent()
+  {
+    return numNegativePresent;
+  }
+  
+  public int getNumPositivePresent()
+  {
+    return numPositivePresent;
+  }
+
+  public int getNumHeartbeatsEnqueued()
+  {
+    return numHeartbeatsEnqueued;
+  }
+  
+  public int getNumMessagesEnqueued()
+  {
+    return numMessagesEnqueued;
+  }
+  
+  public int getNumNegativeEnqueued()
+  {
+    return numNegativeEnqueued;
+  }
+  
+  public int getNumPositiveEnqueued()
+  {
+    return numPositiveEnqueued;
+  }
+  
+  public int getQueueId()
+  {
+    return queueId;
+  }
+ 
+  public int getExecOperatorId()
+  {
+    return execOperatorId;
+  }
+  
+  public long getTimeStampLastEnqueued()
+  {
+    return timeStampLastEnqueued;
+  }
+  
+  public long getTimeStampLastHeartbeatEnqueued()
+  {
+    return timeStampLastHeartbeatEnqueued ;
+  }
+  
+  public long getTimeStampLastNegativeEnqueued()
+  {
+    return timeStampLastNegativeEnqueued ;
+  }
+  
+  public long getTimeStampLastPositiveEnqueued()
+  {
+    return timeStampLastPositiveEnqueued;
+  }
+
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("<WriterQueueStatsRow>");
+    sb.append("<Queue id=\"" + queueId + "\" >");
+    sb.append("<ExecOperatorId id=\"" + execOperatorId + "\" >");
+    sb.append("<MessagesPresent num=\"" + numMessagesPresent + "\" />");
+    sb.append("<PositivePresent num=\"" + numPositivePresent + "\" />");
+    sb.append("<NegativePresent num=\"" + numNegativePresent + "\" />");
+    sb.append("<HeartbeatsPresent num=\"" + numHeartbeatsPresent + "\" />");
+    sb.append("<TotalMessagesEnqueued num=\"" + numMessagesEnqueued + "\" />");
+    sb.append("<TotalPositiveEnqueued num=\"" + numPositiveEnqueued + "\" />");
+    sb.append("<TotalNegativeEnqueued num=\"" + numNegativeEnqueued + "\" />");
+    sb.append("<TotalHeartbeatsEnqueued num=\"" + numHeartbeatsEnqueued + "\" />");
+    sb.append("<TimeStampLastEnqueued ts=\"" + timeStampLastEnqueued + "\" />");
+    sb.append("<TimeStampLastPositiveEnqueued ts=\"" + timeStampLastPositiveEnqueued + "\" />");
+    sb.append("<TimeStampLastNegativeEnqueued ts=\"" + timeStampLastNegativeEnqueued + "\" />");
+    sb.append("<TimeStampLastHeartbeatEnqueued ts=\"" + timeStampLastHeartbeatEnqueued + "\" />");
+    sb.append("</WriterQueueStatsRow>");
+
+    return sb.toString();
+  }
+
+  /*
+   * JDK 5.0 manual conversion methods. The code
+   * below would not be required if we could
+   * rely on the MXBean framework
+   * 
+   * THE REQUIRED METHODS ARE:
+   *
+   *  public static CompositeType toCompositeType();
+   *  public CompositeData toCompositeData(CompositeType ct);
+   *  public static WriterQueueStatsRow from(CompositeData cd);
+   *
+   */
+
+  // The corresponding CompositeType for this class
+  private static CompositeType cType_= null;
+
+  private static final String[] itemNames_= {"queueId", "operatorId", "messagesEnqueued", "positiveEnqueued",
+                                             "negativeEnqueued", "heartbeatsEnqueued", "messagesPresent", "positivePresent",
+                                             "negativePresent", "heartbeatsPresent", "lastEnqueued",
+                                             "lastPositiveEnqueued", "lastNegativeEnqueued", "lastHeatbeatEnqueued"};
+  
+  static{
+    try{
+      OpenType[] itemTypes = {SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.LONG,
+                              SimpleType.LONG,
+                              SimpleType.LONG,
+                              SimpleType.LONG};
+      
+      cType_ = new CompositeType("oracle.cep.statistics.WriterQueueStatsRow",
+                                 "oracle.cep.statistics.WriterQueueStatsRow",
+                                 itemNames_,
+                                 itemNames_,
+                                 itemTypes);
+    }
+    catch(OpenDataException ode)
+    {
+      
+    }
+  }
+  
+  /**
+   * Returns the CompositeType that describes this model
+   * specific class
+   */
+  public static CompositeType toCompositeType() {
+      return cType_;
+  }
+
+  /**
+   * Convert an instance of this model specific type to 
+   * a CompositeData. This ensure that clients that do not
+   * have access to the model specific class can still
+   * use the MBean. The MXBean framework can perform this
+   * conversion automatically. However MXBeans are part of
+   * JDK 6.0 and AS11g is required to support JDK 5.0 
+   * 
+   * @param ct - This parameter is there only for future compatibility reasons
+   *             with JDK 6.0. It can be ignored at this point.
+   */
+   public CompositeData toCompositeData(CompositeType ct) {
+     Object[] itemValues = {new Integer(this.getQueueId()),
+                            new Integer(this.getExecOperatorId()),
+                            new Integer(this.getNumMessagesPresent()),
+                            new Integer(this.getNumPositivePresent()),
+                            new Integer(this.getNumNegativePresent()),
+                            new Integer(this.getNumHeartbeatsPresent()),
+                            new Integer(this.getNumMessagesEnqueued()),
+                            new Integer(this.getNumPositiveEnqueued()),
+                            new Integer(this.getNumNegativeEnqueued()),
+                            new Integer(this.getNumHeartbeatsEnqueued()),
+                            new Long(this.getTimeStampLastEnqueued()),
+                            new Long(this.getTimeStampLastPositiveEnqueued()),
+                            new Long(this.getTimeStampLastNegativeEnqueued()),
+                            new Long(this.getTimeStampLastHeartbeatEnqueued())};
+     
+     CompositeData cData= null;
+     try 
+     {
+        cData= new CompositeDataSupport(cType_, itemNames_, itemValues);
+     }
+     catch( OpenDataException ode) 
+     {
+       
+     }
+     return cData;
+   }
+   
+   /**
+    * Create an instance of the model specific class out of
+    * an associated CompositeData instance
+    */
+    public static WriterQueueStatsRow from(CompositeData cd) {
+      if (cd==null)
+        return null;
+
+      return new WriterQueueStatsRow(((Integer)cd.get("queueId")).intValue(),
+                                     ((Integer)cd.get("operatorId")).intValue(),
+                                     ((Integer)cd.get("messagesPresent")).intValue(),
+                                     ((Integer)cd.get("positivePresent")).intValue(),
+                                     ((Integer)cd.get("negativePresent")).intValue(),
+                                     ((Integer)cd.get("heartbeatsPresent")).intValue(),
+                                     ((Integer)cd.get("messagesEnqueued")).intValue(),
+                                     ((Integer)cd.get("positiveEnqueued")).intValue(),
+                                     ((Integer)cd.get("negativeEnqueued")).intValue(),
+                                     ((Integer)cd.get("heartbeatsEnqueued")).intValue(),
+                                     ((Long)cd.get("lastEnqueued")).longValue(),
+                                     ((Long)cd.get("lastPositiveEnqueued")).longValue(),
+                                     ((Long)cd.get("lastNegativeEnqueued")).longValue(),
+                                     ((Long)cd.get("lastHeatbeatEnqueued")).longValue()); 
+    }
+
+}
+
+

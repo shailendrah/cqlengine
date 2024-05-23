@@ -1,0 +1,60 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- ************************************************ -->
+<!-- THIS TEST IS COPIED FROM ARCHIVED RELATION TESTS -->
+<!-- ************************************************ -->
+
+<!-- Tests VALUE WINDOWs over archived relations -->
+
+
+<CEP_DDL>
+CREATE ARCHIVED RELATION tkSubqArRel0_CallCenterFact 
+(OPTLOCK bigint,  ID bigint, HIERARCHY char(255), CUSTOMERLOCATIONID char(255), 
+PRODUCTID char(255), CUSTOMERSTATUS char(255), CALLPRIORITY bigint, 
+CALLWAITTIME bigint, callProcessingTime bigint, callStatus char(255), 
+callClosedTime timestamp) 
+archiver BIArchiver entity "soainfra.CallCenterFact_DO_VIEW" 
+event identifier ID 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+
+alter relation tkSubqArRel0_CallCenterFact 
+add source
+"<EndPointReference><Address>file://@TEST_DATA@/inpCallCenter.txt</Address></EndPointReference>"
+
+]]> 
+ </CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+create query tkSubqArRel0_q1 as
+IStream(
+SELECT * 
+FROM 
+(SELECT avg(callProcessingTime) as average_call_processing_time,
+        avg(callProcessingTime) - 90 as actual_deviation,
+        15 as allowed_deviation
+FROM tkSubqArRel0_CallCenterFact [range 480 hour on callClosedTime]
+WHERE callStatus = 'CLOSED'
+HAVING avg(callProcessingTime) - 90 > 15) AS FOO
+)
+]]></CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query tkSubqArRel0_q1 
+add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkSubqArRel0_q1.txt</Address></EndPointReference>"
+]]> 
+ </CEP_DDL>
+
+<!-- start_time specified here is assumed to be in nanoseconds -->
+<CEP_DDL> alter query tkSubqArRel0_q1 set start_time 1305221050786000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkSubqArRel0_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

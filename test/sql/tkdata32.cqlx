@@ -1,0 +1,14 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata32_S1 (c1 char(5), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata32_S2 (c1 char(5), c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata32_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1_tk32.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata32_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS2_tk32.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create view  tkdata32_v1 (c1 char(5), c2 integer) as tkdata32_S1 union all tkdata32_S2</CEP_DDL>
+<CEP_DDL> create view tkdata32_v2 (c1 char(5), c2 integer) as select c1,c2 from tkdata32_v1 order by c1</CEP_DDL>
+<CEP_DDL> create view tkdata32_v3 (s integer,c1 char(5)) as select sum(c2), c1 from tkdata32_v2 group by c1 </CEP_DDL> 
+<CEP_DDL> create view tkdata32_v4 (s integer, c1 char(5)) as istream (select * from tkdata32_v3) </CEP_DDL>
+<CEP_DDL> create query tkdata32_q1 as select * from tkdata32_v4 [rows 2] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata32_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq1_tk32.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata32_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

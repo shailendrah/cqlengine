@@ -1,0 +1,79 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create partition stream PS0 (c1 integer, c2 char(4)) </CEP_DDL>
+<CEP_DDL> alter stream PS0 set degree of parallelism = 2 </CEP_DDL>
+
+<CEP_DDL> create partition stream PS1 (c1 integer, c2 char(4)) </CEP_DDL>
+<CEP_DDL> alter stream PS1 set degree of parallelism = 2 </CEP_DDL>
+
+<CEP_DDL> create stream S0 (c1 integer, c2 char(4)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream PS0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkpartnstream_PS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream PS1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkpartnstream_PS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkpartnstream_S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view PV0 as select c1+10 as c1, c2 from PS0 ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create view PV1 as select c1+10 as c1, c2 from PS1 ]]> </CEP_DDL>
+
+<!-- Negative Test to make sure that altering constraint of a view dependent on partitioned source is not allowed -->
+<CEP_DDL> alter view PV0 set ordering constraint partition order on PV0.c1 </CEP_DDL>
+
+<!-- Test: q1 Single query over partition stream -->
+<!-- Negative Test to make sure that altering constraint of a query dependent on partitioned source is not allowed-->
+<CEP_DDL><![CDATA[ create query q1 as select PS0.c1, count(*) from PS0[rows 20] group by PS0.c1   ]]> </CEP_DDL>
+<CEP_DDL> alter query q1 set ordering constraint partition order on PS0.c1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q1 start </CEP_DDL>
+
+<!-- Test: q2,q3 Multiple queries over a single partition stream -->
+<CEP_DDL><![CDATA[ create query q2 as IStream(select PS1.c1, count(*) from PS1[rows 20] group by PS1.c1)   ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query q3 as select PS1.c1+1, PS1.c2  from PS1[range 10]  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<!--
+-->
+
+<!-- Test: q4 Single query over partition view -->
+<CEP_DDL><![CDATA[ create query q4 as select PV0.c1, count(*) from PV0[rows 20] group by PV0.c1   ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q4 start </CEP_DDL>
+<!--
+-->
+
+<!-- Test: q5,q6 Multiple queries over a single partition view -->
+<CEP_DDL><![CDATA[ create query q5 as IStream(select PV1.c1, count(*) from PV1[rows 20] group by PV1.c1)   ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query q6 as select PV1.c1+1, PV1.c2  from PV1[range 10]  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q5 start </CEP_DDL>
+<CEP_DDL> alter query q6 start </CEP_DDL>
+<!--
+-->
+
+<!-- Negative Test: q7 Single query over multiple partition streams -->
+<CEP_DDL><![CDATA[ create query q7 as select PS0.c1, PS1.c1, PS0.c2, PS1.c2 from PS0[rows 20],PS1[rows 20]  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q7 start </CEP_DDL>
+<!--
+-->
+
+<!-- Negative Test: q8 Single query over multiple partition views -->
+<CEP_DDL><![CDATA[ create query q8 as select PV0.c1, PV1.c1, PV0.c2, PV1.c2 from PV0[rows 20],PV1[rows 20]  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q8 start </CEP_DDL>
+<!--
+-->
+
+<!-- Test: q9,q10 Multiple queries over a single partition stream and single non-partition stream -->
+<CEP_DDL><![CDATA[ create query q9 as select PS0.c1, PS0.c2, S0.c1, S0.c2 from PS0[rows 20],S0[rows 20]  ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query q10 as select PS0.c1, PS0.c2, S0.c1, S0.c2 from PS0[range 20],S0[range 20]  ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkpartnstream_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q9 start </CEP_DDL>
+<CEP_DDL> alter query q10 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+<!--
+-->
+</CEP>

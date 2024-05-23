@@ -1,0 +1,10 @@
+1000:+ ,abc,abc
+2000:+ hihi,abchi,hiabc
+6000:- ,abc,abc
+7000:- hihi,abchi,hiabc
+8000:+ hi1hi1,abchi1,hi1abc
+9000:+ ,abc,abc
+13000:- hi1hi1,abchi1,hi1abc
+14000:- ,abc,abc
+15000:+ xyzxyz,abcxyz,xyzabc
+20000:- xyzxyz,abcxyz,xyzabc

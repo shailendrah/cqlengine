@@ -1,0 +1,83 @@
+applyTemplate 'jacoco'
+ant.importBuild 'cqlx_build_gradle.xml'
+
+dependencies
+{
+    runtime libraries.ant_contrib
+    runtime libraries.cep_colt
+    //runtime libraries.spring_osgi
+    runtime libraries.apache_beanutils
+    runtime libraries.antlr_2
+    runtime libraries.cep_sdo_api
+    runtime libraries.cep_sdo_topo
+    runtime libraries.cep_sdo_utl
+    runtime libraries.tools_junit
+    runtime libraries.commons_logging
+//    runtime libraries.cep_i18n
+    runtime libraries.orai18n_collation
+    runtime libraries.aopalliance
+    runtime libraries.cep_vwap_benchmark
+    runtime libraries.apache_commons_csv
+    runtime libraries.wls_xquery
+    runtime libraries.wls_xmlparserv2
+    runtime libraries.wls_ojdbc
+    //runtime libraries.wls_ojdl
+    runtime libraries.cep_dms
+    runtime libraries.apache_log4j
+}
+task copyDeps(type: Copy) {
+  from configurations.runtime
+  into 'lib'
+}
+
+def TASK_RUNTIME="OSA Runtime"
+
+//
+// Generate CQL Parser Java File For Physical CQL Grammar
+//
+task generateLogicalCQLParser(type:Exec) {
+  group TASK_RUNTIME
+  description 'Replace existing and generates a new logical CQL parser for this project'
+
+  workingDir "$projectDir/utl"
+  commandLine './genParser.sh'
+
+  def output_dir=System.getenv('SPARKCQL_HOME')+"/core/src/main/java/com/oracle/cep/spark/parser"
+  def input_grammar=System.getenv('SPARKCQL_HOME')+"/core/src/main/java/com/oracle/cep/spark/parser/cql.yy"
+  def parser_package="com.oracle.cep.spark.parser"
+
+  def argsList = [temporaryDir,output_dir,input_grammar,parser_package]
+  args = argsList
+}
+
+//
+// Generate CQL Parser Java File For Physical CQL Grammar
+//
+task generatePhysicalCQLParser(type:Exec) {
+  group TASK_RUNTIME
+  description 'Replace existing and generates a new physical CQL parser for this project'
+
+  workingDir "$projectDir/utl"
+  commandLine './genParser.sh'
+
+  def output_dir=System.getenv('SPARKCQL_HOME')+"/cqlengine/server/src/main/java/oracle/cep/parser/"
+  def input_grammar=System.getenv('SPARKCQL_HOME')+"/cqlengine/server/src/main/java/oracle/cep/parser/cql.yy"
+  def parser_package="oracle.cep.parser"
+
+  def argsList = [temporaryDir,output_dir,input_grammar,parser_package]
+  args = argsList
+}
+
+//
+// Run cqlx test with code coverage
+//
+task tkjacoco {
+  doFirst {
+    if (project.hasProperty('CODE_COVERAGE')) {
+      ant.properties['jvmarg.line'] = '-XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Xnoincgc -server -javaagent:'+jacocoJarPath+'=append=true,destfile='+"${prj.rootDir}/out/jacoco/test.exec"
+    }
+  }
+}
+
+build.dependsOn copyDeps
+tklrg.dependsOn tkjacoco

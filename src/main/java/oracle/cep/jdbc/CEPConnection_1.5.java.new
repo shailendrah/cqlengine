@@ -1,0 +1,434 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jdbc/CEPConnection_1.5.java.new /main/9 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+ DESCRIPTION
+ <short description of component this file declares/defines>
+
+ PRIVATE CLASSES
+ <list of private classes defined - with one-line descriptions>
+
+ NOTES
+ <other useful comments, qualifications, etc.>
+
+ MODIFIED    (MM/DD/YY)
+ parujain    11/18/08 - support of CEPStatsRuntimeMBean
+ sbishnoi    09/09/08 - support for schema
+ hopark      03/18/08 - reorg config
+ hopark      03/18/08 - reorg config
+ mthatte     03/12/08 - storage folder
+ mthatte     02/27/08 - adding single-task JDBC support
+ skmishra    11/14/07 - adding isreadOnly
+ skmishra    10/29/07 - 
+ mthatte     09/13/07 - Adding methods to make compliant with Java 6
+ sbishnoi    05/24/07 - 
+ parujain    05/09/07 - 
+ najain      04/23/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jdbc/CEPConnection_1.5.java.new /main/9 2008/11/30 13:31:43 parujain Exp $
+ *  @author  najain  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jdbc;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+
+import oracle.cep.common.Constants;
+import oracle.cep.logging.LogUtil;
+import oracle.cep.logging.LoggerType;
+import oracle.cep.server.CEPServer;
+import oracle.cep.server.CEPServerXface;
+import oracle.cep.service.CEPManager;
+
+public class CEPConnection implements Connection
+{
+  CEPServerXface                  cepServer;
+  private static DatabaseMetaData dbMetaData    = null; // points to the
+                                                        // singleton DBMetadata
+                                                        // object
+  private static boolean          isInitialized = false;// flag shared by all
+                                                        // connections.
+  boolean                         autoCommit    = true;
+  boolean                         closed        = false;
+  String                          url;                  //The server url to which this connects
+  long[]                          resultSetIds; 
+  List<Long>                      resultSetList = new ArrayList<Long>();
+
+  /** A flag to check whether this url is for single-task jdbc connection*/
+  boolean                         isLocal = false;
+  /** target host name for jdbc connection*/
+  String                          host;
+  /** target port num for jdbc connection*/
+  int                             port = Constants.DEFAULT_JDBC_PORT;
+  /** target service for jdbc connection*/
+  String                          serviceName = Constants.CEP_SCHEMA;
+  /** User name is Schema Name*/
+  private String                  user;
+  
+  
+  CEPConnection(String url, String user) throws SQLException
+  {
+
+    Registry cepServReg;
+    URI      cepServURI;
+    
+    this.url = url;
+    // Sets the user name; Later user name will act as schema name
+    this.user = user;
+    parseURL(url);
+
+    // Single-task initialization. Get an instance of CEPServer
+    if (isLocal)
+    {
+      try
+      {
+        cepServer = CEPServer.getInstance();
+      } catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+    }
+
+    // If remote, lookup RMI registry and get reference to remote CEPServerXFace
+    else
+    {
+      try
+      {
+        cepServReg = LocateRegistry.getRegistry(host, port);
+        cepServer = (CEPServerXface) (cepServReg.lookup(serviceName));
+      }
+      catch (RemoteException e)
+      {
+        LogUtil.logStackTrace(LoggerType.TRACE, Level.FINE, e);
+      }
+      catch (NotBoundException e)
+      {
+        LogUtil.logStackTrace(LoggerType.TRACE, Level.FINE, e);
+      }
+
+    }
+  }
+  
+  /**
+   * Parses the URL and sets host name, port number and service name 
+   */
+  public void parseURL(String url)
+  {
+    //TODO: Add few CustomerLog Messages and replaces the System.out.println statements
+    String[] parsedURL = url.split(":");
+    if(parsedURL.length < 3)
+    {
+      System.out.println("Wrong number of arguments: " + parsedURL.length);
+    }
+    else if(!parsedURL[0].trim().equals("jdbc") || 
+            !parsedURL[1].trim().equals("oracle"))
+    {
+      System.out.println("Wrong prefix: "+ parsedURL[0] + ":" + parsedURL[1]);
+    }
+    else if(parsedURL[2].trim().equals("ceplocal"))
+    {
+      isLocal = true;
+    }
+    else
+      setHostInfo((url.split("@"))[1]);
+  }
+
+  /**
+  * Fetch Host Details from hostInfo
+  * e.g. hostName:port:service
+  */
+  public void setHostInfo(String hostInfo)
+  {
+    String[] hostDetails = hostInfo.split(":");
+    int numDetails = hostDetails.length;
+    if(numDetails < 1 || numDetails > 3)
+      System.out.println("Wrong Host Information: " + numDetails);
+    switch(numDetails) 
+    {
+    case 3:
+      this.serviceName = hostDetails[2];
+    case 2:
+      this.port = Integer.valueOf(hostDetails[1]);
+    case 1:
+      this.host = hostDetails[0];
+      break;
+    default:
+      assert false;
+    }
+     
+  }
+ 
+  /** Return the user of this connection */  
+  public String getUser()
+  {
+    return this.user;
+  } 
+
+  public void addResultSetID(long id)
+  {
+    resultSetList.add(id);
+  }
+  
+ /**
+  * This method is used when CEPConnection bootstraps a CEPServer in sgltask mode
+  */
+ 
+  public String getURL() 
+  {
+    return url;
+  }
+  public CEPServerXface getCEPServer()
+  {
+    return cepServer;
+  }
+
+  public void clearWarnings() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:clearWarnings() unsupported");
+  }
+  
+  
+  /**
+   * Cleans up the state associated with this connection on the server. 
+   */
+  public void close() throws SQLException
+  {
+    try {
+      cepServer.closeConnection(resultSetList);
+      closed = true;
+    }catch(RemoteException re)
+    {
+      closed = false;
+      throw new SQLException("Error closing connection");
+    }
+  }
+
+  public void commit() throws SQLException
+  {
+    return;
+  }
+
+  public Statement createStatement() throws SQLException
+  {
+    return new CEPStatement(this);
+  }
+
+  public Statement createStatement(int resultSetType, int resultSetConcurrency)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:createStatement(int, int) unsupported");
+  }
+
+  public Statement createStatement(int resultSetType, int resultSetConcurrency,
+      int resultSetHoldability) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:createStatement(int, int, int) unsupported");
+  }
+
+  public boolean getAutoCommit() throws SQLException
+  {
+    return autoCommit;
+  }
+
+  public String getCatalog() throws SQLException
+  {
+    return null;
+  }
+
+  public int getHoldability() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:getHoldability() unsupported");
+  }
+
+  public DatabaseMetaData getMetaData() throws SQLException
+  {
+
+    if (dbMetaData == null)
+    {
+      dbMetaData = new CEPDatabaseMetaData(this);
+    }
+    return dbMetaData;
+  }
+
+  public int getTransactionIsolation() throws SQLException
+  {
+    return Connection.TRANSACTION_NONE;
+  }
+
+  public Map<String, Class<?>> getTypeMap() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:getTypeMap() unsupported");
+  }
+
+  public SQLWarning getWarnings() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:getWarnings() unsupported");
+  }
+
+  public boolean isClosed() throws SQLException
+  {
+    return closed;
+  }
+
+  public boolean isReadOnly() throws SQLException
+  {
+    return false;
+  }
+
+  public String nativeSQL(String sql) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:nativeSQL(String) unsupported");
+  }
+
+  public CallableStatement prepareCall(String sql) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareCall(String) unsupported");
+  }
+
+  public CallableStatement prepareCall(String sql, int resultSetType,
+      int resultSetConcurrency) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareCall(String, int, int) unsupported");
+  }
+
+  public CallableStatement prepareCall(String sql, int resultSetType,
+      int resultSetConcurrency, int resultSetHoldability) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareCall(String, int, int, int) unsupported");
+  }
+
+  public PreparedStatement prepareStatement(String sql) throws SQLException
+  {
+    return new CEPPreparedStatement(sql, this);
+  }
+
+  public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareStatement(String, int) unsupported");
+  }
+
+  public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareStatement(String, int[]) unsupported");
+  }
+
+  public PreparedStatement prepareStatement(String sql, int resultSetType,
+      int resultSetConcurrency) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareStatement(String, int, int) unsupported");
+  }
+
+  public PreparedStatement prepareStatement(String sql, int resultSetType,
+      int resultSetConcurrency, int resultSetHoldability) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareStatement(String, int, int, int) unsupported");
+  }
+
+  public PreparedStatement prepareStatement(String sql, String[] columnNames)
+      throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:prepareStatement(String, String[]) unsupported");
+  }
+
+  public void releaseSavepoint(Savepoint savepoint) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:releaseSavepoint(Savepoint) unsupported");
+  }
+
+  public void rollback() throws SQLException
+  {
+    return;
+  }
+
+  public void rollback(Savepoint savepoint) throws SQLException
+  {
+    return;
+  }
+
+  public void setAutoCommit(boolean autoCommit) throws SQLException
+  {
+    this.autoCommit = autoCommit;
+  }
+
+  public void setCatalog(String catalog) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:setCatalog(String) unsupported");
+  }
+
+  public void setHoldability(int holdability) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:setHoldability(int) unsupported");
+  }
+
+  public void setReadOnly(boolean readOnly) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:setReadOnly(boolean) unsupported");
+  }
+
+  public Savepoint setSavepoint() throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:setSavepoint() unsupported");
+  }
+
+  public Savepoint setSavepoint(String name) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:setSavepoint(String) unsupported");
+  }
+
+  public void setTransactionIsolation(int level) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:setTransactionIsolation(int) unsupported");
+  }
+
+  public void setTypeMap(Map<String, Class<?>> map) throws SQLException
+  {
+    throw new UnsupportedOperationException(
+        "CEPConnection:setTypeMap(Map) unsupported");
+  }
+}

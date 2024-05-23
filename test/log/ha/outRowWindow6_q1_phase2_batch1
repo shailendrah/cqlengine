@@ -1,0 +1,12 @@
+15000:- 80,phase1
+15000:- 90,phase1
+15000:- 100,phase1
+15000:+ 130,phase2batch1
+15000:+ 140,phase2batch1
+15000:+ 150,phase2batch1
+20000:- 130,phase2batch1
+20000:- 140,phase2batch1
+20000:- 150,phase2batch1
+20000:+ 180,phase2batch1
+20000:+ 190,phase2batch1
+20000:+ 200,phase2batch1

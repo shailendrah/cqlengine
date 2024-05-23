@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>alter system run_time=5000000</CEP_DDL>
+<CEP_DDL>create stream tkhbtest_s1 (c1 char(10)) is system timestamped</CEP_DDL>
+<CEP_DDL>create stream tkhbtest_s2 (c1 char(10))</CEP_DDL>
+<CEP_DDL>alter stream tkhbtest_s1 set heartbeat timeout 70000 nanoseconds</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkhbtest_s1 add source  "<EndPointReference><Address>file://@TEST_DATA@/inphbtestsys.txt?delay=1000</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkhbtest_s2 add source  "<EndPointReference><Address>file://@TEST_DATA@/inphbtestapp.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>create query tkhbtest_q1 as select * from tkhbtest_s1[range 3]</CEP_DDL>
+<CEP_DDL>create query tkhbtest_q2 as select * from tkhbtest_s2[range 3]</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkhbtest_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outsys.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkhbtest_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outapp.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL>alter query tkhbtest_q1 start</CEP_DDL>
+<CEP_DDL>alter query tkhbtest_q2 start</CEP_DDL> 
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

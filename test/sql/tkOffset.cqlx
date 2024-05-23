@@ -1,0 +1,8 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkfoo_S(c1 integer , function float) is application timestamped </CEP_DDL>
+<CEP_DDL> create stream tkfoo_S1( value integer,value float) is application timestamped </CEP_DDL>
+<CEP_DDL> create stream tkfoo_S(c1 integer, c2 float, value float) is application timestamped </CEP_DDL>
+<CEP_DDL> create stream tkfoo_S1(c1 integer, c2 float,value float) is application timestamped </CEP_DDL>
+<CEP_DDL> create stream value(c1 integer, c2 float) is application timestamped </CEP_DDL>
+<CEP_DDL> create function function(n int) return int as language java name "oracle.cep.test.userfunctions.TkUsrFib" </CEP_DDL>
+</CEP>

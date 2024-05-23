@@ -1,0 +1,7 @@
+c 30 
+1000 "san jose"
+1000 "mountain view"
+1000 
+1000 "sunnyvale"
+1003 
+1004 "belmont"

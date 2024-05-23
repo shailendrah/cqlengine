@@ -1,0 +1,40 @@
+1:+ <S10>
+   <c1_int>1</c1_int>
+   <abcab>abc</abcab>
+</S10>
+
+2:+ <S10>
+   <c1_int>2</c1_int>
+   <abab>ab</abab>
+</S10>
+
+3:+ <S10>
+   <c1_int>3</c1_int>
+   <abcab>abc</abcab>
+</S10>
+
+4:+ <S10>
+   <c1_int>4</c1_int>
+   <aab>a</aab>
+</S10>
+
+1001:- <S10>
+   <c1_int>1</c1_int>
+   <abcab>abc</abcab>
+</S10>
+
+1002:- <S10>
+   <c1_int>2</c1_int>
+   <abab>ab</abab>
+</S10>
+
+1003:- <S10>
+   <c1_int>3</c1_int>
+   <abcab>abc</abcab>
+</S10>
+
+1004:- <S10>
+   <c1_int>4</c1_int>
+   <aab>a</aab>
+</S10>
+

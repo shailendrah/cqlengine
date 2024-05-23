@@ -1,0 +1,24 @@
+1:+ <c1_int>1</c1_int>
+<abcab>abc</abcab>
+
+2:+ <c1_int>2</c1_int>
+<abab>ab</abab>
+
+3:+ <c1_int>3</c1_int>
+<abcab>abc</abcab>
+
+4:+ <c1_int>4</c1_int>
+<aab>a</aab>
+
+1001:- <c1_int>1</c1_int>
+<abcab>abc</abcab>
+
+1002:- <c1_int>2</c1_int>
+<abab>ab</abab>
+
+1003:- <c1_int>3</c1_int>
+<abcab>abc</abcab>
+
+1004:- <c1_int>4</c1_int>
+<aab>a</aab>
+

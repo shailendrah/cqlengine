@@ -1,0 +1,25 @@
+<OEPS>
+<OEPS_DDL> register stream TradeInputs(tradeId integer, tradeVolume integer); </OEPS_DDL>
+<OEPS_DDL> register stream TradeUpdates(tradeId integer, statusCode integer); </OEPS_DDL>
+<OEPS_DDL> register stream TradeMatched(tradeId integer); </OEPS_DDL>
+<OEPS_DDL> alter stream TradeInputs add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTI.txt</Address></EndPointReference>"; </OEPS_DDL>                
+<OEPS_DDL> alter stream TradeUpdates add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTU.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter stream TradeMatched add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTM.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> register view CutOffTrades(tradeId, tradeVolume) as DStream(select * from TradeInputs[range 200 seconds]); </OEPS_DDL>
+<OEPS_DDL> register view FineTrades(tradeId) as IStream(select t.tradeId from CutOffTrades[now] as c, TradeUpdates[range 200 seconds] as t where c.tradeId = t.tradeId group by t.tradeId); </OEPS_DDL>
+<OEPS_DDL> register view TotalTrades(c1) as select count(*) from CutOffTrades[range 1 hour]; </OEPS_DDL>
+<OEPS_DDL> register view TotalFineTrades(c1) as select count(*) from FineTrades[range 1 hour]; </OEPS_DDL>
+<OEPS_DDL> create query q201 as select * from TotalTrades; </OEPS_DDL>
+<OEPS_DDL> create query q202 as select * from TotalFineTrades; </OEPS_DDL>
+<OEPS_DDL><![CDATA[ create query q203 as select t.c1, f.c1 from TotalTrades as t, TotalFineTrades as f where f.c1*100 < 95*t.c1; ]]> </OEPS_DDL>
+<OEPS_DDL><![CDATA[create query q204 as IStream(select t.c1, f.c1 from TotalTrades as t, TotalFineTrades as f where f.c1*100 < 95*t.c1); ]]> </OEPS_DDL>
+<OEPS_DDL> alter query q201 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbtt.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q202 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbtf.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q203 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfb1.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q204 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfb2.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q201 start; </OEPS_DDL>
+<OEPS_DDL> alter query q202 start; </OEPS_DDL>
+<OEPS_DDL> alter query q203 start; </OEPS_DDL>
+<OEPS_DDL> alter query q204 start; </OEPS_DDL>
+<OEPS_DDL> alter system run;</OEPS_DDL>	
+</OEPS>

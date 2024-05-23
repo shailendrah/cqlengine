@@ -1,0 +1,10 @@
+1000:+ tkmultistreampattern_S0,10,11,,
+1000:+ S3,,,10,11
+2000:+ tkmultistreampattern_S0,20,21,,
+2200:+ S3,,,20,21
+3000:+ tkmultistreampattern_S0,30,31,,
+4000:+ S3,,,40,31
+5000:+ S3,,,40,41
+6000:+ tkmultistreampattern_S0,40,41,,
+6000:+ S3,,,50,51
+7000:+ tkmultistreampattern_S0,50,51,,

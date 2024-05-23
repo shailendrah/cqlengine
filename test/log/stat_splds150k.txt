@@ -1,0 +1,7 @@
+sucs, 4
+difs, 0
+
+outModule11_splds150k.suc
+outModule2_splds150k.suc
+outModule3_splds150k.suc
+outR10000_1_splds150k.suc

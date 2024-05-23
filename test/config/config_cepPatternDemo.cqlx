@@ -1,0 +1,3 @@
+<CEP>
+<CEP_DDL> alter system TIME_SLICE = 1 </CEP_DDL>
+</CEP>

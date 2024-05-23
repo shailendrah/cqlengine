@@ -1,0 +1,62 @@
+/* $Header: pcbpel/cep/src/oracle/cep/statistics/comparator/StatsComparator.java /main/3 2008/08/06 14:24:44 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle. All rights reserved.  */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    07/16/08 - jar reorg
+    parujain    03/24/08 - use column
+    parujain    10/05/07 - Statistics Comparator
+    parujain    10/05/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/src/oracle/cep/statistics/comparator/StatsComparator.java /main/3 2008/08/06 14:24:44 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.comparator;
+
+import java.util.Comparator;
+
+import oracle.cep.statistics.statsmgr.StatsManager;
+import oracle.cep.jmx.stats.Column;
+import oracle.cep.jmx.stats.StatsRow;
+
+public class StatsComparator implements Comparator<StatsRow>
+{
+  Column column;
+ 
+  public StatsComparator(Column c)
+  {
+    this.column = c; 
+  }
+  
+  public StatsComparator()
+  {
+    column = null;
+  }
+  
+  public void setColumn(Column c)
+  {
+    this.column = c;
+  }
+  
+  public int compare(StatsRow o1, StatsRow o2)
+  {
+    int type = StatsManager.getDatatype(column).toType();
+    // Currently columnname will be null but when we want generic sorting then we will use it
+    int retval = o1.compareTo(o2, column, type);
+    // we want descending order
+    return (-1*retval);
+  }
+}

@@ -1,0 +1,243 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+  <CEP_DDL> create stream S0(_this java.lang.String, c1 integer, c2 java.lang.Double, c3 char(10)) </CEP_DDL>
+  
+  <CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpObjS0.txt</Address></EndPointReference>"]]>  
+  </CEP_DDL>
+  
+<!-- test attr, var.attr, pseudo, var.pseudo, attr as alias, engine-managed function, java constructor for default package
+-->
+ <CEP_DDL> 
+    create query objexpr0 as 
+    select
+      V.c1, 
+      c2, 
+      V._this, 
+      ELEMENT_TIME, 
+      V.ELEMENT_TIME, 
+      c3 as a5,
+      to_char(10),
+      String(c3)
+    from S0 as V where c2 = '2.0' and c2 = 2.0d and 3.0d &gt; c2 and c2 = 2.0f and c2 = Double(2.0)
+ </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr0 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr0.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query objexpr0 start </CEP_DDL>
+
+<!-- test attr.method(), var.attr.method(), attr.method().method(), attr.method(attr), attr.method(primitive,primitive), attr.method(var.attr).method(primitive)
+-->
+<CEP_DDL>
+    create query objexpr1 as select 
+      c2.longValue(), 
+      V.c2.floatValue(), 
+      toString().toString(),
+      V.charAt(c1), 
+      c3.replace("a","x")
+   from S0 as V 
+   where 
+      substring(V.c1).equals("bc") = true
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr1.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query objexpr1 start </CEP_DDL>
+
+<!-- test data conversion: for each Java and CQL primitive, convert from literal to Java, to CQL and then back to Java 
+   Currently no support for arrays: oracle.cep.test.java.TypeConverter().setChA(oracle.cep.test.java.TypeConverter().getChA()).getChA()
+-->
+<CEP_DDL>
+    create query objexpr2 as
+    select 
+      oracle.cep.test.java.TypeConverter().setBo(oracle.cep.test.java.TypeConverter(false).isBo()).isBo(),
+      oracle.cep.test.java.TypeConverter().setCh(oracle.cep.test.java.TypeConverter("ZZZ").getCh()).getCh(),
+      oracle.cep.test.java.TypeConverter().setBy(oracle.cep.test.java.TypeConverter(999).getBy()).getBy(),
+      oracle.cep.test.java.TypeConverter().setSh(oracle.cep.test.java.TypeConverter(999).getSh()).getSh(),
+      oracle.cep.test.java.TypeConverter().setIn(oracle.cep.test.java.TypeConverter(13).getIn()).getIn(),
+      oracle.cep.test.java.TypeConverter().setLo(oracle.cep.test.java.TypeConverter(14l).getLo()).getLo(),
+      oracle.cep.test.java.TypeConverter().setFl(oracle.cep.test.java.TypeConverter(15.0f).getFl()).getFl(),
+      oracle.cep.test.java.TypeConverter().setDu(oracle.cep.test.java.TypeConverter(16.0d).getDu()).getDu(),
+      oracle.cep.test.java.TypeConverter().setSt(oracle.cep.test.java.TypeConverter("bbb").getSt()).getSt(),
+      oracle.cep.test.java.TypeConverter().setSt(oracle.cep.test.java.TypeConverter(c3).getSt()).getSt(),
+      String(oracle.cep.test.java.TypeConverter().setChA(oracle.cep.test.java.TypeConverter().getChA()).getChA()).toString(),
+      oracle.cep.test.java.TypeConverter().setInA(oracle.cep.test.java.TypeConverter().getInA()).getInAAsString()
+  from S0 where c3 = "ab"
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr2.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query objexpr2 start </CEP_DDL>
+
+<!-- 
+test: CQL CHAR acts like String. It can be used as a native type for the et function, or it can be used as a complex type with member access.
+-->      
+<CEP_DDL>
+    create query objexpr3 as
+    select 
+    c3.toCharArray()[0],
+    c3.toCharArray()[1],
+    String("hello").toCharArray()[2],
+    c3.toString().toString().toCharArray()[0],
+    oracle.cep.test.java.TypeConverter().getStA()[1].toCharArray()[1]
+ from S0 where String(c3).toString() = "ab" 
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr3 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr3.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query objexpr3 start </CEP_DDL>
+
+<!-- attr (with object), var.attr, attr.field, var.attr.field, attr.field.method, attr.field.field, attr.field.method.field, attr.field.field.field.method,
+     constructor.field, constructor.field.field,
+      const(const()), const(attr.field)
+-->	
+<CEP_DDL>
+   create view V4(a1 oracle.cep.test.java.TypeA) as
+   select oracle.cep.test.java.TypeA() 
+   from S0 where c3 = "ab"
+</CEP_DDL>
+<CEP_DDL>
+    create query objexpr4 as
+    select 
+      a1,V4.a1,
+      a1.i1, V4.a1.i2, a1.i1.intValue(),a1.nestedType.i1, a1.nestedType.getNestedType().i1, a1.nestedType.nestedType.i1.intValue(),
+      oracle.cep.test.java.TypeA().i1, oracle.cep.test.java.TypeA().nestedType.i1,
+      oracle.cep.test.java.TypeA(oracle.cep.test.java.TypeB()), oracle.cep.test.java.TypeA(a1.nestedType)
+   from V4
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr4 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr4.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query objexpr4 start </CEP_DDL>
+
+<!--
+  test overloading: 
+   1) no conversions, find correct signatures for: int, Integer, long, Object
+   2) convert: 
+   int -> long (taking precedence over Integer)
+   int -> Integer (taking precedence over Object)
+   int -> Object
+   Integer -> Object (taking precedence over int, and where Object is in super-class),
+ test static
+-->
+<CEP_DDL>
+    create query objexpr5 as
+      select 
+     a1.overloadedMethod(13).getI3(),
+     a1.overloadedMethod(java.lang.Integer(11)).getO1(),
+     a1.overloadedMethod(java.lang.Integer(14).longValue()).getI4(),
+     a1.overloadedMethod(a1.getI2()).getI2(),
+     oracle.cep.test.java.TypeA2().overloadedMethod(14).getI4(),
+     oracle.cep.test.java.TypeA3().overloadedMethod(11).getI1(),
+     oracle.cep.test.java.TypeA4().overloadedMethod(12).getI2(),
+     oracle.cep.test.java.B().test(java.lang.Integer(22)).getI2(),
+     oracle.cep.test.java.B.testStatic(),
+     oracle.cep.test.java.A.testStaticField
+ from V4
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr5 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr5.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query objexpr5 start </CEP_DDL>
+
+<!-- negative test: static modifier should only be taken into account after most specific method is found!
+-->
+<CEP_DDL>
+    create query objexpr6 as
+    select 
+     oracle.cep.test.java.B.testOverloadedStatic(13)
+    from V4
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr6 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr6.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query objexpr6 start </CEP_DDL>
+
+<!-- test links, functions, and sub and super class assignment 
+-->
+<CEP_DDL>
+   create view V5(a1 oracle.cep.test.java.TypeA@java, a2 oracle.cep.test.java.A, 
+    a3 java.lang.String[], a4 int@java[]) as
+   select oracle.cep.test.java.TypeA@java(), oracle.cep.test.java.B(), 
+    oracle.cep.test.java.TypeConverter().getStA(),
+    oracle.cep.test.java.TypeConverter().getInA()
+   from S0 where c3 = "ab"
+</CEP_DDL>
+<CEP_DDL>
+    create query objexpr7 as
+    select 
+      a1,
+      oracle.cep.test.java.A.testStatic@java(),
+      oracle.cep.test.java.A.testStaticField@java,
+      myFunction@myCartridge(), myFunction@myCartridge1(), myFunction@myCartridge2(), myFunction@myCartridge3(),
+      echo@myCartridge("echo"), trim@myCartridge(String(" hello ")).toString(),
+      oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge1(), oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge2(), 
+      a3[1], 
+      a4[0],
+      cast@java(a2, oracle.cep.test.java.B.class).i1
+  from V5
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query objexpr7 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr7.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+<CEP_DDL> alter query objexpr7 start </CEP_DDL>
+
+<!-- Test Object with aggr functions
+-->
+<CEP_DDL>
+    create query objexpr8 as
+    select
+	avg(c2),
+	sum(Double(c2)),
+	count(c2),
+	max(c2),
+	min(c2)
+    from S0
+    group by c1
+</CEP_DDL>
+<CEP_DDL>
+  <![CDATA[ alter query objexpr8 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr8.txt</Address></EndPointReference>"]]> 
+</CEP_DDL> 
+<CEP_DDL> alter query objexpr8 start </CEP_DDL>
+
+<!-- Test untyped view with implicit _this pointer
+-->
+<CEP_DDL>
+   create view V6(c1, c2, c3) as
+   select * 
+   from S0 where c3 = "ab"
+</CEP_DDL>
+<CEP_DDL>
+    create query objexpr9 as
+    select
+	c1, c3
+    from V6
+</CEP_DDL>
+<CEP_DDL>
+  <![CDATA[ alter query objexpr9 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr9.txt</Address></EndPointReference>"]]> 
+</CEP_DDL> 
+<CEP_DDL> alter query objexpr9 start </CEP_DDL>
+
+<!-- Test typed view with implicit _this pointer
+-->
+<CEP_DDL>
+   create view V7(c1 integer, c2 java.lang.Double, c3 char(10)) as
+   select * 
+   from S0 where c3 = "ab"
+</CEP_DDL>
+<CEP_DDL>
+    create query objexpr10 as
+    select
+	c2
+    from V7
+</CEP_DDL>
+<CEP_DDL>
+  <![CDATA[ alter query objexpr10 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outObjExpr10.txt</Address></EndPointReference>"]]> 
+</CEP_DDL> 
+<CEP_DDL> alter query objexpr10 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+
+</CEP>

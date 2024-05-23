@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_CREATE>
+   <CEP_DDL> register stream order_OrderStream(orderId integer, orderAmount float) </CEP_DDL>
+
+   <CEP_DDL> alter stream order_OrderStream add push source </CEP_DDL>
+   <CEP_DDL> register query q0 as select * from order_OrderStream where orderAmount > 10000.0  </CEP_DDL>
+   <CEP_DDL> alter query q0 add destination "&ltEndPointReference> &ltAddress>fabric:order&lt/Address>&lt/EndPointReference>" </CEP_DDL>
+   <CEP_DDL> alter query q0 start </CEP_DDL>
+</CEP_CREATE>
+
+<CEP_DROP>
+  <CEP_DDL> alter query q0 stop </CEP_DDL>
+  <CEP_DDL> drop query q0 </CEP_DDL>
+  <CEP_DDL> drop stream order_OrderStream </CEP_DDL> 
+</CEP_DROP>
+
+</CEP>

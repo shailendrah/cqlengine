@@ -1,0 +1,50 @@
+1000:+ <tkdata53_S0>
+   <column name="c1">10</column>
+   <column name="c2">0.1</column>
+</tkdata53_S0>
+
+1002:+ <tkdata53_S0>
+   <column name="c1">15</column>
+   <column name="c2">0.14</column>
+</tkdata53_S0>
+
+2000:- <tkdata53_S0>
+   <column name="c1">10</column>
+   <column name="c2">0.1</column>
+</tkdata53_S0>
+
+2002:- <tkdata53_S0>
+   <column name="c1">15</column>
+   <column name="c2">0.14</column>
+</tkdata53_S0>
+
+200000:+ <tkdata53_S0>
+   <column name="c1">20</column>
+   <column name="c2">0.2</column>
+</tkdata53_S0>
+
+201000:- <tkdata53_S0>
+   <column name="c1">20</column>
+   <column name="c2">0.2</column>
+</tkdata53_S0>
+
+400000:+ <tkdata53_S0>
+   <column name="c1">30</column>
+   <column name="c2">0.3</column>
+</tkdata53_S0>
+
+401000:- <tkdata53_S0>
+   <column name="c1">30</column>
+   <column name="c2">0.3</column>
+</tkdata53_S0>
+
+100000000:+ <tkdata53_S0>
+   <column name="c1">40</column>
+   <column name="c2">4.04</column>
+</tkdata53_S0>
+
+100001000:- <tkdata53_S0>
+   <column name="c1">40</column>
+   <column name="c2">4.04</column>
+</tkdata53_S0>
+

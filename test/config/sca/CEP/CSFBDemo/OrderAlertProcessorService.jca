@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<adapter-config name="FulfillmentBatchService" adapterRef="JMS"
+  xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata"
+  xmlns:jms="http://xmlns.oracle.com/pcbpel/adapter/jms/"
+  >
+
+ <connection-factory adapterRef="">
+    <non-managed-connection managedConnectionFactoryClassName=
+            "oracle.tip.adapter.jms.JmsManagedConnectionFactory">
+      <property name="connectionFactoryLocation" value="jms/QueueConnectionFactory"/>
+      <property name="factoryProperties" value=""/>
+      <property name="acknowledgeMode" value="AUTO_ACKNOWLEDGE"/>
+      <property name="isTopic" value="false"/>
+      <property name="isTransacted" value="false"/>
+      <property name="username" value="oc4jadmin"/>
+      <property name="password" value="welcome1"/>
+    </non-managed-connection>
+  </connection-factory>
+    <endpoint-interaction operation="sendMessage">
+
+        <interaction-spec className=
+                "oracle.tip.adapter.jms.outbound.JmsProduceInteractionSpec">
+          
+          <property name="DestinationName" value="jms/demoQueue"/>
+          <property name="DeliveryMode" value="Persistent"/>
+          <property name="TimeToLive" value="0"/>
+          <property name="PayloadType" value="TextMessage"/>
+        </interaction-spec>
+
+        <input>
+          <header  message="jms:OutboundHeader_msg" part="outboundHeader"/>
+        </input>
+
+        <output/>
+
+      </endpoint-interaction>
+
+</adapter-config>

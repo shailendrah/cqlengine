@@ -1,0 +1,213 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/QueryStatsManager.java /main/5 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle and/or its affiliates.All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    03/27/08 - abstract class for query manager
+    parujain    03/27/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/QueryStatsManager.java /main/5 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.statsmgr;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+import oracle.cep.common.Datatype;
+import oracle.cep.execution.operators.ExecOpt;
+import oracle.cep.execution.operators.ExecStats;
+import oracle.cep.metadata.MetadataStats;
+import oracle.cep.phyplan.PhyOpt;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.Column;
+import oracle.cep.jmx.stats.FilterCondition;
+
+public abstract class QueryStatsManager extends StatsManager
+{
+  protected boolean hasFilters = false;
+  protected Datatype[] types;
+  protected ArrayList<FilterCondition> qFilters;
+  protected boolean op_id_filter;
+  protected int op_id;
+  protected boolean user_func_filter;
+  protected int func_id;
+  protected long numExec;
+  protected long time;
+  protected long latency;
+  
+  public QueryStatsManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+
+
+  public static boolean isSpecialCase(FilterCondition[] filters)
+  {
+	if(filters != null)
+	{
+      for(int i=0; i<filters.length; i++)
+      {
+        int colcode = filters[i].getColName().colCode;
+        if((colcode == Column.QUERY_OPERATOR_ID.colCode) ||
+           (colcode == Column.QUERY_USERFUNCTION_ID.colCode))
+          return true;
+      }
+	}
+    return false;
+  }
+  
+  public void init(FilterCondition[] filters)
+  {
+    qFilters = new ArrayList<FilterCondition>();
+    op_id_filter = false;
+    op_id = -1;
+    user_func_filter = false;
+    func_id = -1;
+    hasFilters = false;
+    numExec = 0;
+    time = 0;
+    latency = 0;
+    if(filters != null)
+    {
+      for(int i=0; i<filters.length; i++)
+      {
+        if(filters[i].getColName().colCode == Column.QUERY_OPERATOR_ID.colCode)
+        {
+          op_id_filter = true;
+          op_id = Integer.parseInt(filters[i].getColVal());
+        }
+        else if(filters[i].getColName().colCode == Column.QUERY_USERFUNCTION_ID.colCode)
+        {
+           user_func_filter = true;
+           func_id = Integer.parseInt(filters[i].getColVal());
+        }
+        else
+        {
+          hasFilters = true;
+          qFilters.add(filters[i]);
+        }
+      } //end of for loop
+    }
+    if(hasFilters)
+    {
+      types = new Datatype[qFilters.size()];
+      for(int i=0; i<qFilters.size(); i++)
+        types[i] = getDatatype(qFilters.get(i).getColName());
+    }
+    else
+    {
+      types = null;
+      qFilters = null;
+    }
+  }
+  
+  public abstract IStats getNext();
+  
+  public void close()
+  {
+    hasFilters = false;
+    qFilters = null;
+    types = null;
+    op_id_filter = false;
+	op_id = -1;
+	user_func_filter = false;
+	func_id = -1;
+	numExec = 0;
+    time = 0;
+    latency = 0;
+  }
+  
+  protected void getNumExecutionsAndTime(PhyOpt op)
+  { 
+    PhyOpt[] opts = op.getInputs();
+    for(int i=0; i<op.getNumInputs(); i++)
+    {
+      numExec += opts[i].getInstOp().getStats().getNumExecutions();
+      time += opts[i].getInstOp().getStats().getTotalTime();
+      getNumExecutionsAndTime(opts[i]);
+    }
+  }
+  
+  protected void addOutputsExecutionsAndTime(List<PhyOpt> outputs)
+  {
+    if(outputs.isEmpty())
+      return;
+    
+    Iterator<PhyOpt> iterator = outputs.iterator();
+    while(iterator.hasNext())
+    {
+      PhyOpt opt = iterator.next();
+      numExec += opt.getInstOp().getStats().getNumExecutions();
+      time += opt.getInstOp().getStats().getTotalTime();
+    }
+  }
+  
+  protected void getTotalLatency(List<PhyOpt> outputs, AtomicLong latency)
+  {
+    if(outputs.isEmpty())
+      return;
+    
+    Iterator<PhyOpt> iterator = outputs.iterator();
+    while(iterator.hasNext())
+    {
+      PhyOpt opt = iterator.next();
+      if(opt.getInstOp().getIsStatsEnabled())
+        latency.addAndGet(opt.getInstOp().getStats().getLatency());
+    }
+  }
+  
+  protected IStats getQueryStatsRow(int id, PhyOpt opt, ExecOpt rootOp)
+  {
+      MetadataStats stat = execContext.getQueryMgr().getQueryStats(id);
+      List<PhyOpt> outputs = execContext.getPlanMgr().getAllQueryOutputs(id);
+      
+      numExec = rootOp.getStats().getNumExecutions();
+      time = rootOp.getStats().getTotalTime();
+     
+      getNumExecutionsAndTime(opt);
+      addOutputsExecutionsAndTime(outputs);
+      AtomicLong latency = new AtomicLong(0);
+      getTotalLatency(outputs, latency);
+      float avg = (float)0.0;
+      if(outputs.size() > 0)
+        avg = ((float)latency.longValue()/(float)outputs.size());
+     
+      float percent = 0;
+      if(ExecStats.getRunningTime() > 0)
+       percent = ((float)time/(float)ExecStats.getRunningTime())*100;
+      
+      return factory.createQueryStat(id, stat.getText(), stat.getName(),
+                                     stat.getIsMetadata(),
+                                     rootOp.getStats().getNumOutputs(),
+                                     rootOp.getStats().getStartTime(),
+                                     rootOp.getStats().getEndTime(),
+                                     rootOp.getStats().getNumOutputsLatest(),
+                                     numExec,
+                                     time,
+                                     avg,
+                                     percent);
+  }
+  
+}

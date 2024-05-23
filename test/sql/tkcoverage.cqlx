@@ -1,0 +1,211 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkcoverage_S0 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S1 (c1 integer, c2 bigint) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S2 (c1 float) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S3 (c1 float) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S4 (c1 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S5 (c1 integer, c2 byte(10)) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S6 (c1 integer, c2 byte(10)) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S7 (c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S8 (c1 interval) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S10 (c1 float) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S11 (c1 char(4), c2 integer, c3 float, c4 bigint) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S12 (c1 integer, c2 bigint, c3 float, c4 double) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S13 (c1 integer, c2 bigint, c3 float, c4 double) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S14 (c1 integer, c2 bigint, c3 float, c4 double, c5 number(7,5)) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S15 (c1 interval, c2 timestamp) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S16 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S17 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tkcoverage_S18 (c1 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S6 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S7 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S11 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S12 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S13 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S14 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S16 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S17 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoverage_S18 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkcoverage_v1 (c1 float) as select  *  from   tkcoverage_S10 [range 1] </CEP_DDL>
+<CEP_DDL> register view tkcoverage_v2 (c1 float) as select  *  from   tkcoverage_S10 [range 2]  </CEP_DDL>
+<CEP_DDL> register view tkcoverage_v3 (c1 integer, c2 integer) as select  c1,c2 from  tkcoverage_S0 [range 2]  </CEP_DDL>
+<CEP_DDL> register view tkcoverage_v4 (c1 integer) as select  c1 from   tkcoverage_S1 [range 2]  </CEP_DDL>
+<CEP_DDL> register view tkcoverage_v5 (c1 integer) as tkcoverage_v4 not in tkcoverage_v3  </CEP_DDL>
+<CEP_DDL> register view tkcoverage_v6 (c1 integer) as select c1 from tkcoverage_S0 </CEP_DDL>
+<CEP_DDL> register view tkcoverage_v7 (c1 integer, c2 bigint) as select c1, element_time from tkcoverage_S0 </CEP_DDL>
+
+<CEP_DDL> create query tkcoverage_check_in1 as select c1,c2 from tkcoverage_S0[range 1] where c1 in (50,30,4,22) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_in2 as select c1,c2 from tkcoverage_S0[range 1] where c1 in (60,90) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_notin1 as select c1,c2 from tkcoverage_S0[range 1] where c1 not in (50, 30) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_notin2 as select c1,c2 from tkcoverage_S0[range 1] where c1 not in (50,60,80) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_inset1 as select c1,c2 from tkcoverage_S0[range 1] where (c1,c2) in ((50,4),(4,5)) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_inset2 as select c1,c2 from tkcoverage_S0[range 1] where (c1,c2) in ((60,90),(90,60)) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_notinset1 as select c1,c2 from tkcoverage_S0[range 1] where (c1,c2) not in ((50,4),(4,5)) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_notinset2 as select c1,c2 from tkcoverage_S0[range 1] where (c1,c2) not in ((60,90),(90,60)) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q1 as select tkcoverage_S0.c1/tkcoverage_S1.c1 from tkcoverage_S0[range 5], tkcoverage_S1[range 3] where tkcoverage_S0.c2 = tkcoverage_S1.c2 </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q2 as select tkcoverage_S0.c1-tkcoverage_S1.c1 from tkcoverage_S0[range 5], tkcoverage_S1[range 3] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q3 as select sum(c2) from tkcoverage_S1[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_float_sum as select count(c1),sum(c1) from tkcoverage_S2[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_float_sub_mul as select tkcoverage_S2.c1-tkcoverage_S3.c1,tkcoverage_S2.c1*tkcoverage_S3.c1,tkcoverage_S2.c1/tkcoverage_S3.c1 from tkcoverage_S2[range 5],tkcoverage_S3[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_chr_cpy as select c1 from tkcoverage_S4[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_count_init as select count(c1) from tkcoverage_S1[range 5] group by c2 </CEP_DDL>
+<CEP_DDL> create query tkcoverage_chr_len as select length(c1) from tkcoverage_S4[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_chr_concat as select concat(c1,c1),concat("abc",c1),concat(c1,"abc") from tkcoverage_S4[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_float_avg as select avg(c1) from tkcoverage_S3[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_byt_len as select length(c2) from tkcoverage_S5[range 2] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_byt_concat as select concat(tkcoverage_S5.c2,tkcoverage_S6.c2) from tkcoverage_S5[range 2],tkcoverage_S6[range 2]  </CEP_DDL>
+<CEP_DDL> create query tkcoverage_interval_add as select (INTERVAL "2 1:03:45.10" DAY TO SECOND + INTERVAL "2 2:03:45.10" DAY TO SECOND+c1) from tkcoverage_S8[range 2] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_interval_sub as select (INTERVAL "2 1:03:45.10" DAY TO SECOND - INTERVAL "2 2:03:45.10" DAY TO SECOND-c1) from tkcoverage_S8[range 1] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_int_nvl as select nvl(tkcoverage_S5.c1, tkcoverage_S6.c1) from tkcoverage_S5[range 3], tkcoverage_S6[range 3] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_int_avg as select avg(c1) from tkcoverage_S5[range 3] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_check_systime as select 1 from tkcoverage_S2 where systimestamp() > to_timestamp("01/01/0001 00:00:01") </CEP_DDL>
+<CEP_DDL> create query tkcoverage_byte_to_hex as select rawtohex(c2) from tkcoverage_S5[range 4] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_byte_to_hex_const as select rawtohex(hextoraw("abc")) from tkcoverage_S5[range 4] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_hex_to_byte as select hextoraw(c2) from tkcoverage_S7[range 2] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_hex_to_byte_const as select hextoraw("axc") from tkcoverage_S7[range 2] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_interval_cpy as select c1 from tkcoverage_S8[range 3] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_interval_nvl as select "check it"," ", "   ", nvl(c1,(INTERVAL "2 1:03:45.10" DAY TO SECOND)),nvl(c1,c1) FROM tkcoverage_S8[range 3] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_interval_sum as select sum(c1) from tkcoverage_S8[range 1] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_byte_nvl as select nvl(tkcoverage_S5.c2, tkcoverage_S6.c2) from tkcoverage_S5[range 3], tkcoverage_S6[range 3] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_r_union_r as tkcoverage_v1 union tkcoverage_v2 </CEP_DDL>
+<CEP_DDL> create query tkcoverage_r1_union_r1 as tkcoverage_v1 union tkcoverage_v1 </CEP_DDL>
+<CEP_DDL> create query tkcoverage_s_unionall_s as tkcoverage_S3 union all tkcoverage_S10 </CEP_DDL>
+<CEP_DDL> create query tkcoverage_r_unionall_r as tkcoverage_v1 union all tkcoverage_v2 </CEP_DDL>
+<CEP_DDL> create query tkcoverage_r1_unionall_r1 as tkcoverage_v1 union all tkcoverage_v1 </CEP_DDL>
+<CEP_DDL> create query tkcoverage_distinct1 as select distinct c1 from tkcoverage_S2[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_distinct2 as select distinct c1*c1 from tkcoverage_S2[range 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_setop_notin as select * from tkcoverage_v5</CEP_DDL>
+<CEP_DDL> create query check_mod as select mod(tkcoverage_S12.c1,tkcoverage_S13.c1) as int_mod, mod(tkcoverage_S12.c2,tkcoverage_S13.c2) as bigint_mod, mod(tkcoverage_S12.c3,tkcoverage_S13.c3) as float_mod, mod(tkcoverage_S12.c4,tkcoverage_S13.c4) as double_mod from tkcoverage_S12[range 1 millisecond], tkcoverage_S13[range 1 millisecond]</CEP_DDL>
+<CEP_DDL> create query tkcoverage_q4 as select element_time from tkcoverage_v6</CEP_DDL>
+<CEP_DDL> create query tkcoverage_q5 as select c1, element_time from tkcoverage_v6</CEP_DDL>
+<CEP_DDL> create query tkcoverage_q6 as select c1, c2, element_time from tkcoverage_v7 where element_time = tkcoverage_v7.c2</CEP_DDL>
+<CEP_DDL> create query tkcoverage_q7 as select vwap(c3,c4) from tkcoverage_S11[range 2] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q8 as select c1, vwap(c3,c4) from tkcoverage_S11[range 2] group by c1</CEP_DDL>
+<CEP_DDL> create query tkcoverage_q9 as select vwap(c1,c2) from tkcoverage_S1[range 10] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q10 as select vwap(c1,c4) from tkcoverage_S12[rows 10] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q11 as IStream(select median(c1),median(c2),median(c3),median(c4),median(c5) from tkcoverage_S14[rows 10]) </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q12 as select median(c1), median(c2) from tkcoverage_S15[rows 5] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q12_neg as select median(c1),median(c2) from tkcoverage_S4[rows 10] </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q14 as select median(c1) from tkcoverage_S16[rows 5] </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkcoverage_q15 as select T.sumA, T.medianA from tkcoverage_S17 MATCH_RECOGNIZE ( MEASURES sum(A.c1) as sumA, median(A.c1) as medianA PATTERN(A*) DEFINE A as A.c1 > prev(A.c1)) as T]]> </CEP_DDL>
+<CEP_DDL> create query tkcoverage_q16 as select median(c1) from tkcoverage_S18[rows 5] </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_float_sum add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_float_sub_mul add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_chr_cpy add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_count_init add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_chr_len add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_chr_concat add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_float_avg add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_byt_len add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_byt_concat add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_interval_add add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_interval_sub add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_int_nvl add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_int_avg add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_systime add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_byte_to_hex add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_hex_to_byte add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_byte_to_hex_const add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out-bytetohex-const.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_hex_to_byte_const add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out-hextobyte-const.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_interval_cpy add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_interval_nvl add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_interval_sum add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov22.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_byte_nvl add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcov23.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_r1_union_r1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/r1_union_r1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_r_union_r add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/r_union_r.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_s_unionall_s add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/s_unionall_s.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_r1_unionall_r1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/r1_unionall_r1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_r_unionall_r add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/r_unionall_r.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_distinct1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/distinct1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_distinct2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/distinct2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_in1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_in1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_in2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_in2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_notin1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_notin1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_notin2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_notin2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_inset1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_inset1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_inset2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_inset2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_notinset1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_notinset1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_check_notinset2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_notinset2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_setop_notin add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/setop_notin.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query check_mod add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/check_mod.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcoverage_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkcoverage_outq16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_float_sum start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_float_sub_mul start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_chr_cpy start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_count_init start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_chr_len start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_chr_concat start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_float_avg start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_byt_len start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_byt_concat start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_interval_add start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_interval_sub start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_int_nvl start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_int_avg start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_systime start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_byte_to_hex start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_byte_to_hex_const start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_hex_to_byte start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_hex_to_byte_const start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_interval_cpy start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_interval_nvl start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_interval_sum start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_byte_nvl start </CEP_DDL>
+<CEP_DDL> alter query tkcoverage_r_union_r start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_r1_union_r1 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_s_unionall_s start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_r_unionall_r start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_r1_unionall_r1 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_distinct1 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_distinct2 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_in1 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_in2 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_notin1 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_notin2 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_inset1 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_inset2 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_notinset1 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_check_notinset2 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_setop_notin start</CEP_DDL>
+<CEP_DDL> alter query check_mod start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q4 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q5 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q6 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q7 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q8 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q9 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q10 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q11 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q12 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q14 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q15 start</CEP_DDL>
+<CEP_DDL> alter query tkcoverage_q16 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

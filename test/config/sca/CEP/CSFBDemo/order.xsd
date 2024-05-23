@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            targetNamespace="http://www.oracle.com/cep"
+            xmlns:cep="http://www.oracle.com/cep" >
+
+<xsd:element name="ComplexEvent" type="cep:ComplexEventType"/>
+
+<xsd:complexType name = "ComplexEventType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="Timestamp"  type= "xsd:dateTime" />
+        <xsd:element name="ElementKind"  type="xsd:string" />
+        <xsd:element name="orderId"  type= "xsd:integer" />
+        <xsd:element name="orderAmount"  type= "xsd:float" />
+    </xsd:sequence>
+</xsd:complexType>
+
+</xsd:schema>
+

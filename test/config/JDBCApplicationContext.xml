@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: cep/wlevs_cql/modules/cqlengine/test/config/JDBCApplicationContext.xml /main/2 2012/06/18 06:29:07 udeshmuk Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   udeshmuk    06/07/12 - add BIArchiver
+   hopark      03/12/09 - use datasource finder
+   hopark      01/30/09 - add QryDestLocator
+   anasrini    02/11/09 - add directInterop
+   alealves    02/03/09 - test user function locator
+   hopark      11/28/08 - fix timezone
+   hopark      11/06/08 - fix dumpplan
+   hopark      06/19/08 - logging refactor
+   hopark      03/26/08 - Creation
+
+-->
+<beans>
+    <import resource="cep-jdbcrmi.xml" />
+    
+    <bean id="userFunctionLocator" class="oracle.cep.test.userfunctions.TkLocator" />
+
+    <bean id="javaTypeLocator" class="com.oracle.cep.cartridge.java.impl.JavaTypeSystemImpl" />
+
+    <bean id="cartridgeLocator"
+        class="oracle.cep.env.standalone.CartridgeRegistry">
+    </bean>
+
+    <bean class="com.oracle.cep.cartridge.java.impl.JavaCartridge">
+      <constructor-arg ref="cartridgeLocator" />
+      <property name="typeLocator" ref="javaTypeLocator"/>
+    </bean>
+
+    <bean id="MyCartridge" class="oracle.cep.test.java.MyCartridge">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+
+    <bean id="TreeIndexCartridge" class="oracle.cep.test.cartridge.treeindex.TreeIndexCartridge">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+    
+    <bean id="SpatialCartridge" class="com.oracle.cep.cartridge.spatial.SpatialCartridge" 
+    	factory-method="createInstance">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+ 
+     <bean id="spatialCtx1" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+     	factory-method="registerContext">
+      <constructor-arg value="spatial1" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="srid">8307</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+
+     <bean id="spatialCtx2" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+     	factory-method="registerContext">
+      <constructor-arg value="spatial8265" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="srid">8265</prop>
+            <prop key="SMA">6378137</prop>
+            <prop key="ROF">298.257223563</prop>
+            <prop key="ARC_TOLERANCE">1.0</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+    
+    <bean id="envConfig"
+          class="oracle.cep.env.standalone.EnvConfig" >
+        <property name="cartridgeLocator" ref="cartridgeLocator" />
+        <property name="archiverFinder" ref="archiverFinder" />
+        <property name="isJDBCTest" value="true" />
+	<property name="targetSQLType" value="ORACLE" />
+        <property name="timeZone" value="GMT-7:00" />
+    </bean>
+    
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="envConfig" ref="envConfig" />
+        <property name="schedRuntime" value="0" />
+    </bean>
+
+    <bean id="cepServerRegistry" 
+          class="oracle.cep.server.CEPServerRegistryImpl" />
+
+    <bean id="cepManager" 
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="config" ref="config" />
+        <property name="evictPolicy" ref="queuesrcEvictPolicy" />
+        <property name="serverRegistry" ref="cepServerRegistry" />
+    </bean>
+  
+    
+    <bean id="queuesrcEvictPolicy" 
+          class="oracle.cep.memmgr.evictPolicy.QueueSrcPolicy" >
+        <property name="normalThreshold"  value="-30" />
+        <property name="partialThreshold" value="-20" />
+        <property name="fullThreshold"  value="-10" />
+        <property name="syncThreshold" value="-5" />
+    </bean>
+    
+    <bean id="archiverFinder"
+          class="oracle.cep.env.standalone.ArchiverFinder">
+        <property name="archiver0">
+          <props>
+            <prop key="name">BIArchiver</prop>
+            <prop key="class">oracle.cep.archiver.SampleArchiver</prop>
+          </props>
+        </property>
+    </bean>
+
+  </beans>
+

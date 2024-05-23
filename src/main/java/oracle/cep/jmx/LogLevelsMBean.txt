@@ -1,0 +1,41 @@
+/* $Header: LogLevelsMBean.java 20-dec-2007.15:10:45 hopark Exp $ */
+
+/* Copyright (c) 2007, Oracle. All rights reserved.  */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    hopark      12/20/07 - add quit
+    hopark      08/06/07 - add runcql
+    hopark      06/22/07 - Creation
+ */
+
+/**
+ *  @version $Header: LogLevelsMBean.java 20-dec-2007.15:10:45 hopark Exp $
+ *  @author  hopark  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx;
+
+public interface LogLevelsMBean
+{
+  void clear();
+  String setLevel(boolean enable, int a, int type, int id, int ev, int level) throws Exception;
+  String[] getAreas();
+  String[] getTypes(int a);
+  String[] getEvents(int a);
+  String[] getLevels(int a);
+  String[] getCurrentInfo();
+  
+  String runcqlx(String cqlx);
+  void quitSystem();
+}
+ 

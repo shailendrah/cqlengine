@@ -1,0 +1,13 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk14589957_S1 (c1 char(10), c2 char(15)) </CEP_DDL>
+<CEP_DDL> create stream tk14589957_S2 (c1 char(20)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk14589957_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk14589957_S1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk14589957_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk14589957_S2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tk14589957_q1 as select lk(c1,c2) from tk14589957_S1[rows 50] </CEP_DDL>
+<CEP_DDL> create query tk14589957_q2 as select lk(c1, '^Ste(v|ph)en$') from tk14589957_S2[rows 30]</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk14589957_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk14589957_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk14589957_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk14589957_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tk14589957_q1 start </CEP_DDL>
+<CEP_DDL> alter query tk14589957_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,19 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkuf_S1 (c1 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuf_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpuf1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register function counter return integer as language java instance "counterObject"</CEP_DDL>
+<CEP_DDL> register function clone(c1 integer) return integer as language java instance "cloneObject"</CEP_DDL>
+<CEP_DDL> register function adder(c1 integer, c2 integer) return integer as language java instance "sumObject"</CEP_DDL>
+<CEP_DDL> register function aggrsum1(c1 integer) return integer aggregate using instance "aggrSumObject" </CEP_DDL>
+<!--<CEP_DDL> register function aggrsum2(c1 integer) return integer aggregate using "oracle.cep.test.userfunctions.TkAggrSum" supports incremental computation</CEP_DDL>-->
+<CEP_DDL> register function aggrsum2(c1 integer) return integer aggregate using instance "aggrSumObject" supports incremental computation</CEP_DDL>
+<CEP_DDL> register function aggrsum3(c1 integer, c2 integer) return integer aggregate using instance "aggrSumObject" </CEP_DDL>
+<CEP_DDL> register function aggrsum4(c1 integer, c2 integer) return integer aggregate using instance "aggrSumObject" supports incremental computation</CEP_DDL>
+<CEP_DDL> create query tkuf_Q1 as select counter(), clone(c1), adder(c1, c1) from tkuf_S1[Now] </CEP_DDL>
+<CEP_DDL> create query tkuf_Q2 as select aggrsum1(c1), aggrsum2(c1), aggrsum3(c1,c1), aggrsum4(c1,c1) from tkuf_S1[range 2] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuf_Q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuf1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuf_Q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuf2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkuf_Q1 start </CEP_DDL>
+<CEP_DDL> alter query tkuf_Q2 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

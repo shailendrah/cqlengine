@@ -1,0 +1,27 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk16571604_S1 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> create stream tk16571604_S2 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk16571604_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16571604_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk16571604_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16571604_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test Slide operator creation on top of partition window operator -->
+<CEP_DDL><![CDATA[ create query tk16571604_q1 as select * from tk16571604_S1[partition by c1 rows 2 range 1 minute slide 3 seconds] ]]></CEP_DDL>
+
+<!-- Test whether select operator can be pushed below slide operator -->
+<CEP_DDL><![CDATA[ create query tk16571604_q2 as select * from tk16571604_S1[partition by c1 rows 2 range 1 minute slide 3 seconds] where c2 > 1 ]]></CEP_DDL>
+
+<!-- Test whether the output event is not coming until slide happens -->
+<CEP_DDL><![CDATA[ create query tk16571604_q3 as select * from tk16571604_S2[partition by c1 rows 2 range 1 minute slide 3 seconds] ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16571604_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16571604_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16571604_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16571604_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16571604_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16571604_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16571604_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk16571604_q2 start</CEP_DDL>
+<CEP_DDL>alter query tk16571604_q3 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

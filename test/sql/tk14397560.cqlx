@@ -1,0 +1,31 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk14397560_S (callId integer, callStatus char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk14397560_S add source "<EndPointReference><Address>file://@TEST_DATA@/inp14397560.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tk14397560_q1 as
+SELECT
+      T.callId,
+      T.callStatus
+FROM
+      tk14397560_S MATCH_RECOGNIZE (
+        PARTITION BY callId
+        MEASURES
+          A.callId as callId,
+          NOTB.callStatus as callStatus
+	ALL MATCHES
+        PATTERN (A NOTB)
+        DEFINE
+          A AS (callStatus = 'SUSPEND'),
+          NOTB as (NOT (callStatus = 'RESUME'))
+) as T
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk14397560_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out14397560.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk14397560_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

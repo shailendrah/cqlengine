@@ -1,0 +1,213 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/StatsManager.java /main/5 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle and/or its affiliates.All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    03/20/08 - stats manager
+    parujain    03/20/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/StatsManager.java /main/5 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+package oracle.cep.statistics.statsmgr;
+
+import oracle.cep.common.Datatype;
+import oracle.cep.exceptions.CEPException;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.Column;
+import oracle.cep.jmx.stats.ColumnCodes;
+import oracle.cep.jmx.stats.FilterCondition;
+import oracle.cep.jmx.stats.StatsRow;
+import oracle.cep.service.CEPManager;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsIterator;
+import oracle.cep.statistics.IStatsFactory;
+
+/**
+ * Abstract class for stats managers.  
+ *
+ * @since 1.0
+ */
+
+public abstract class StatsManager implements IStatsIterator
+{
+  protected CEPManager cepMgr;
+  protected ExecContext execContext;
+  protected IStatsFactory factory;
+  
+  public StatsManager(ExecContext ec, IStatsFactory factory)
+  {
+    this.execContext = ec;
+    this.cepMgr = ec.getServiceManager();
+    this.factory = factory;
+  }
+  
+  public void setStatsRowFactory(IStatsFactory factory)
+  {
+    this.factory = factory;  
+  }
+  
+  public abstract void init();
+  public abstract IStats getNext() throws CEPException;
+  public abstract void close();
+  public static Datatype getDatatype(Column c)
+  {
+    int colCode = c.getColCode();
+    switch(colCode)
+    {
+      case ColumnCodes.OPERATOR_TYPE_CODE :
+      case ColumnCodes.OPERATOR_NAME_CODE :
+      case ColumnCodes.QUERY_TEXT_CODE :
+      case ColumnCodes.QUERY_OBJECT_NAME_CODE :
+      case ColumnCodes.STREAM_TEXT_CODE :
+      case ColumnCodes.STREAM_NAME_CODE :
+      case ColumnCodes.FUNCTION_MAPPING_FUNCTION_CODE :
+      case ColumnCodes.FUNCTION_TEXT_CODE :
+         return Datatype.CHAR;
+       	  
+      case ColumnCodes.OPERATOR_ID_CODE :
+      case ColumnCodes.OPERATOR_QUEUE_ID_CODE :
+      case ColumnCodes.OPERATOR_QUERY_ID_CODE :
+      case ColumnCodes.OPERATOR_STREAM_ID_CODE :
+      case ColumnCodes.QUERY_ID_CODE :
+      case ColumnCodes.QUERY_OPERATOR_ID_CODE :
+      case ColumnCodes.QUERY_USER_FUNC_ID_CODE :
+      case ColumnCodes.STREAM_ID_CODE :
+      case ColumnCodes.STREAM_OPERATOR_ID_CODE :
+      case ColumnCodes.FUNCTION_QUERY_ID_CODE :
+      case ColumnCodes.FUNCTION_INVOKATIONS_CODE :
+      case ColumnCodes.FUNCTION_ID_CODE:
+          return Datatype.INT;
+    	  
+      case ColumnCodes.OPERATOR_NUM_OUT_MSGS_CODE :
+      case ColumnCodes.OPERATOR_NUM_OUT_MSGS_LATEST_CODE :
+      case ColumnCodes.OPERATOR_IN_MSGS_CODE :
+      case ColumnCodes.OPERATOR_IN_MSGS_LATEST_CODE :
+      case ColumnCodes.OPERATOR_TOTAL_TIME_CODE :
+      case ColumnCodes.OPERATOR_START_TIME_CODE :
+      case ColumnCodes.OPERATOR_END_TIME_CODE :
+      case ColumnCodes.OPERATOR_NUM_EXECUTIONS_CODE :
+      case ColumnCodes.QUERY_NUM_OUT_MSGS_CODE :
+      case ColumnCodes.QUERY_NUM_OUT_MSGS_LATEST_CODE :
+      case ColumnCodes.QUERY_TOTAL_TIME_CODE :
+      case ColumnCodes.QUERY_NUM_EXECUTIONS_CODE :
+      case ColumnCodes.QUERY_START_TIME_CODE :
+      case ColumnCodes.QUERY_END_TIME_CODE :
+      case ColumnCodes.STREAM_NUM_IN_MSGS_LATEST_CODE :
+      case ColumnCodes.STREAM_NUM_IN_MSGS_CODE :
+      case ColumnCodes.STREAM_START_TIME_CODE :
+      case ColumnCodes.STREAM_END_TIME_CODE :
+      case ColumnCodes.STREAM_TOTAL_TUPLES_IN_MEMORY_CODE :
+      case ColumnCodes.STREAM_TOTAL_TUPLES_ON_DISK_CODE :
+      case ColumnCodes.FUNCTION_TOTAL_TIME_CODE :
+          return Datatype.BIGINT;
+    	  
+      case ColumnCodes.OPERATOR_PERCENT_CODE :
+      case ColumnCodes.QUERY_PERCENT_CODE :
+      case ColumnCodes.QUERY_AVG_LATENCY_CODE :
+      case ColumnCodes.STREAM_AVG_LATENCY_CODE :
+      case ColumnCodes.STREAM_INPUT_RATE_CODE :
+      case ColumnCodes.STREAM_PERCENT_CODE :
+      case ColumnCodes.STREAM_HITRATIO_CODE :
+          return Datatype.FLOAT;
+    	     	  
+      case ColumnCodes.QUERY_IS_VIEW_CODE :
+      case ColumnCodes.STREAM_IS_STREAM_CODE :
+      case ColumnCodes.STREAM_IS_PUSH_SRC_CODE :
+      case ColumnCodes.FUNCTION_IS_AGGREGATE_CODE :
+          return Datatype.BOOLEAN;
+          
+      default :
+    	  return Datatype.UNKNOWN;
+    }
+   
+  }
+  
+  protected boolean processFilter(IStats statsRow, FilterCondition[] filters, Datatype[] types)
+  {
+    if(filters == null)
+      return true;
+    
+    int numFilters = filters.length;
+    assert numFilters == types.length;
+    boolean pass = true;
+    
+    StatsRow row = (StatsRow)statsRow;
+    
+    for(int i=0; i<numFilters; i++)
+    {
+      switch(types[i])
+      {
+        case INT:
+          int i1 = Integer.parseInt(filters[i].getColVal());
+          int i2 = row.getIntValue(filters[i].getColName());
+          if(filters[i].getOpKind().equalsIgnoreCase("EQUAL"))
+            pass = (i1 == i2);
+          
+          if(!pass)
+            return false;
+          break;
+          
+        case BIGINT:
+          long l1 = Long.parseLong(filters[i].getColVal());
+          long l2 = row.getLongValue(filters[i].getColName());
+          if(filters[i].getOpKind().equalsIgnoreCase("EQUAL"))
+            pass = (l1 == l2);
+          
+          if(!pass)
+            return false;
+          break;
+          
+        case CHAR:
+          String s1 = filters[i].getColVal().toLowerCase();
+          String s2 = row.getStringValue(filters[i].getColName()).toLowerCase();
+          if(filters[i].getOpKind().equalsIgnoreCase("EQUAL"))
+            pass = (s1.equals(s2));
+          else if(filters[i].getOpKind().equalsIgnoreCase("CONTAINS"))
+            pass = s2.contains(s1);
+          if(!pass)
+            return false;
+          break;
+          
+        case FLOAT:
+          float f1 = Float.parseFloat(filters[i].getColVal());
+          float f2 = row.getFloatValue(filters[i].getColName());
+          if(filters[i].getOpKind().equalsIgnoreCase("EQUAL"))
+            pass = (f1 == f2);
+          if(!pass)
+            return false;
+          break;
+          
+        case BOOLEAN:
+          boolean b1 = Boolean.parseBoolean(filters[i].getColVal());
+          boolean b2 = row.getBooleanValue(filters[i].getColName());
+          if(filters[i].getOpKind().equalsIgnoreCase("EQUAL"))
+            pass = (b1 == b2);
+          if(!pass)
+            return false;
+          break;
+          
+        default:
+          assert false;
+      }
+    }
+    return true;
+  }
+}

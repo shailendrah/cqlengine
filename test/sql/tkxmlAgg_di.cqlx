@@ -1,0 +1,55 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkxmlAgg_S1(c1 int, c2 xmltype)</CEP_DDL>
+<CEP_DDL> create stream tkxmlAgg_S3(c1 char(10), c2 char(10), c3 char(10), c4 char(10), c5 char(10))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkxmlAgg_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkxmlAgginpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkxmlAgg_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/tkxmlAgginpS3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- just single xmlagg query -->
+<CEP_DDL> create query tkxmlAgg_q1 as select xmlagg(c2) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- xmlagg with other non-distinct aggr.-->
+<CEP_DDL> create query tkxmlAgg_q2 as select xmlagg(c2),avg(c1) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- xmlagg with other distinct aggr.-->
+<CEP_DDL> create query tkxmlAgg_q3 as select xmlagg(c2),sum(distinct c1) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- more than one identical  xmlagg in a single query-->
+<CEP_DDL> create query tkxmlAgg_q4 as select xmlagg(c2), xmlagg(c2) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- more than one non-identical  xmlagg in a single query-->
+<CEP_DDL> create query tkxmlAgg_q5 as select xmlagg(c2), xmlagg(c2 order by c1) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- xmlagg with different order by clauses -->
+<CEP_DDL> create query tkxmlAgg_q6 as select xmlagg(c2 order by c1 nulls first), xmlagg(c2 order by c1 desc) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- negative test case : chk that numbers are not allowed in xmlagg -->
+<CEP_DDL> create query tkxmlAgg_q7 as select xmlagg(c2 order by 4) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- Assertion problem in xml. bug no: 9362545  -->
+<CEP_DDL><![CDATA[ create query tkxmlAgg_q8 as  
+                 SELECT c1, c2, c3, COUNT(c4) AS c4,
+                XMLELEMENT("XYZ", XMLAGG(XMLELEMENT("c5", c5))) as c5
+                FROM tkxmlAgg_S3[RANGE 20 seconds]
+                group by c1,c2,c3
+                having count(c4) >= 3
+            ]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_di_3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_di_8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkxmlAgg_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q8 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

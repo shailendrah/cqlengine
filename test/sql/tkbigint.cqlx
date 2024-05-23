@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> register stream tkbigint_SBigInt (c1 bigint, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint_SBigInt add source "<EndPointReference><Address>file://@TEST_DATA@/inpSBigInt-l-f.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkbigint_SBigInt2(c1 bigint, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint_SBigInt2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSBigInt-l-f2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkbigint_S2 (c1 int, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkbigint_S15 (c1 int, c2 timestamp) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check if bigint type is properly parsed from the source and shown in the output -->
+<CEP_DDL> create query qBigInt1 as select * from tkbigint_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check int + bigint -->
+<CEP_DDL> create query tkbigint_qBigInt_addil as select c1 + 50000000000L from tkbigint_S2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint_qBigInt_addil add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-addil.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint + int -->
+<CEP_DDL> create query qBigInt_addli as select c1 + 1000000 from tkbigint_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_addli add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-addli.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint + float -->
+<CEP_DDL> create query tkbigint_qBigInt_addlf as select c1 + 1000.34567 from tkbigint_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint_qBigInt_addlf add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-addlf.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint + bigint -->
+<CEP_DDL> create query qBigInt_addll as select c1 + 50000000000L from tkbigint_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_addll add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-addll.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint - bigint -->
+<CEP_DDL> create query tkbigint_qBigInt_sub as select 50000000000L - c1 from tkbigint_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint_qBigInt_sub add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-sub.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint * bigint --> 
+<CEP_DDL> create query qBigInt_mul as select 50000000000L * c1 from tkbigint_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_mul add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-mul.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint / bigint Exception -->
+<CEP_DDL> create query tkbigint_qBigInt_div as select c1 / 50000000000L from tkbigint_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint_qBigInt_div add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-div.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint lt bigint -->
+<CEP_DDL><![CDATA[ create query qBigInt_lt as select c1 from tkbigint_SBigInt [range 10] where c1 < 10000000000L ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_lt add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-lt.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint lte bigint -->
+<CEP_DDL><![CDATA[ create query tkbigint_qBigInt_lte as select c1 from tkbigint_SBigInt [range 10] where c1 <= 10000000000L ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint_qBigInt_lte add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-lte.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint gt bigint -->
+<CEP_DDL><![CDATA[ create query qBigInt_gt as select c1 from tkbigint_SBigInt [range 10] where c1 > 10000000000L ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_gt add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-gt.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint gte bigint -->
+<CEP_DDL><![CDATA[ create query tkbigint_qBigInt_gte as select c1 from tkbigint_SBigInt [range 10] where c1 >= 10000000000L ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint_qBigInt_gte add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-gte.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint eq bigint -->
+<CEP_DDL><![CDATA[ create query qBigInt_eq as select c1 from tkbigint_SBigInt [range 10] where c1 = 10000000000L ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_eq add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-eq.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint ne bigint -->
+<CEP_DDL><![CDATA[ create query tkbigint_qBigInt_ne as select c1 from tkbigint_SBigInt [range 10] where c1 != 10000000000L ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint_qBigInt_ne add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-ne.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check is null -->
+<CEP_DDL><![CDATA[ create query qBigInt_null as select c1 from tkbigint_SBigInt [range 10] where c1 is null ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_null add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-null.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> alter query qBigInt1 start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_addli start </CEP_DDL>
+<CEP_DDL> alter query tkbigint_qBigInt_addil start </CEP_DDL>
+<CEP_DDL> alter query tkbigint_qBigInt_addlf start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_addll start </CEP_DDL>
+<CEP_DDL> alter query tkbigint_qBigInt_sub start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_mul start </CEP_DDL>
+<CEP_DDL> alter query tkbigint_qBigInt_div start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_lt start </CEP_DDL>
+<CEP_DDL> alter query tkbigint_qBigInt_lte start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_gt start </CEP_DDL>
+<CEP_DDL> alter query tkbigint_qBigInt_gte start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_eq start </CEP_DDL>
+<CEP_DDL> alter query tkbigint_qBigInt_ne start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_null start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>
+

@@ -1,0 +1,12 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata2_dropddl_S0 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> register stream tkdata2_dropddl_S5 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_dropddl_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>               
+<CEP_DDL> <![CDATA[ alter stream tkdata2_dropddl_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata2_dropddl_q11 as select * from tkdata2_dropddl_S5[range 2]</CEP_DDL>
+<CEP_DDL> register view tkdata2_dropddl_vq11 (c1 integer, c2 float) as query tkdata2_dropddl_q11</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_dropddl_q11 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outCr211.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> drop view tkdata2_dropddl_vq11</CEP_DDL>
+<CEP_DDL> drop stream tkdata2_dropddl_S0</CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

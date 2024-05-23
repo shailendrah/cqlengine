@@ -1,0 +1,8 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_initcap(c1 char(40)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_initcap add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_initcap.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_initcap_q1  as select initcap(c1) from tkdata_initcap</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_initcap_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/initcap_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_initcap_q1 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

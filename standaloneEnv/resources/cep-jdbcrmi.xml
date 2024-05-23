@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: pcbpel/cep/server/META-INF/spring/resources/cep-jdbcrmi.xml /main/4 2008/10/24 15:50:24 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     cep-jdbcrmi.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   skmishra    09/02/08 - changing package of CEPServiceXface
+   hopark      05/19/08 - change rmi port
+   hopark      03/27/08 - Creation
+
+-->
+<beans>
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+	  <property name="serviceName" value="sys" />
+	  <property name="service" ref="cepServerRegistry"/>
+	  <property name="serviceInterface" value="oracle.cep.service.CEPServerRegistry" />
+<!--      <property name="registry" ref="cepRegistry" /> -->
+	  <property name="registryPort" value="1199"/>
+   </bean>
+</beans>  
+

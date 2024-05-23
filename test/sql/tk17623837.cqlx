@@ -1,0 +1,25 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17623837_S1 (typeXml xmltype, typeTimestamp TIMESTAMP) derived timestamped typeTimestamp </CEP_DDL>
+<!--<CEP_DDL> create stream tk17623837_S1 (orderId bigint, location char(50), amount bigint, typeXml xmltype) </CEP_DDL>-->
+
+<CEP_DDL> <![CDATA[ alter stream tk17623837_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17623837_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk17623837_q1 as 
+SELECT X.orderId as typeBigInt, X.location as typeString, X.amount as typeBigInt2
+FROM tk17623837_S1 XMLTABLE (
+  '//EVNT'
+  PASSING BY VALUE tk17623837_S1.typeXml as "."
+  COLUMNS
+    orderId bigint PATH 'fn:data(ID)',
+    location char(30) PATH 'fn:data(LOC)',
+    amount bigint PATH 'fn:data(AMNT)'
+) as X ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17623837_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17623837_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17623837_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

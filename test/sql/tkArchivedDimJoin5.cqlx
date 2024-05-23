@@ -1,0 +1,215 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- ************************** -->
+<!--        FACT tables         -->
+<!-- ************************** -->
+
+<CEP_DDL>
+CREATE ARCHIVED RELATION 
+tkArchivedDimJoin5_LeftRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3
+</CEP_DDL>
+
+
+<!-- ********************************* -->
+<!--         DIMENSION tables          -->
+<!-- ********************************* -->
+
+
+<!-- NO DATA dimension tables -->
+
+<!-- first dimension table -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedDimJoin5_RightRel1(c1 integer, c2 float, c3 bigint, c4 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+</CEP_DDL>
+
+<!-- second dimension table -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedDimJoin5_RightRel2(c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable2" event identifier c3
+</CEP_DDL>
+
+<!-- third dimension table -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedDimJoin5_RightRel3(c1 integer, c3 bigint) 
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable3" event identifier c3
+</CEP_DDL>
+
+<!-- fourth dimension table -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedDimJoin5_RightRel4(c1 integer, c11 float, c111 bigint, c1111 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable4" event identifier c111
+</CEP_DDL>
+
+<!-- ******************************************************************* -->
+<!-- Set up sources                                                      -->
+<!-- same as for RelBinOp but slightly modified to suit the task at hand -->
+<!-- ******************************************************************* -->
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedDimJoin5_LeftRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpArchivedDimJoin5Left.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+alter relation tkArchivedDimJoin5_RightRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpArchivedDimJoin5Right1.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedDimJoin5_RightRel2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpArchivedDimJoin5Right2.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedDimJoin5_RightRel3 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpArchivedDimJoin5Right3.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedDimJoin5_RightRel4 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpArchivedDimJoin5Right4.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<!-- ***************************** -->
+<!-- LDO with multiple left outer join -->
+<!-- ***************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view tkArchivedDimJoin5_v0 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+                                            q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), 
+                                            r_c4 char(10))
+as
+select 
+	p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4, r.c4 as r_c4
+from 
+	tkArchivedDimJoin5_LeftRel1 as p left outer join tkArchivedDimJoin5_RightRel1 as q on p.c1 = q.c1 and p.c2 = q.c2 and  (p.c4 = "second" and q.c4 = "second") left outer join tkArchivedDimJoin5_RightRel2 as r on p.c4 = r.c4
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query tkArchivedDimJoin5_q0 as select p_c1, p_c2, p_c3, q_c3, q_c4,r_c4 from tkArchivedDimJoin5_v0
+]]>
+</CEP_DDL>
+
+<!-- we have to group by the column which is non-null otherwise groupaggr may throw assertion error -->
+<CEP_DDL>
+<![CDATA[ 
+create query tkArchivedDimJoin5_q1 as select count(p_c2), r_c4 from tkArchivedDimJoin5_v0 group by r_c4
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query tkArchivedDimJoin5_q0 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin5_q0.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+<CEP_DDL> 
+<![CDATA[ 
+alter query tkArchivedDimJoin5_q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin5_q1.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<!-- ***************************** -->
+<!-- LDO with mix of left outer join and normal join -->
+<!-- ***************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view tkArchivedDimJoin5_v1 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+                                            q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10),
+                                            r_c4 char(10),
+                                            s_c1 integer 
+                                            )
+as
+select 
+	p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4, r.c4 as r_c4, s.c1 as s_c1
+from 
+	tkArchivedDimJoin5_LeftRel1 as p left outer join tkArchivedDimJoin5_RightRel1 as q on p.c1 = q.c1 and p.c2 = q.c2 and  (p.c4 = "second" and q.c4 = "second"),
+        tkArchivedDimJoin5_RightRel2 as r,
+        tkArchivedDimJoin5_RightRel3 as s
+where
+	p.c4 = r.c4 and p.c1 = s.c1
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+create query tkArchivedDimJoin5_q2 as select * from tkArchivedDimJoin5_v1
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query tkArchivedDimJoin5_q2 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin5_q2.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<!-- Names of columns are prefixes of each other so exact word replacement necessary. Bam HOT bug. -->
+<CEP_DDL>
+<![CDATA[ 
+create archived view tkArchivedDimJoin5_v2 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+                                            q_c1 integer, q_c11 float, q_c111 float, q_c1111 char(10), 
+                                            r_c4 char(10))
+as
+select 
+	p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c11+q.c1 as q_c11, q.c1+q.c11+q.c111 as q_c111, q.c1111 as q_c1111, r.c4 as r_c4
+from 
+	tkArchivedDimJoin5_LeftRel1 as p left outer join tkArchivedDimJoin5_RightRel4 as q on p.c1 = q.c1 and p.c2 = q.c11 and  (p.c4 = "second" and q.c1111 = "second") left outer join tkArchivedDimJoin5_RightRel2 as r on p.c4 = r.c4
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query tkArchivedDimJoin5_q3 as select p_c1, p_c2, p_c3, q_c111, q_c1111, r_c4 from tkArchivedDimJoin5_v2
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query tkArchivedDimJoin5_q3 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin5_q3.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<!-- start_time specified here is assumed to be in nanoseconds -->
+<CEP_DDL> alter query tkArchivedDimJoin5_q0 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedDimJoin5_q1 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedDimJoin5_q2 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedDimJoin5_q3 set start_time 1000000000L</CEP_DDL>
+
+<CEP_DDL> alter query tkArchivedDimJoin5_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkArchivedDimJoin5_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkArchivedDimJoin5_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkArchivedDimJoin5_q3 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+
+</CEP>

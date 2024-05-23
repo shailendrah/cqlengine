@@ -1,0 +1,24 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> alter system time_slice = 1</CEP_DDL>
+<CEP_DDL> register stream tkdata8_SD0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata8_SD0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSD0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata8_q0 as select *  from tkdata8_SD0[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata8_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSD0R0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata8_q0 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata8_q1 as select *  from tkdata8_SD0[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata8_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSD0R1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata8_q1 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata8_q2 as select *  from tkdata8_SD0[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata8_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSD0R2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata8_q2 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata8_q3 as select *  from tkdata8_SD0[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata8_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSD0R3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata8_q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

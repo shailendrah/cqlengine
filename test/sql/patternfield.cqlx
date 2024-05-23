@@ -1,0 +1,51 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> CREATE STREAM T(c1 integer, c2 integer, d2 integer, d3 integer, e2 integer, e3 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream T add source "<EndPointReference><Address>file://@TEST_DATA@/patternfieldinp.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+
+<CEP_DDL> CREATE VIEW V0(s1 oracle.cep.test.java.S1, s2 oracle.cep.test.java.S2, s3 oracle.cep.test.java.S3) AS
+        SELECT oracle.cep.test.java.S1(c1,c2), oracle.cep.test.java.S2(c1,d2,d3), oracle.cep.test.java.S3(c1,e2,e3) FROM T </CEP_DDL>
+
+
+<CEP_DDL>
+<![CDATA[  
+CREATE QUERY Q0 AS
+  SELECT M.As1.c1,M.Bs2.d2,M.Ds3.e2
+    FROM V0
+      MATCH_RECOGNIZE (
+       MEASURES A.s1 as As1, B.s2 as Bs2, D.s3 as Ds3
+       PATTERN(A B C* D)
+       DEFINE
+	A as A.s1.c1 = 10,
+        B as B.s1.c2 = 21,
+        C as C.s2.d2 = 30,
+        D as D.s3.e3 = 35
+      ) as M
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY Q1 AS
+  SELECT M.As1.c1,M.Bs2.d2,M.Ds3.e2
+    FROM V0
+      MATCH_RECOGNIZE (
+       MEASURES A.s1 as As1, B.s2 as Bs2, D.s3 as Ds3
+       PATTERN(A B C* D)
+       DEFINE
+        A as A.s1.getMeC1() = 10,
+        B as B.s1.getMeC2() = 21,
+        C as C.s2.getMeD2() = 30,
+        D as D.s3.getMeE3() = 35
+      ) as M
+]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query Q0 add destination"<EndPointReference><Address>file://@TEST_OUTPUT@/patternfieldout.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query Q1 add destination"<EndPointReference><Address>file://@TEST_OUTPUT@/patternfieldout1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> alter query Q0 start </CEP_DDL>
+<CEP_DDL> alter query Q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+

@@ -1,0 +1,14 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk15931819_S1 (c1 integer, c2 bigint) derived timestamped c2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk15931819_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk15931819_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk15931819_q1 as select * from tk15931819_S1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk15931819_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk15931819_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk15931819_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

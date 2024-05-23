@@ -1,0 +1,8 @@
+c 5, c 5
+1000 "sandeep", "bishnoi"
+2000 "anand", "srinivasan"
+3000 "unmesh", "deshmukh"
+4000 "sandeep", "bishnoi"
+5000 "anand", "srinivasan"
+6000 "unmesh", "deshmukh"
+h 7000

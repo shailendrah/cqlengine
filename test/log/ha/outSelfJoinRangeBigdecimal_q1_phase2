@@ -1,0 +1,60 @@
+5000:- test string1,63.00006,test string3,60.00008
+5000:- test string1,63.00006,oracle,38.00007
+5000:+ good,10.00007,test string3,60.00008
+5000:+ good,10.00007,oracle,38.00007
+5000:- test string2,80.00008,test string3,60.00008
+5000:- test string3,60.00008,test string3,60.00008
+5000:- oracle,38.00007,test string3,60.00008
+5000:- good,10.00007,test string3,60.00008
+5000:+ test string2,80.00008,good,10.00007
+5000:+ test string3,60.00008,good,10.00007
+5000:+ oracle,38.00007,good,10.00007
+5000:+ good,10.00007,good,10.00007
+6000:- test string2,80.00008,oracle,38.00007
+6000:- test string2,80.00008,good,10.00007
+6000:+ test string,86.00003,oracle,38.00007
+6000:+ test string,86.00003,good,10.00007
+6000:- test string3,60.00008,oracle,38.00007
+6000:- oracle,38.00007,oracle,38.00007
+6000:- good,10.00007,oracle,38.00007
+6000:- test string,86.00003,oracle,38.00007
+6000:+ test string3,60.00008,test string,86.00003
+6000:+ oracle,38.00007,test string,86.00003
+6000:+ good,10.00007,test string,86.00003
+6000:+ test string,86.00003,test string,86.00003
+7000:- test string3,60.00008,good,10.00007
+7000:- test string3,60.00008,test string,86.00003
+7000:+ oracle,85.00006,good,10.00007
+7000:+ oracle,85.00006,test string,86.00003
+7000:- oracle,38.00007,good,10.00007
+7000:- good,10.00007,good,10.00007
+7000:- test string,86.00003,good,10.00007
+7000:- oracle,85.00006,good,10.00007
+7000:+ oracle,38.00007,oracle,85.00006
+7000:+ good,10.00007,oracle,85.00006
+7000:+ test string,86.00003,oracle,85.00006
+7000:+ oracle,85.00006,oracle,85.00006
+8000:- oracle,38.00007,test string,86.00003
+8000:- oracle,38.00007,oracle,85.00006
+8000:+ oracle,27.00007,test string,86.00003
+8000:+ oracle,27.00007,oracle,85.00006
+8000:- good,10.00007,test string,86.00003
+8000:- test string,86.00003,test string,86.00003
+8000:- oracle,85.00006,test string,86.00003
+8000:- oracle,27.00007,test string,86.00003
+8000:+ good,10.00007,oracle,27.00007
+8000:+ test string,86.00003,oracle,27.00007
+8000:+ oracle,85.00006,oracle,27.00007
+8000:+ oracle,27.00007,oracle,27.00007
+9000:- good,10.00007,oracle,85.00006
+9000:- good,10.00007,oracle,27.00007
+9000:+ ibm,21.00007,oracle,85.00006
+9000:+ ibm,21.00007,oracle,27.00007
+9000:- test string,86.00003,oracle,85.00006
+9000:- oracle,85.00006,oracle,85.00006
+9000:- oracle,27.00007,oracle,85.00006
+9000:- ibm,21.00007,oracle,85.00006
+9000:+ test string,86.00003,ibm,21.00007
+9000:+ oracle,85.00006,ibm,21.00007
+9000:+ oracle,27.00007,ibm,21.00007
+9000:+ ibm,21.00007,ibm,21.00007

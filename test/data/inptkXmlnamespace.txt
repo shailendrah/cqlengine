@@ -1,0 +1,4 @@
+x
+3000 "<emps xmlns=\"http://example.com\"><emp empno=\"1\" deptno=\"10\" ename=\"John\" salary=\"21000\"/><emp empno=\"2\" deptno=\"10\" ename=\"Jack\" salary=\"310000\"/><emp empno=\"3\" deptno=\"20\" ename=\"Jill\" salary=\"100001\"/></emps>"
+h 4000
+

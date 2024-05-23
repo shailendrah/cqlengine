@@ -1,0 +1,92 @@
+-9223372036854775808:+ 0,,<parent/>
+
+1000:- 0,,<parent/>
+
+1000:+ 1,10,<parent>
+   <value>10</value>
+</parent>
+
+2000:- 1,10,<parent>
+   <value>10</value>
+</parent>
+
+2000:+ 2,30,<parent>
+   <value>10</value>
+   <value>20</value>
+</parent>
+
+3000:- 2,30,<parent>
+   <value>10</value>
+   <value>20</value>
+</parent>
+
+3000:+ 3,50,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+</parent>
+
+4000:- 3,50,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+</parent>
+
+4000:+ 4,70,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+</parent>
+
+5000:- 4,70,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+</parent>
+
+5000:+ 5,90,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+</parent>
+
+6000:- 5,90,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+</parent>
+
+6000:+ 6,120,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>30</value>
+</parent>
+
+7000:- 6,120,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>30</value>
+</parent>
+
+7000:+ 7,160,<parent>
+   <value>10</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>20</value>
+   <value>30</value>
+   <value>40</value>
+</parent>
+

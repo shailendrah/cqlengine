@@ -1,0 +1,44 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     elementFormDefault="qualified">
+ 
+<xsd:simpleType name="nonNegativeDecimal">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minInclusive value="0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="distanceUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="mile"/>
+    <xsd:enumeration value="km"/>
+    <xsd:enumeration value="kilometer"/>
+    <xsd:enumeration value="meter"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="timeUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="minute"/>
+    <xsd:enumeration value="hour"/>
+    <xsd:enumeration value="second"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:element name="batch_route_response">
+  <xsd:complexType>               
+    <xsd:sequence>
+      <xsd:element name="route" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+          <xsd:attribute name="step_count" type="xsd:nonNegativeInteger" fixed="0" use="required"/>
+          <xsd:attribute name="distance" type="nonNegativeDecimal" use="required"/>
+          <xsd:attribute name="distance_unit" type="distanceUnit" use="required"/>
+          <xsd:attribute name="time" type="nonNegativeDecimal" use="required"/>
+          <xsd:attribute name="time_unit" type="timeUnit" use="required"/>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+  </xsd:complexType>
+</xsd:element>
+</xsd:schema>

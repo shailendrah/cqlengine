@@ -1,0 +1,23 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> register stream tkxmltype_S1 (c1 integer, c2 xmltype) </CEP_DDL>
+<CEP_DDL> register stream tkxmltype_S2 (c1 integer, c2 xmltype) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkxmltype_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata67inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create view  tkXmltypeNeg_v1 as IStream(select c1, xmlagg(xmlelement("c2",c2)) as c2xml from tkxmltype_S1[rows 10] group by c1)</CEP_DDL>
+
+<CEP_DDL> create view Rwindow1 as select * from tkxmltype_S1[range 10] </CEP_DDL>
+
+<CEP_DDL> create view Rwindow2 as select * from tkxmltype_S2[range 20] </CEP_DDL>
+
+<CEP_DDL> create view  tkXmltypeNeg_v2 as Rwindow1 INTERSECT Rwindow2</CEP_DDL>
+
+<CEP_DDL> create view v3 as select avg(c1) from tkxmltype_S1 order by c2 </CEP_DDL>
+
+<CEP_DDL> create view v4 as select avg(c1) from tkxmltype_S2 group by c2 </CEP_DDL> 
+
+<CEP_DDL> create view v5 as select sum(avg(c1)) from tkxmltype_S2  </CEP_DDL> 
+
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

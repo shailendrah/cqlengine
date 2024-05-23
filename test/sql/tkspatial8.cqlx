@@ -1,0 +1,76 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+    <CEP_DDL> register stream tkspatial_S6 (c1 integer, c2 float) </CEP_DDL>
+    <CEP_DDL> <![CDATA[ alter stream tkspatial_S6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS6.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<!-- more geometries -->
+<CEP_DDL><![CDATA[ 
+        register view cgeoms(
+          square1 oracle.spatial.geometry.JGeometry,
+          square2 oracle.spatial.geometry.JGeometry,
+          square3 oracle.spatial.geometry.JGeometry,
+          square4 oracle.spatial.geometry.JGeometry,
+          square5 oracle.spatial.geometry.JGeometry,
+          testpoint oracle.spatial.geometry.JGeometry,
+          point oracle.spatial.geometry.JGeometry,
+          line1 oracle.spatial.geometry.JGeometry,
+          multiline1 oracle.spatial.geometry.JGeometry,
+          surface1 oracle.spatial.geometry.JGeometry,
+          polygon1 oracle.spatial.geometry.JGeometry,
+          multipoint1 oracle.spatial.geometry.JGeometry,
+          rectangle1 oracle.spatial.geometry.JGeometry,
+          circle1 oracle.spatial.geometry.JGeometry,
+          testpoint1 oracle.spatial.geometry.JGeometry
+        ) as    
+        select 
+        com.oracle.cep.cartridge.spatial.Geometry.createRectangle(0, 1.0d, 1.0d, 2.0d, 2.0d) as square1,
+        com.oracle.cep.cartridge.spatial.Geometry.createRectangle(0, 0.0d, 0.0d, 2.0d, 2.0d) as square2,
+        com.oracle.cep.cartridge.spatial.Geometry.createRectangle(0, 2.0d, 2.0d, 4.0d, 4.0d) as square3,
+        com.oracle.cep.cartridge.spatial.Geometry.createRectangle(0, 0.9d, 0.9d, 2.1d, 2.1d) as square4,
+        com.oracle.cep.cartridge.spatial.Geometry.createRectangle(0, 1.1d, 1.1d, 2.1d, 2.1d) as square5,
+        com.oracle.cep.cartridge.spatial.Geometry.createPoint@cartesian(0,0.0d,0.0d) as testpoint,
+        com.oracle.cep.cartridge.spatial.Geometry.createGeometry(com.oracle.cep.cartridge.spatial.Geometry.GTYPE_POINT, 0,    EINFOGENERATOR@cartesian(1,3001,1), ORDSGENERATOR@cartesian(1.0d,2.0d)) as point1,
+        com.oracle.cep.cartridge.spatial.Geometry.createLinearLineString(0, ORDSGENERATOR@cartesian(2.0d,0.0d,2.0d,4.0d,2.0d,4.0d)) as line1, 
+        com.oracle.cep.cartridge.spatial.Geometry.createGeometry(com.oracle.cep.cartridge.spatial.Geometry.GTYPE_COLLECTION, 0, EINFOGENERATOR@cartesian(1,2,1,7,2,1),ORDSGENERATOR@cartesian(1.0d,5.0d,3.0d,7.0d,5.0d,5.0d,6.0d,4.0d,8.0d,2.0d,10.0d,4.0d)) as multiline1,
+        com.oracle.cep.cartridge.spatial.Geometry.createLinearPolygon(0,ORDSGENERATOR@cartesian(1.0d,1.0d,2.0d,-1.0d,3.0d,1.0d,2.0d,2.0d,1.0d,1.0d)) as surface1,
+        com.oracle.cep.cartridge.spatial.Geometry.createLinearPolygon(0,ORDSGENERATOR@cartesian(2.0d,4.0d, 4.0d,3.0d, 10.0d,3.0d, 13.0d,5.0d, 13.0d,9.0d, 11.0d,13.0d, 5.0d,13.0d, 2.0d,11.0d, 2.0d,4.0d,7.0d,5.0d, 7.0d,10.0d, 10.0d,10.0d, 10.0d,5.0d, 7.0d,5.0d)) as polygon1,
+        com.oracle.cep.cartridge.spatial.Geometry.createGeometry(com.oracle.cep.cartridge.spatial.Geometry.GTYPE_MULTIPOINT,0,EINFOGENERATOR@cartesian(1, 1, 3),ORDSGENERATOR@cartesian(1.0d,1.0d, 3.0d,1.0d, 2.0d,2.0d)) as multipoint1,
+        com.oracle.cep.cartridge.spatial.Geometry.createRectangle(0, 1.0d, 1.0d, 2.0d, 2.0d) as rectangle1,
+        com.oracle.cep.cartridge.spatial.Geometry.createCircle@cartesian(0,2.0d,2.0d,1.0d) as circle1,
+        com.oracle.cep.cartridge.spatial.Geometry.createPoint@cartesian(0,2.0d,2.0d) as testpoint1
+                    from tkspatial_S6[NOW]
+]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ 
+        create query qgeometries1 as
+        select ANYINTERACT@cartesian(cv.square1, cv.testpoint, 1.0d) as any_square1,
+               ANYINTERACT@cartesian(cv.square2, cv.testpoint, 1.0d) as any_square2,
+               ANYINTERACT@cartesian(cv.square3, cv.testpoint, 1.0d) as any_square3,
+               ANYINTERACT@cartesian(cv.square4, cv.testpoint, 1.0d) as any_square4,
+               ANYINTERACT@cartesian(cv.square5, cv.testpoint, 1.0d) as any_square5,
+               ANYINTERACT@cartesian(cv.circle1, cv.testpoint1, 1.0d) as any_circle1,
+               CONTAIN@cartesian(cv.square1, cv.testpoint, 1.0d) as contain_square1,
+               CONTAIN@cartesian(cv.square2, cv.testpoint, 1.0d) as contain_square2,
+               CONTAIN@cartesian(cv.square3, cv.testpoint, 1.0d) as contain_square3,
+               CONTAIN@cartesian(cv.square4, cv.testpoint, 1.0d) as contain_square4,
+               CONTAIN@cartesian(cv.square5, cv.testpoint, 1.0d) as contain_square5,
+               CONTAIN@cartesian(cv.circle1, cv.testpoint1, 1.0d) as contain_circle1,
+               WITHINDISTANCE@cartesian(cv.square1, cv.testpoint, 1.0d) as wdist_square1,
+               WITHINDISTANCE@cartesian(cv.square2, cv.testpoint, 1.0d) as wdist_square2,
+               WITHINDISTANCE@cartesian(cv.square3, cv.testpoint, 1.0d) as wdist_square3,
+               WITHINDISTANCE@cartesian(cv.square4, cv.testpoint, 1.0d) as wdist_square4,
+               WITHINDISTANCE@cartesian(cv.square5, cv.testpoint, 1.0d) as wdist_square5,
+               WITHINDISTANCE@cartesian(cv.circle1, cv.testpoint, 2.0d) as wdist_circle1,
+               INSIDE@cartesian(cv.testpoint, cv.square1, 1.0d) as inside_square1,
+               INSIDE@cartesian(cv.testpoint, cv.square2, 1.0d) as inside_square2,
+               INSIDE@cartesian(cv.testpoint, cv.square3, 1.0d) as inside_square3,
+               INSIDE@cartesian(cv.testpoint, cv.square4, 1.0d) as inside_square4,
+               INSIDE@cartesian(cv.testpoint, cv.square5, 1.0d) as inside_square5,
+               INSIDE@cartesian(cv.testpoint, cv.circle1, 1.0d) as inside_circle1
+        from cgeoms as cv
+]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query qgeometries1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/spatial_geoms1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query qgeometries1 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+
+

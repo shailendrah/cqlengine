@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>create stream tklrbdemo_CarLoc (data_type integer, time_pos integer, car_id integer, speed integer, exp_way integer, lane integer, dir integer, segment integer, x_pos integer,qyrid integer, startseg integer, endseg integer, dayofweek integer, minofday integer, weekday integer) </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter stream tklrbdemo_CarLoc add source "<EndPointReference><Address>file://@TEST_DATA@/@DATAFILE@</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>create relation tklrbdemo_Offsets (val integer) </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter relation tklrbdemo_Offsets add source "<EndPointReference><Address>file://@TEST_DATA@/tklrbdemo_Offsets.dat</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>register view tklrbdemo_CarLocStr (car_id integer, speed integer, exp_way integer, lane integer, dir integer, x_pos integer) as select car_id, speed, exp_way, lane, dir, x_pos from tklrbdemo_CarLoc where tklrbdemo_CarLoc.data_type = 0 </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklrbdemo_CarSegStr (car_id integer, speed integer, exp_way integer, lane integer, dir integer, seg integer) as select car_id, speed, exp_way, lane, dir, x_pos / 5280 as seg from tklrbdemo_CarLocStr  ]]></CEP_DDL>
+
+<CEP_DDL>register view tklrbdemo_CurCarSeg(car_id, exp_way, lane, dir, seg) as select car_id, exp_way, lane, dir, seg from tklrbdemo_CarSegStr [range 30 seconds] </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklrbdemo_SegAvgSpeed (exp_way integer, lane integer, dir integer, seg integer, avg_speed float) as select exp_way, lane, dir, seg, avg(speed) as avg_speed from tklrbdemo_CarSegStr [range 5 minutes] group by exp_way, lane, dir, seg ]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklrbdemo_SegVol (exp_way integer, lane integer, dir integer, seg integer, volume integer) as select exp_way, lane, dir, seg, count(*) as volume from tklrbdemo_CurCarSeg group by exp_way, lane, dir, seg having count(*) > 50 ]]> </CEP_DDL>
+
+<!-- 
+
+<CEP_DDL>register view tklrbdemo_AccCars(car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select car_id, max(exp_way) as exp_way, max(lane) as lane, max(dir) as dir, max(x_pos/5280) as seg from tklrbdemo_CarLocStr [partition by car_id rows 4 range 120 seconds] group by car_id having max(x_pos) = min(x_pos) and count(car_id) = 4 </CEP_DDL>
+
+-->
+
+<CEP_DDL>register view tklrbdemo_AccStrm(car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select T.car_id as car_id, T.exp_way as exp_way, T.lane as lane, T.dir as dir, T.seg as seg from tklrbdemo_CarLocStr MATCH_RECOGNIZE (partition by car_id MEASURES A.car_id as car_id, A.exp_way as exp_way, A.lane as lane, A.dir as dir, A.x_pos/5280 as seg ALL MATCHES PATTERN(A) DEFINE A as (A.x_pos = prev(A.x_pos,3,91000000000L) AND A.lane = prev(A.lane,3,91000000000L) AND A.dir = prev(A.dir,3,91000000000L) AND A.exp_way = prev(A.exp_way,3,91000000000L))) as T </CEP_DDL>
+
+<CEP_DDL>register view tklrbdemo_AccCars(car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select car_id, exp_way, lane, dir, seg from tklrbdemo_AccStrm[range 30 seconds] </CEP_DDL>
+
+<CEP_DDL>register view tklrbdemo_AccSeg(exp_way integer, lane integer, dir integer, seg integer) as select distinct exp_way, lane, dir, seg from tklrbdemo_AccCars </CEP_DDL>
+
+<!--
+
+<CEP_DDL><![CDATA[ alter query tklrbdemo_QAccStrm add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/accSeg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+-->
+
+<CEP_DDL>create query tklrbdemo_QAccStrm as select distinct seg from tklrbdemo_AccSeg </CEP_DDL>
+
+<CEP_DDL>create query tklrbdemo_QSegSpeed as select seg, avg_speed from tklrbdemo_SegAvgSpeed where seg in (8 ,12 , 15, 89, 14, 10) </CEP_DDL>
+
+<!--<CEP_DDL><![CDATA[ alter query tklrbdemo_QAccStrm add destination "<EndPointReference><Address>java://oracle.cep.test.DBDestination</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query tklrbdemo_QSegSpeed add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSegSpeed.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+-->
+
+<CEP_DDL><![CDATA[ alter query tklrbdemo_QAccStrm add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.test.DBDestination</ClassName><Arguments><Argument>tklrbdemo_AccSeg</Argument></Arguments></Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query tklrbdemo_QSegSpeed add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.test.DBDestination</ClassName><Arguments><Argument>SegSpeed</Argument></Arguments></Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tklrbdemo_QAccStrm start </CEP_DDL>
+
+<CEP_DDL>alter query tklrbdemo_QSegSpeed start </CEP_DDL>
+
+<CEP_DDL> alter system run duration=1000000000 </CEP_DDL>
+
+</CEP>

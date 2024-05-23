@@ -1,0 +1,84 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelAlias_Phase2TestTable(c1 integer, c2 float, c3 char(10), eid bigint) archiver BIArchiver entity "soainfra.Phase2TestTable" event identifier eid</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelAlias_Phase2TestTable add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpPhase2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!--Subquery based CQL query. Project below project. Expression is aliased and attrs are not. Aliases from lower project are re-used-->
+<CEP_DDL> <![CDATA[ create query tkArchivedRelAlias_q1 as select n1,c3 from(select c1+4 as n1, c2, c3 from tkArchivedRelAlias_Phase2TestTable) as s1 where (n1 > 4) ]]></CEP_DDL>
+
+<!-- multiple sub-queries -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q2 as select someExpr from (select S1.n2, n1, someExpr from (select (case c1 when 10 then 1 when 20 then 2 else 5 end) as someExpr, c1 as n1, (c1+c2) as n2 from tkArchivedRelAlias_Phase2TestTable) as S1) as S2 where n1 > 4 ]]></CEP_DDL>
+
+<!-- aggr distinct, only attr in group by -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q3 as select sum(distinct c1) from tkArchivedRelAlias_Phase2TestTable group by c3]]></CEP_DDL>
+
+<!-- aggr distinct, only expr in group by -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q4 as select sum(distinct c1) from tkArchivedRelAlias_Phase2TestTable group by c3||'unmesh']]></CEP_DDL>
+
+<!-- aggr distinct, attr and expr both in group by -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q5 as select sum(distinct c1) from tkArchivedRelAlias_Phase2TestTable group by c1+c2, c3]]></CEP_DDL>
+
+<!-- expr in distinct. group by attr only -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q6 as select sum(distinct c1+c2) from tkArchivedRelAlias_Phase2TestTable group by c1 ]]></CEP_DDL>
+
+<!-- same expr in distinct and group by -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q7 as select sum(distinct c1+c2) from tkArchivedRelAlias_Phase2TestTable group by c1+c2, c2+3.4 ]]></CEP_DDL>
+
+<!-- aggr without distinct, using an attr and expr in group by -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q8 as select sum(c1+c2) from tkArchivedRelAlias_Phase2TestTable group by c1+c2, c2 ]]></CEP_DDL>
+
+<!-- query demonstrating the need to bypass useless project opt if query is based on archived rel -->
+<CEP_DDL><![CDATA[ create query tkArchivedRelAlias_q9 as select p1 from (select n1, n2 as p1 from ( select c1 as n1, c2 as n2 from tkArchivedRelAlias_Phase2TestTable) as S1 ) as S2]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q2 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q3 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q4 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q5 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q6 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q7 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q8 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelAlias_q9 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedRelAlias_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- start_time specified here is assumed to be in nanoseconds -->
+<CEP_DDL> alter query tkArchivedRelAlias_q1 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q2 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q3 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q4 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q5 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q6 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q7 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q8 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelAlias_q9 set start_time 1000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedRelAlias_q1 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q2 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q3 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q4 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q5 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q6 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q7 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q8 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelAlias_q9 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+</CEP>

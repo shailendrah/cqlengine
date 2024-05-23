@@ -1,0 +1,496 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata2_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S2 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S3 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S4 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S5 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S6 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S7 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S8 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S9 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_S10(c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_S11(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_S12(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register relation tkdata2_R1 (d1 integer, d2 float) </CEP_DDL>
+<CEP_DDL> register relation tkdata2_R6 (d1 integer, d2 timestamp) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_S15(c1 integer, c2 timestamp) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_S13(c1 integer, c2 timestamp) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S14 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_S16 (c1 float) </CEP_DDL>
+<CEP_DDL> create relation tkdata2_R5454682(d1 integer, d2 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SP1(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> register relation tkdata2_RP1(d1 integer, rname char(10)) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S17(c1 integer, c2 float, c3 timestamp, c4 interval) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SCr1(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S18(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_STs1(c1 integer, c2 char(20)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_STs2(c1 integer, c2 char(20)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SNVL(c1 char(20), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_STs3(c1 float, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_STs4(c1 timestamp, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SN1(c1 char(20), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SN2(c1 timestamp, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SLk1(first1 char(20), last1 char(20)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SIn1(c1 integer, c2 interval) </CEP_DDL>
+<CEP_DDL> register relation tkdata2_RIn1(c1 integer, c2 interval) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_STs(c1 timestamp, c2 timestamp) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_SByt(c1 integer, c2 byte(2)) </CEP_DDL>
+<CEP_DDL> create stream tkdata2_STsNegative(c1 char(20), c2 char(20)) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S19(c1 integer) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_S20(c1 integer) </CEP_DDL>
+<CEP_DDL> create window tkdata2_range_slide(winrange int, winslide int) implement using "oracle.cep.extensibility.windows.builtin.RangeSlide" </CEP_DDL>
+<CEP_DDL> create function tkdata2_fib(n int) return int as language java name "oracle.cep.test.userfunctions.TkUsrFib" </CEP_DDL>
+<CEP_DDL> create function tkdata2_fib(n float) return int as language java name "oracle.cep.test.userfunctions.TkUsrFib2" </CEP_DDL>
+<CEP_DDL> create function tkdata2_concat2(c1 char, c2 char) return char as language java name "oracle.cep.test.userfunctions.TkUsrConcat" </CEP_DDL>
+<CEP_DDL> create function tkdata2_substring(c1 char, first1 int, last1 int) return char as language java name "oracle.cep.test.userfunctions.TkUsrSubstring" </CEP_DDL>
+<CEP_DDL> create function tkdata2_secondMax(c1 int) return int aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkdata2_var(c1 int) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkdata2_bytTest(c1 byte) return byte as language java name "oracle.cep.test.userfunctions.TkUsrBytManip" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]></CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS2.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS3.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS4.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS5.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS6.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S7 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS7.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S9 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S11 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S12 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata2_R1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpR1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata2_R6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpR6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S13 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S14 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S16 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata2_R5454682 add source "<EndPointReference><Address>file://@TEST_DATA@/inp5454682.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata2_RP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpRP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter stream tkdata2_S17 add source push </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SCr1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCr1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S18 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S19 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata2_S19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S20 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata2_S20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_STs1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTs1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_STs2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTs2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SNVL add source "<EndPointReference><Address>file://@TEST_DATA@/inpSNVL.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_STs3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTs3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_STs4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTs4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SN1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSN1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SN2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSN2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SLk1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSLk1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SIn1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSIn1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata2_RIn1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpRIn1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_STs add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_SByt add source "<EndPointReference><Address>file://@TEST_DATA@/inpSByt.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_STsNegative add source "<EndPointReference><Address>file://@TEST_DATA@/inpSTsNegative.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata2_v0 (c1 integer, c2 float) as select * from tkdata2_S0 </CEP_DDL>
+<CEP_DDL> register view tkdata2_v1 (c1 integer, c2 float) as select * from tkdata2_S1 </CEP_DDL>
+<CEP_DDL> register view tkdata2_v2 (c1, c2) as select * from tkdata2_S1 </CEP_DDL>
+<CEP_DDL> register view tkdata2_v3 (c1, s2) as select * from tkdata2_S1 </CEP_DDL>
+<CEP_DDL> register view tkdata2_v5 (c1, c2) as tkdata2_S3 union all tkdata2_S4 </CEP_DDL>
+<CEP_DDL> register view tkdata2_v6 (c1 integer, c2 float) as select  *  from   tkdata2_S0 [range 1] </CEP_DDL>
+<CEP_DDL> register view tkdata2_v7 (c1 integer, c2 timestamp) as select * from tkdata2_S15 </CEP_DDL>
+<CEP_DDL> register view tkdata2_v8 (c1 integer, c2 float) as select * from tkdata2_S0[range 2] </CEP_DDL>
+<CEP_DDL> register view tkdata2_v9 (c1 integer, c2 timestamp) as select * from tkdata2_S15 </CEP_DDL>
+<CEP_DDL> register view tkdata2_v10 (c1 integer, c2 float) as select * from tkdata2_S0[rows 500] </CEP_DDL>
+<CEP_DDL> register view tkdata2_v11 (c1 integer, c2 float) as select * from tkdata2_S1[rows 500] </CEP_DDL>
+<CEP_DDL> register view tkdata2_v12 (c1 integer, c2 float) as select * from tkdata2_S2[rows 500] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q201 as select * from tkdata2_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q202 as select * from tkdata2_v0 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q204 as select * from tkdata2_S2 [rows 5] where tkdata2_S2.c1 > 10 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q205 as select * from tkdata2_S0 [range 1] as a, tkdata2_S0 [range 1] as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q206 as tkdata2_S1 union all tkdata2_S2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q207 as select * from tkdata2_S1 [range 5 minutes] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q208 as select * from tkdata2_v5 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q209 as select * from tkdata2_S2 [range 5 minutes] where tkdata2_S2.c1 > 10 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q210 as select * from tkdata2_S3 [range 5 minutes] where tkdata2_S3.c1 > 10 and tkdata2_S3.c2 > 20.0 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q212 as select * from tkdata2_S5 [range 2 minutes], tkdata2_S6 [range 2 minutes] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q213 as IStream(select (c1+10)*2, c2+1.5 from tkdata2_S7[range unbounded] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_q214 as DStream(select (c1+10)*2, c2+1.5 from tkdata2_S8[range unbounded] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_q215 as IStream(select * from tkdata2_S5 [range 2 minutes], tkdata2_S6 [range 2 minutes]) </CEP_DDL>
+<CEP_DDL> create query tkdata2_q216 as DStream(select * from tkdata2_S5 [range 2 minutes], tkdata2_S6 [range 2 minutes]) </CEP_DDL>
+<CEP_DDL> create query tkdata2_q217 as select * from tkdata2_S2 [range 1000], tkdata2_S3 [range 1000] where tkdata2_S2.c1 = tkdata2_S3.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q218 as select * from tkdata2_S2 [range 1000], tkdata2_S3 [range 1000] where tkdata2_S2.c1 > tkdata2_S3.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q219 as select * from tkdata2_v1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q220 as select * from tkdata2_R1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q222 as select max(c1) as maxc1, avg(c1) as avgc1 from tkdata2_S9[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q223 as select c2, min(c1), avg(c1) from tkdata2_S9[range 10] group by c2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q224 as select * from tkdata2_S10 where c2 = "abc" </CEP_DDL>
+<CEP_DDL> create query tkdata2_q225 as select c1 as val, tkdata2_fib(c1) as fibc1, tkdata2_fib(tkdata2_fib(tkdata2_fib(c1)+1)+1) as nestedfunc, tkdata2_concat2(c2, c2) as stringfunc, tkdata2_concat2(tkdata2_concat2(c2, c2), tkdata2_concat2(c2, c2)) as nestedstrfunc, tkdata2_substring(tkdata2_concat2(tkdata2_concat2(c2, c2),tkdata2_concat2(c2, c2)), c1+2, c1+3) as difftypesfunc from tkdata2_S10 where tkdata2_concat2(c2, "abc") = "abcabc" </CEP_DDL>
+<CEP_DDL> create query tkdata2_q227 as select max(c1), tkdata2_secondMax(c1) from tkdata2_S9[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q228 as select max(c1), tkdata2_secondMax(c1), tkdata2_var(c1) from tkdata2_S9[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q229 as select c2, max(c1), tkdata2_secondMax(c1) from tkdata2_S9[range 10] group by c2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q230 as select tkdata2_var(c1) from tkdata2_S9[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q231 as select * from tkdata2_S11[range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q232 as select * from tkdata2_v6 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q233 as select * from tkdata2_S12 [range 10 slide 5] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q234 as select * from tkdata2_S12 [range 10 slide 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q236 as select * from tkdata2_R6 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q237 as select * from tkdata2_S13[range 1] as a, tkdata2_S14[range 1] as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q238 as select * from tkdata2_S11[range 1000], tkdata2_S15[range 1000] where tkdata2_S11.c1 > tkdata2_S15.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q239 as select * from tkdata2_S15 where tkdata2_S15.c1 > 2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q240 as select * from tkdata2_S15 where tkdata2_S15.c2 = to_timestamp("08/07/2006 11:13:48") </CEP_DDL>
+<CEP_DDL> create query tkdata2_q241 as select tkdata2_S15.c2 from tkdata2_S15 where tkdata2_S15.c2 > to_timestamp("08/07/2006 11:13:48") </CEP_DDL>
+<CEP_DDL> create query tkdata2_q242 as select * from tkdata2_S13[range 1000], tkdata2_S15[range 1000] where tkdata2_S13.c2 > tkdata2_S15.c2 </CEP_DDL>
+<!-- commenting this query for now 
+<CEP_DDL> create query tkdata2_q243 as select max(c2) from tkdata2_S15[range 5] group by c1 </CEP_DDL>
+-->
+<CEP_DDL> create query tkdata2_q244 as select * from tkdata2_R5454682 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q245 as tkdata2_v10 except tkdata2_v11 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q246 as tkdata2_v10 except tkdata2_v12 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q247 as tkdata2_v6 except tkdata2_R1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q248 as tkdata2_R1 except tkdata2_v6 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q249 as tkdata2_R1 union all tkdata2_v6 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q250 as tkdata2_v6 union all tkdata2_v8 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q251 as select * from tkdata2_v7 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q252 as select * from tkdata2_SP1 [partition by c1 rows 1] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q253 as select * from tkdata2_SP1 [partition by c1 rows 2] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q254 as select c1, name, rname from tkdata2_SP1 [partition by c1 rows 1], tkdata2_RP1 where tkdata2_SP1.c1 = tkdata2_RP1.d1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q255 as select c1, name, rname from tkdata2_SP1 [partition by c1 rows 2], tkdata2_RP1 where tkdata2_SP1.c1 = tkdata2_RP1.d1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q256 as select * from tkdata2_S11[range 1] as a, tkdata2_S15[range 1] as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q257 as select * from tkdata2_S0 where tkdata2_S0.c1 != 20 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q258 as select * from tkdata2_S0[rows 100], tkdata2_S1[rows 100] where tkdata2_S0.c2 != tkdata2_S1.c2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q259 as select * from tkdata2_SP1[rows 100], tkdata2_S11[rows 100] where tkdata2_SP1.name != tkdata2_S11.name </CEP_DDL>
+<CEP_DDL> create query tkdata2_q260 as select * from tkdata2_v9 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q261 as select * from tkdata2_S17 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q262 as select length(c2) from tkdata2_S10 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q263 as select length(c2 || c2) + 1 from tkdata2_S10 where length(c2) = 2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q264 as select c2 || "xyz" from tkdata2_S10 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q265 as select c2 || c2 from tkdata2_S10 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q266 as select (sum(c1) + max(c1)) *2 from tkdata2_S1[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q267 as select c2 + avg(c1) from tkdata2_S1[range 10] group by c2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q268 as select sum(c1+4) from tkdata2_S1[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q269 as select max(c1-(c1*2)) from tkdata2_S1[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q270 as select tkdata2_secondMax(2*c1) from tkdata2_S1[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q271 as select sum(c1), min(c1+1), tkdata2_secondMax(c1*2) from tkdata2_S2[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q272 as select sum(c1+4),max(c1*2) from tkdata2_S2[range 10] group by c2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q273 as select concat(concat(c2, c2), c2) from tkdata2_S10 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q274 as select c1, tkdata2_fib(c1), c2, tkdata2_fib(c2) from tkdata2_S18 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q275 as select to_timestamp(c2) from tkdata2_STs1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q276 as select to_timestamp(c2, "yyMMddHHmmss") from tkdata2_STs2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q277 as select * from tkdata2_STs2 where to_timestamp(c2,"yyMMddHHmmss") = to_timestamp("09/07/2005 10:13:48") </CEP_DDL>
+<CEP_DDL> create query tkdata2_q279 as select nvl(c1,5) from tkdata2_S11 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q280 as select * from tkdata2_S11 where nvl(c1,5) > 3 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q281 as select nvl(c1,"abcd") from tkdata2_SNVL </CEP_DDL>
+<CEP_DDL> create query tkdata2_q282 as select nvl(to_float(c1), 5.2) from tkdata2_S11 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q283 as select nvl(c1,5) from tkdata2_STs3 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q284 as select nvl(c1,to_timestamp("09/07/2005 10:13:48")) from tkdata2_STs4 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q285 as select tkdata2_STs4.c2 from tkdata2_STs4 where nvl(tkdata2_STs4.c1,to_timestamp("09/07/2005 10:13:48")) = to_timestamp("09/07/2005 10:13:48") </CEP_DDL>
+<CEP_DDL> create query tkdata2_q286 as select * from tkdata2_S15 where c1 is null </CEP_DDL>
+<CEP_DDL> create query tkdata2_q287 as select * from tkdata2_SN1 where c1 is null </CEP_DDL>
+<CEP_DDL> create query tkdata2_q288 as select * from tkdata2_SN2 where c1 is null </CEP_DDL>
+<CEP_DDL> create query tkdata2_q289 as select * from tkdata2_S10 where tkdata2_S10.c2 like "ab" </CEP_DDL>
+<CEP_DDL> create query tkdata2_q290 as select * from tkdata2_S10 where concat(concat(c2, c2), c2) like "(abc)+" </CEP_DDL>
+<CEP_DDL> create query tkdata2_q291 as select * from tkdata2_SLk1 where first1 like "^Ste(v|ph)en$" </CEP_DDL>
+<CEP_DDL> create query tkdata2_q292 as select * from tkdata2_S1[range 1] as a, tkdata2_S1[range 1] as b, tkdata2_S1[range 1] as c where a.c1 = b.c1 and b.c1 = c.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q293 as select * from tkdata2_SIn1 where c2 = INTERVAL "6 1:03:45.100" DAY TO SECOND </CEP_DDL>
+<CEP_DDL> create query tkdata2_q294 as select (c2 + INTERVAL "2 1:03:45.10" DAY TO SECOND) from tkdata2_SIn1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q295 as select * from tkdata2_SIn1 where (c2 + INTERVAL "2 1:03:45.10" DAY TO SECOND) > INTERVAL "6 12:23:45.10" DAY TO SECOND </CEP_DDL>
+<CEP_DDL> create query tkdata2_q296 as select * from tkdata2_RIn1 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q297 as select tkdata2_S15.c2 - tkdata2_SIn1.c2 from tkdata2_S15[rows 500], tkdata2_SIn1[rows 500] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q298 as select tkdata2_S15.c2 + tkdata2_SIn1.c2 from tkdata2_S15[rows 500], tkdata2_SIn1[rows 500] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q299 as select tkdata2_SIn1.c2 + tkdata2_S15.c2 from tkdata2_S15[rows 500], tkdata2_SIn1[rows 500] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q300 as select tkdata2_STs.c1 - tkdata2_STs.c2 from tkdata2_STs </CEP_DDL>
+<CEP_DDL> create query tkdata2_q301 as select * from tkdata2_S12 [tkdata2_range_slide(10,5)] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q302 as select tkdata2_bytTest(c2) from tkdata2_SByt[range 2] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q303 as select c1+null, null, c1*null, null/c1 from tkdata2_S11[range 1]</CEP_DDL> 
+<CEP_DDL> create query tkdata2_q304 as select concat(name, null) from tkdata2_S11[range 1]</CEP_DDL> 
+<CEP_DDL> create query tkdata2_q305 as select -10+-5, 10+-5, -10+5, +10-+5,10-+5, +10-5 from tkdata2_S9[range 1 millisecond]</CEP_DDL>
+<CEP_DDL> create query tkdata2_q306 as select -2.27, +4.68, 5*-10/+20, 5*-10/-20-5-5 from tkdata2_S9[range 1 millisecond]</CEP_DDL>
+<CEP_DDL> create query tkdata2_q307 as select -10++5, +10--5 ,++++5, -----5, -c1,+c2 from tkdata2_S9[range 1 millisecond]</CEP_DDL>
+<CEP_DDL> create query tkdata2_q308 as select max(-c1) from tkdata2_S13[range 2] where -c1 >= -30</CEP_DDL>
+<CEP_DDL> create query tkdata2_q309 as select to_timestamp(c2, null) from tkdata2_STs2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q310 as select to_timestamp(c2, 12323) from tkdata2_STs2 </CEP_DDL>
+<CEP_DDL> create query tkdata2_q311 as select to_timestamp(c1, c2) from tkdata2_STsNegative</CEP_DDL>
+
+<!-- Test for support of Relation.* type project terms -->
+<CEP_DDL> create query tkdata2_q312 as select A.* from tkdata2_S0[range 1] as A</CEP_DDL>
+
+<!-- Negative Test for support of Relation.* type project terms -->
+<CEP_DDL> create query tkdata2_q312_neg as select A.* from tkdata2_S0[range 1]</CEP_DDL>
+
+<!-- Test for support of Relation.* with multiple relations and multiple project expressions-->
+<CEP_DDL><![CDATA[ create query tkdata2_q313 as select A.c2 , B.* , C.c1, D.* from tkdata2_S0[range 1] as A, 
+tkdata2_S1[range 1] as B, tkdata2_S2[range 1] as C, tkdata2_S3[range 1] as D 
+where B.c1 > D.c1 and B.c2 is not null and D.c2 > 0f ]]> </CEP_DDL>
+
+<!-- Negative test case to ensure no aliases are allowed . Use Views with schemas instead -->
+<CEP_DDL> create query tkdata2_q313_neg as select A.* as B from tkdata2_S0[range 1] as A</CEP_DDL>
+
+<!-- Test For views using Relation.* project clause  -->
+<CEP_DDL> create view tkdata2_v13 as select A.* from tkdata2_S0[range 10] as A</CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_q314 as select c2, sum(c1) from tkdata2_v13 where c2 < 1f group by c2 ]]></CEP_DDL>
+
+<!-- Test for views with schema defined -->
+<CEP_DDL> create view tkdata2_v14(d1 integer, d2 float) as select A.* from tkdata2_S1[range 10] as A</CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata2_q315 as select d2, avg(d1) from tkdata2_v14 where d2 < 1f  and d2 != 0.2f group by d2 ]]></CEP_DDL>
+
+<!-- Test for support for Stream.* type project terms. Ensure ELEMENT_TIME is not a part of the output -->
+<CEP_DDL> create query tkdata2_q316 as select A.* from tkdata2_S0 as A</CEP_DDL>
+
+<!-- Test on views. -->
+<CEP_DDL> create query tkdata2_q317 as select A.* from tkdata2_v14 as A</CEP_DDL>
+
+<!-- Test on patterns -->
+<CEP_DDL><![CDATA[ create query tkdata2_q318 as select T.* from tkdata2_S0 MATCH_RECOGNIZE (
+          MEASURES A.c1 as c1, A.c2 as c2
+          ALL MATCHES  PATTERN (A B)
+          DEFINE A as A.c1 > 2,
+                 B as B.c1 > 3) as T ]]></CEP_DDL>
+
+<!-- Test for distinct keyword in select -->
+<CEP_DDL> create query tkdata2_q319 as select distinct A.* from tkdata2_S16[range 5] as A </CEP_DDL>
+
+<!-- Negative Test for duplicates in select expression -->
+<CEP_DDL> create view tkdata2_q319_neg as select distinct A.*, A.c1 from tkdata2_S16[range 5] as A </CEP_DDL>
+
+<!-- Query: Test to check range-slide when range is not a multiple of slide value -->
+<CEP_DDL> create query tkdata2_q320 as select * from tkdata2_S12 [range 10 slide 4] </CEP_DDL>
+
+<CEP_DDL> create query tkdata2_q321 as select * from tkdata2_S19 [range 10 slide 5] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q322 as select * from tkdata2_S20 [range 10 slide 5] </CEP_DDL>
+<CEP_DDL> create query tkdata2_q323 as select * from tkdata2_SLk1 where lk(first1, "^Ste(v|ph)en$") = true </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata2_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q202 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSv0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q204 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSrow1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q205 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0J1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q206 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outU1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q207 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q208 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outU2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q209 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q210 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q212 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q213 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSI1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q214 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSD1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q215 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSI2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q216 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSD2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q217 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSJ1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q218 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSJ2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q219 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSV1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q220 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSR1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q222 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outGA1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q223 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outGA2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q224 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q225 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outFn1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q227 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUDA1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q228 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUDA2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q229 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUDA3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q230 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUDA4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q231 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q232 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSV6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q233 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS12great.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q234 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS12equal.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q236 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q237 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q238 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSJ12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q239 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSC12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q240 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q241 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSG15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q242 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSJ15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<!-- commenting this query for now 
+<CEP_DDL> <![CDATA[ alter query tkdata2_q243 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSM15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+-->
+<CEP_DDL> <![CDATA[ alter query tkdata2_q244 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out5454682.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q245 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExc1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q246 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExc2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q247 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExc3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q248 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExc4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q249 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outU3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q250 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outU4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q251 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSV15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q252 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSP11r.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q253 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSP12r.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q254 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPRJ11r.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q255 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPRJ12r.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q256 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSB15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q257 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outINE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q258 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outFNE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q259 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCNE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q260 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outV9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q261 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outPush1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q262 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outLength1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q263 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outLength2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q264 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCon1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q265 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCon2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q266 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrExpr1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q267 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrExpr2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q268 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrExpr3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q269 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrExpr4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q270 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrExpr5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q271 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrExpr6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q272 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrExpr7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q273 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCon3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q274 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q275 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTs1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q276 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTs2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q277 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTs21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q279 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnvl1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q280 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnvlGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q281 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnvlCH.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q282 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnvlFL.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q283 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnvlIF.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q284 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnvlTS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q285 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnvl2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q286 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_q286.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q287 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnullC.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q288 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnullT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q289 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outLike.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q290 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outLike1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q291 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outLike2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q292 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMJ1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q293 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSIn1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q294 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outInAr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q295 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outInGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q296 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outInR.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q297 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTIS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q298 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTIA.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q299 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outITA.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q300 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTTS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q301 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS12great_rs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q302 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outByt.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q303 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnullexpr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q304 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnullfuncexpr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q305 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outunary1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q306 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outunary2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q307 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outunary3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q308 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outunary4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q309 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTsNull.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q311 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTsNegative.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q312 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q312.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q313 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q313.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q314 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q314.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q315 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q315.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q316 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q316.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q317 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q317.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q318 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q318.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q319 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q319.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q320 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q320.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q321 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q321.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q322 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q322.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_q323 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata2_q323.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q201 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q202 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q204 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q205 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q206 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q207 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q208 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q209 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q210 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q212 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q213 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q214 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q215 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q216 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q217 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q218 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q219 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q220 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q222 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q223 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q224 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q225 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q227 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q228 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q229 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q230 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q231 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q232 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q233 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q234 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q236 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q237 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q238 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q239 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q240 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q241 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q242 start </CEP_DDL>
+<!-- Commenting this query for now
+<CEP_DDL> alter query tkdata2_q243 start </CEP_DDL>
+-->
+<CEP_DDL> alter query tkdata2_q244 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q245 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q246 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q247 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q248 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q249 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q250 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q251 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q252 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q253 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q254 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q255 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q256 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q257 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q258 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q259 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q260 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q261 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q262 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q263 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q264 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q265 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q266 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q267 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q268 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q269 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q270 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q271 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q272 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q273 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q274 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q275 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q276 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q277 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q279 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q280 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q281 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q282 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q283 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q284 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q285 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q286 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q287 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q288 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q289 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q290 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q291 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q292 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q293 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q294 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q295 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q296 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q297 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q298 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q299 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q300 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q301 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q302 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q303 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q304 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q305 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q306 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q307 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q308 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q309 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q311 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q312 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q313 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q314 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q315 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q316 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q317 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q318 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q319 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q320 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q321 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q322 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_q323 start </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_S17 add push source "<EndPointReference><Address>file://@TEST_DATA@/pushSrc.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

@@ -1,0 +1,23 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream S1 (c1 xmltype) </CEP_DDL>
+<CEP_DDL> register stream S2(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata35inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk8290106.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create function xmlfn( i1 xmltype) return xmltype as language java name "oracle.cep.test.userfunctions.TkUsrXmlType" </CEP_DDL>
+<CEP_DDL> create function xmlfn1( i1 integer, i2 integer) return xmltype as language java name "oracle.cep.test.userfunctions.TkUsrXmlType1" </CEP_DDL>
+<CEP_DDL> create function xmlfn2( i1 xmltype) return xmltype as language java name "oracle.cep.test.userfunctions.TkUsrXmlType2" </CEP_DDL>
+<CEP_DDL> create view v1(c xmltype) as select xmlfn(c1) from S1</CEP_DDL>
+<CEP_DDL> create view v2(c xmltype) as select xmlfn1(c1, c2) from S2</CEP_DDL>
+<CEP_DDL> create view v3(c xmltype) as select xmlfn2(c1) from S1</CEP_DDL>
+
+<CEP_DDL>create query q1 as SELECT * from v1 XMLTable ('//item' PASSING BY VALUE v1.c as "." COLUMNS Name CHAR(16) PATH 'fn:data(productName)' , Quantity INTEGER PATH 'fn:data(quantity)') AS X </CEP_DDL>
+<CEP_DDL>create query q2 as SELECT * from v2 XMLTable ('//Integer' PASSING BY VALUE v2.c as "." COLUMNS Name CHAR(16) PATH 'fn:data(Value)') AS X </CEP_DDL>
+<CEP_DDL>create query q3 as select * from v3</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8290106_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8290106_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8290106_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,83 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkvaluewindow_S0 (c1 bigint, c2 timestamp, c3 char(10)) </CEP_DDL>
+<CEP_DDL> register stream tkvaluewindow_S1 (c1 bigint, c2 timestamp, c3 char(10)) </CEP_DDL>
+<CEP_DDL> register stream tkvaluewindow_S2 (c1 bigint, c2 timestamp, c3 char(10)) </CEP_DDL>
+<CEP_DDL> register stream tkvaluewindow_S3 (c1 double, c2 timestamp, c3 char(10)) </CEP_DDL>
+<CEP_DDL> register stream tkvaluewindow_S4 (c1 bigint, c2 timestamp, c3 char(10)) </CEP_DDL>
+<CEP_DDL> register stream tkvaluewindow_S5 (c1 bigint, c2 timestamp, c3 char(10)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkvaluewindow_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkvaluewindow_S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkvaluewindow_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkvaluewindow_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkvaluewindow_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkvaluewindow_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkvaluewindow_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkvaluewindow_S3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkvaluewindow_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkvaluewindow_S4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkvaluewindow_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkvaluewindow_S5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkvaluewindow_q1 as select c1, c3 from tkvaluewindow_S4 [range 3600000000000l on c1] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q2 as select c2, c3 from tkvaluewindow_S4 [range 1 hour on c2] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q3 as select c1, c3 from tkvaluewindow_S0 [CurrentPeriod("0900", "1559") on c1] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q4 as select c2, c3 from tkvaluewindow_S0 [CurrentPeriod("0900", "1559") on c2] </CEP_DDL>
+
+<CEP_DDL> create view tkvaluewindow_v1 as select * from tkvaluewindow_S1[rows 5]</CEP_DDL>
+
+<CEP_DDL> create query tkvaluewindow_q5 as select c1, c3 from tkvaluewindow_v1 [CurrentHour on c1] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q6 as select c2, c3 from tkvaluewindow_v1 [CurrentHour on c2] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q7 as select c1, c3 from tkvaluewindow_v1 [CurrentPeriod("0900", "1559") on c1] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q8 as select c2, c3 from tkvaluewindow_v1 [CurrentPeriod("0900", "1559") on c2] </CEP_DDL>
+
+<CEP_DDL> create view tkvaluewindow_v2 as select * from tkvaluewindow_S2[rows 5]</CEP_DDL>
+
+<CEP_DDL> create query tkvaluewindow_q9 as select c1, c3 from tkvaluewindow_v2 [CurrentHour on c1 slide 15 minutes] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q10 as select c2, c3 from tkvaluewindow_v2 [CurrentHour on c2 slide 15 minutes] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q11 as select c1, c3 from tkvaluewindow_v2 [CurrentPeriod("0900", "1559") on c1 slide 15 minutes] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q12 as select c2, c3 from tkvaluewindow_v2 [CurrentPeriod("0900", "1559") on c2 slide 15 minutes] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q13 as select c1, c3 from tkvaluewindow_v2 [range 5 minutes on c1 slide 5 minutes] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q14 as select c2, c3 from tkvaluewindow_v2 [range 5 minutes on c2 slide 5 minutes] </CEP_DDL>
+
+<CEP_DDL> create view tkvaluewindow_v3 as select * from tkvaluewindow_S3[rows 5]</CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q15 as select * from tkvaluewindow_v3[CurrentHour on c1]</CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q16 as select * from tkvaluewindow_v3 [CurrentPeriod("0900", "1559") on c1] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q17 as select * from tkvaluewindow_v3[CurrentHour on c1 slide 15 minutes]</CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q18 as select * from tkvaluewindow_v3 [CurrentPeriod("0900", "1559") on c1 slide 15 minutes] </CEP_DDL>
+
+<CEP_DDL> create view tkvaluewindow_v4 as select * from tkvaluewindow_S5[rows 15]</CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q19 as select c2, c3 from tkvaluewindow_v4 [CurrentHour on c2] </CEP_DDL>
+<CEP_DDL> create query tkvaluewindow_q20 as select c2, c3 from tkvaluewindow_v4 [CurrentPeriod("1500", "1559") on c2] </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q19 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkvaluewindow_q20 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkvaluewindow_q20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!--
+-->
+<CEP_DDL> alter query tkvaluewindow_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q19 start </CEP_DDL>
+<CEP_DDL> alter query tkvaluewindow_q20 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  $Header: cep/wlevs_cql/modules/cqlengine/cartridges/jdbc/src/main/resources/META-INF/spring/com.oracle.cep.cartridge.jdbc.spring.xml /main/3 2012/08/28 13:08:11 mjames Exp $ -->
+
+<!-- 
+ Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     com.oracle.cep.cartridge.jdbc.spring.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   udeshmuk    04/28/10 - add dummy adapter factory
+   udeshmuk    01/04/10 - Creation
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:wlevs="http://www.bea.com/ns/wlevs/spring"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd
+  http://www.bea.com/ns/wlevs/spring
+  http://www.bea.com/ns/wlevs/spring/spring-wlevs-v11_1_1_3.xsd">
+  
+
+  <wlevs:factory class="com.oracle.cep.cartridge.jdbc.DummyAdapterFactory"
+     provider-name="jdbc-ctx-configuration" provider-schema="ocep_jdbc_context_config.xsd" />
+  
+  <osgi:reference id="cartridgeMgr" interface="oracle.cep.service.ICartridgeRegistry" /> 
+
+  <bean class="com.oracle.cep.cartridge.jdbc.JdbcCartridge"
+    factory-method="createInstance">
+    <constructor-arg ref="cartridgeMgr"/>
+  </bean>
+
+  <!-- Set-up for Table Stage -->
+  <bean id="tableStageFactory" class="com.oracle.cep.cartridge.jdbc.TableStageFactory"/>
+  <osgi:service interface="com.bea.wlevs.ede.api.StageFactory"
+                ref="tableStageFactory">
+      <osgi:service-properties>
+          <entry key="type" value="jdbc"/>
+      </osgi:service-properties>
+  </osgi:service>
+
+    
+</beans>
+

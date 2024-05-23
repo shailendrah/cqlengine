@@ -1,0 +1,6 @@
+i, c 20, TOF
+1000 F 60, "yellow"
+1000 F 70, "unique"
+1000 F 80, "zero"
+1000 F 90, "unique"
+1000 T 100, "visitor"

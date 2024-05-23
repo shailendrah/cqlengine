@@ -1,0 +1,9 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tk14050762_S0 (c1 bigint) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk14050762_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk14050762_S0.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> create query tk14050762_q1 as select case c1 when 1 then c1+1 when 2 then c1+2 end from tk14050762_S0 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk14050762_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk14050762_q1.txt</Address></EndPointReference>" ]]>  </CEP_DDL>
+<CEP_DDL> alter query tk14050762_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+

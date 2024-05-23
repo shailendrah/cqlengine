@@ -1,0 +1,317 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream SColtFunc(c1 integer, c2 float, c3 bigint, c4 double) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream SColtFunc add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpSColtFunc.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt1 as select log(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt1 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlog.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt2 as select log10(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt2 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlog10.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt3 as select ceil(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt3 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtceil.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt4 as select floor(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt4 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtfloor.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt5 as select stirlingCorrection(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt5 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtstirlingCorrection.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt6 as select binomial(c4,c3) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt6 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbinomial.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt7 as select binomial1(c3,c3) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt7 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbinomial1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt8 as select factorial(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt8 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtfactorial.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt9 as select log2(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt9 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlog2.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt10 as select logFactorial(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt10 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlogFactorial.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt11 as select longFactorial(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt11 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlongFactorial.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt12 as select i0(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt12 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColti0.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt13 as select i0e(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt13 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColti0e.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt14 as select i1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt14 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColti1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt15 as select i1e(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt15 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColti1e.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt16 as select j0(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt16 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtj0.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt17 as select j1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt17 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtj1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt18 as select jn(c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt18 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtjn.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt19 as select k0(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt19 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtk0.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt20 as select k0e(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt20 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtk0e.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt21 as select k1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt21 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtk1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt22 as select k1e(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt22 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtk1e.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt23 as select kn(c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt23 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtkn.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt24 as select y0(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt24 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColty0.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt25 as select y1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt25 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColty1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt26 as select yn(c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt26 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtyn.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt27 as select getSeedAtRowColumn(c1,c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt27 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtgetSeedAtRowColumn.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt28 as select beta(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt28 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbeta.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt29 as select gamma(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt29 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtgamma.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt30 as select incompleteBeta(c4,c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt30 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtincompleteBeta.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt31 as select incompleteGamma(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt31 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtincompleteGamma.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt32 as select incompleteGammaComplement(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt32 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtincompleteGammaComplement.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt33 as select logGamma(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt33 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlogGamma.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt34 as select binomial2(c1,c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt34 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbinomial2.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt35 as select beta1(c4,c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt35 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbeta1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt36 as select gamma1(c4,c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt36 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtgamma1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt37 as select betaComplemented(c4,c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt37 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbetaComplemented.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt38 as select binomialComplemented(c1,c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt38 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbinomialComplemented.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt39 as select chiSquare(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt39 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtchiSquare.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt40 as select chiSquareComplemented(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt40 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtchiSquareComplemented.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt41 as select errorFunction(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt41 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColterrorFunction.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt42 as select errorFunctionComplemented(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt42 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColterrorFunctionComplemented.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt43 as select gammaComplemented(c4,c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt43 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtgammaComplemented.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt44 as select negativeBinomial(c1,c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt44 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnegativeBinomial.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt45 as select negativeBinomialComplemented(c1,c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt45 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnegativeBinomialComplemented.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt46 as select normal(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt46 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnormal.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt47 as select normal1(c4,c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt47 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnormal1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt48 as select normalInverse(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt48 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnormalInverse.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt49 as select poisson(c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt49 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtpoisson.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt50 as select poissonComplemented(c1,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt50 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtpoissonComplemented.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt51 as select studentT(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt51 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtstudentT.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt52 as select studentTInverse(c4,c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt52 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtstudentTInverse.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt53 as select bitMaskWithBitsSetFromTo(c1,c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt53 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtbitMaskWithBitsSetFromTo.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt54 as select leastSignificantBit(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt54 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtleastSignificantBit.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt55 as select mostSignificantBit(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt55 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtmostSignificantBit.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt56 as select hash(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt56 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColthash.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt57 as select hash1(c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt57 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColthash1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt58 as select hash2(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt58 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColthash2.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt59 as select hash3(c3) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt59 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColthash3.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt60 as select abs(c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt60 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtabs.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt61 as select abs1(c3) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt61 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtabs1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt62 as select abs2(c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt62 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtabs2.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt63 as select abs3(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt63 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtabs3.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt64 as select sin(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt64 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtsin.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt65 as select cos(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt65 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtcos.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt66 as select tan(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt66 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColttan.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt67 as select atan2(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt67 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtatan2.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt68 as select sqrt(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt68 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtsqrt.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt69 as select log1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt69 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlog1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt70 as select log101(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt70 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlog101.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt71 as select pow(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt71 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtpow.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt72 as select exp(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt72 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtexp.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt73 as select scalb(c4,c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt73 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtscalb.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt74 as select scalb1(c2,c1) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt74 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtscalb1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt75 as select getExponent(c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt75 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtgetExponent.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt76 as select getExponent1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt76 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtgetExponent1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt77 as select signum(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt77 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtsignum.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt78 as select signum1(c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt78 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtsignum1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt79 as select IEEEremainder(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt79 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtIEEEremainder.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt80 as select acos(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt80 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtacos.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt81 as select asin(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt81 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtasin.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt82 as select atan(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt82 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtatan.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt83 as select cbrt(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt83 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtcbrt.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt84 as select ceil1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt84 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtceil1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt85 as select copySign(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt85 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtcopySign.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt86 as select copySign1(c2,c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt86 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtcopySign1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt87 as select cosh(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt87 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtcosh.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt88 as select expm1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt88 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtexpm1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt89 as select floor1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt89 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtfloor1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt90 as select hypot(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt90 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColthypot.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt91 as select log1p(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt91 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtlog1p.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt92 as select nextAfter(c4,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt92 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnextAfter.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt93 as select nextAfter1(c2,c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt93 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnextAfter1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt94 as select nextUp(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt94 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnextUp.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt95 as select nextUp1(c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt95 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtnextUp1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt96 as select rint(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt96 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtrint.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt97 as select round(c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt97 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtround.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt98 as select round1(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt98 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtround1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt99 as select sinh(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt99 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtsinh.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt100 as select tanh(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt100 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColttanh.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt101 as select toDegrees(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt101 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColttoDegrees.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt102 as select toRadians(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt102 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColttoRadians.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt103 as select ulp(c4) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt103 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtulp.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>create query qColt104 as select ulp1(c2) from SColtFunc </CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColt104 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtulp1.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL>alter query qColt1 start </CEP_DDL>
+<CEP_DDL>alter query qColt2 start </CEP_DDL>
+<CEP_DDL>alter query qColt3 start </CEP_DDL>
+<CEP_DDL>alter query qColt4 start </CEP_DDL>
+<CEP_DDL>alter query qColt5 start </CEP_DDL>
+<CEP_DDL>alter query qColt6 start </CEP_DDL>
+<CEP_DDL>alter query qColt7 start </CEP_DDL>
+<CEP_DDL>alter query qColt8 start </CEP_DDL>
+<CEP_DDL>alter query qColt9 start </CEP_DDL>
+<CEP_DDL>alter query qColt10 start </CEP_DDL>
+<CEP_DDL>alter query qColt11 start </CEP_DDL>
+<CEP_DDL>alter query qColt12 start </CEP_DDL>
+<CEP_DDL>alter query qColt13 start </CEP_DDL>
+<CEP_DDL>alter query qColt14 start </CEP_DDL>
+<CEP_DDL>alter query qColt15 start </CEP_DDL>
+<CEP_DDL>alter query qColt16 start </CEP_DDL>
+<CEP_DDL>alter query qColt17 start </CEP_DDL>
+<CEP_DDL>alter query qColt18 start </CEP_DDL>
+<CEP_DDL>alter query qColt19 start </CEP_DDL>
+<CEP_DDL>alter query qColt20 start </CEP_DDL>
+<CEP_DDL>alter query qColt21 start </CEP_DDL>
+<CEP_DDL>alter query qColt22 start </CEP_DDL>
+<CEP_DDL>alter query qColt23 start </CEP_DDL>
+<CEP_DDL>alter query qColt24 start </CEP_DDL>
+<CEP_DDL>alter query qColt25 start </CEP_DDL>
+<CEP_DDL>alter query qColt26 start </CEP_DDL>
+<CEP_DDL>alter query qColt27 start </CEP_DDL>
+<CEP_DDL>alter query qColt28 start </CEP_DDL>
+<CEP_DDL>alter query qColt29 start </CEP_DDL>
+<CEP_DDL>alter query qColt30 start </CEP_DDL>
+<CEP_DDL>alter query qColt31 start </CEP_DDL>
+<CEP_DDL>alter query qColt32 start </CEP_DDL>
+<CEP_DDL>alter query qColt33 start </CEP_DDL>
+<CEP_DDL>alter query qColt34 start </CEP_DDL>
+<CEP_DDL>alter query qColt35 start </CEP_DDL>
+<CEP_DDL>alter query qColt36 start </CEP_DDL>
+<CEP_DDL>alter query qColt37 start </CEP_DDL>
+<CEP_DDL>alter query qColt38 start </CEP_DDL>
+<CEP_DDL>alter query qColt39 start </CEP_DDL>
+<CEP_DDL>alter query qColt40 start </CEP_DDL>
+<CEP_DDL>alter query qColt41 start </CEP_DDL>
+<CEP_DDL>alter query qColt42 start </CEP_DDL>
+<CEP_DDL>alter query qColt43 start </CEP_DDL>
+<CEP_DDL>alter query qColt44 start </CEP_DDL>
+<CEP_DDL>alter query qColt45 start </CEP_DDL>
+<CEP_DDL>alter query qColt46 start </CEP_DDL>
+<CEP_DDL>alter query qColt47 start </CEP_DDL>
+<CEP_DDL>alter query qColt48 start </CEP_DDL>
+<CEP_DDL>alter query qColt49 start </CEP_DDL>
+<CEP_DDL>alter query qColt50 start </CEP_DDL>
+<CEP_DDL>alter query qColt51 start </CEP_DDL>
+<CEP_DDL>alter query qColt52 start </CEP_DDL>
+<CEP_DDL>alter query qColt53 start </CEP_DDL>
+<CEP_DDL>alter query qColt54 start </CEP_DDL>
+<CEP_DDL>alter query qColt55 start </CEP_DDL>
+<CEP_DDL>alter query qColt56 start </CEP_DDL>
+<CEP_DDL>alter query qColt57 start </CEP_DDL>
+<CEP_DDL>alter query qColt58 start </CEP_DDL>
+<CEP_DDL>alter query qColt59 start </CEP_DDL>
+<CEP_DDL>alter query qColt60 start </CEP_DDL>
+<CEP_DDL>alter query qColt61 start </CEP_DDL>
+<CEP_DDL>alter query qColt62 start </CEP_DDL>
+<CEP_DDL>alter query qColt63 start </CEP_DDL>
+<CEP_DDL>alter query qColt64 start </CEP_DDL>
+<CEP_DDL>alter query qColt65 start </CEP_DDL>
+<CEP_DDL>alter query qColt66 start </CEP_DDL>
+<CEP_DDL>alter query qColt67 start </CEP_DDL>
+<CEP_DDL>alter query qColt68 start </CEP_DDL>
+<CEP_DDL>alter query qColt69 start </CEP_DDL>
+<CEP_DDL>alter query qColt70 start </CEP_DDL>
+<CEP_DDL>alter query qColt71 start </CEP_DDL>
+<CEP_DDL>alter query qColt72 start </CEP_DDL>
+<CEP_DDL>alter query qColt73 start </CEP_DDL>
+<CEP_DDL>alter query qColt74 start </CEP_DDL>
+<CEP_DDL>alter query qColt75 start </CEP_DDL>
+<CEP_DDL>alter query qColt76 start </CEP_DDL>
+<CEP_DDL>alter query qColt77 start </CEP_DDL>
+<CEP_DDL>alter query qColt78 start </CEP_DDL>
+<CEP_DDL>alter query qColt79 start </CEP_DDL>
+<CEP_DDL>alter query qColt80 start </CEP_DDL>
+<CEP_DDL>alter query qColt81 start </CEP_DDL>
+<CEP_DDL>alter query qColt82 start </CEP_DDL>
+<CEP_DDL>alter query qColt83 start </CEP_DDL>
+<CEP_DDL>alter query qColt84 start </CEP_DDL>
+<CEP_DDL>alter query qColt85 start </CEP_DDL>
+<CEP_DDL>alter query qColt86 start </CEP_DDL>
+<CEP_DDL>alter query qColt87 start </CEP_DDL>
+<CEP_DDL>alter query qColt88 start </CEP_DDL>
+<CEP_DDL>alter query qColt89 start </CEP_DDL>
+<CEP_DDL>alter query qColt90 start </CEP_DDL>
+<CEP_DDL>alter query qColt91 start </CEP_DDL>
+<CEP_DDL>alter query qColt92 start </CEP_DDL>
+<CEP_DDL>alter query qColt93 start </CEP_DDL>
+<CEP_DDL>alter query qColt94 start </CEP_DDL>
+<CEP_DDL>alter query qColt95 start </CEP_DDL>
+<CEP_DDL>alter query qColt96 start </CEP_DDL>
+<CEP_DDL>alter query qColt97 start </CEP_DDL>
+<CEP_DDL>alter query qColt98 start </CEP_DDL>
+<CEP_DDL>alter query qColt99 start </CEP_DDL>
+<CEP_DDL>alter query qColt100 start </CEP_DDL>
+<CEP_DDL>alter query qColt101 start </CEP_DDL>
+<CEP_DDL>alter query qColt102 start </CEP_DDL>
+<CEP_DDL>alter query qColt103 start </CEP_DDL>
+<CEP_DDL>alter query qColt104 start </CEP_DDL>
+<CEP_DDL>alter system run </CEP_DDL>
+</CEP>

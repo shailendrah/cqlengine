@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <import resource="cep-default-logging.xml" />
+
+  <bean id="demoServlet"
+      class="oracle.cep.demo.csfb.DemoServlet"
+       factory-method="getInstance" />
+       
+  <bean id="servletHandler"
+      class="org.mortbay.jetty.servlet.ServletHandler">
+  </bean>
+  
+  <bean id="servletMapping"
+      class="oracle.cep.demo.csfb.ServletMappingsHelper" >
+    <constructor-arg index="0" ref="servletHandler" />
+    <constructor-arg index="1" ref="demoServlet" />
+    <constructor-arg index="2" value="DemoServlet" />
+    <constructor-arg index="3" value="DemoServlet" />
+    <constructor-arg index="4" value="/demox" />
+  </bean>
+ 
+  <bean id="Server"
+      class="org.mortbay.jetty.Server" 
+      init-method="start" 
+      destroy-method="stop">
+    <constructor-arg>
+       <value>8080</value>
+    </constructor-arg>
+
+    <property name="handler">
+      <bean id="handlers"
+          class="org.mortbay.jetty.handler.HandlerCollection">
+        <property name="handlers">
+          <list>
+            <bean id="resourceHandler"
+                class="org.mortbay.jetty.handler.ResourceHandler">
+                <property name="resourceBase" value="web" />
+            </bean>
+            <ref bean="servletHandler" />
+            <bean id="defaultHandler"
+                class="org.mortbay.jetty.handler.DefaultHandler">
+            </bean>
+          </list>
+        </property>
+      </bean>
+    </property>
+  </bean>
+
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="logConfig" ref="logConfig" />
+        <property name="schedRuntime" value="0" />
+    </bean>
+
+    <bean id="cepManager" 
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="config" ref="config" />
+        <property name="cqlxFile" value="tkcsfbdemo.cqlx" />
+        <property name="exitAfterRun" value="true" />
+    </bean>
+</beans>
+
+

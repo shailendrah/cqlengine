@@ -1,0 +1,30 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17077931_S1 (c1 char(50)) </CEP_DDL>
+<CEP_DDL> create stream tk17077931_S2 (c1 char(10), c2 char(50)) </CEP_DDL>
+<CEP_DDL> create stream tk17077931_S3 (c1 char(10), c2 char(50)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk17077931_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17077931_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17077931_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17077931_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17077931_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17077931_S3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test invalid arguments for function to_yminterval() -->
+<CEP_DDL><![CDATA[ create query tk17077931_q1 as select extract("year", to_yminterval(c1)) from tk17077931_S1 ]]></CEP_DDL>
+
+<!-- Test invalid YEAR TO MONTH arguments for function extract() -->
+<CEP_DDL><![CDATA[ create query tk17077931_q2 as select extract(c1, to_yminterval(c2)) from tk17077931_S2 ]]></CEP_DDL>
+
+<!-- Test invalid DAY TO SECOND arguments for function extract() -->
+<CEP_DDL><![CDATA[ create query tk17077931_q3 as select extract(c1, to_dsinterval(c2)) from tk17077931_S3 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17077931_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17077931_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk17077931_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17077931_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk17077931_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out17077931_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17077931_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk17077931_q2 start</CEP_DDL>
+<CEP_DDL>alter query tk17077931_q3 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

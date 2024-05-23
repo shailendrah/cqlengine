@@ -1,0 +1,283 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/UserFunctionStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/12/08 - support runtime MBeans
+    parujain    04/01/08 - modify userfunctions
+    parujain    10/05/07 - ordering
+    parujain    09/12/07 - remove logging
+    hopark      07/13/07 - dump stack trace on exception
+    parujain    05/31/07 - cep-em integration
+    parujain    04/26/07 - User Function Statistics
+    parujain    04/26/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/UserFunctionStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+
+import oracle.cep.statistics.IStats;
+
+/**
+ * Statistics for UserFunctions: This can be thought of a fixed table with the
+ * following columns:
+ *
+ * FunctionName         : Function Name
+ * IsAggregate          : Whether Aggregate function or not
+ * Text                 : Function creation text
+ * MappingFunction      : Name of java function to which function is bound
+ * NumInvokations       : Number of times function is invoked
+ * Time                 : Total time taken by function
+ *
+ */
+
+public class UserFunctionStatsRow extends StatsRow implements IStats
+{
+  
+  private String functionName;
+  private int functionId;
+  private boolean isAggregate;
+  private String text;
+  private String mappingFunction;
+  private int numInvokations;
+  private long time;
+  
+  /** 
+   * Construct a UserFunctionRow instance. 
+   * The PropertyNames annotation is used 
+   * to be able to construct a UserFunctionRow instance out of a CompositeData
+   * instance. See MXBeans documentation for more details.
+   */ 
+  @ConstructorProperties({"functionName","functionId", "isAggregate", "text", 
+                          "mappingFunction", "numInvokations", "time"})
+  public UserFunctionStatsRow(String name, int fnId, boolean is, String txt, 
+                              String fn, int num, long tim)
+  {
+    functionName = name;
+    functionId = fnId;
+    isAggregate = is;
+    text = txt;
+    mappingFunction = fn;
+    numInvokations = num;
+    time = tim;
+  }
+ 
+  public String getFunctionName()
+  {
+    return functionName;
+  }
+  
+  public int getFunctionId()
+  {
+    return functionId;
+  }
+
+  public boolean getIsAggregate()
+  {
+    return isAggregate;
+  }
+  
+  public String getText()
+  {
+    return text;
+  }
+  
+  public String getMappingFunction()
+  {
+    return mappingFunction;
+  }
+  
+  public int getNumInvokations()
+  {
+    return numInvokations;
+  }
+  
+  public long getTime()
+  {
+    return time;
+  }
+  
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+    sb.append("<UserFunctionStatistics>");
+    sb.append("<Function Name =\"" + functionName + "\" >");
+    sb.append("<FunctionId =\"" + functionId + "\" >");
+    sb.append("<IsAggregate =\"" + isAggregate + "\" >");
+    sb.append("<Text =\"" + text + "\" >");
+    sb.append("<Mapping Function =\"" + mappingFunction + "\" >");
+    sb.append("NumInvokations =\"" + numInvokations + "\" >");
+    sb.append("<Time =\"" + time + "\" >");
+    sb.append("</UserFunctionStatistics>");
+    return sb.toString();
+  }
+  
+  /*
+   * JDK 5.0 manual conversion methods. The code
+   * below would not be required if we could
+   * rely on the MXBean framework
+   * 
+   * THE REQUIRED METHODS ARE:
+   *
+   *  public static CompositeType toCompositeType();
+   *  public CompositeData toCompositeData(CompositeType ct);
+   *  public static UserFunctionStatsRow from(CompositeData cd);
+   *
+   */
+
+  // The corresponding CompositeType for this class
+  private static CompositeType cType_= null;
+
+  private static final String[] itemNames_= {"functionName", "functionId",
+                                            "isAggregate","text","mappingFunction",
+                                            "numInvokations", "time"};
+  
+  static{
+    try{
+      OpenType[] itemTypes = {SimpleType.STRING,
+    		                  SimpleType.INTEGER,
+                              SimpleType.BOOLEAN,
+                              SimpleType.STRING,
+                              SimpleType.STRING,
+                              SimpleType.INTEGER,
+                              SimpleType.LONG};
+      cType_ = new CompositeType("oracle.cep.statistics.UserFunctionStatsRow",
+                                 "oracle.cep.statistics.UserFunctionStatsRow",
+                                 itemNames_,
+                                 itemNames_,
+                                 itemTypes);
+    }
+    catch(OpenDataException ode)
+    {
+
+    }
+  }
+  
+  /**
+   * Returns the CompositeType that describes this model
+   * specific class
+   */
+  public static CompositeType toCompositeType() {
+      return cType_;
+  }
+
+  /**
+   * Convert an instance of this model specific type to 
+   * a CompositeData. This ensure that clients that do not
+   * have access to the model specific class can still
+   * use the MBean. The MXBean framework can perform this
+   * conversion automatically. However MXBeans are part of
+   * JDK 6.0 and AS11g is required to support JDK 5.0 
+   * 
+   * @param ct - This parameter is there only for future compatibility reasons
+   *             with JDK 6.0. It can be ignored at this point.
+   */
+   public CompositeData toCompositeData(CompositeType ct) {
+     Object[] itemValues = {new String(this.getFunctionName()),
+    		                new Integer(this.getFunctionId()),
+                            new Boolean(this.getIsAggregate()),
+                            new String(this.getText()),
+                            new String(this.getMappingFunction()),
+                            new Integer(this.getNumInvokations()),
+                            new Long(this.getTime())};
+     CompositeData cData= null;
+     try {
+        cData= new CompositeDataSupport(cType_, itemNames_, itemValues);
+
+    }
+    catch( OpenDataException ode) 
+    {
+
+    }
+    return cData;
+   }
+   
+   /**
+    * Create an instance of the model specific class out of
+    * an associated CompositeData instance
+    */
+    public static UserFunctionStatsRow from(CompositeData cd) {
+      if (cd==null)
+        return null;
+      
+      return new UserFunctionStatsRow(((String)cd.get("functionName")).toString(),
+    		                          ((Integer)cd.get("functionId")).intValue(),
+                                      ((Boolean)cd.get("isAggregate")).booleanValue(),
+                                      ((String)cd.get("text")).toString(),
+                                      ((String)cd.get("mappingFunction")).toString(),
+                                      ((Integer)cd.get("numInvokations")).intValue(),
+                                      ((Long)cd.get("time")).longValue());
+    }
+
+@Override
+public boolean getBooleanValue(Column c) {
+  int colcode = c.getColCode();
+  switch(colcode)
+  {
+    case ColumnCodes.FUNCTION_IS_AGGREGATE_CODE : return this.isAggregate;
+  }
+	return false;
+}
+
+@Override
+public float getFloatValue(Column c) {
+ return Float.MIN_VALUE;
+}
+
+@Override
+public int getIntValue(Column c) {
+  int colcode = c.getColCode();
+  switch(colcode)
+  {
+    case ColumnCodes.FUNCTION_INVOKATIONS_CODE : return this.numInvokations;
+    case ColumnCodes.FUNCTION_ID_CODE : return this.functionId;
+    case ColumnCodes.FUNCTION_QUERY_ID_CODE : 
+  }
+	return Integer.MIN_VALUE;
+}
+
+@Override
+public long getLongValue(Column c) {
+  int colcode = c.getColCode();
+  switch(colcode)
+  {
+    case ColumnCodes.FUNCTION_TOTAL_TIME_CODE : return this.time;
+  }
+	return Long.MIN_VALUE;
+}
+
+@Override
+public String getStringValue(Column c) {
+  int colcode = c.getColCode();
+  switch(colcode)
+  {
+    case ColumnCodes.FUNCTION_MAPPING_FUNCTION_CODE : return this.mappingFunction;
+    case ColumnCodes.FUNCTION_TEXT_CODE :  return this.text;
+  }
+	return null;
+}
+}

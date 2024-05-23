@@ -1,0 +1,2 @@
+1000:+ 30,third,25,fifth
+5000:+ 30,third,25,sixth

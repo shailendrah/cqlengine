@@ -1,0 +1,69 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream PriceEvent(cusip char(100), srcId char(100), bid double, bidQty integer, ask double, askQty integer, seq bigint, sector char(100), tsNs bigint) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream PriceEvent add source "<EndPointReference><Address>file://@TEST_DATA@/inpCiti.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>register view Yr3Sector(cusip char(100), bid Double, srcId char(100), bidQty integer, ask Double, askQty integer, seq bigint) as select cusip, bid, srcId, bidQty, ask, askQty, seq from PriceEvent where sector="3_YEAR" </CEP_DDL>
+
+<CEP_DDL>register view lastEvents(cusip char(100), bid Double, srcId char(100), bidQty integer, ask Double, askQty integer, seq bigint) as select * from Yr3Sector[partition by srcId, cusip rows 1] </CEP_DDL>
+
+<CEP_DDL>register view bidask(cusip char(100), bid Double, ask Double) as select cusip, max(bid), min(ask) from lastEvents group by cusip </CEP_DDL>
+
+<CEP_DDL> register view bid(cusip char(100), bid Double, seq bigint) as select ba.cusip as cusip, ba.bid as bid, e.seq from bidask as ba, lastEvents as e WHERE e.cusip = ba.cusip AND e.bid = ba.bid </CEP_DDL>
+
+<CEP_DDL>register view bid1(cusip char(100), maxseq bigint) as select b.cusip, max(seq) as maxseq from bid as b group by b.cusip </CEP_DDL>
+
+<CEP_DDL>register view BIDMAX(cusip char(100), seq bigint, srcId char(100), bid double, bidQty integer) as select e.cusip, e.seq, e.srcId, e.bid, e.bidQty from bid1 as b, lastEvents as e where (e.seq = b.maxseq) </CEP_DDL>
+
+<CEP_DDL>register view ask(cusip char(100), ask Double, seq bigint) as select ba.cusip as cusip, ba.ask as ask, e.seq from bidask as ba, lastEvents as e WHERE e.cusip = ba.cusip AND e.ask = ba.ask </CEP_DDL>
+
+<CEP_DDL> register view ask1(cusip char(100), maxseq bigint) as select a.cusip, max(seq) as maxseq from ask as a group by a.cusip </CEP_DDL>
+
+<CEP_DDL> register view ASKMIN(cusip char(100), seq bigint, srcId char(100), ask double, askQty integer) as select e.cusip, e.seq, e.srcId, e.ask, e.askQty from ask1 as a, lastEvents as e where (e.seq = a.maxseq) </CEP_DDL>
+
+<CEP_DDL>create view MAXBIDMINASK(cusip char(100), bidseq bigint, bidSrcId char(100), bid double, askseq bigint, askSrcId char(100), ask double, bidQty integer, askQty integer) as select bid.cusip, bid.seq, bid.srcId as bidSrcId, bid.bid, ask.seq, ask.srcId as askSrcId, ask.ask, bid.bidQty, ask.askQty from BIDMAX as bid, ASKMIN as ask where bid.cusip = ask.cusip </CEP_DDL>
+
+<!-- BBA Processor -->
+
+<CEP_DDL>create view BBAQuery (cusip char(100), bidseq bigint, bidSrcId char(100), bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority integer) as ISTREAM(select bba.cusip, bba.bidseq, bba.bidSrcId, bba.bid, bba.askseq, bba.askSrcId, bba.ask, bba.bidQty, bba.askQty, "BBAStrategy" as intermediateStrategy, p.seq as correlationId, 1 as priority from MAXBIDMINASK as bba, Yr3Sector[rows 1] as p  where bba.cusip = p.cusip) </CEP_DDL>
+
+<CEP_DDL> create query bbaq as select * from BBAQuery </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query bbaq add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbbaq.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query bbaq start </CEP_DDL>
+
+
+<!-- Analytics Processor -->
+
+<CEP_DDL>create view AnalyticsQuery (cusip char(100), bidseq bigint, bidSrcId char(100), bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority integer) as  ISTREAM(select a.cusip, a.bidseq, a.bidSrcId, case p.seq when 3L then a.bid+1 when 9L then a.bid+1 else a.bid-1 end, a.askseq, a.askSrcId, case p.seq when 6L then a.ask-1 when 9L then a.ask-1 else a.ask+1 end, a.bidQty, a.askQty, "ANALYTICSStrategy" as intermediateStragtegy, p.seq as correlationId, 2 as priority from MAXBIDMINASK as a, Yr3Sector[rows 1] as p where a.cusip = p.cusip) </CEP_DDL>
+
+<!-- Final Order Event Processing -->
+
+<CEP_DDL> create view IOE(cusip char(100), bidseq bigint, bidSrcId char(100),bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority integer) as BBAQuery union all AnalyticsQuery </CEP_DDL>
+
+<CEP_DDL> create view v1 (cusip char(100), bidseq bigint, bidSrcId char(100), bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority integer) as  select * from IOE[partition by correlationId rows 2 range 1 hours] </CEP_DDL>
+
+<CEP_DDL> create view fullBatchIds(correlationId bigint) as select correlationId from v1  group by correlationId  having count(*) = 2 </CEP_DDL>
+
+<CEP_DDL>create view fullBatchId(cusip char(100), bidseq bigint, bidSrcId char(100), bid Double, askseq bigint, askSrcId char(100), ask Double, bidQty integer, askQty integer, intermediateStrategy char(100), correlationId bigint, priority integer) as  select b.cusip, b.bidseq, b.bidSrcId, b.bid, b.askseq, b.askSrcId, b.ask, b.bidQty, b.askQty, b.intermediateStrategy, b.correlationId, b.priority from fullBatchIds as a, v1 as b  where a.correlationId = b.correlationId </CEP_DDL>
+
+<CEP_DDL>create view finalMaxMin(bid Double, ask Double, correlationId bigint) as select max(f.bid) as bid, min(f.ask) as ask, f.correlationId  from fullBatchId as f group by f.correlationId </CEP_DDL>
+
+<CEP_DDL>create view maxBidPri(correlationId bigint, priority integer) as select b.correlationId, min(b.priority)  from finalMaxMin as a, fullBatchId as b where (a.correlationId = b.correlationId) and (a.bid = b.bid) group by b.correlationId </CEP_DDL>
+
+<CEP_DDL> create view finalBid(cusip char(100), bidseq bigint, bidSrcId char(100), bid double, bidQty integer, intermediateStrategy char(100), correlationId bigint) as  select b.cusip, b.bidseq, b.bidSrcId, b.bid, b.bidQty, b.intermediateStrategy, b.correlationId from maxBidPri as a, fullBatchId as b where (a.correlationId = b.correlationId) and (a.priority = b.priority) </CEP_DDL>
+
+<CEP_DDL>create view minAskPri(correlationId bigint, priority integer) as select b.correlationId, min(b.priority)  from finalMaxMin as a, fullBatchId as b where (a.correlationId = b.correlationId) and (a.ask = b.ask) group by b.correlationId </CEP_DDL>
+
+<CEP_DDL> create view finalAsk(cusip char(100), askseq bigint, askSrcId char(100), ask double, askQty integer, intermediateStrategy char(100), correlationId bigint) as  select b.cusip, b.askseq, b.askSrcId, b.ask, b.askQty, b.intermediateStrategy, b.correlationId from minAskPri as a, fullBatchId as b where (a.correlationId = b.correlationId) and (a.priority = b.priority) </CEP_DDL>
+
+<CEP_DDL>create query finalOrderEvent as ISTREAM(select a.cusip, b.bidseq, b.bidSrcId, b.bid, b.bidQty, b.intermediateStrategy as bidSourceStrategy, a.askseq, a.askSrcId, a.ask, a.askQty, a.intermediateStrategy as askSourceStrategy, a.correlationId  from finalBid as b, finalAsk as a  where a.correlationId = b.correlationId) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query finalOrderEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outFOE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query finalOrderEvent start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+
+</CEP>

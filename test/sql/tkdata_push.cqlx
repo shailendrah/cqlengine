@@ -1,0 +1,9 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata_push_S (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> alter stream tkdata_push_S add source push </CEP_DDL>
+<CEP_DDL> create query tkdata_push_q1 as select * from tkdata_push_S </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_push_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPushSrcStr2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_push_q1 start </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_push_S add push source "<EndPointReference><Address>file://@TEST_DATA@/pushSrc2.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

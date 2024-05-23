@@ -1,0 +1,176 @@
+/* $Header: pcbpel/cep/src/oracle/cep/jmx/stats/Column.java /main/1 2008/08/06 14:24:44 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle. All rights reserved.  */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    04/01/08 - modify columns
+    parujain    03/18/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/src/oracle/cep/jmx/stats/Column.java /main/1 2008/08/06 14:24:44 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+import java.io.Serializable;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+
+
+public class Column implements Serializable
+{
+  /**
+ * 
+ */
+private static final long serialVersionUID = 1L;
+
+public int colCode;
+
+// list of all columns wher the values can be sorted/searched by for OPERATORS
+  public static final Column OPERATOR_TYPE = new Column(ColumnCodes.OPERATOR_TYPE_CODE);
+  public static final Column OPERATOR_ID = new Column(ColumnCodes.OPERATOR_ID_CODE);
+  public static final Column OPERATOR_NAME = new Column(ColumnCodes.OPERATOR_NAME_CODE);
+  public static final Column OPERATOR_OUT_MSGS = new Column(ColumnCodes.OPERATOR_NUM_OUT_MSGS_CODE);
+  public static final Column OPERATOR_OUT_MSGS_LATEST = new Column(ColumnCodes.OPERATOR_NUM_OUT_MSGS_LATEST_CODE);
+  public static final Column OPERATOR_IN_MSGS = new Column(ColumnCodes.OPERATOR_IN_MSGS_CODE);
+  public static final Column OPERATOR_IN_MSGS_LATEST = new Column(ColumnCodes.OPERATOR_IN_MSGS_LATEST_CODE);
+  public static final Column OPERATOR_TOTAL_TIME = new Column(ColumnCodes.OPERATOR_TOTAL_TIME_CODE);
+  public static final Column OPERATOR_PERCENT = new Column(ColumnCodes.OPERATOR_PERCENT_CODE);
+  public static final Column OPERATOR_START_TIME = new Column(ColumnCodes.OPERATOR_START_TIME_CODE);
+  public static final Column OPERATOR_END_TIME = new Column(ColumnCodes.OPERATOR_END_TIME_CODE);
+  public static final Column OPERATOR_OUT_QUEUE_ID = new Column(ColumnCodes.OPERATOR_QUEUE_ID_CODE);
+  public static final Column OPERATOR_NUM_EXECUTIONS = new Column(ColumnCodes.OPERATOR_NUM_EXECUTIONS_CODE);
+  public static final Column OPERATOR_QUERY_ID = new Column(ColumnCodes.OPERATOR_QUERY_ID_CODE);
+  public static final Column OPERATOR_STREAM_ID = new Column(ColumnCodes.OPERATOR_STREAM_ID_CODE);
+
+// list of all columns wher the values can be sorted/searched by for QUERY
+  public static final Column QUERY_TEXT = new Column(ColumnCodes.QUERY_TEXT_CODE);
+  public static final Column QUERY_ID = new Column(ColumnCodes.QUERY_ID_CODE);
+  public static final Column QUERY_OBJECT_NAME = new Column(ColumnCodes.QUERY_OBJECT_NAME_CODE);
+  public static final Column QUERY_IS_VIEW = new Column(ColumnCodes.QUERY_IS_VIEW_CODE);
+  public static final Column QUERY_NUMBER_OUT_MSGS = new Column(ColumnCodes.QUERY_NUM_OUT_MSGS_CODE);
+  public static final Column QUERY_NUMBER_OUT_MSGS_LATEST = new Column(ColumnCodes.QUERY_NUM_OUT_MSGS_LATEST_CODE);
+  public static final Column QUERY_TOTAL_TIME = new Column(ColumnCodes.QUERY_TOTAL_TIME_CODE);
+  public static final Column QUERY_OPERATOR_ID = new Column(ColumnCodes.QUERY_OPERATOR_ID_CODE);
+  public static final Column QUERY_NUMBER_EXECUTIONS = new Column(ColumnCodes.QUERY_NUM_EXECUTIONS_CODE);
+  public static final Column QUERY_PERCENT = new Column(ColumnCodes.QUERY_PERCENT_CODE);
+  public static final Column QUERY_START_TIME = new Column(ColumnCodes.QUERY_START_TIME_CODE);
+  public static final Column QUERY_END_TIME = new Column(ColumnCodes.QUERY_END_TIME_CODE);
+  public static final Column QUERY_AVG_LATENCY = new Column(ColumnCodes.QUERY_AVG_LATENCY_CODE);
+  public static final Column QUERY_USERFUNCTION_ID = new Column(ColumnCodes.QUERY_USER_FUNC_ID_CODE);
+
+// list of all columns wher the values can be sorted/searched by for STREAM
+  public static final Column STREAM_TEXT = new Column(ColumnCodes.STREAM_TEXT_CODE);
+  public static final Column STREAM_ID = new Column(ColumnCodes.STREAM_ID_CODE);
+  public static final Column STREAM_NAME = new Column(ColumnCodes.STREAM_NAME_CODE);
+  public static final Column STREAM_IS_STREAM = new Column(ColumnCodes.STREAM_IS_STREAM_CODE);
+  public static final Column STREAM_AVERAGE_LATENCY = new Column(ColumnCodes.STREAM_AVG_LATENCY_CODE);
+  public static final Column STREAM_NUMBER_IN_MSGS_LATEST = new Column(ColumnCodes.STREAM_NUM_IN_MSGS_LATEST_CODE);
+  public static final Column STREAM_NUMBER_IN_MSGS = new Column(ColumnCodes.STREAM_NUM_IN_MSGS_CODE);
+  public static final Column STREAM_OPERATOR_ID = new Column(ColumnCodes.STREAM_OPERATOR_ID_CODE);
+  public static final Column STREAM_INPUT_RATE = new Column(ColumnCodes.STREAM_INPUT_RATE_CODE);
+  public static final Column STREAM_PERCENT = new Column(ColumnCodes.STREAM_PERCENT_CODE);
+  public static final Column STREAM_START_TIME = new Column(ColumnCodes.STREAM_START_TIME_CODE);
+  public static final Column STREAM_END_TIME = new Column(ColumnCodes.STREAM_END_TIME_CODE);
+  public static final Column STREAM_IS_PUSH_SRC = new Column(ColumnCodes.STREAM_IS_PUSH_SRC_CODE);
+  public static final Column STREAM_TOTAL_TUPLES_IN_MEMORY = new Column(ColumnCodes.STREAM_TOTAL_TUPLES_IN_MEMORY_CODE);
+  public static final Column STREAM_TOTAL_TUPLES_ON_DISK = new Column(ColumnCodes.STREAM_TOTAL_TUPLES_ON_DISK_CODE);
+  public static final Column STREAM_HITRATIO = new Column(ColumnCodes.STREAM_HITRATIO_CODE);
+ 
+  // list of all columns wher the values can be sorted/searched by for FUNCTIONS
+  public static final Column FUNCTION_ID = new Column(ColumnCodes.FUNCTION_ID_CODE);
+  public static final Column FUNCTION_QUERY_ID = new Column(ColumnCodes.FUNCTION_QUERY_ID_CODE);
+  public static final Column FUNCTION_MAPPING_FUNCTION = new Column(ColumnCodes.FUNCTION_MAPPING_FUNCTION_CODE);
+  public static final Column FUNCTION_IS_AGGREGATE = new Column(ColumnCodes.FUNCTION_IS_AGGREGATE_CODE);
+  public static final Column FUNCTION_TEXT = new Column(ColumnCodes.FUNCTION_TEXT_CODE);
+  public static final Column FUNCTION_INVOKATIONS = new Column(ColumnCodes.FUNCTION_INVOKATIONS_CODE);
+  public static final Column FUNCTION_TOTAL_TIME = new Column(ColumnCodes.FUNCTION_TOTAL_TIME_CODE);
+  
+  
+  @ConstructorProperties({"colCode"})
+  public Column(int colCode)
+  {
+    this.colCode = colCode;
+  }
+
+  public Column()
+  {
+   this.colCode = -1;
+  }
+  
+  public int getColCode()
+  {
+    return this.colCode;
+  }
+
+  public void setColCode(int code)
+  {
+    this.colCode = code;
+  }
+  
+  private static CompositeType mType = null;
+  
+  private static final String[] itemNames= {"colCode"};
+  
+  static{
+  try{
+      OpenType[] itemTypes = {SimpleType.INTEGER};
+      mType = new CompositeType("Column",
+                                 "Column",
+                                 itemNames,
+                                 itemNames,
+                                 itemTypes);
+    }
+    catch(OpenDataException ode)
+    {
+      
+    }
+  }
+  
+  public static CompositeType toCompositeType()
+  {
+    return mType;
+  }
+  
+  public CompositeData toCompositeData(CompositeType ct) {
+     Object[] itemValues = {new Integer(this.colCode)};
+     
+     CompositeData cData= null;
+     try 
+     {
+        cData= new CompositeDataSupport(mType, itemNames, itemValues);
+     }
+     catch( OpenDataException ode)
+     {
+       
+     }
+     return cData;
+   }
+  
+  public static Column from(CompositeData cd)
+  {
+    if (cd==null)
+      return null;
+      
+    return new Column(((Integer)cd.get("colCode")).intValue());
+  }
+  
+}

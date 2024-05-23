@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.oracle.com/ns/ocep/spatial"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    targetNamespace="http://www.oracle.com/ns/ocep/spatial" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+	<xsd:annotation>
+		<xsd:documentation>
+			<![CDATA[
+    Custom tags for OCEP Spatial cartridge.
+        ]]>
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans" />
+
+	<xsd:complexType name="SpatialType">
+		<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:attribute name="cartesian" type="xsd:boolean" default="false">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+Use true to use cartesian coordinates. Default value is false.
+                    ]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="srid" type="xsd:string" default="LAT_LNG_WGS84_SRID">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+SRID integer. For cartesian and wgs84 coordiates sytem, 'CARTESIAN' or 'LAT_LNG_WGS84_SRID' can be used.
+default : LAT_LNG_WGS84_SRID(8307)
+                    ]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="sma" type="xsd:double">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+sma defines semi-major axis parameter. It is used for buffering and projection.  default: 6378137.0
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="rof" type="xsd:double">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+rof defines reciprocal of falttening parameter. It is used for buffering and projection.  default: 298.257223563                    
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="tolerance" type="xsd:double">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+The minimum distance to be ignored in geometric operations including buffering.  default: 0.000000001
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="anyinteract-tolerance" type="xsd:double">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+The default tolerance for anyinteract. default: 0.0000005
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="arc-tolerance" type="xsd:double">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+The default arc tolerance for creating circle or arcs.  default: 5.0 (meters)
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:element name="context" type="SpatialType">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[
+Spatial contexts are used to specify the coordinate system and associated parameters.
+            ]]>
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+</xsd:schema>
+

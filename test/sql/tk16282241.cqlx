@@ -1,0 +1,82 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk16282241_S1 (c1 number(7,2), c2 double, c3 float, c4 bigint, c5 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk16282241_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16282241.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test FLOOR function with various datatypes -->
+<CEP_DDL><![CDATA[create query tk16282241_q1 as select floor(c1), floor(c2), floor(c3), floor(c4), floor(c5) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- Test CEIL function with various datatypes -->
+<CEP_DDL><![CDATA[create query tk16282241_q2 as select ceil(c1), ceil(c2), ceil(c3), ceil(c4), ceil(c5) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- Test ROUND function with single param-->
+<CEP_DDL><![CDATA[create query tk16282241_q3 as select round(c1), round(c2), round(c3), round(c4), round(c5) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- Test ROUND function with two params i)value ii) rounding places -->
+<CEP_DDL><![CDATA[create query tk16282241_q4 as select round(c1,2), round(c2,2), round(c3,2), round(c4,2), round(c5,2) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- Test ROUND function with zero rounding places-->
+<CEP_DDL><![CDATA[create query tk16282241_q5 as select round(c1,0), round(c2,0), round(c3,0), round(c4,0), round(c5,0) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- Test ROUND function with negative rounding places-->
+<CEP_DDL><![CDATA[create query tk16282241_q6 as select round(c1,-2), round(c2,-2), round(c3,-2), round(c4,-2), round(c5,-2) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- double FLOOR1(double) - supports only integer, bigint, float and double; integer, bigint and float will be implicitly converted to double -->
+<CEP_DDL><![CDATA[create query tk16282241_q7 as select floor1(c2), floor1(c3), floor1(c4), floor1(c5) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- double CEIL1(double) - supports only integer, bigint, float and double; integer, bigint and float will be implicitly converted to double -->
+<CEP_DDL><![CDATA[create query tk16282241_q8 as select ceil1(c2), ceil1(c3), ceil1(c4), ceil1(c5) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- bigint ROUND1(double) - supports only integer, bigint, float and double; integer, bigint and float will be implicitly converted to double -->
+<CEP_DDL><![CDATA[create query tk16282241_q9 as select round1(c2), round1(c3), round1(c4), round1(c5) from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- test floor with complex expression -->
+<CEP_DDL><![CDATA[create query tk16282241_q10 as select floor(c1) + c1, floor(c2) + c2, floor(c3) + c3, floor(c4) + c4, floor(c5)+c5 from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- test ceil with complex expression -->
+<CEP_DDL><![CDATA[create query tk16282241_q11 as select ceil(c1)+c1, ceil(c2)+c2, ceil(c3)+c3, ceil(c4)+c4, ceil(c5)+c5 from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- test round with complex expression -->
+<CEP_DDL><![CDATA[create query tk16282241_q12 as select round(c1)+c1, round(c2)+c2, round(c3)+c3, round(c4)+c4, round(c5)+c5 from tk16282241_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[create query tk16282241_q13 as select round(c1,2)+c1, round(c2,2)+c2, round(c3,2)+c3, round(c4,2)+c4, round(c5,2)+c5 from tk16282241_S1 ]]></CEP_DDL>
+
+<!-- test round function in where clause -->
+<CEP_DDL><![CDATA[create query tk16282241_q14 as select * from tk16282241_S1 where round(c5) is not null]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[create query tk16282241_qNeg1 as select round1(c1) from tk16282241_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[create query tk16282241_qNeg2 as select floor1(c1) from tk16282241_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[create query tk16282241_qNeg3 as select ceil1(c1) from tk16282241_S1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16282241_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16282241_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16282241_q14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16282241_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q2 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q3 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q4 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q5 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q6 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q7 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q8 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q9 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q10 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q11 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q12 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q13 start</CEP_DDL>
+<CEP_DDL>alter query tk16282241_q14 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

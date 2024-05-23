@@ -1,0 +1,34 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tk7680460_S0 (c1 float, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk7680460_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inp7680460.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+
+<CEP_DDL><![CDATA[ create query tk7680460_q0 as select * from tk7680460_S0 [range 1] where c1 is null]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk7680460_q1 as select * from tk7680460_S0 [range 1] where null is null]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk7680460_q2 as select * from tk7680460_S0 [range 1] where not (c1 is null)]]> </CEP_DDL>
+<!-- Output of q3 should be the same as the output of q2 -->
+<CEP_DDL><![CDATA[ create query tk7680460_q3 as select * from tk7680460_S0 [range 1] where c1 is not null ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk7680460_q4 as select * from tk7680460_S0 [range 1] where null is not null]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk7680460_q5 as select * from tk7680460_S0 [range 1] where 4 + c2 is not null]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk7680460_q6 as select * from tk7680460_S0 [range 1] where c1 + 5.0 is null]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk7680460_q7 as select * from tk7680460_S0 [range 1] where 1 + null is null]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk7680460_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7680460_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7680460_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7680460_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7680460_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7680460_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7680460_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7680460_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7680460_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk7680460_q0 start </CEP_DDL>
+<CEP_DDL> alter query tk7680460_q1 start </CEP_DDL>
+<CEP_DDL> alter query tk7680460_q2 start </CEP_DDL>
+<CEP_DDL> alter query tk7680460_q3 start </CEP_DDL>
+<CEP_DDL> alter query tk7680460_q4 start </CEP_DDL>
+<CEP_DDL> alter query tk7680460_q5 start </CEP_DDL>
+<CEP_DDL> alter query tk7680460_q6 start </CEP_DDL>
+<CEP_DDL> alter query tk7680460_q7 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

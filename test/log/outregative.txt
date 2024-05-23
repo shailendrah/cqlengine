@@ -1,0 +1,21 @@
+/
+/ $Header: outregative.txt12476 11-aug-2006.17:59:59 rpoliset Exp $
+/
+/ outregative.txt
+/
+/ Copyright (c) 2006, Oracle. All Rights Reserved.
+/
+/   NAME
+/     outregative.txt - <one-line expansion of the name>
+/
+/   DESCRIPTION
+/     <short description of component this file declares/defines>
+/
+/   NOTES
+/     <other useful comments, qualifications, etc.>
+/
+/   MODIFIED   (MM/DD/YY)
+/   rpoliset    08/11/06 - creating one output file
+/   rpoliset    08/11/06 - Creation
+/
+

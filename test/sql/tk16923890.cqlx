@@ -1,0 +1,21 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>create stream tk16923890_productInputChannel (product_id integer,product_type_id integer, name char(30), price double, firstExpiredInterval bigint, secExpiredInterval bigint, variableRate double)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk16923890_productInputChannel add source "<EndPointReference><Address>file://@TEST_DATA@/inp16923890.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tk16923890_q1 as
+  select product_type_id, sum(price) as amount
+  from tk16923890_productInputChannel[rows 3]
+  where price > 0
+  group by product_type_id
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16923890_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out16923890.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16923890_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

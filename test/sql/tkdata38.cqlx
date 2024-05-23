@@ -1,0 +1,44 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata38_S1 (c1 xmltype) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata38_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata38inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+CREATE VIEW tkdata38_v1 AS 
+           SELECT 
+              X.stringAttr,
+              X.intAttr, 
+              X.longAttr,
+              X.doubleAttr,
+              X.floatAttr, 
+              X.dateTimeAttr, 
+              X.dateAttr,
+              X.intervalAttr, 
+              X.booleanAttr 
+              from tkdata38_S1 
+              XMLTable (
+              '//attribute-values' 
+              PASSING BY VALUE tkdata38_S1.c1 as "." 
+              COLUMNS 
+                stringAttr char(16) PATH 'fn:data(@string-attr)', 
+                dateTimeAttr timestamp PATH 'fn:data(@dateTime-attr)',
+                dateAttr timestamp PATH 'fn:data(@date-attr)',
+                intervalAttr interval PATH 'fn:data(@duration-attr)',
+                booleanAttr boolean  PATH 'fn:data(@boolean-attr)', 
+                intAttr integer  PATH 'fn:data(@int-attr)', 
+                longAttr bigint PATH 'fn:data(@long-attr)', 
+                doubleAttr double PATH 'fn:data(@double-attr)', 
+                floatAttr float PATH 'fn:data(@float-attr)') 
+              AS X              
+ ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+CREATE QUERY tkdata38_q1 AS  
+          SELECT * FROM tkdata38_v1
+ ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata38_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata38_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkdata38_q1 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>	
+</CEP>

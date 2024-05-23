@@ -1,0 +1,13 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream tk7707490_S( c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tk7707490_S add source
+"<EndPointReference><Address>file://@TEST_DATA@/inp7707490.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>register query tk7707490_q1 as select * from tk7707490_S[range 1]</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query tk7707490_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7707490_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk7707490_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

@@ -1,0 +1,55 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+    <CEP_DDL> register stream CustomerLocStream(customerId int, lat double, lng double) </CEP_DDL>
+    <CEP_DDL> <![CDATA[ 
+        alter stream CustomerLocStream add source "<EndPointReference> <Address>file://@TEST_DATA@/inpLbsCustPos.txt?startDelay=5</Address> </EndPointReference>"
+    ]]></CEP_DDL>
+    
+    <CEP_DDL> register relation ShopRelation(shopId int, shopName char(100),
+        nCoords int, lat1 double, lng1 double, lat2 double, lng2 double, lat3
+        double, lng3 double, lat4 double, lng4 double, lat5 double, lng5
+        double , lat6 double, lng6 double, lat7 double, lng7 double, lat8
+        double, lng8 double, lat9 double, lng9 double, lat10 double, lng10
+        double) </CEP_DDL>
+    <CEP_DDL> <![CDATA[ 
+        alter relation ShopRelation add source "<EndPointReference> <Address>file://@TEST_DATA@/inpLbsMallMap.txt</Address> </EndPointReference>"
+    ]]></CEP_DDL>
+
+    <CEP_DDL> register view ShopGeomRelation(shopId int, shopName char(100), geom oracle.spatial.geometry.JGeometry) as
+        select shopId, shopName, com.oracle.cep.cartridge.spatial.Geometry.createGeometry(
+                com.oracle.cep.cartridge.spatial.Geometry.GTYPE_POLYGON,
+                8307,
+                EINFOGENERATOR@spatial1(1, 1003, 1),
+                ORDSGENERATOR@spatial1( 2, nCoords,
+                    lng1,lat1,
+                    lng2,lat2,
+                    lng3,lat3,
+                    lng4,lat4,
+                    lng5,lat5,
+                    lng6,lat6,
+                    lng7,lat7,
+                    lng8,lat8,
+                    lng9,lat9,
+                    lng10, lat10) )
+        from ShopRelation
+    </CEP_DDL>
+
+    <CEP_DDL> create view LocGeomStream(customerId int, curLoc oracle.spatial.geometry.JGeometry) as
+            select customerId, 
+                com.oracle.cep.cartridge.spatial.Geometry.createPoint(8307, lng, lat)
+            from CustomerLocStream
+    </CEP_DDL>
+
+    <CEP_DDL> create query qinside as
+        RStream(
+            select loc.customerId, shop.shopId
+            from LocGeomStream[NOW] as loc, ShopGeomRelation as shop
+            where INSIDE@spatial(loc.curLoc, shop.geom, 5.0d) = true
+        )
+    </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query qinside add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/spatial_inside.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query qinside start </CEP_DDL> 
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+
+

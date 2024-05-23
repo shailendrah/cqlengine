@@ -1,0 +1,18 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17709899_S1 (c1 bigint, c2 bigint) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk17709899_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17709899_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk17709899_q1 as select AA.c1 as c1, AA.c2 as c2 from (select * from tk17709899_S1 where c2 > 5)[range c2 milliseconds] as AA ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk17709899_q2 as select AA.c1 as c1, AA.c2 as c2 from (select * from tk17709899_S1 where c2 > 5)[range c2 milliseconds] as AA ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17709899_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17709899_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk17709899_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17709899_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17709899_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk17709899_q2 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

@@ -1,0 +1,35 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata145_S145_1 (c1 integer, c2 integer, c3 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata145_S145_1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata145_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkdata145_Q145_1 as select c1 as col1 from tkdata145_S145_1</CEP_DDL>
+<CEP_DDL> create query tkdata145_Q145_2 as select c1 as col1, c2 as col2 from tkdata145_S145_1[range 2] primary key(col1)</CEP_DDL>
+<CEP_DDL> create query tkdata145_Q145_3 as select c3 as col1, c2 as col2 from tkdata145_S145_1[range 2] primary key(col1)</CEP_DDL>
+<CEP_DDL> create query tkdata145_Q145_4 as select c1 as col1, c3 as col2 from tkdata145_S145_1[range 1] primary key(col1, col2)</CEP_DDL>
+<!-- Negative Tests -->
+<!-- Commented out for the timebeing till the problem with droping is solved 
+<CEP_DDL> create query Q145_5 as select c1 as col1, c3 as col2 from tkdata145_S145_1[range 1]</CEP_DDL>
+-->
+<CEP_DDL> <![CDATA[ alter query tkdata145_Q145_1 add destination "<EndPointReference><Address><type>db</type><Arguments><Table>dbdestination1</Table><DataSource>soainfra</DataSource></Arguments></Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata145_Q145_2 add destination "<EndPointReference><Address><type>db</type><Arguments><Table>dbdestination2</Table><DataSource>soainfra</DataSource><PrimaryKey>c1</PrimaryKey></Arguments></Address></EndPointReference>" use update semantics ]]> </CEP_DDL>
+
+<!-- Another way to specify Connection String -->
+
+<CEP_DDL> <![CDATA[ alter query tkdata145_Q145_3 add destination "<EndPointReference><Address><type>db</type><Arguments><Table>dbdestination3</Table><DataSource>soainfra</DataSource><PrimaryKey>c3</PrimaryKey></Arguments></Address></EndPointReference>" use update semantics]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata145_Q145_4 add destination "<EndPointReference><Address><type>db</type><Arguments><Table>dbdestination4</Table><DataSource>soainfra</DataSource></Arguments></Address></EndPointReference>" use update semantics]]> </CEP_DDL>
+
+<!-- Commented out for the timebeing till the problem with droping is solved 
+<CEP_DDL> <![CDATA[ alter query Q145_5 add destination "<EndPointReference><Address><type>db</type><Arguments><Table>dbdestination4</Table><DataSource>soainfra</DataSource></Arguments></Address></EndPointReference>" use update semantics]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query Q145_5 add destination "<EndPointReference><Address><type>db</type><Arguments><Table>dbdestination4</Table><DataSource>soainfra</DataSouce></Arguments></Address></EndPointReference>"]]> </CEP_DDL>
+-->
+<CEP_DDL> alter query tkdata145_Q145_1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata145_Q145_2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata145_Q145_3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata145_Q145_4 start </CEP_DDL>
+<!-- Commented out for the timebeing till the problem with droping is solved 
+<CEP_DDL> alter query Q145_5 start </CEP_DDL>
+-->
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

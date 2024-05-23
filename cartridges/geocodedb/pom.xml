@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>com.oracle.cep.cql</groupId>
+        <artifactId>cartridges</artifactId>
+        <version>12.2.1.3-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.oracle.cep</groupId>
+    <artifactId>cartridge.geocodedb</artifactId>
+    <packaging>bundle</packaging>
+    <name>Cartridge.geocodedb</name>
+    <url>http://maven.apache.org</url>
+    <dependencies>
+    </dependencies>
+    <build>
+        <testSourceDirectory>src/junit_test/java</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+ 		     <excludes>
+	          <exclude>**/.ade_path/**</exclude>
+	        </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Version>${wlevs.version}</Bundle-Version>
+                        <Bundle-SymbolicName>com.oracle.cep.cartridge.geocodedb</Bundle-SymbolicName>
+                        <Export-Package>
+                            com.oracle.cep.cartridge.geocodedb;version=${wlevs.version}
+                        </Export-Package>
+                        <Import-Package>
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,249 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedView_LeftRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedView_LeftRel1a(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedView_LeftRel2(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedView_RightRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedView_RightRel2(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3</CEP_DDL>
+<!-- related to bug 16692957. RelName as to be prefix of colName for this test. So normal naming convention is not followed. -->
+<CEP_DDL>CREATE ARCHIVED RELATION Emp(beam_id bigint, EmpNo integer, EName char(20), salary double, DeptNo integer) archiver BIArchiver entity
+"soainfra.EmpTable" event identifier beam_id </CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION Dept(beam_id bigint, DeptNo integer, DeptName char(30)) archiver BIArchiver entity
+"soainfra.DeptTable" event identifier beam_id </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkArchivedView_LeftRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedView_LeftRel1a add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedView_LeftRel2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedView_RightRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedView_RightRel2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation Emp add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpEmp.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation Dept add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpDept.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- join project as view root. aliases for FROM clause table. two-way join. multiple queries on the view. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view1(myVal float, c3 bigint) as select p.c2 + tkArchivedView_RightRel1.c1, p.c3 from tkArchivedView_LeftRel1 as p, tkArchivedView_RightRel1 where (p.c1=10 or p.c1=20) event identifier c3]]></CEP_DDL>
+
+<!-- multiple aggr queries over view. view operators are shared. -->
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q1 as select sum(myVal) from tkArchivedView_view1 ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q2 as select avg(myVal) from tkArchivedView_view1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q2 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- join project as view root. three way join. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view2(changedrel1c2 float, changedrel2c1 integer, changedrel3c3 bigint) as select tkArchivedView_LeftRel1.c2 , tkArchivedView_RightRel1.c1, tkArchivedView_RightRel2.c3 from tkArchivedView_LeftRel1, tkArchivedView_RightRel1 , tkArchivedView_RightRel2 where (tkArchivedView_RightRel1.c3=tkArchivedView_RightRel2.c3) and (tkArchivedView_LeftRel1.c3 = tkArchivedView_RightRel1.c3) event identifier changedrel3c3 ]]></CEP_DDL>
+
+<!-- lineage synopsis using operator (project) above view. Event identifier will be tested. View defn enforces equality on c3 (unique column) so that at max only one record from left matches one record from right. Necessary to ensure changedrel3c3 is unique for every record of the view.-->
+<CEP_DDL><![CDATA[ create query tkArchivedView_q3 as select changedrel2c1, changedrel1c2, changedrel3c3 from tkArchivedView_view2 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q3 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q4 as select distinct changedrel2c1 from tkArchivedView_view2 where changedrel1c2 > 3.2]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q4 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- join as view root. two way join. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view3 (leftc1 integer, leftc2 float, leftc3 bigint, leftc4 char(10), rightc1 integer, rightc2 float, rightc3 bigint, rightc4 char(10)) as select * from tkArchivedView_LeftRel1, tkArchivedView_RightRel1 where tkArchivedView_LeftRel1.c3 = tkArchivedView_RightRel1.c3  event identifier rightc3]]></CEP_DDL>
+
+<!-- query using a function (signum) that does not have sql equivalent. So the querying would fall back on view root which is a join. Join would only propagate the archived tuples. It won't change its internal state/synopsis. -->
+<CEP_DDL><![CDATA[ create query tkArchivedView_q5 as select leftc1+5, leftc3, rightc1-5, rightc3, signum1(leftc2) from tkArchivedView_view3]]></CEP_DDL>
+
+<!-- second query that also asks the same join to be query operator. To make sure there are no side effects even when multiple queries are on the same LDO. -->
+<CEP_DDL><![CDATA[ create query tkArchivedView_q21 as select leftc1, signum1(leftc2), "second query" from tkArchivedView_view3]]></CEP_DDL>
+
+<!-- a normal query over the same LDO that does not ask the join to query. -->
+<CEP_DDL><![CDATA[ create query tkArchivedView_q22 as select leftc1, leftc2, "third query" from tkArchivedView_view3 where 1=1]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q5 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q21 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q22 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q22.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- join as view root. three way join. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view4 (onec1 integer, onec2 float, onec3 bigint, onec4 char(10), secondc1 integer, secondc2 float, secondc3 bigint, secondc4 char(10), thirdc1 integer, thirdc2 float, thirdc3 bigint, thirdc4 char(10)) as select * from tkArchivedView_LeftRel1, tkArchivedView_RightRel1, tkArchivedView_RightRel2 as q where tkArchivedView_LeftRel1.c1 = tkArchivedView_RightRel1.c1 and tkArchivedView_RightRel1.c2=q.c2 event identifier onec3 ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q6 as select sum(onec1+secondc2) from tkArchivedView_view4 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q6 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q7 as select count(length(thirdc4)) from tkArchivedView_view4 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q7 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!--
+  ********************************************************************************************************
+  ** Note : (Especially for QA)                                                                         **
+  ** Queries from q8 to q13 and their view definitions were added when first support for LDO was added. **
+  ** However it later became clear that such use-cases are NOT going to occur in BEAM (post discussions **
+  ** of Jeff and Vikram). So the ues-cases that these queries represent should be ignored.              **
+  ** These queries are still run when this test file is executed as they are harmless.                  **
+  ********************************************************************************************************
+-->
+
+<!-- project as view root. Some entries aliased and some not. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view5 (firstc1 integer, firstc2 float, firstc3 bigint, firstc4 char(20)) as select c1+5 , 1.5 as somec2, c3 as firstc3, "first" from tkArchivedView_LeftRel1 event identifier firstc3]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q8 as RStream(select firstc1, firstc3 from tkArchivedView_view5) ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q8 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- select as view root. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view6 (c1 integer, c2 float,c3 bigint, c4 char(20)) as select * from tkArchivedView_RightRel1 where c2 > 1.5 event identifier c3]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q9 as IStream(select c1, c2 from tkArchivedView_view6 where c4='first' or c4='second') ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q9 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q10 as select count(c2) from tkArchivedView_view6 group by c1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q10 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- relsrc as view root. A separate relation LeftRel2 is used here. We do not yet handle sharing of operators below view. This will require that the operator have separate outputSQL depending on the query being started. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view7 (c1 integer, c2 float,c3 bigint, c4 char(20)) as select * from tkArchivedView_LeftRel2 event identifier c3]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q11 as select c4||'changed' from tkArchivedView_view7 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q11 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- distinct as view root. -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view8 (c1 integer, c3 bigint) as select distinct c1, c3 from tkArchivedView_LeftRel1 event identifier c3 ]]> </CEP_DDL>
+
+<!-- project above view root (for c3) is also shared -->
+<CEP_DDL><![CDATA[ create query tkArchivedView_q12 as IStream(select c3 from tkArchivedView_view8) ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q12 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q13 as select c3 from tkArchivedView_view8 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q13 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!--
+   ** New queries for testing the case when operator immediately above view root expects a synopsis from child
+   ** and hence cannot query the archiver going back to the view root.
+   ** Buffer operator is added in such cases in between view root and operator immediately above it.
+-->
+<!-- non-incremental aggr - MAX on view1 --> 
+<CEP_DDL><![CDATA[ create query tkArchivedView_q14 as select max(myVal) from tkArchivedView_view1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q14 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- distinct aggr and non-incremental aggr - MIN on view1 --> 
+<CEP_DDL><![CDATA[ create query tkArchivedView_q15 as select sum(distinct myVal), min(myVal) from tkArchivedView_view1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q15 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- select * - FLAT query over view2 -->
+<CEP_DDL><![CDATA[ create query tkArchivedView_q16 as select * from tkArchivedView_view2 ]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedView_q16 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- queries for bug 16692957 -->
+<CEP_DDL> <![CDATA[ create archived view Employee(beam_id bigint, EmpNo integer, EName char(20), DeptNo integer, DeptName char(30), salary double) as select Emp.beam_id, EmpNo, EName, Dept.DeptNo, DeptName, salary from Emp, Dept where Emp.DeptNo=Dept.DeptNo event identifier beam_id ]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q17 as select DeptName, sum(salary) from Employee group by DeptName ]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkArchivedView_q17 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ create archived view EmployeeDetails(beam_id bigint, EmpNo integer, EName char(20), salary double, DeptNo integer, depBeamId bigint, depDeptNo integer, depDeptName char(30)) as select * from Emp, Dept where Emp.DeptNo=Dept.DeptNo  event identifier beam_id ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q18 as select * from EmployeeDetails ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query tkArchivedView_q18 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- query for bug 17054511 -->
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view9(beam_id bigint, leftc1 integer, leftc2 float, leftc4 char(10), rightc1 integer, rightc2 float, rightc4 char(10)) as select tkArchivedView_LeftRel1.c3 as beam_id, tkArchivedView_LeftRel1.c1 as leftc1, tkArchivedView_LeftRel1.c2 as leftc2, tkArchivedView_LeftRel1.c4 as leftc4, tkArchivedView_LeftRel1a.c1 as rightc1, tkArchivedView_LeftRel1a.c2 as rightc2, tkArchivedView_LeftRel1a.c4 as rightc4 from tkArchivedView_LeftRel1, tkArchivedView_LeftRel1a where tkArchivedView_LeftRel1.c3 = tkArchivedView_LeftRel1a.c3 event identifier beam_id ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q19 as select leftc1 as leftc1 from tkArchivedView_view9 ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query tkArchivedView_q19 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create archived view tkArchivedView_view10(leftc1 integer, leftc2 float, leftc3 bigint, leftc4 char(10), rightc1 integer, rightc2 float, rightc3 bigint, rightc4 char(10)) as select * from tkArchivedView_LeftRel1, tkArchivedView_LeftRel1a where tkArchivedView_LeftRel1.c3 = tkArchivedView_LeftRel1a.c3 event identifier leftc3 ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedView_q20 as select leftc1 as leftc1 from tkArchivedView_view10 ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query tkArchivedView_q20 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedView_q20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- start_time specified here is assumed to be in nanoseconds -->
+
+<CEP_DDL> alter query tkArchivedView_q1 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q2 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q3 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q4 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q5 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q6 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q7 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q8 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q9 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q10 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q11 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q12 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q13 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q14 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q15 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q16 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q17 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q18 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q19 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q20 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q21 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedView_q22 set start_time 1000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedView_q1 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q2 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q3 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q4 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q5 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q6 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q7 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q8 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q9 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q10 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q11 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q12 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q13 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q14 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q15 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q16 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q17 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q18 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q19 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q20 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q21 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedView_q22 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+</CEP>

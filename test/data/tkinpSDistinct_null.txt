@@ -1,0 +1,13 @@
+c 10, i
+1  a ,  
+2 ab, 20
+3 abc, 25
+5 abc, 
+6 abc, 
+7 abcid, 1234 
+8 abc, 
+9 abc, 
+10 abcierf, 98
+11 abcvb, 
+12 abcnh, 0
+13 abcq, 0

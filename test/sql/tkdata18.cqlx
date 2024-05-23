@@ -1,0 +1,27 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> alter system time_slice = 1</CEP_DDL>
+<CEP_DDL> alter system time_slice = 1</CEP_DDL>
+<CEP_DDL> register relation  tkdata18_R3 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register relation  tkdata18_R4 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata18_R3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpR3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata18_R4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpR4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata18_q0 as select a.c1 from tkdata18_R3 as a, tkdata18_R4 as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata18_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR34S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata18_q0 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata18_q1 as select a.c1 from tkdata18_R3 as a, tkdata18_R4 as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata18_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR34S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata18_q1 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata18_q2 as select a.c1 from tkdata18_R3 as a, tkdata18_R4 as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata18_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR34S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata18_q2 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata18_q3 as select a.c1 from tkdata18_R3 as a, tkdata18_R4 as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata18_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR34S3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata18_q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

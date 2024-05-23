@@ -1,0 +1,194 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/LogLevels.java /main/7 2008/11/18 21:46:32 hopark Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+ DESCRIPTION
+ <short description of component this file declares/defines>
+
+ PRIVATE CLASSES
+ <list of private classes defined - with one-line descriptions>
+
+ NOTES
+
+ MODIFIED    (MM/DD/YY)
+ hopark      11/07/08 - activate refactor
+ hopark      10/10/08 - remove statics
+ hopark      10/07/08 - use execContext to remove statics
+ hopark      06/18/08 - logging refactor
+ hopark      05/12/08 - use LogLevelManager directly
+ hopark      03/26/08 - server reorg
+ hopark      12/20/07 - remove semicolon
+ hopark      05/22/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/LogLevels.java /main/7 2008/11/18 21:46:32 hopark Exp $
+ *  @author  hopark  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import oracle.cep.logging.LevelDesc;
+import oracle.cep.logging.ILogArea;
+import oracle.cep.logging.ILogEvent;
+import oracle.cep.logging.trace.LogArea;
+import oracle.cep.logging.trace.LogEvent;
+import oracle.cep.logging.trace.LogLevel;
+import oracle.cep.logging.trace.LogLevelManager;
+import oracle.cep.phyplan.PhyOptKind;
+import oracle.cep.phyplan.PhyStoreKind;
+import oracle.cep.phyplan.SynopsisKind;
+import oracle.cep.service.CEPManager;
+import oracle.cep.service.ExecContext;
+import oracle.cep.util.EnumUtil;
+
+public class LogLevels implements LogLevelsMBean
+{
+  CEPManager cepMgr;
+  
+  public LogLevels(CEPManager cepMgr)
+  {
+    this.cepMgr = cepMgr;
+  }
+  
+  public void clear()
+  {
+    LogLevelManager lm = cepMgr.getLogLevelManager();
+    lm.clear();
+  }
+  
+  public String[] getAreas()
+  {
+    Collection<ILogArea> vals = LogArea.values();
+    String[] res = new String[vals.size()];
+    int pos = 0;
+    for (ILogArea a : vals) 
+    {
+      res[pos++] = a.getValue() + "," + a.toString();
+    }
+    return res;
+  }
+
+  public String[] getTypes(int a)
+  {
+    ILogArea area = LogArea.fromValue(a);
+    if (area == null) 
+      return null;
+    String[] res = null;
+    if (area == LogArea.OPERATOR)
+      res = EnumUtil.getDescs(PhyOptKind.class);
+    else if (area == LogArea.SYNOPSIS)
+      res = EnumUtil.getDescs(SynopsisKind.class);
+    else if (area == LogArea.STORE)
+      res = EnumUtil.getDescs(PhyStoreKind.class);
+    return res;
+  }
+  
+  public String[] getEvents(int a)
+  {
+    ILogArea area = LogArea.fromValue(a);
+    if (area == null) 
+      return null;
+    ILogEvent[] events = LogEvent.getEvents(area);
+    if (events == null)
+      return null;
+    String[] res = new String[events.length];
+    int pos = 0;
+    for (ILogEvent ev : events) 
+    {
+      res[pos++] = ev.getValue() + "," + ev.toString();
+    }
+    return res; 
+  }
+
+  public String[] getLevels(int a)
+  {
+    ILogArea area = LogArea.fromValue(a);
+    if (area == null) 
+      return null;
+    LevelDesc[] descs = LogLevel.getLevelDescs(area);
+    if (descs == null) return null;
+    String[] res = new String[descs.length];
+    int pos = 0;
+    for (LevelDesc d : descs)
+    {
+      res[pos++] = d.getLevel() + ", " + d.getDesc();
+    }
+    return res; 
+  }
+  
+  public String[] getCurrentInfo()
+  {
+    LogLevelManager lm = cepMgr.getLogLevelManager();
+    return lm.getCurrentInfo();
+  }
+
+  public String setLevel(boolean enable, int a,
+      int type, int id, int e, int level) 
+    throws Exception
+  {
+    ILogArea area = LogArea.fromValue(a);
+    if (area == null) 
+      return null;
+    ILogEvent event = null;
+    if (e >= 0)
+      event = LogEvent.fromValue(e);
+    List<Integer> types = null;
+    if (type >= 0) 
+    {
+     types = new ArrayList<Integer>(1);
+     types.add(type);
+    }
+    List<Integer> ids = null;
+    if (id >= 0)
+    {
+      ids = new ArrayList<Integer>(1);
+      ids.add(id);
+    }
+    List<ILogEvent> events = null;
+    if (event != null)
+    {
+      events = new ArrayList<ILogEvent>(1);
+      events.add(event);
+    }
+    List<Integer> levels = null;
+    if (level >= 0)
+    {
+      levels = new ArrayList<Integer>(1);
+      levels.add(level);
+    }
+    LogLevelManager lm = cepMgr.getLogLevelManager();
+    lm.setLevel(enable, area, types, ids, events, levels);
+    return lm.toString();
+  }  
+  
+  public String runcqlx(String cql)
+  {
+    String result = "ok";
+    try {
+      ExecContext ec = cepMgr.getSystemExecContext();
+      ec.executeDDL(cql, false);
+    } catch(Exception e)
+    {
+      result = e.toString();
+    }
+    return result;
+  }
+
+  public void quitSystem()
+  {
+    try
+    {
+      cepMgr.close();
+      System.exit(0);
+    } catch(Exception e)
+    {
+    }
+  }
+}

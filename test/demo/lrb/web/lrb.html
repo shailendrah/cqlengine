@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<style>
+	#mapArea {
+		width:800px;
+		height:600px;
+		background-color:#dedeed;
+		border:1px solid #999;
+	}
+	table {
+		border-collapse: collapse;
+	}
+	td {
+		font-size: 85%;
+		text-align: right;
+		padding-right: 10pt;
+		padding-left: 10pt;
+	}
+	th {
+		font-size: 85%;
+		padding-right: 10pt;
+		padding-left: 10pt;
+		background-color:#dedeed;
+	}
+	tr.accident td {
+		color: red;
+	}
+
+</style>
+    <title>Linea road demo</title>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAv_mtmGv2utjvqGuZl2WTPxRnwEHEBK62rmi0qlW5mtAe0ZycYBTZlc0f_ME-rzmBRSXQOjxYsd1OFA"
+      type="text/javascript"></script>
+    <script type="text/javascript" src="dojo/dojo.js"></script>
+    <script type="text/javascript">
+
+var test = false;
+
+var MAX_ROWS = 30;
+var UPDATE_FREQ = 5000;
+var SPEED_URL = "/demox?type=speed";
+var TIME_URL = "/demox?type=time&segid=";
+var ACC_URL = "/demox?type=acc";
+var map;
+
+    //<![CDATA[
+
+function load() {
+  if (GBrowserIsCompatible()) {
+	map = new GMap2(document.getElementById("mapArea"));
+	map.setCenter(new GLatLng(37.4419, -122.1419), 13);
+
+    if (test) {
+	  var tdata =
+	  [
+	  { segid: 8, sx: 37.488631,   sy: -122.212653,   ex: 37.483814,   ey: -122.181394, speed: 10, acc:8}
+	  ];
+
+	  UpdateMap(tdata);
+    }
+  }
+}
+
+var currentTime;
+var updateTime;
+
+function My_Request() {
+	if (!updateTime || currentTime >= updateTime + UPDATE_FREQ) {
+		updateTime = currentTime;
+
+		var bindArgs = {
+			url: SPEED_URL,
+			error: function(type, err){
+     			StopTimer();
+     			alert("Failed to retrieve stock data from the server.\n" + err.message);
+			},
+			load: function(type, data, evt){
+				My_Response(data);
+			},
+			mimetype: "text/javascript"
+		};
+		dojo.io.bind(bindArgs);
+	}
+}
+
+function My_Response(data) {
+  UpdateMap (data);
+}
+
+function addCol(tr, typ, value)
+{
+	var td = document.createElement("TD");
+//	td.className = typ + "Data";
+	td.innerHTML = value;
+	tr.appendChild(td);
+}
+
+function UpdateMap(data) {
+    var table = document.getElementById("SpeedTable");
+    var tBody = table.tBodies[0];
+    for(var i=tBody.childNodes.length-1; i>0; i--){
+        tBody.removeChild(tBody.childNodes[i]);
+    }
+    map.clearOverlays();
+    for (var i = 0; i < data.length; i++) {
+	  var tr = document.createElement("TR");
+      addCol(tr, "Seg", data[i].segid);
+      addCol(tr, "Speed", (data[i].speed | 0));
+      if (data[i].acc > 0) {
+        tr.className = "accident";
+      }
+	  tBody.appendChild(tr);
+
+	  var color = "none"
+	  var speed = data[i].speed | 0;
+	  if (speed < 34) { color = "#fc6d7e"; }
+	  else if (speed >= 35 && speed < 55) { color = "#a4e0a4"; }
+	  else if (speed >= 55) { color = "#f6f031"; }
+	  if (data[i].acc > 0) { color = "#fa0000"; }
+	  if (color != "none") {
+		var polyline = new GPolyline([
+			  new GLatLng(data[i].sx, data[i].sy),
+			  new GLatLng(data[i].ex, data[i].ey)
+			], color, 10);
+		map.addOverlay(polyline);
+ 	  }
+	}
+}
+
+function My_AccRequest() {
+   var bindArgs = {
+    url: ACC_URL,
+    error: function(type, err){
+     StopTimer();
+     alert("Failed to retrieve table data from the server.\n" + err.message);
+    },
+    load: function(type, data, evt){
+     My_AccResponse(data);
+    },
+    mimetype: "text/javascript"
+   };
+   dojo.io.bind(bindArgs);
+}
+
+function My_AccResponse(data){
+	UpdateTable(data);
+}
+
+function UpdateTable(data) {
+    var table = document.getElementById("AccTable");
+    var tBody = table.tBodies[0];
+	for (var i = 0; i < data.length; i++) {
+		var tr = document.createElement("TR");
+		addCol(tr, "Time", data[i].Time);
+		addCol(tr, "Seg", data[i].Segment);
+		tBody.appendChild(tr);
+	    if (tBody.childNodes.length > MAX_ROWS) {
+        	tBody.removeChild(tBody.childNodes[0]);
+	    }
+	}
+}
+
+var timerID = 0;
+
+function StartTimer() {
+   timerID = setTimeout("StartTimer()", UPDATE_FREQ);
+   currentTime = new Date().getTime();
+   My_Request();
+   My_AccRequest();
+}
+
+function StopTimer() {
+    if (timerID)
+	    clearTimeout(timerID);
+}
+
+function InitDashboard() {
+  load();
+  if (!test) {
+    StartTimer();
+  }
+
+}
+
+    //]]>
+    </script>
+  </head>
+  <body onload="InitDashboard()" onunload="GUnload()">
+
+<table id="OuterTable">
+  <tr>
+	<td valign="top">
+      <div id="mapArea"></div>
+	</td>
+	<td valign="top">
+	  <table>
+	    <tr>
+		  <td>
+		      <b></b>
+			  <table border="1" id="SpeedTable">
+			    <caption><b>Speeds</b></caption>
+				<tr>
+				  <th>Segment</th>
+				  <th>Speed</th>
+				</tr>
+				<tbody id="SpeedTableBody"></tbody>
+			  </table>
+		 </td>
+        </tr>
+	    <tr>
+		  <td>
+			  <table border="1" id="AccTable">
+			    <caption><b>Accident history</b></caption>
+				<tr>
+				  <th>Time</th>
+				  <th>Segment</th>
+				</tr>
+				<tbody id="AccTableBody"></tbody>
+			  </table>
+		  </td>
+       </tr>
+      </table>
+	 </td>
+  </tr>
+</table>
+
+  </body>
+</html>

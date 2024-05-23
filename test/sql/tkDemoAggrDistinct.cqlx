@@ -1,0 +1,33 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkDemoAggrDistinct_S1(c1 integer, c2 double, c3 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkDemoAggrDistinct_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpAggrd1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkDemoAggrDistinct_S2(c1 integer, c2 double, c3 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkDemoAggrDistinct_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpAggrd1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkDemoAggrDistinct_S3(c1 integer, c2 double, c3 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkDemoAggrDistinct_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpAggrd1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Query to demonstrate aggr distinct functionality -->
+<CEP_DDL> create query tkDemoAggrDistinct_q0 as select sum(c1), avg(c2), count(c1), c3 from tkDemoAggrDistinct_S1[range 10] group by c3</CEP_DDL>
+<CEP_DDL> create query tkDemoAggrDistinct_q1 as select sum(distinct c1), avg(distinct c2), count(distinct c1), c3 from tkDemoAggrDistinct_S2[range 10] group by c3</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkDemoAggrDistinct_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDemoAggrd0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkDemoAggrDistinct_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDemoAggrd1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkDemoAggrDistinct_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkDemoAggrDistinct_q1 start </CEP_DDL>
+
+<!-- Queries to demonstrate sharing -->
+<CEP_DDL> create query tkDemoAggrDistinct_q3 as select sum(distinct c1), max(distinct c1) from tkDemoAggrDistinct_S3[range 10] group by c2</CEP_DDL>
+<!-- private plan of the query being added as operator (range window) having multiple outputs -->
+<CEP_DDL> create query tkDemoAggrDistinct_q2 as select sum(distinct c1), max(distinct c1), sum(c2) from tkDemoAggrDistinct_S3[range 10] group by c2</CEP_DDL>
+<!-- completely identical queries -->
+<CEP_DDL> create query tkDemoAggrDistinct_q4 as select sum(distinct c1), max(distinct c1), sum(c2) from tkDemoAggrDistinct_S3[range 10] group by c2</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkDemoAggrDistinct_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDemoAggrd3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkDemoAggrDistinct_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDemoAggrd2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkDemoAggrDistinct_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outDemoAggrd4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkDemoAggrDistinct_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkDemoAggrDistinct_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkDemoAggrDistinct_q4 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

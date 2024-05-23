@@ -1,0 +1,16 @@
+c 10
+1000 data1
+2000 data2
+3000 data3
+4000 data4
+5000 data5
+6000 data6
+7000 data7
+8000 data8
+9000 data9
+10000 data10
+11000 data11
+12000 data12
+13000 data13
+14000 data14
+15000 data15

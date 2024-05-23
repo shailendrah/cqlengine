@@ -1,0 +1,24 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata23_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata23_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create function tkdata23_runError(a int, b float) return int as language java name "oracle.cep.test.userfunctions.TkRunErr" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata23_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkdata23_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata23_q5 as select * from tkdata23_S1 [range 5 minutes] </CEP_DDL>
+<CEP_DDL> create view tkdata23_v1(c1 integer, c2 float) as select * from tkdata23_S0[range 1] where tkdata23_runError(tkdata23_S0.c1, tkdata23_S0.c2) > 2 </CEP_DDL>
+<CEP_DDL> create view tkdata23_v5(c1 integer, c2 float) as query tkdata23_q5 </CEP_DDL>
+<CEP_DDL> create view tkdata23_v7(c1 integer, c2 float) as query tkdata23_q5 </CEP_DDL>
+<CEP_DDL> create query tkdata23_q2 as select * from tkdata23_v1</CEP_DDL>
+<CEP_DDL> create query tkdata23_q3 as select c1 from tkdata23_v1</CEP_DDL>
+<CEP_DDL> create view tkdata23_v2(c1 integer, c2 float) as query tkdata23_q2 </CEP_DDL>
+<CEP_DDL> create view tkdata23_v6(c1 integer, c2 float) as query tkdata23_q2 </CEP_DDL>
+<CEP_DDL> create query tkdata23_q4 as tkdata23_v2 union tkdata23_v5 </CEP_DDL>
+<CEP_DDL> create query tkdata23_q7 as select * from tkdata23_v7 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata23_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq7S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata23_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata23_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata23_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata23_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkdata23_q7 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

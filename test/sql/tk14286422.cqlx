@@ -1,0 +1,10 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tk14286422_S1 (pid integer, riskSummary oracle.cep.test.userfunctions.TkRiskSummary) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk14286422_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk14286422_S1.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> create function sumRiskSummary(c1 oracle.cep.test.userfunctions.TkRiskSummary) return oracle.cep.test.userfunctions.TkRiskSummary aggregate using "oracle.cep.test.userfunctions.TkSumRiskSummary" </CEP_DDL>
+<CEP_DDL> create query tk14286422_q1 as IStream(select pid, sumRiskSummary(riskSummary) from tk14286422_S1 group by pid) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk14286422_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk14286422_q1.txt</Address></EndPointReference>" ]]>  </CEP_DDL>
+<CEP_DDL> alter query tk14286422_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+

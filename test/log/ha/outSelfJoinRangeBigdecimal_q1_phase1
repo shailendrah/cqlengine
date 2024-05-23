@@ -1,0 +1,22 @@
+1000:+ test string1,63.00006,test string1,63.00006
+2000:+ test string2,80.00008,test string1,63.00006
+2000:+ test string1,63.00006,test string2,80.00008
+2000:+ test string2,80.00008,test string2,80.00008
+3000:+ test string3,60.00008,test string1,63.00006
+3000:+ test string3,60.00008,test string2,80.00008
+3000:- test string1,63.00006,test string1,63.00006
+3000:- test string2,80.00008,test string1,63.00006
+3000:- test string3,60.00008,test string1,63.00006
+3000:+ test string1,63.00006,test string3,60.00008
+3000:+ test string2,80.00008,test string3,60.00008
+3000:+ test string3,60.00008,test string3,60.00008
+4000:+ oracle,38.00007,test string2,80.00008
+4000:+ oracle,38.00007,test string3,60.00008
+4000:- test string1,63.00006,test string2,80.00008
+4000:- test string2,80.00008,test string2,80.00008
+4000:- test string3,60.00008,test string2,80.00008
+4000:- oracle,38.00007,test string2,80.00008
+4000:+ test string1,63.00006,oracle,38.00007
+4000:+ test string2,80.00008,oracle,38.00007
+4000:+ test string3,60.00008,oracle,38.00007
+4000:+ oracle,38.00007,oracle,38.00007

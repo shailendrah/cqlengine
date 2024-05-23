@@ -1,0 +1,20 @@
+<OEPS>
+<OEPS_DDL> create stream S0 (c1 integer, c2 integer); </OEPS_DDL>
+<OEPS_DDL> alter stream S0 add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpPattern2.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL><![CDATA[ create query q1 as select A.c1,B.c1 from S0 RECOGNIZE ( 
+
+PATTERN(A W+ X+ Y+ Z* B) 
+
+DEFINE 
+A as A.c2 = A.c2, 
+W as W.c2 < prev(W.c2), 
+X as X.c2 > prev(X.c2), 
+Y as Y.c2 < prev(Y.c2), 
+Z as Z.c2 > prev(Z.c2), 
+B as B.c2 > prev(B.c2));
+
+]]> </OEPS_DDL>
+<OEPS_DDL> alter query q1 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/patternout3.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q1 start; </OEPS_DDL>
+<OEPS_DDL> alter system run; </OEPS_DDL>
+</OEPS>

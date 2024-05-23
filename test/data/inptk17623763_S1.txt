@@ -1,0 +1,7 @@
+l, l, c 50, TOF
+1000 T 1, 8, "first"
+1001 T 2, 3, "second"
+1002 T 3, 6, "third"
+1003 T 4, 6, "fourth"
+1008 T 5, 8, "fifth"
+h 1020

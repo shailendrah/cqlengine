@@ -1,0 +1,69 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkExtensibleIndex_S1(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkExtensibleIndex_S2(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create relation tkExtensibleIndex_R1(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create relation tkExtensibleIndex_R2(c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkExtensibleIndex_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpExtenIndexS1.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkExtensibleIndex_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpExtenIndexS2.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkExtensibleIndex_R1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpExtenIndexR1.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkExtensibleIndex_R2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpExtenIndexR2.txt</Address></EndPointReference>"]]></CEP_DDL>
+
+<!-- Simple test cases with just one predicate in WHERE -->
+<!-- test bnstreamjoinprojectfactory -->
+<CEP_DDL>create query tkExtensibleIndex_q1 as RStream(select * from tkExtensibleIndex_S1[now] as P, tkExtensibleIndex_S2[range 3] as Q where LESSTHAN@TreeIndexCartridge(Q.c1,P.c2) = true)</CEP_DDL>
+
+<!-- test binstreamjoinfactory -->
+<CEP_DDL>create query tkExtensibleIndex_q2 as RStream(select Q.c2, count(*) from tkExtensibleIndex_S1[now] as P, tkExtensibleIndex_S2[range 3] as Q where true = GREATERTHAN@TreeIndexCartridge(Q.c1, P.c2) group by Q.c2)</CEP_DDL>
+
+<!-- Multiple extensible predicates in WHERE. tests index results combining code -->
+<CEP_DDL>create query tkExtensibleIndex_q3 as RStream(select * from tkExtensibleIndex_S1[now] as P, tkExtensibleIndex_S2[range 3] as Q where LESSTHAN@TreeIndexCartridge(Q.c2,P.c1) = true AND GREATERTHAN@TreeIndexCartridge(P.c2, Q.c1) = true)</CEP_DDL>
+
+<!-- Some other predicate with extensible predicate -->
+<CEP_DDL>create query tkExtensibleIndex_q4 as RStream(select * from tkExtensibleIndex_S1[now] as P, tkExtensibleIndex_S2[range 3] as Q where LESSTHAN@TreeIndexCartridge(P.c1, Q.c1) = true AND P.c2 = Q.c2)</CEP_DDL>
+
+<!-- binjoinfactory code will be tested -->
+<CEP_DDL>create query tkExtensibleIndex_q5 as select P.c1, count(Q.c2) from tkExtensibleIndex_S1[range 1] as P, tkExtensibleIndex_S2[range 3] as Q where LESSTHAN@TreeIndexCartridge(P.c1, Q.c1) = true AND P.c2 = Q.c2 group by P.c1</CEP_DDL>
+
+<!-- testing index memory optimization -->
+<!-- test binjoinprojectfactory -->
+<CEP_DDL>create query tkExtensibleIndex_q6 as select * from tkExtensibleIndex_S1[range 2] as P, tkExtensibleIndex_S2[range 3] as Q where true = LESSTHAN@TreeIndexCartridge(Q.c2,P.c1) AND GREATERTHAN@TreeIndexCartridge(P.c2, Q.c2) = true</CEP_DDL>
+
+<CEP_DDL>create query tkExtensibleIndex_q7 as select * from tkExtensibleIndex_S1[range 2] as P, tkExtensibleIndex_S2[range 3] as Q where true = LESSTHAN@TreeIndexCartridge(Q.c2,P.c1) AND GREATERTHAN@TreeIndexCartridge(P.c1, Q.c1) = true AND LESSTHAN@TreeIndexCartridge(Q.c2,P.c1) = true AND P.c2=Q.c1</CEP_DDL>
+
+<CEP_DDL>create query tkExtensibleIndex_q8 as select tkExtensibleIndex_R1.c1,count(tkExtensibleIndex_R2.c2) from tkExtensibleIndex_R1, tkExtensibleIndex_R2 where LESSTHAN@TreeIndexCartridge(tkExtensibleIndex_R2.c2, tkExtensibleIndex_R1.c1) = true AND true = GREATERTHAN@TreeIndexCartridge(tkExtensibleIndex_R1.c2, tkExtensibleIndex_R2.c2) group by tkExtensibleIndex_R1.c1</CEP_DDL>
+
+<CEP_DDL>create query tkExtensibleIndex_q9 as select * from tkExtensibleIndex_R1 as A, tkExtensibleIndex_R2 as B, tkExtensibleIndex_S2[range 2] as C where LESSTHAN@TreeIndexCartridge(B.c2, A.c1)=true AND GREATERTHAN@TreeIndexCartridge(B.c2, C.c2) = true AND GREATERTHAN@TreeIndexCartridge(C.c1, A.c2)=true </CEP_DDL>
+
+<!-- exprs other than ATTR_REF in function call arguments -->
+<CEP_DDL>create query tkExtensibleIndex_q10 as select * from tkExtensibleIndex_S1[range 2] as P, tkExtensibleIndex_S2[range 3] as Q where true = LESSTHAN@TreeIndexCartridge(Q.c2,P.c1-5) AND GREATERTHAN@TreeIndexCartridge(round(P.c2*0.1)+round(P.c1/4), Q.c2) = true AND LESSTHAN@TreeIndexCartridge(Q.c1+7, round((P.c2+2*Q.c2)/2)) = true</CEP_DDL>
+
+<CEP_DDL>create query tkExtensibleIndex_q11 as RStream(select * from tkExtensibleIndex_S1[now] as P, tkExtensibleIndex_S2[range 3] as Q where true = LESSTHAN@TreeIndexCartridge(Q.c2+1,P.c1+P.c2) AND GREATERTHAN@TreeIndexCartridge(round(round(P.c2*0.5)), Q.c2) = true AND LESSTHAN@TreeIndexCartridge(Q.c1+2, round((P.c2+2*Q.c2)/2)) = true)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq1.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq2.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq3.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq4.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq5.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq6.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq7.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq8.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq9.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq10.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkExtensibleIndex_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExtenIndexq11.txt</Address></EndPointReference>"]]></CEP_DDL>
+
+<CEP_DDL> alter query tkExtensibleIndex_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkExtensibleIndex_q11 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+
+</CEP>

@@ -1,0 +1,21 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>create stream tk17623763_S1 (c1 bigint, c2 bigint, c3 char(50))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk17623763_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17623763_S1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test the output of variable duration range window -->
+<CEP_DDL><![CDATA[ create query tk17623763_q1 as select * from tk17623763_S1[range c2 nanoseconds] ]]></CEP_DDL>
+
+<!-- Test the output of DStream on variable duration range window-->
+<CEP_DDL><![CDATA[ create query tk17623763_q2 as Dstream(select * from tk17623763_S1[range c2 nanoseconds]) ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17623763_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17623763_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk17623763_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17623763_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17623763_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk17623763_q2 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

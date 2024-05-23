@@ -1,0 +1,12 @@
+1000:+ <column name="c2_int">1</column>
+<column name="abc">abc</column>
+
+2000:- <column name="c2_int">1</column>
+<column name="abc">abc</column>
+
+2000:+ <column name="c2_int">2</column>
+<column name="ab">ab</column>
+
+3000:- <column name="c2_int">2</column>
+<column name="ab">ab</column>
+

@@ -1,0 +1,8 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tkdata26_R (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata26_R add source "<EndPointReference><Address>file://@TEST_DATA@/inpR7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata26_q1 as select * from tkdata26_R </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata26_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata26_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

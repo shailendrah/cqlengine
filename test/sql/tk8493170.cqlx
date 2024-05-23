@@ -1,0 +1,23 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk8493170_S(sequenceNo integer, c2 char(20))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk8493170_S add source "<EndPointReference><Address>file://@TEST_DATA@/inptk8493170.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create view tk8493170_previousView as SELECT b.sequenceNo as sequenceNo, b.c2 as c2 FROM tk8493170_S [rows 1]as a, tk8493170_S[range 4 hours] as b where a.sequenceNo > b.sequenceNo</CEP_DDL>
+
+<CEP_DDL> create query tk8493170_qProc as select * from tk8493170_S[range 4 hours]</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ create query tk8493170_qDup as SELECT count(*) as duplexCount, to_char(sequenceNo) as eventKey FROM tk8493170_S [range 4 hours] group by sequenceNo having count(*) > 1 ]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ create query tk8493170_qLoss as SELECT a.sequenceNo as sequenceNo, a.c2 as ac2 FROM tk8493170_S[rows 1] as a, tk8493170_previousView as b group by a.sequenceNo, a.c2 having a.sequenceNo != (max(b.sequenceNo) + 1) ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk8493170_qProc add destination "<EndPointReference><Address><Type>file</Type><FileName>//@TEST_OUTPUT@/outtk8493170_qProc.txt</FileName></Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk8493170_qDup add destination "<EndPointReference><Address><Type>file</Type><FileName>//@TEST_OUTPUT@/outtk8493170_qDup.txt</FileName></Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk8493170_qLoss add destination "<EndPointReference><Address><Type>file</Type><FileName>//@TEST_OUTPUT@/outtk8493170_qLoss.txt</FileName></Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk8493170_qProc start </CEP_DDL>
+<CEP_DDL> alter query tk8493170_qDup start </CEP_DDL>
+<CEP_DDL> alter query tk8493170_qLoss start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

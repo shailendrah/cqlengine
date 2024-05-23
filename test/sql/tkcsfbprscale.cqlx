@@ -1,0 +1,74 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkcsfbprscale_TradeInputs(tradeId integer, tradeVolume integer, tradeSymbol char(4), tradeType integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcsfbprscale_TradeInputs add source "<EndPointReference> <Address>file://@TEST_DATA@/inpTIDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register stream tkcsfbprscale_TradeUpdates(tradeId integer, statusCode integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcsfbprscale_TradeUpdates add source "<EndPointReference> <Address>file://@TEST_DATA@/inpTUDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register stream tkcsfbprscale_TradeMatched(tradeId integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcsfbprscale_TradeMatched add source "<EndPointReference> <Address>file://@TEST_DATA@/inpTMDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register relation tkcsfbprscale_TradeTypeCodes(tradeType char(10), code integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkcsfbprscale_TradeTypeCodes add source "<EndPointReference> <Address>file://@TEST_DATA@/inpTT1.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register relation tkcsfbprscale_TradeStatusCodes(statusCode char(20), code integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkcsfbprscale_TradeStatusCodes add source "<EndPointReference> <Address>file://@TEST_DATA@/inpTS1.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register relation tkcsfbprscale_Dual(c1 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkcsfbprscale_Dual add source "<EndPointReference> <Address>file://@TEST_DATA@/inpDual.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create function tkcsfbprscale_seqNo(n int) return int as language java name "oracle.cep.test.userfunctions.TkUsrSeqNo" </CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_CutOffTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as DStream(select * from tkcsfbprscale_TradeInputs[range 20 seconds])</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_FineTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(select c.tradeId, c.tradeVolume, c.tradeSymbol, c.tradeType from tkcsfbprscale_CutOffTrades[now] as c, tkcsfbprscale_TradeMatched[range 20 seconds] as t where c.tradeId = t.tradeId)</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy1(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from tkcsfbprscale_CutOffTrades[NOW]</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy2(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from tkcsfbprscale_FineTrades[NOW]</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_FailedTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(tkcsfbprscale_Dummy1 except tkcsfbprscale_Dummy2)</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFineTrades(c1) as select count(*) from tkcsfbprscale_FineTrades[range 5 minutes slide 5 minutes]</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailedByNonZeroType(tradeType, total) as select tradeType, count(*) from tkcsfbprscale_FailedTrades[range 5 minutes slide 5 minutes] group by tradeType</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy6(tradeType) as select tradeType from tkcsfbprscale_TotalFailedByNonZeroType</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy7(tradeType) as select code from tkcsfbprscale_TradeTypeCodes</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy8(tradeType) as tkcsfbprscale_Dummy7 except tkcsfbprscale_Dummy6</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy9(tradeType, total) as select tradeType, 0 from tkcsfbprscale_Dummy8</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailedByType(tradeType, total) as tkcsfbprscale_TotalFailedByNonZeroType union all tkcsfbprscale_Dummy9</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailedTrades(total, dummy) as select sum(total), count(*) from tkcsfbprscale_TotalFailedByType</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalTrades(c1) as select fine.c1+failed.total from tkcsfbprscale_TotalFineTrades as fine, tkcsfbprscale_TotalFailedTrades as failed</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy4(buyCount, sellCount) as select a.total, b.total from tkcsfbprscale_TotalFailedByType as a, tkcsfbprscale_TotalFailedByType as b where a.tradeType = 0 and b.tradeType = 1</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailuresByTypes(buyCount, sellCount, exchgCount) as select b.buyCount, b.sellCount, a.total from tkcsfbprscale_TotalFailedByType as a, tkcsfbprscale_Dummy4 as b where a.tradeType = 2</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_FailedTradesStatus(tradeId, statusCode) as IStream(select f.tradeId, u.statusCode from tkcsfbprscale_FailedTrades[NOW] as f, tkcsfbprscale_TradeUpdates[partition by tradeId rows 1 range 20 seconds] as u where f.tradeId = u.tradeId)</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailedNonZeroByStatus12(statusCode, total) as select statusCode, count(*) from tkcsfbprscale_FailedTradesStatus[range 5 minutes slide 5 minutes] group by statusCode</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy10(statusCode) as select statusCode from tkcsfbprscale_TotalFailedNonZeroByStatus12</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy11(statusCode) as select code from tkcsfbprscale_TradeStatusCodes where code = 1</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy12(statusCode) as select code from tkcsfbprscale_TradeStatusCodes where code = 2</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy13(statusCode) as tkcsfbprscale_Dummy11 union all tkcsfbprscale_Dummy12</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy14(statusCode) as tkcsfbprscale_Dummy13 except tkcsfbprscale_Dummy10</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy15(statusCode, total) as select statusCode, 0 from tkcsfbprscale_Dummy14</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailedStatus12(statusCode, total) as tkcsfbprscale_TotalFailedNonZeroByStatus12 union all tkcsfbprscale_Dummy15</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy18(total, dummy) as select sum(total), count(*) from tkcsfbprscale_TotalFailedStatus12</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailedStatus0(statusCode, total) as select 0, allRec.total - status12.total from tkcsfbprscale_TotalFailedTrades as allRec, tkcsfbprscale_Dummy18 as status12</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailedByStatus(statusCode, total) as tkcsfbprscale_TotalFailedStatus0 union all tkcsfbprscale_TotalFailedStatus12</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Dummy5(status0, count0, status1, count1) as select a.statusCode, a.total, b.statusCode, b.total from tkcsfbprscale_TotalFailedByStatus as a, tkcsfbprscale_TotalFailedByStatus as b where a.statusCode = 0 and b.statusCode = 1</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailuresByStatus(status0, count0, status1, count1, status2, count2) as select b.status0, b.count0, b.status1, b.count1, a.statusCode, a.total from tkcsfbprscale_TotalFailedByStatus as a, tkcsfbprscale_Dummy5 as b where a.statusCode = 2</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailuresByStatusType(buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select a.buyCount, a.sellCount, a.exchgCount, b.count0, b.count1, b.count2 from tkcsfbprscale_TotalFailuresByTypes as a, tkcsfbprscale_TotalFailuresByStatus as b</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalReq1(totalCount, totalFailedCount, buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select t.c1, a.buyCount+a.sellCount+a.exchgCount, a.buyCount, a.sellCount, a.exchgCount, a.noackCount, a.recvdCount, a.processedCount from tkcsfbprscale_TotalFailuresByStatusType as a, tkcsfbprscale_TotalTrades as t</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TradeStatus0(tradeId, statusCode) as select tradeId, 0 from tkcsfbprscale_TradeInputs</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TradeStatus3(tradeId, statusCode) as select tradeId, 3 from tkcsfbprscale_TradeMatched</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TradeStatus03(tradeId, statusCode) as tkcsfbprscale_TradeStatus0 union all tkcsfbprscale_TradeStatus3</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TradeStatusStreamDup(tradeId, statusCode) as tkcsfbprscale_TradeStatus03 union all tkcsfbprscale_TradeUpdates</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TradeStatus(tradeId, statusCode) as select * from tkcsfbprscale_TradeStatusStreamDup[partition by tradeId rows 1 range 4 seconds]</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TradeStatusStream(tradeId, statusCode) as IStream(select * from tkcsfbprscale_TradeStatus)</CEP_DDL>
+<CEP_DDL><![CDATA[ register view tkcsfbprscale_CutOff3(tradeId, statusCode) as DStream(select tradeId, statusCode from tkcsfbprscale_TradeStatusStream[range 3 seconds] where statusCode < 3)]]></CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Failed3(tradeId, statusCode) as IStream(select a.tradeId, a.statusCode from tkcsfbprscale_CutOff3[NOW] as a, tkcsfbprscale_TradeStatus as b where a.tradeId = b.tradeId and a.statusCode = b.statusCode)</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalCutOff3(c1) as select count(*) from tkcsfbprscale_CutOff3[range 10 minutes slide 5 minutes]</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_TotalFailed3(c1) as select count(*) from tkcsfbprscale_Failed3[range 10 minutes slide 5 minutes]</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Req1(total, totalFailed, buy, sell, exchg, trade_noack, trade_recvd, trade_processing, dummy) as IStream(select totalCount, totalFailedCount, buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount, tkcsfbprscale_seqNo(0) from tkcsfbprscale_TotalReq1)</CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Req2(tickerSymbol, symbolCount, dummy) as IStream(select tradeSymbol, count(*), tkcsfbprscale_seqNo(0) from tkcsfbprscale_FailedTrades[range 5 minutes slide 5 minutes] group by tradeSymbol)</CEP_DDL>
+<CEP_DDL><![CDATA[ register view tkcsfbprscale_Req3(totalCount, failedCount, dummy) as IStream(select t.c1, t.c1-f.c1, tkcsfbprscale_seqNo(0) from tkcsfbprscale_TotalTrades as t, tkcsfbprscale_TotalFineTrades as f where f.c1*100 < 95*t.c1)]]></CEP_DDL>
+<CEP_DDL> register view tkcsfbprscale_Req4(totalCount, failedCount, dummy) as IStream(select t.c1, f.c1, tkcsfbprscale_seqNo(0) from tkcsfbprscale_TotalCutOff3 as t, tkcsfbprscale_TotalFailed3 as f where f.c1*100 > 10*t.c1)</CEP_DDL>
+<CEP_DDL> create query tkcsfbprscale_q0 as select total as totalCount, totalFailed as failedCount, buy as buy, sell as sell, exchg as exchg, trade_noack as trade_noack, trade_recvd as trade_recvd, trade_processing as trade_processing from tkcsfbprscale_Req1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfbprscale_q0 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outcsfbPR1Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkcsfbprscale_q0 start </CEP_DDL>
+<CEP_DDL> create query tkcsfbprscale_q1 as select tickerSymbol as tickerSymbol, symbolCount as symbolCount from tkcsfbprscale_Req2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfbprscale_q1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outcsfbPR2Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkcsfbprscale_q1 start </CEP_DDL>
+<CEP_DDL> create query tkcsfbprscale_q2 as select totalCount as totalCount, failedCount as failedCount from tkcsfbprscale_Req3</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfbprscale_q2 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outcsfbPR3Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkcsfbprscale_q2 start </CEP_DDL>
+<CEP_DDL> create query tkcsfbprscale_q3 as select totalCount as totalCount, failedCount as failedCount from tkcsfbprscale_Req4</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcsfbprscale_q3 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outcsfbPR4Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkcsfbprscale_q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

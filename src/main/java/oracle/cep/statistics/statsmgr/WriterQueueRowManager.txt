@@ -1,0 +1,128 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/WriterQueueRowManager.java /main/12 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2006, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    najain      04/24/08 - stats
+    najain      04/24/08 - 
+    hopark      02/25/08 - support paged queue
+    parujain    03/20/08 - 
+    hopark      10/23/07 - remove TimeStamp
+    parujain    09/12/07 - 
+    najain      07/23/07 - move stats to SharedQueueWriter
+    parujain    05/31/07 - cep-em integration
+    najain      10/17/06 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/WriterQueueRowManager.java /main/12 2008/11/30 13:31:43 parujain Exp $
+ *  @author  najain  
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+package oracle.cep.statistics.statsmgr;
+
+import java.util.Iterator;
+
+import oracle.cep.execution.queues.ISharedQueueWriter;
+import oracle.cep.execution.queues.SharedQueueWriterStats;
+import oracle.cep.statistics.IStats;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+
+
+/**
+ * Statistics Manager for the Shared Writer Queue
+ *
+ * @since 1.0
+ */
+
+public class WriterQueueRowManager extends StatsManager
+{
+  // iterator to traverse the shared queue writer array
+  private Iterator<ISharedQueueWriter> itr;
+
+  // Loop over all the execution operators and return the statistics 
+  // corresponding to them. Note that we deliberately do not take a latch
+  // while traversing the operators. So, it is possible that we miss an
+  // operator if it gets added in the beginning of the operator array after
+  // we have traversed the initial segment of the array. Also, it is possible
+  // that the different operators are showing statistics for different 
+  // timestamps
+  public WriterQueueRowManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+  
+  public void init()
+  {
+    itr = execContext.getExecMgr().getSharedQWriterIterator();
+  }
+
+  public IStats getNext()
+  {
+    if(factory == null)
+      return null;
+    
+    if (itr == null)
+      return null;
+
+    ISharedQueueWriter qWriter = null;
+
+    if (itr.hasNext())
+      qWriter = itr.next();
+
+    if (qWriter == null)
+      return null;
+
+    IStats qWriterStatsRow = null;
+
+    synchronized (qWriter)
+    {
+      SharedQueueWriterStats qWriterStats = (SharedQueueWriterStats) qWriter.populateAndGetStats();
+      
+      // Note that since we dont know when the memory for this row will get 
+      // freed, we haven't integrated this with the StorageFactory. Once the
+      // JMX piece gets finalized and we have more clarity on this, we should
+      // integrate this with the SimpleStorageFactory.
+      qWriterStatsRow = 
+	 factory.createWriterQueueStat(qWriter.getId(),
+				qWriter.getSrcOp().getId(),
+				qWriterStats.getNumElements(),
+				qWriterStats.getNumPosElements(),
+				qWriterStats.getNumNegElements(),
+				qWriterStats.getNumHeartbeats(),
+				qWriterStats.getTotalNumElements(),
+				qWriterStats.getTotalNumPosElements(),
+				qWriterStats.getTotalNumNegElements(),
+				qWriterStats.getTotalNumHeartbeats(),
+				qWriterStats.getTsLastElement(),
+				qWriterStats.getTsLastPosElement(),
+				qWriterStats.getTsLastNegElement(),
+				qWriterStats.getTsLastHeartbeat());
+    }
+
+    return qWriterStatsRow;
+  }
+
+  public void close()
+  {
+    itr = null;
+  }
+}
+

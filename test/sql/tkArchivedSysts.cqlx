@@ -1,0 +1,16 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedSysts_R(c1 integer, c2 float, c3 char(10), eid bigint) archiver BIArchiver entity "soainfra.phase2testtable" event identifier eid IS SYSTEM TIMESTAMPED</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkArchivedSysts_R add source 
+"<EndPointReference><Address>mlffile://@TEST_DATA@/inpArchivedSysts.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkArchivedSysts_q1 as select c3, c1+5, count(3.14), sum(c2+5), count(*), count(c2) from tkArchivedSysts_R group by c3, c1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedSysts_q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedSysts1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedSysts_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+</CEP>

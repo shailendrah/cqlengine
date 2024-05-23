@@ -1,0 +1,13 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata13_S(c1 integer, c2 float, c3 char(10), c4 byte(10), c5 timestamp, c6 interval)  </CEP_DDL>
+<CEP_DDL> register relation tkdata13_R(c1 integer, c2 float, c3 char(10), c4 byte(10), c5 timestamp, c6 interval) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata13_S add source "<EndPointReference><Address>file://@TEST_DATA@/inpSDebug.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata13_R add source "<EndPointReference><Address>file://@TEST_DATA@/inpRDebug.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata13_q1 as select * from tkdata13_S </CEP_DDL>
+<CEP_DDL> create query tkdata13_q2 as select * from tkdata13_R </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata13_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSDebug.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata13_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outRDebug.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata13_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata13_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

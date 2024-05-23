@@ -1,0 +1,20 @@
+/
+/ $Header: tkqryoutSR1-except-static.txt 14-nov-2006.20:34:34 aime     Exp $
+/
+/ tkqryoutSR1-except-static.txt
+/
+/ Copyright (c) 2006, Oracle. All Rights Reserved.
+/
+/   NAME
+/     tkqryoutSR1-except-static.txt - <one-line expansion of the name>
+/
+/   DESCRIPTION
+/     <short description of component this file declares/defines>
+/
+/   NOTES
+/     <other useful comments, qualifications, etc.>
+/
+/   MODIFIED   (MM/DD/YY)
+/   aime        11/14/06 - Creation
+/
+

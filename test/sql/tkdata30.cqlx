@@ -1,0 +1,41 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata30_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata30_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata30_S2 (c1 integer, c2 char(10), c3 timestamp, c4 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata30_S3 (c1 bigint, c2 interval, c3 byte(10), c4 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata30_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS21.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter stream tkdata30_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS22.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter stream tkdata30_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS23.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter stream tkdata30_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS24.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> register view tkdata30_v0 (c1 integer, c2 float) as select * from tkdata30_S0 order by 1 </CEP_DDL>
+<CEP_DDL> create query tkdata30_q201 as select c1 from tkdata30_S0 order by 1 </CEP_DDL>
+<CEP_DDL> create query tkdata30_q202 as select c1 from tkdata30_S0[range 1] order by 1 </CEP_DDL>
+<CEP_DDL> create query tkdata30_q203 as select c1 from tkdata30_S0[range 1] order by 2 </CEP_DDL>
+<CEP_DDL> create query tkdata30_q204 as select c1 from tkdata30_S0 order by 1 desc </CEP_DDL>
+<CEP_DDL> create query tkdata30_q205 as select c1 from tkdata30_S1 order by 1 desc nulls first </CEP_DDL>
+<CEP_DDL> create query tkdata30_q206 as select c1 from tkdata30_S1 order by 1 nulls last </CEP_DDL>
+<CEP_DDL> create query tkdata30_q207 as select * from tkdata30_S2 order by c1 asc nulls first, 2 desc nulls last </CEP_DDL>
+<CEP_DDL> create query tkdata30_q208 as select * from tkdata30_S2 order by c1 asc nulls first, 3 desc nulls last </CEP_DDL>
+<CEP_DDL> create query tkdata30_q209 as select * from tkdata30_v0[range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata30_q210 as select * from tkdata30_S3 order by c1 desc nulls first, c2 desc nulls last </CEP_DDL>
+<CEP_DDL> create query tkdata30_q211 as select * from tkdata30_S3 order by c2 desc nulls first, 3 desc nulls last, 4 desc </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q204 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS21Desc.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q205 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS22Desc.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q206 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS22Nulls.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q207 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS23.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q208 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS23Time.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q209 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS21view.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q210 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS24two.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata30_q211 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS24three.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q201 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q204 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q205 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q206 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q207 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q208 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q209 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q210 start </CEP_DDL>
+<CEP_DDL> alter query tkdata30_q211 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

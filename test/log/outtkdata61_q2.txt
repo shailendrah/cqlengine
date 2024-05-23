@@ -1,0 +1,24 @@
+1000:+ <this>is</this>
+<!--<a>3</a>-->
+<![CDATA[the quick brown fox jumps over the lazy dog]]>
+
+1000:+ <this>is</this>
+<!--<e3>blaaaaa</e3>-->
+<![CDATA[the quick brown fox jumps over the lazy dog]]>
+
+1000:+ <this>is</this>
+<!--<r>4</r>-->
+<![CDATA[the quick brown fox jumps over the lazy dog]]>
+
+1000:+ <this>is</this>
+<!--<a><b>99999</b></a>-->
+<![CDATA[the quick brown fox jumps over the lazy dog]]>
+
+1003:+ <this>is</this>
+<!--<a>s3</a>-->
+<![CDATA[the quick brown fox jumps over the lazy dog]]>
+
+1004:+ <this>is</this>
+<!--<d>b6</d>-->
+<![CDATA[the quick brown fox jumps over the lazy dog]]>
+

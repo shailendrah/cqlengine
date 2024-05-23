@@ -1,0 +1,14 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> alter system time_slice = 1</CEP_DDL>
+<CEP_DDL> register stream tkdata4_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata4_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata4_q1 as select *  from tkdata4_S0[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata4_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outPreS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata4_q1 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 10 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>	
+<CEP_DDL> create query tkdata4_q2 as select *  from tkdata4_S0[range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata4_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outPostS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata4_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,10 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_nearby(latitude double, longitude double) </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter stream tkdata_nearby add source "<EndPointReference><Address>file://@TEST_DATA@/innearby_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+
+<CEP_DDL> create query tkdata_nearby_q1  as select NEARBY@spatial(latitude, longitude) from tkdata_nearby</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkdata_nearby_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnearby_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> alter query tkdata_nearby_q1 start</CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL> 
+</CEP>

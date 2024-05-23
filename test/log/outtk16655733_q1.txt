@@ -1,0 +1,10 @@
+3000:+ 1,ModernScience
+3000:+ 2,Chemistry
+3000:+ 3,Supernova
+6000:+ 4,Tanwar
+6000:+ 5,Zfiles
+6000:- 1,ModernScience
+6000:- 2,Chemistry
+9000:- 3,Supernova
+18000:- 4,Tanwar
+27000:- 5,Zfiles

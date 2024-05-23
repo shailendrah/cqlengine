@@ -1,0 +1,102 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkxmlAgg_S1(c1 int, c2 xmltype)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkxmlAgg_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkxmlAgginpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tkxmlAgg_S2(c1 int, c2 xmltype)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkxmlAgg_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/tkxmlAgginpS2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tkxmlAgg_S3(val int)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkxmlAgg_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPattern40.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tkxmlAgg_S4(c1 int, c2 object)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkxmlAgg_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/tkxmlAgginpS4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tkxmlAgg_S5(c1 integer, c2 timestamp)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkxmlAgg_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS26.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create function tkxmlAgg_nullObj(c1 integer) return integer as language java name "oracle.cep.test.userfunctions.TkNullObj" </CEP_DDL>
+
+<!-- just single xmlagg query -->
+<CEP_DDL> create query tkxmlAgg_q1 as select xmlagg(c2) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- xmlagg with other non-distinct aggr.-->
+<CEP_DDL> create query tkxmlAgg_q2 as select xmlagg(c2),avg(c1) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- xmlagg with other distinct aggr.-->
+<CEP_DDL> create query tkxmlAgg_q3 as select xmlagg(c2),sum(distinct c1) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- more than one identical  xmlagg in a single query-->
+<CEP_DDL> create query tkxmlAgg_q4 as select xmlagg(c2), xmlagg(c2) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- more than one non-identical  xmlagg in a single query-->
+<CEP_DDL> create query tkxmlAgg_q5 as select xmlagg(c2), xmlagg(c2 order by c1) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- xmlagg with different order by clauses -->
+<CEP_DDL> create query tkxmlAgg_q6 as select xmlagg(c2 order by c1 nulls first), xmlagg(c2 order by c1 desc) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- negative test case : chk that numbers are not allowed in xmlagg -->
+<CEP_DDL> create query tkxmlAgg_q7 as select xmlagg(c2 order by 4) from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<!-- 3 Test cases related to bug no : 8550445 -->
+<CEP_DDL> create query tkxmlAgg_q8 as DSTREAM(select to_char(sum(c1) + 10) from tkxmlAgg_S1[range 2]) </CEP_DDL>
+
+<CEP_DDL> create view tkxmlAgg_v1 as select xmlagg(c2) as agg from tkxmlAgg_S1[range 2] </CEP_DDL>
+
+<CEP_DDL> create query tkxmlAgg_q9 as ISTREAM(select to_char(agg), concat(agg,agg) from tkxmlAgg_v1) </CEP_DDL>
+
+<CEP_DDL> create query tkxmlAgg_q10 as ISTREAM(select to_char(xmlagg(xmlelement("element",c1) order by c1 asc)) from tkxmlAgg_S2[range 2]) </CEP_DDL>
+
+<!-- xmlelement over xmlagg -->
+<CEP_DDL><![CDATA[ create query tkxmlAgg_q11 as SELECT COUNT(T.val) as totalCount, SUM(T.val) as bCount, XMLELEMENT("parent", XMLAGG(XMLELEMENT("value", T.val))) AS lin FROM tkxmlAgg_S3[rows 10] AS T ]]></CEP_DDL>
+
+<!-- is null checks over xmltype and object datatypes -->
+<CEP_DDL> create query tkxmlAgg_q12 as select * from tkxmlAgg_S2[range 2] where tkxmlAgg_S2.c2 is not null </CEP_DDL>
+<CEP_DDL> create query tkxmlAgg_q13 as select * from tkxmlAgg_S1[range 2] where tkxmlAgg_S1.c2 is null </CEP_DDL>
+<CEP_DDL> create query tkxmlAgg_q14 as select * from tkxmlAgg_S1[range 2] where tkxmlAgg_nullObj(c1) is not null </CEP_DDL>
+<CEP_DDL> create query tkxmlAgg_q15 as select * from tkxmlAgg_S1[range 2] where tkxmlAgg_nullObj(c1) is  null </CEP_DDL>
+<CEP_DDL> create query tkxmlAgg_q16 as select c1 from tkxmlAgg_S4[range 2] where c2 is null </CEP_DDL>
+<CEP_DDL> create query tkxmlAgg_q17 as select c1, c2 from tkxmlAgg_S5[range 2] where c2 - c2  is not null </CEP_DDL>
+<CEP_DDL> create query tkxmlAgg_q18 as select c1, c2 from tkxmlAgg_S5[range 2] where c2 - c2  is  null </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkxmlAgg_q18 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkxmlAgg_18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkxmlAgg_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q16 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q17 start </CEP_DDL>
+<CEP_DDL> alter query tkxmlAgg_q18 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

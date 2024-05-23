@@ -1,0 +1,11 @@
+i, c 20, TOF
+11000 F 40676999, "oracle"
+12000 F 595028227, "oracle"
+13000 F 380257854, "ibm"
+14000 F , "test string"
+15000 F 780457646, "ibm"
+16000 F 595028227, "test string"
+17000 F , "Spark"
+18000 F 1787092973, "Spark"
+19000 F ,
+20000 T , "test string"

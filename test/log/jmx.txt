@@ -1,0 +1,50 @@
+
+
+reading pcbpel/cep/test/config/stats.cmd
+---------------------- streamStats 
+fields from oracle.cep.jmx.stats.StreamStatsRow
+
+
+streamName = SimpleEvent1
+isStream = true
+text = register stream SimpleEvent1(orderId integer, orderAmount float)
+numInMessages = 6
+
+
+numInMessagesLatest = 6
+avgLatency = 0.0
+
+
+isPushSrc = false
+totalTuplesInMemory = 0
+totalTuplesOnDisk = 0
+hitRatio = 0.0
+fields from oracle.cep.jmx.stats.StatsRow
+---------------------- systemStats 
+fields from oracle.cep.jmx.stats.SystemStatsRow
+
+
+
+
+
+
+fields from oracle.cep.jmx.stats.StatsRow
+---------------------- userfuncStats 
+fields from oracle.cep.jmx.stats.UserFunctionStatsRow
+functionName = doubleOrderAmount(float)
+
+isAggregate = false
+text =  create function doubleOrderAmount(c1 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFunction" 
+mappingFunction = oracle.cep.test.userfunctions.TkUsrFunction
+numInvokations = 5
+
+fields from oracle.cep.jmx.stats.StatsRow
+fields from oracle.cep.jmx.stats.UserFunctionStatsRow
+functionName = sumOrder(float)
+
+isAggregate = true
+text =  create function sumOrder(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkSum"
+mappingFunction = oracle.cep.test.userfunctions.TkSum
+numInvokations = 10
+
+fields from oracle.cep.jmx.stats.StatsRow

@@ -1,0 +1,10 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tk20cols_scale11_S1 (c1 integer, c2 integer, c3 integer, c4 integer, c5 integer, c6 integer, c7 integer, c8 integer, c9 integer, c10 integer, c11 float, c12 float, c13 float, c14 float, c15 float, c16 float, c17 float, c18 float, c19 float, c20 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk20cols_scale11_S1 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpS20colsDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register stream tk20cols_scale11_S2 (c1 integer, c2 integer, c3 integer, c4 integer, c5 integer, c6 integer, c7 integer, c8 integer, c9 integer, c10 integer, c11 float, c12 float, c13 float, c14 float, c15 float, c16 float, c17 float, c18 float, c19 float, c20 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk20cols_scale11_S2 add source "<EndPointReference> <Address>file://@TEST_DATA@/inpS20colsDataSize@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address> </EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tk20cols_scale11_q1 as tk20cols_scale11_S1 except tk20cols_scale11_S2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk20cols_scale11_q1 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outSExcept@RANGE@Size@NUM_MSGS@Rate@MSGS_PER_SEC@.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tk20cols_scale11_q1 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

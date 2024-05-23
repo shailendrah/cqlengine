@@ -1,0 +1,66 @@
+/* $Header: pcbpel/cep/src/oracle/cep/jmx/CEPStatsMXBeanProxy.java /main/3 2008/08/06 14:24:44 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle. All rights reserved.*/
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    08/05/08 - stats reorg
+    najain      04/25/08 - add more APIs
+    parujain    03/17/08 - proxy for MXBeans
+    parujain    03/17/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/src/oracle/cep/jmx/CEPStatsMXBeanProxy.java /main/3 2008/08/06 14:24:44 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx;
+
+import java.io.IOException;
+
+import java.util.List;
+
+import oracle.cep.jmx.stats.Column;
+import oracle.cep.jmx.stats.DBStatsRow;
+import oracle.cep.jmx.stats.FilterCondition;
+import oracle.cep.jmx.stats.MemoryStatsRow;
+import oracle.cep.jmx.stats.OperatorStatsRow;
+import oracle.cep.jmx.stats.QueryStatsRow;
+import oracle.cep.jmx.stats.ReaderQueueStatsRow;
+import oracle.cep.jmx.stats.StreamStatsRow;
+import oracle.cep.jmx.stats.StoreStatsRow;
+import oracle.cep.jmx.stats.SystemStatsRow;
+import oracle.cep.jmx.stats.UserFunctionStatsRow;
+import oracle.cep.jmx.stats.WriterQueueStatsRow;
+import oracle.cep.jmx.stats.OperatorQueryStatsRow;
+
+public interface CEPStatsMXBeanProxy{
+    public List<MemoryStatsRow> getMemoryStats() throws IOException; 
+    public List<QueryStatsRow> getQueryStats(FilterCondition[] filter, Column sortColumn, int offset, int numItems) throws IOException;
+    public List<QueryStatsRow> getQueryStats() throws IOException;
+    public List<StreamStatsRow> getStreamStats(FilterCondition[] filter, Column column, int offset, int numItems) throws IOException;
+    public List<StreamStatsRow> getStreamStats() throws IOException;
+    public List<StoreStatsRow> getStoreStats() throws IOException;
+    public List<OperatorStatsRow> getOperatorStats(FilterCondition[] filter, Column sortColumn, int offset, int numItems) throws IOException;
+    public List<OperatorStatsRow> getOperatorStats() throws IOException;
+    public List<DBStatsRow> getDBStats() throws IOException;
+    public List<UserFunctionStatsRow> getUserFuncStats(FilterCondition[] filter, Column sortColumn, int offset, int numItems) throws IOException;
+    public List<UserFunctionStatsRow> getUserFuncStats() throws IOException;
+    public List<ReaderQueueStatsRow> getReaderQueueStats() throws IOException;
+    public List<WriterQueueStatsRow> getWriterQueueStats() throws IOException;
+    public List<OperatorQueryStatsRow> getOperatorQueueStats() throws IOException;
+    public List<SystemStatsRow> getSystemStats() throws IOException;
+    public boolean getIsMemoryMode() throws IOException;
+//    public FilterCondition getFilterCondition() throws IOException;
+
+}

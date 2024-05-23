@@ -1,0 +1,6 @@
+c 10, i, z, c 10
+1 abc, 1, 1, abc
+2 ab, 2, 2, ab
+3 abc, 3, 3, abc
+4 abcd, 4, 4, abcd
+h 200000000

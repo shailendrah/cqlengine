@@ -1,0 +1,7 @@
+c 40
+1000 "@@hELLO w3Or4Ld  sTRINg THeRE"
+2000 "@asdFA @@AdFAD$##hE1Y"
+3000 "#2AB&&SA AAD #sDF35SF"
+4000 " @$hE2L2L2O --w3Or4ld"
+5000 "#H!1E%L^LO -WO-R@LD"
+h 200000000

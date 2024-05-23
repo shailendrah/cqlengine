@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OEPS>
+<!-- Input Stream of Car location reports, account-balance queries, expenditure, expected-travel-time and Credit  -->
+<OEPS_DDL>create stream CarLocStr(car_id integer,speed integer,x_way integer,lane integer,dir integer,pos integer); </OEPS_DDL>
+<OEPS_DDL>create stream AccBalQueryStr(car_id integer, qid integer); </OEPS_DDL>
+<OEPS_DDL>create stream ExpQueryStr(car_id integer, x_way integer,qid integer,day integer); </OEPS_DDL>
+<OEPS_DDL>create stream TravelTimeQueryStr(qid integer,x_way integer, init_seg integer, fin_seg integer,tod timestamp,dow integer); </OEPS_DDL>
+<OEPS_DDL>create stream CreditStream(car_id integer,credit integer); </OEPS_DDL>
+
+<OEPS_DDL>alter stream CarLocStr add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpSCarloc.txt</Address></EndPointReference>"; </OEPS_DDL>                
+<OEPS_DDL>alter stream AccBalQueryStr add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpSAccBalQuery.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter stream  ExpQueryStr add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpSExpQuery.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter stream TravelTimeQueryStr add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpSTravelTimeQuery.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter stream CreditStream add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpSCredit.txt</Address></EndPointReference>"; </OEPS_DDL>
+
+<!-- Toll Notification  -->
+<OEPS_DDL>register view CarSegStr(car_id,speed, x_way, lane, dir, sep integer) as SELECT car_id, speed, x_way, lane, dir, (pos/52800) as seg FROM CarLocStr ; </OEPS_DDL>
+<OEPS_DDL>register view CurActiveCars(car_id) as RStream(SELECT DISTINCT car_id FROM CarSegStr [RANGE 30 SECONDS]); </OEPS_DDL>
+<OEPS_DDL>register view CurCarSeg(car_id,x_way,dir,seg) as RStream(SELECT car_id, x_way, dir, seg FROM CarSegStr [PARTITION BY car_id ROWS 1], CurActiveCars WHERE CarSegStr.car_id = CurActiveCars.car_id); </OEPS_DDL>
+<OEPS_DDL>register view CarSegEntryStr(car_id,x_way,dir,seg) as IStream(SELECT car_id, x_way, dir, seg FROM CarSegStr [PARTITION BY car_id ROWS 1], CurActiveCars WHERE CarSegStr.car_id = CurActiveCars.car_id); </OEPS_DDL>
+
+<!-- Toll Compulation for Segments  -->
+<OEPS_DDL>register view SegAvgSpeed(x_way,dir,seg,speed) as RStream(SELECT x_way, dir, seg, AVG(speed) as speed, FROM CarSegStr [RANGE 5 MINUTES] GROUP BY x_way, dir, seg); </OEPS_DDL>
+<OEPS_DDL>register view SegVol(x_way,dir,seg,volume integer) as RStream(SELECT x_way, dir, seg, COUNT(*) as volume FROM CurCarSeg GROUP BY x_way, dir, seg); </OEPS_DDL>
+<OEPS_DDL>register view SegToll(x_way,dir,seg,toll integer) as RStream(SELECT S.x_way, S.dir, S.seg, basetoll*(V.volume-150)*(V.volume-150) FROM SegAvgSpeed as S, SegVol as V WHERE S.x_way = V.x_way and S.dir = V.dir and S.seg = V.seg and S.speed &lt; 40 and (S.x_way, S.dir, S.seg) NOT IN (AccAffectedSeg)); </OEPS_DDL> 
+
+<!-- Accident Detection and Notification-->
+<OEPS_DDL>register view AccCars(car_id, acc_loc integer) as RStream(SELECT car_id, AVG(x-pos) AS acc_loc FROM CarLocStr [PARTITION BY car_id ROWS 4] GROUP BY car_id HAVING COUNT DISTINCT (pos) ==1 ); </OEPS_DDL>
+<OEPS_DDL>register view AccSeg(x_way, dir,seg, acc_loc) as RStream(SELECT DISTINCT x_way, dir, seg, acc_loc FROM CurCarSeg, AccCars WHERE CurCarSeg.car_id = AccCars.car_id ); </OEPS_DDL>
+
+<!-- Negative Toll Generation-->
+<OEPS_DDL>register view CarExitStr(car_id, x_way, dir,seg) as SELECT RSTREAM (S.car_id, S.x_way, S.dir, S.seg) FROM (DSTREAM (CurActiveCars)) [NOW] AS A, CarSegStr [PARTITION BY car_id ROWS 1] AS S WHERE A.car_id = S.car_id; </OEPS_DDL>
+<OEPS_DDL>register view NegTollStr(car_id, toll) as SELECT RSTREAM (E.car_id, T.toll) FROM CarExitStr [NOW] AS E, TollStr [PARTITION BY car_id ROWS 1] AS T WHERE E.car_id = T.car_id; </OEPS_DDL>
+<OEPS_DDL>register view NegAccTollStr(car_id, x integer) as SELECT RSTREAM (car_id, X) ROM CarExitStr [NOW] as E, AccSeg as A WHERE (E.x_way = A.x_way AND E.dir = EAST AND A.dir = EAST and E.seg &lt; A.seg AND E.seg > A.seg - 5) OR (E.x_way = A.x_way AND E.dir = WEST AND A.dir = WEST and E.seg > A.seg AND E.seg &lt; A.seg + 5); </OEPS_DDL>
+
+<!-- Accounting -->
+<OEPS_DDL>register view AccTransStr(car_id, credit) as SELECT * FROM CreditStr UNION ALL SELECT car_id, toll AS credit FROM NegTollStr UNION ALL SELECT car_id, toll AS credit FROM NegAccTollStr UNION ALL SELECT car_id, -1 * toll AS credit FROM TollStr; </OEPS_DDL>
+<OEPS_DDL>register view AccBal(car_id, credit) as SELECT car_id, SUM(credit) AS balance FROM AccTransStr GROUP BY car_id;</OEPS_DDL>
+
+<!-- the output streams of the benchmark  -->
+<OEPS_DDL>create query q201 as SELECT RSTREAM(E.car_id, T.toll) FROM CarSegEntryStr [NOW] AS E, SegToll as T WHERE E.x_way = T.x_way AND E.dir = T.dir AND E.seg = T.seg;</OEPS_DDL>
+<OEPS_DDL>create query q202 as SELECT RSTREAM (car_id, acc_loc) FROM (ISTREAM (AccSeg)) [NOW] AS A, CurCarSeg as S WHERE (A.x_way = S.x_way and A.dir = EAST and S.dir = EAST and S.seg &lt; A.seg and S.seg > A.seg - 5) OR (A.x_way = S.x_way and A.dir = WEST and S.dir = WEST and S.seg > A.seg and S.seg &lt; A.seg + 5); </OEPS_DDL>
+<OEPS_DDL>create query q203 as SELECT A.x_way, A.dir, A.seg FROM AllSeg AS A, AccSeg AS S WHERE (A.x_way = S.x_way AND A.dir = EAST AND S.dir = EAST AND A.seg &lt; S.seg AND A.seg > S.seg - 10) OR (A.x_way = S.x_way AND A.dir = WEST AND S.dir = WEST AND A.seg > S.seg AND A.seg &lt; S.seg + 10) UNION SELECT A.x_way, A.dir, A.seg FROM AllSeg AS A, DSTREAM(AccSeg)[RANGE 20 MINUTES] AS S WHERE (A.x_way = S.x_way AND A.dir = EAST AND S.dir = EAST AND A.seg &lt; S.seg AND A.seg > S.seg - 10) OR (A.x_way = S.x_way AND A.dir = WEST AND S.dir = WEST AND A.seg > S.seg AND A.seg &lt; S.seg + 10); </OEPS_DDL>
+
+<!-- Adhoc Query Answering-->
+<OEPS_DDL>create query q204 as SELECT RSTREAM(qid, B.car_id, B.balance) FROM AccBalQueryStr [NOW] AS Q, AccBal AS B WHERE Q.car_id = B.car_id;</OEPS_DDL>
+<OEPS_DDL>create query q205 as iSELECT RSTREAM(qid, E.car_id, -1 * SUM(credit)) FROM ExpQueryStr [NOW] as Q, AccTransStr[Today Window] as T WHERE Q.car_id = T.car_id ;</OEPS_DDL>
+
+<OEPS_DDL>alter query q201 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outlinroadTollNot.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter query q202 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outlinroadTollNot2.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter query q203 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outlinroadTollNot3.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter query q204 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outlinroadTollNot4.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter query q205 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outlinroadTollNot5.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL>alter query q201 start; </OEPS_DDL>
+<OEPS_DDL>alter query q202 start; </OEPS_DDL>
+<OEPS_DDL>alter query q203 start; </OEPS_DDL>
+<OEPS_DDL>alter query q204 start; </OEPS_DDL>
+<OEPS_DDL>alter query q205 start; </OEPS_DDL>
+<OEPS_DDL>alter system run;</OEPS_DDL>	
+</OEPS>

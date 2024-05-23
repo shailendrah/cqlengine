@@ -1,0 +1,299 @@
+<?xml version="1.0"?>
+<project name="cep-common" basedir=".">
+
+    <!-- 
+ Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+
+   NAME
+     cep-common.xml - contains global properties for cep
+
+   DESCRIPTION
+     add properties here that might be used across all the src folders under cep/
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   ygatty      05/30/13 - enabling cql_lrg from maven
+   ygatty      05/02/13 - Migrating cql_lrg to maven
+   hopark      12/11/09 - fix ojdl link
+   hopark      05/13/09 - rename jar names
+   hopark      02/25/09 - add release flag in source control mf
+   hopark      02/19/09 - add gen.sourcecontrol.mf
+   hopark      01/05/09 - add javac target
+   parujain    12/10/08 - fabric cleanup
+   hopark      11/22/08 - build cleanup
+   skmishra    09/23/08 - common properties for cep build
+   skmishra    09/23/08 - Creation
+
+-->
+
+    <defaultexcludes add="**/.ade_path/**" />
+    <!-- really we should import the root build.properties here, but
+    there are too many conflicts -->
+    <property name="cqlengine.dir" value="${wlevs.home}/modules/cqlengine" />
+    <property file="${cqlengine.dir}/build.properties" />
+    <property file="${wlevs.version.properties}" />
+
+    <property name="ant.build.javac.target" value="1.5" />
+
+    <property name="ade.view.root" location="${ade.home}" />
+    <property name="cqlengine.utl" value="${cqlengine.dir}/utl" />
+    <property name="perl.bin" value="/usr/bin/perl" />
+    <property name="xe.home" value="/usr/lib/oracle/xe/app/oracle/product/10.2.0" />
+    <property name="jdk.home" value="${ade.view.root}/jdk6" />
+    <property name="dbhost.fallback" value="${test.db.host}" />
+    <property name="prod.rep.dir" value="${product.publish.dir}" />
+
+    <!-- set global properties for this build -->
+    <property name="common.src" value="${cqlengine.dir}/common/src" />
+    <property name="standaloneEnv.src" value="${cqlengine.dir}/standaloneEnv/src" />
+    <property name="test" value="test" />
+    <property name="test.src" value="test/src" />
+    <property name="dist" value="dist" />
+    <property name="build.dir" value="build" />
+    <property name="build.dir.target" value="${cqlengine.dir}/ant/target" />
+    <property name="build.dir.props" value="${cqlengine.dir}/ant/properties" />
+    <property name="generated.cep" value="${cqlengine.dir}/generated" />
+    <property name="build.generated" value="${build.dir}/generated" />
+    <property name="build.lib" value="${build.dir}/lib" />
+    <property name="build.docs" value="${build.dir}/docs" />
+    <property name="build.apidocs" value="${build.docs}/api" />
+    <property name="work.dir" value="${test.work.home}" />
+    <property name="build.generated.generated" value="${build.generated}/generated" />
+    <property name="msgcat.dir" value="msgcat" />
+
+    <property name="soa.props" value="${user.home}/soa-infra-install.properties" />
+
+    <property name="bea.dir" value="${wlevs.staging.ce.dir}" />
+    <!--property name="bea.dir" value="${cqlengine.dir}/bea" /-->
+    <property name="wlevs.ver" value="oep" />
+    <!--property name="wlevs.ver" value="ocep_11.1" /-->
+    <property name="bea.stage.dir" value="${bea.dir}/${wlevs.ver}/modules" />
+    <property name="domainbase.dir" value="${bea.dir}/user_projects/domains/ocep_domain/defaultserver" />
+    <property name="monitorapp.dir" value="${bea.dir}/user_projects/domains/ocep_domain/defaultserver/applications/com.bea.wlevs.dataservices" />
+    <property name="sharedlib.dir" value="${bea.dir}/modules" />
+    <property name="wlevs.dir" value="${bea.dir}/${wlevs.ver}" />
+    <property name="wlrtlib.dir" value="${wlevs.dir}/modules" />
+    <property name="wlrtfeature.config" value="${wlevs.dir}/modules/features/com.bea.wlevs.edebase_11.1.1.1_0.xml" />
+    <property name="loadgen.dir" value="${wlevs.dir}/utils/load-generator" />
+
+    <property name="coverage.dir" location="${cqlengine.dir}/test/coverage" />
+    <property name="emma" value="${coverage.dir}/emma.jar" />
+    <property name="emma_ant" value="${coverage.dir}/emma_ant.jar" />
+    <property name="je" value="${cqlengine.dir}/lib/ext/je-6.2.31.jar" />
+    <property name="JFlex.jar" value="${cqlengine.dir}/lib/ext/JFlex.jar" />
+    <property name="cep.server" value="com.oracle.cep.server_${oracle.cep.version}" />
+    <property name="cep.logging" value="com.oracle.cep.logging_${oracle.cep.version}" />
+    <property name="cep.client" value="com.oracle.cep.client_${oracle.cep.version}" />
+    <property name="cep.visualizer" value="cep.visualizer_${oracle.cep.version}" />
+    <property name="cep.fabric" value="com.oracle.cep.fabric_${oracle.cep.version}" />
+
+    <property name="cep.server.jar" value="${cep.server}.jar" />
+    <property name="cep.logging.jar" value="${cep.logging}.jar" />
+    <property name="cep.client.jar" value="${cep.client}.jar" />
+    <property name="cep.visualizer.jar" value="${cep.visualizer}.jar" />
+    <property name="cep.fabric.jar" value="${cep.fabric}.jar" />
+    <property name="cep.test.jar" value="${cqlengine.dir}/test/target/cep-test.jar" />
+
+    <!-- set project properties for this build -->
+    <property environment="env" />
+
+    <property name="base.dir" value="." />
+    <property name="src.dir" value="src" />
+    <property name="output.dir" value="bin" />
+    <property name="build.generated.dir" value="generated" />
+    <property name="dist.dir" value="${generated.cep}" />
+
+    <!--
+    <echo message="JFlex.jar : ${JFlex.jar}"/>
+-->
+
+    <!--
+     use -Drelease=true in order to build release version without debug info
+     It is also used to turn off 'assertion'
+-->
+    <condition property="debug.value" value="false" else="true">
+        <isset property="release" />
+    </condition>
+
+    <condition property="jvmarg.assertion" value="false" else="true">
+        <isset property="release" />
+    </condition>
+
+    <!-- set the operating system specific properties -->
+    <condition property="isMac">
+        <os family="mac" />
+    </condition>
+
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>
+
+    <condition property="isUnix">
+        <!-- mac ox x is also considered a unix OS, therefore we need to negate this condition -->
+        <and>
+            <os family="unix" />
+            <not>
+                <os family="mac" />
+            </not>
+        </and>
+    </condition>
+
+    <condition property="yacc.bin" value="${cqlengine.dir}/bin/yacc.linux">
+        <isset property="isUnix" />
+    </condition>
+
+    <condition property="yacc.bin" value="${cqlengine.dir}/bin/yacc.macosx">
+        <isset property="isMac" />
+    </condition>
+
+    <condition property="yacc.bin" value="${cqlengine.dir}/bin/yacc.exe">
+        <isset property="isWindows" />
+    </condition>
+
+    <property name="message.registry.base" value="/ade_autofs/ade_linux/ASCORE_MAIN_LINUX.rdd/LATEST/ascore/utl/msgrepository" />
+
+    <path id="message.task.path">
+        <pathelement location="${message.registry.base}/MessageRepository.jar" />
+        <pathelement location="${message.registry.base}/activation.jar" />
+        <pathelement location="${message.registry.base}/commons-logging.jar" />
+        <pathelement location="${message.registry.base}/jaxb-api.jar" />
+        <pathelement location="${message.registry.base}/jaxb-impl.jar" />
+        <pathelement location="${message.registry.base}/jsr173_1.0_api.jar" />
+        <pathelement location="${message.registry.base}/ojdbc14.jar" />
+        <pathelement location="${message.registry.base}/spring.jar" />
+        <pathelement location="${message.registry.base}/toplink.jar" />
+        <pathelement location="${message.registry.base}/xmlparserv2.jar" />
+    </path>
+
+    <taskdef resource="oracle/messages/anttask/antlib.xml">
+        <classpath refid="message.task.path" />
+    </taskdef>
+
+    <path id="beai18n.task.path">
+        <pathelement location="${cqlengine.dir}/lib/ext/com.bea.core.i18n_1.5.0.0.jar" />
+        <pathelement location="${cqlengine.dir}/lib/ext/com.bea.core.i18n.generator_1.1.0.0.jar" />
+        <pathelement location="${cqlengine.dir}/lib/ext/com.bea.core.utils_1.1.0.0.jar" />
+        <pathelement location="${cqlengine.dir}/lib/ext/com.bea.core.utils.full_1.1.0.0.jar" />
+        <pathelement location="${i18n.dependency.maven}" />
+    </path>
+    
+	<!--This classpath setting is used for maven execution -->
+    <path id ="beai18n.task.path" path="${i18n.dependency.maven}"/>	
+
+    <taskdef name="i18n" classname="weblogic.i18n.tools.codegen.I18NTask">
+        <classpath>
+            <path refid="beai18n.task.path" />
+        </classpath>
+    </taskdef>
+       
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${pcbpel.dir}/lib/ant-tasks.jar" />
+
+    <!-- ant contrib jar files  -->
+    <property name="ant.lib" value="${ade.view.root}/ant/lib" />
+    <property name="ant.contrib" value="${cqlengine.dir}/lib/link/ant-contrib-1.0b1.jar" />
+
+    <!-- View environment -->
+    <!-- You should not have to add jars here, most should get pulled
+    in automatically through ivy.xml. If you are getting errors about
+    javac.resolve.classpath not being found then add a dependency in
+    your ant task on resolve -->
+    <path id="cep.classpath">
+        <path refid="javac.resolve.classpath" />
+        <pathelement location="${cep.test.jar}" />
+        <pathelement location="${cqlengine.dir}/lib/link/ojdbc6dms.jar" />
+        <pathelement location="${cqlengine.dir}/lib/link/xmlparserv2.jar" />
+        <pathelement location="${cqlengine.dir}/lib/link/xquery.jar" />
+        <pathelement location="${cqlengine.dir}/lib/ext/ojdl.jar" />
+        <pathelement location="${cqlengine.dir}/lib/link/orai18n-collation.jar" />
+        <pathelement location="${cqlengine.dir}/lib/link/ant-contrib-1.0b1.jar" />
+        <pathelement location="${cqlengine.dir}/lib/link/bcel.jar" />
+        <pathelement location="${cqlengine.dir}/lib/ext/vwap-benchmark.jar" />
+        <pathelement location="${cqlengine.dir}/lib/ext/commons-csv-20070730.jar" />
+        <pathelement location="${cqlengine.dir}/cartridges/spatial/lib/sdoapi-11.1.1.1_0.jar" />
+        <pathelement location="${cqlengine.dir}/cartridges/spatial/lib/sdoutl-11.1.1.1_0.jar" />
+        <pathelement location="${cqlengine.dir}/cartridges/spatial/lib/sdotopo-11.1.1.1_0.jar" />
+        <pathelement location="${generated.cep}/colt-1.2.0.jar" />
+         <pathelement location="${cqlengine.dir}/lib/link/dms.jar" />
+    </path>
+
+    <!-- common targets -->
+    <target name="property-init" unless="property.initialized">
+        <available property="jar.created" type="file" file="${dist.dir}/${output.file}" />
+        <property name="property.initialized" value="true" />
+    </target>
+
+    <!-- Clean up everything. -->
+    <target name="clean" depends="clean-build, clean-lib, clean-cache-module">
+        <delete dir="${output.dir}" failonerror="false" />
+        <delete file="${dist.dir}/${output.file}" failonerror="false" />
+    </target>
+
+    <!-- Initialize. -->
+    <target name="init">
+        <!-- Create generated directory. -->
+        <mkdir dir="${build.generated.dir}" />
+        <!-- Create lib directory. -->
+        <mkdir dir="${dist.dir}" />
+        <!-- Create output directory. -->
+        <mkdir dir="${output.dir}" />
+    </target>
+
+    <!-- Compile and JAR everything -->
+    <target name="all">
+        <antcall target="clean" />
+        <antcall target="compile" />
+        <antcall target="dist" />
+    </target>
+
+
+    <macrodef name="gen.sourcecontrol.mf">
+        <attribute name="result.file" default="" />
+        <sequential>
+            <exec executable="/bin/sh" vmlauncher="false" failonerror="false" output="@{result.file}">
+                <arg value="${build.dir.target}/gen_scmf.sh" />
+                <arg value="${debug.value}" />
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="msgcat">    	
+        <attribute name="msgcat.folder" default="" />
+        <attribute name="output.folder" default="" />
+        <attribute name="gen.folder" default="" />
+        <sequential>
+            <if>
+                <available file="@{msgcat.folder}" />
+                <then>
+                </then>
+                <else>
+                    <recomp.test />
+                </else>
+            </if>
+            <i18n sourcedir="@{msgcat.folder}" i18n="true" l10n="true" generated="@{gen.folder}" keepgenerated="true" server="true" verbose="true" classes="@{output.folder}/">
+		                <include name="*.xml" />
+		     </i18n>            
+        </sequential>
+    </macrodef>
+
+
+    <macrodef name="version.manifest">
+        <attribute name="manifest" default="" />
+        <attribute name="output" default="" />
+
+        <sequential>
+            <echo message="versioning @{manifest} @{output}" />
+            <copy file="@{manifest}" tofile="@{output}" filtering="true" overwrite="true" failonerror="true">
+                <filterset>
+                    <filter token="colt.version" value="${colt.version}" />
+                    <filter token="oracle.cep.version" value="${oracle.cep.version}" />
+                    <filter token="wlevs.version" value="${wlevs.version}" />
+                    <filter token="spring.osgi.version" value="${spring.osgi.version}" />
+                    <filter token="spring.version" value="${spring.version}" />
+                </filterset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+</project>

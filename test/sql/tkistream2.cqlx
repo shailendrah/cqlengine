@@ -1,0 +1,69 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tkistream_R1 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkistream_R1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkistream2.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> create query tkistream_q0 as 
+ISTREAM (select c1, c2, c3 from tkistream_R1 as R1) DIFFERENCE USING (R1.c2) 
+</CEP_DDL>
+
+<!-- [-ve] empty USING list -->
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1, c2, c3 from
+tkistream_R1 as R1) DIFFERENCE USING () 
+</CEP_DDL>
+
+<!-- [-ve] position in USING clause refers to a non-existent SELECT expresion -->
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1, c2, c3 from
+tkistream_R1 as R1) DIFFERENCE USING (5) 
+</CEP_DDL>
+
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1, c2, c3 from
+tkistream_R1 as R1) DIFFERENCE USING (0) 
+</CEP_DDL>
+
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1, c2, c3 from
+tkistream_R1 as R1) DIFFERENCE USING (-1) 
+</CEP_DDL>
+
+<!-- [-ve] alias in USING clause does not refer to an existing SELECT list
+expression -->
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1, c2, c3 from
+tkistream_R1 as R1) DIFFERENCE USING (c4) 
+</CEP_DDL>
+
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1 as c1, c2 as c2, c3
+as c3 from tkistream_R1 as R1) DIFFERENCE USING (c4) 
+</CEP_DDL> 
+
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1 as c1, c2 as c2, c3
+as c3 from tkistream_R1 as R1) DIFFERENCE USING (R1.c4) 
+</CEP_DDL> 
+
+<!-- [-ve] case sensitive match -->
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1 as c1, c2 as c2, c3
+as c3 from tkistream_R1 as R1) DIFFERENCE USING (C1) 
+</CEP_DDL> 
+
+<!-- [-ve] constants in select list should not work unless USING clause
+specifies positions -->
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select 1, 2, 3 from
+tkistream_R1 as R1) DIFFERENCE USING (c1) 
+</CEP_DDL>  
+
+<!-- [-ve] NULLs in SELECT lsit -->
+<CEP_DDL> create query tkistream_q1 as ISTREAM (select c1, c2, NULL from
+tkistream_R1 as R1) DIFFERENCE USING (3) 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkistream_q0 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkistream_q0.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+
+<CEP_DDL> alter query tkistream_q0 start </CEP_DDL>
+
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,35 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk14774142_S (pkey char(10), b int, expire boolean, firstElement boolean)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk14774142_S add source "<EndPointReference><Address>file://@TEST_DATA@/inpStaticFnInDuration.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tk14774142_q1 as
+IStream(
+SELECT
+                T.pkey,
+                T.b,
+		T.expire,
+		T.firstElement
+FROM
+       tk14774142_S MATCH_RECOGNIZE (
+                      PARTITION BY pkey
+                      MEASURES
+                        pkey as pkey,
+			b as b,
+			expire as expire,
+			firstElement as firstElement
+		      INCLUDE TIMER EVENTS
+                      PATTERN (A) DURATION oracle.cep.test.userfunctions.AlertUtil.getDuration("TaskAcceptedNotBooked") seconds
+                      DEFINE
+                         A AS A.pkey != ''
+              ) as T)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk14774142_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outStaticFnInDuration.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk14774142_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

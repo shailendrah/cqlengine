@@ -1,0 +1,85 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- fact table -->
+<CEP_DDL>
+CREATE ARCHIVED RELATION 
+tkArchivedRelBinOp_LeftRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3
+</CEP_DDL>
+
+<!-- dimension table -->
+<!-- see it has same data as fact - for snapshot -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel1a(c1 integer, c2 float, c3 bigint, c4 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_LeftRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft4.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<!-- no dimension data -->
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel1a add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight2.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v0 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4
+from tkArchivedRelBinOp_LeftRel1 as p, 
+     tkArchivedRelBinOp_RightRel1a as q
+where p.c1 = q.c1 and p.c2 = q.c2
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q0 as select max(p_c1) from v0
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q1 as select * from v0
+]]>
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q0 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin4_q0.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin4_q1.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> alter query q0 set start_time 1000000000L</CEP_DDL> 
+<CEP_DDL> alter query q1 set start_time 1000000000L</CEP_DDL> 
+
+<CEP_DDL> alter query q0 start </CEP_DDL> 
+<CEP_DDL> alter query q1 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+
+</CEP>

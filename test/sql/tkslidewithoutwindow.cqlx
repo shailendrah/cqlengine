@@ -1,0 +1,56 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkslidewithoutwindow_S0 (c1 integer) </CEP_DDL>
+<CEP_DDL> register stream tkslidewithoutwindow_S1 (c1 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkslidewithoutwindow_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkslidewithoutwindow_S0.txt</Address></EndPointReference>"]]></CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkslidewithoutwindow_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkslidewithoutwindow_S1.txt</Address></EndPointReference>"]]></CEP_DDL>                
+
+<!-- Test EVALUTATE on ROW WINDOW -->
+<CEP_DDL> create query tkslidewithoutwindow_q1 as select c1/1  from tkslidewithoutwindow_S0 [rows 10] evaluate every 1 second </CEP_DDL>
+
+<!-- Test EVALUATE On RANGE WINDOW -->
+<CEP_DDL> create query tkslidewithoutwindow_q2 as select * from tkslidewithoutwindow_S1[range 2] evaluate every 2 second</CEP_DDL>
+
+<!-- Test EVALUTAE On VIEW BASED ON AN ISTREAM -->
+<CEP_DDL> create view tkslidewithoutwindow_v1 as IStream(select R1.c1 as c1, R2.c1 as c2 from tkslidewithoutwindow_S1[range 2] as R1, tkslidewithoutwindow_S1[range 1] as R2)</CEP_DDL>
+<CEP_DDL> create query tkslidewithoutwindow_q3 as select * from tkslidewithoutwindow_v1[rows 10] evaluate every 1 seconds</CEP_DDL>
+
+<!-- Negative Test: EVALUATE will not work on stream -->
+<CEP_DDL> create query tkslidewithoutwindow_negq1 as select * from tkslidewithoutwindow_S1 evaluate every 2 second</CEP_DDL>
+
+<!-- Test EVALUATE Sharing of Slide operator -->
+<CEP_DDL> create query tkslidewithoutwindow_q4 as select *  from tkslidewithoutwindow_S1 [rows 4] evaluate every 1 second </CEP_DDL>
+<CEP_DDL> create query tkslidewithoutwindow_q5 as select *  from tkslidewithoutwindow_S1 [rows 4] evaluate every 1 second </CEP_DDL>
+
+<!-- Test EVALUATE in a subquery-->
+<CEP_DDL> create query tkslidewithoutwindow_q6 as IStream(select * from (select * from tkslidewithoutwindow_S1[range 2] evaluate every 2 second) as innerQuery)</CEP_DDL>
+
+<!-- Test EVALUTE in a view query-->
+<CEP_DDL> create view tkslidewithoutwindow_v2 as select * from tkslidewithoutwindow_S1[range 2] evaluate every 2 second</CEP_DDL>
+<CEP_DDL> create query tkslidewithoutwindow_q7 as select *  from tkslidewithoutwindow_v2 </CEP_DDL>
+
+<!-- Test EVALUTE in a binary query-->
+<CEP_DDL> create view tkslidewithoutwindow_v3 as select * from tkslidewithoutwindow_S1[rows 4] </CEP_DDL>
+<CEP_DDL> create view tkslidewithoutwindow_v4 as select * from tkslidewithoutwindow_S1[rows 4] </CEP_DDL>
+<CEP_DDL> create query tkslidewithoutwindow_q8 as tkslidewithoutwindow_v3 union all tkslidewithoutwindow_v4 evaluate every 2 seconds </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q1.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q2.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q3.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q4.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q5.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q6.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q7.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkslidewithoutwindow_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkslidewithoutwindow_q8.txt</Address></EndPointReference>"  ]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkslidewithoutwindow_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkslidewithoutwindow_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkslidewithoutwindow_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkslidewithoutwindow_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkslidewithoutwindow_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkslidewithoutwindow_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkslidewithoutwindow_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkslidewithoutwindow_q8 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

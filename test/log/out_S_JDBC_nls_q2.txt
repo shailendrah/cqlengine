@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rule root="5">
+<Operator ID="1" type="Source"><cql-property> select * from  tknls_v1 </cql-property>
+	<source-name>tknls_v1</source-name><source-type>View</source-type><view-output-type>Stream</view-output-type></Operator>
+<Operator ID="2" type="Window"><inputs>
+		<input>1</input></inputs>
+
+	<cql-property> select * from  tknls_v1  [now]</cql-property>
+		<type>now</type>
+	<range-params><timevalue>0</timevalue>
+		<timeunit>seconds</timeunit></range-params></Operator><Operator ID="3" type="Select"><inputs><input>2</input></inputs>
+	
+	<cql-property> select  orderId , SUM( LastShares * LastPrice ) , SUM( LastShares * LastPrice ) / SUM( LastShares )  FROM tknls_v1[now] GROUP BY  orderId </cql-property>
+	<select-list><select-attr>
+		<select-expression> orderId </select-expression></select-attr><select-attr>
+		<select-expression>SUM( LastShares * LastPrice )</select-expression></select-attr><select-attr>
+		<select-expression> SUM( LastShares * LastPrice )  /  SUM( LastShares ) </select-expression></select-attr></select-list>
+	<group-list><group-by> orderId </group-by></group-list></Operator>
+<Operator ID="4" type="IStream">
+	<cql-property>IStream( select  orderId , SUM( LastShares * LastPrice ) , SUM( LastShares * LastPrice ) / SUM( LastShares )  FROM tknls_v1[now] GROUP BY  orderId )</cql-property>
+	<inputs><input>3</input></inputs></Operator>
+
+<Operator ID="5" type="Output"><inputs>
+		<input>4</input></inputs>
+	<output-type>Query</output-type>
+	<cql-property>istream(select orderid, sum(lastshares * lastprice), sum(lastshares * lastprice) / sum(lastshares) from tknls_v1[now] group by orderid)</cql-property>
+	<output-name>tknls_q2</output-name></Operator>
+</Rule>
+

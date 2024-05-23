@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**|oracle/cep/driver/data/**|oracle/cep/driver/net/**|oracle/cep/driver/view/**|oracle/cep/server/network/**" kind="src" path="server/src"/>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="common/src"/>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="logging/src"/>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="standaloneEnv/src"/>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="cartridges/java/src/main/java"/>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="cartridges/java/target/src"/>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="cartridges/spatial/src/main/java"/>
+    <classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="cartridges/spatial/target/src"/>
+    <!-- classpathentry excluding="**/.ade_*|**/.ade_path/**|.ade_path/**" kind="src" path="cqlprocessor"/ -->
+    <classpathentry including="Tk*.java|oracle/" excluding="**/.ade_*|**/.ade_path/**|.ade_path/**|TkOC4J*|TkOOW*" kind="src" path="test/src"/>
+    <classpathentry kind="src" path="server/generated" excluding="**/.ade_*|**/.ade_path/**|.ade_path/**|oc4j/"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+    <classpathentry kind="lib" path="lib/link/bcel.jar"/>
+    <classpathentry kind="lib" path="lib/link/commons-logging-1.1.1.jar"/>
+    <classpathentry kind="lib" path="lib/link/dms.jar"/>
+    <!--classpathentry kind="lib" path="lib/link/fabric-common.jar"/-->
+    <classpathentry kind="lib" path="lib/link/fabric-runtime.jar"/>
+    <!--classpathentry kind="lib" path="lib/link/javax88.jar"/-->
+    <classpathentry kind="lib" path="lib/link/jms.jar"/>
+    <classpathentry kind="lib" path="lib/link/jmxframework.jar"/>
+    <classpathentry kind="lib" path="lib/link/jmxspi.jar"/>
+    <classpathentry kind="lib" path="lib/link/junit.jar"/>
+    <classpathentry kind="lib" path="lib/link/log4j.jar"/>
+    <classpathentry kind="lib" path="lib/link/ojdbc6dms.jar"/>
+    <classpathentry kind="lib" path="lib/link/orai18n-collation.jar"/>
+    <classpathentry kind="lib" path="lib/link/servlet.jar"/>
+    <classpathentry kind="lib" path="lib/link/soa-infra-mgmt.jar"/>
+    <classpathentry kind="lib" path="lib/link/xmlparserv2.jar"/>
+    <classpathentry kind="lib" path="lib/link/xquery.jar"/>
+    <classpathentry kind="lib" path="lib/ext/ojdl.jar"/>
+    <classpathentry kind="lib" path="lib/ext/JFlex.jar"/>
+    <classpathentry kind="lib" path="lib/ext/bsh-2.0b4.jar"/>
+    <classpathentry kind="lib" path="lib/ext/commons-csv-20070730.jar"/>
+    <classpathentry kind="lib" path="lib/ext/hessian-3.0.20.jar"/>
+    <classpathentry kind="lib" path="lib/ext/je-3.3.69.jar"/>
+    <classpathentry kind="lib" path="lib/ext/vwap-benchmark.jar"/>
+    <classpathentry kind="lib" path="lib/ext/xmltask-v1.15.1.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/cqlengine/cartridges/spatial/src/main/lib/sdoapi.jar" />
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/cqlengine/cartridges/spatial/src/main/lib/sdoutl.jar" />
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/cqlengine/cartridges/spatial/src/main/lib/sdotopo.jar" />
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/jdk/lib/tools.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/jdk/jre/lib/rt.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/maven/repo/javax/javaee-api/6.0/javaee-api-6.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/cqlengine/colt/target/colt-1.2.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/release/target/server/wlserver/modules/com.bea.core.apache.log4j_1.3.0.0_1-2-15.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/external/apache-ant-1.7.1/lib/com.bea.core.i18n_1.1.0.0.jar" />
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/cqlengine/lib/ext/org.osgi.eclipse.equinox_3.2.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/release/target/server/wlserver/modules/org.aopalliance_1.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-core_3.0.6.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-beans_3.0.6.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-aop_3.0.6.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/lib/org.springframework.spring-asm_3.0.6.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-context_3.0.6.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-expression_3.0.6.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-osgi-core_1.2.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-osgi-extender_1.2.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/org.springframework.spring-osgi-io_1.2.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/lib/com.bea.core.jetty_7.0.0.0.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/release/target/server/oep/modules/com.bea.wlevs.util.jar"/>
+    <classpathentry kind="lib" path="@ADE_VIEW_ROOT@/cep/wlevs_cql/modules/utilities/target/util-12.1.3.0-SNAPSHOT.jar"/>
+    <classpathentry kind="con" path="com.bea.wlevs.eclipse.tools.core.ocepClasspath"/>
+    <classpathentry kind="output" path="classes"/>
+</classpath>

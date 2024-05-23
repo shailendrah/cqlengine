@@ -1,0 +1,11 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata57_S0 (c1 boolean, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata57_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSbool-f.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdata57_q1 as select XMLELEMENT("S0", XMLELEMENT("c1", c1), XMLELEMENT(NAME "c2", c2)) from tkdata57_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata57_q2 as select XMLELEMENT("S0", XMLATTRIBUTES(c1 as "C1", c2 as "C2"), XMLELEMENT(NAME "c1", tkdata57_S0.c1), XMLELEMENT("c2", tkdata57_S0.c2)) from tkdata57_S0 [range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata57_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata57_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata57_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata57_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata57_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata57_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

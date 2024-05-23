@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: pcbpel/cep/test/config/VwapApplicationContext.xml /main/2 2009/01/06 16:31:52 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, 2009, Oracle and/or its affiliates.All rights reserved. 
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      05/29/08 - cepRegistry is not used any more
+   hopark      05/16/08 - disable jetty
+   hopark      03/26/08 - Creation
+
+-->
+<beans>
+    <import resource="cep-default-logging.xml" />
+
+    <import resource="cep-jdbcrmi.xml" />
+
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="logConfig" ref="logConfig" />
+        <property name="schedRuntime" value="0" />
+    </bean>
+
+    <bean id="cepManager" 
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance" >
+        <property name="config" ref="config" />
+        <property name="evictPolicy" ref="queuesrcEvictPolicy" />
+    </bean>
+    
+    <bean id="queuesrcEvictPolicy" 
+          class="oracle.cep.memmgr.evictPolicy.QueueSrcPolicy" >
+        <property name="normalThreshold"  value="-30" />
+        <property name="partialThreshold" value="-20" />
+        <property name="fullThreshold"  value="-10" />
+        <property name="syncThreshold" value="-5" />
+    </bean>
+    
+    <bean id="cepServer" 
+          class="oracle.cep.server.CEPServer"
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="CEPManager" ref="cepManager" />
+    </bean>
+
+<!--	
+Instead of using cepRegistry, we use rmiPort directly.
+    <bean id="cepRegistry"  
+           class="org.springframework.remoting.rmi.RmiRegistryFactoryBean"
+           singleton="true">
+         <property name='port' value='1099' />
+    </bean>
+-->
+</beans>
+
+

@@ -1,0 +1,4 @@
+1000:+ 10,Total Risk Summary:= 100
+2000:+ 10,Total Risk Summary:= 0
+3000:+ 10,Total Risk Summary:= 300
+4000:+ 11,Total Risk Summary:= 1234

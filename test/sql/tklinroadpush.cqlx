@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>create stream tklinroadpush_CarLoc (data_type integer, time_pos integer, car_id integer, speed integer, exp_way integer, lane integer, dir integer, segment integer, x_pos integer,qyrid integer, startseg integer, endseg integer, dayofweek integer, minofday integer, weekday integer) </CEP_DDL>
+
+<CEP_DDL>alter stream tklinroadpush_CarLoc add source @SOURCE@</CEP_DDL>
+
+<CEP_DDL>create relation tklinroadpush_Offsets (val integer) is silent </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter relation tklinroadpush_Offsets add source "<EndPointReference><Address>file://@TEST_DATA@/OffsetsSilent.dat</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>create external relation LinRoad(c1 integer, c2 integer, c3 integer, c4 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation LinRoad add source "<EndPointReference><Address>external:jdbc:oracle:thin:scott/tiger@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=stbda16)(PORT=5521))(CONNECT_DATA=(SERVICE_NAME=rdbms.regress.rdbms.dev.us.oracle.com)))</Address></EndPointReference>"</CEP_DDL>
+
+<CEP_DDL>create view tklinroadpush_VCarLoc (data_type integer, time_pos integer, car_id integer, speed integer, exp_way integer, lane integer, dir integer, segment integer, x_pos integer,qyrid integer, startseg integer, endseg integer, dayofweek integer, minofday integer, weekday integer)  as select * from tklinroadpush_CarLoc where tklinroadpush_CarLoc.data_type = 3</CEP_DDL>
+
+<CEP_DDL>register view tklinroadpush_CarLocStr (car_id integer, speed integer, exp_way integer, lane integer, dir integer, x_pos integer) as select car_id, speed, exp_way, lane, dir, x_pos from tklinroadpush_CarLoc where tklinroadpush_CarLoc.data_type = 0 </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklinroadpush_CarSegStr (car_id integer, speed integer, exp_way integer, lane integer, dir integer, seg integer) as select car_id, speed, exp_way, lane, dir, x_pos / 5280 as seg from tklinroadpush_CarLocStr  ]]></CEP_DDL>
+
+<CEP_DDL>register view tklinroadpush_CurCarSeg(car_id, exp_way, lane, dir, seg) as select car_id, exp_way, lane, dir, seg from tklinroadpush_CarSegStr [range 30 seconds] </CEP_DDL>
+
+<CEP_DDL>register view tklinroadpush_CarSegEntryStr(car_id, exp_way, lane, dir, seg) as IStream(select car_id, exp_way, lane, dir, seg from tklinroadpush_CurCarSeg) </CEP_DDL>
+
+<!-- 
+
+<CEP_DDL>register view tklinroadpush_CarSegEntryStr(car_id, exp_way, lane, dir, seg) as select T.car_id as car_id, T.exp_way as exp_way, T.lane as lane, T.dir as dir, T.seg as seg from tklinroadpush_CarSegStr MATCH_RECOGNIZE (partition by car_id MEASURES A.car_id as car_id, A.exp_way as exp_way, A.lane as lane, A.dir as dir, A.seg as seg PATTERN(A) DEFINE A as (A.seg != prev(A.seg,1,31000000000L) OR prev(A.seg,1,31000000000L) is null OR A.lane != prev(A.lane,1,31000000000L) OR A.dir != prev(A.dir,1,31000000000L) OR A.exp_way != prev(A.exp_way,1,31000000000L))) as T </CEP_DDL>
+
+-->
+
+<CEP_DDL><![CDATA[ register view tklinroadpush_SegAvgSpeed (exp_way integer, lane integer, dir integer, seg integer, avg_speed float) as select exp_way, lane, dir, seg, avg(speed) as avg_speed from tklinroadpush_CarSegStr [range 5 minutes] group by exp_way, lane, dir, seg having avg(speed) < 50 ]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklinroadpush_SegVol (exp_way integer, lane integer, dir integer, seg integer, volume integer) as select exp_way, lane, dir, seg, count(*) as volume from tklinroadpush_CurCarSeg group by exp_way, lane, dir, seg having count(*) > 50 ]]> </CEP_DDL>
+<!--
+<CEP_DDL>register view tklinroadpush_AccCars(car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select car_id, max(exp_way) as exp_way, max(lane) as lane, max(dir) as dir, max(x_pos/5280) as seg from tklinroadpush_CarLocStr [partition by car_id rows 4 range 120 seconds] group by car_id having max(x_pos) = min(x_pos) and count(car_id) = 4 </CEP_DDL>
+
+-->
+
+<CEP_DDL>register view tklinroadpush_AccStrm(car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select T.car_id as car_id, T.exp_way as exp_way, T.lane as lane, T.dir as dir, T.seg as seg from tklinroadpush_CarLocStr MATCH_RECOGNIZE (partition by car_id MEASURES A.car_id as car_id, A.exp_way as exp_way, A.lane as lane, A.dir as dir, A.x_pos/5280 as seg ALL MATCHES PATTERN(A) DEFINE A as (A.x_pos = prev(A.x_pos,3,91000000000L) AND A.lane = prev(A.lane,3,91000000000L) AND A.dir = prev(A.dir,3,91000000000L) AND A.exp_way = prev(A.exp_way,3,91000000000L))) as T </CEP_DDL>
+
+<CEP_DDL>register view tklinroadpush_AccCars(car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select car_id, exp_way, lane, dir, seg from tklinroadpush_AccStrm[range 30 seconds] </CEP_DDL>
+
+
+<CEP_DDL>register view tklinroadpush_AccSeg(exp_way integer, lane integer, dir integer, seg integer) as select distinct exp_way, lane, dir, seg from tklinroadpush_AccCars </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy1a(exp_way integer, lane integer, dir integer, seg integer) as select S.exp_way, S.lane, 0, S.seg-Off.val from tklinroadpush_AccSeg AS S, tklinroadpush_Offsets AS Off where S.dir = 0 </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy1b(exp_way integer, lane integer, dir integer, seg integer) as select S.exp_way, S.lane, 1, S.seg+Off.val from tklinroadpush_AccSeg AS S, tklinroadpush_Offsets AS Off where S.dir = 1 </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy1c(exp_way integer, lane integer, dir integer, seg integer) as tklinroadpush_dummy1a union all tklinroadpush_dummy1b </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklinroadpush_dummy1(exp_way integer, lane integer, dir integer, seg integer) as select exp_way, lane, dir, seg from tklinroadpush_dummy1c where seg >=0 and seg <= 100 ]]> </CEP_DDL>
+
+<CEP_DDL>register view tklinroadpush_dummy2(exp_way integer, lane integer, dir integer, seg integer) as DStream(select exp_way, lane, dir, seg from tklinroadpush_AccSeg) </CEP_DDL>
+<CEP_DDL>register view tklinroadpush_dummy3(exp_way integer, lane integer, dir integer, seg integer) as select exp_way, lane, dir, seg from tklinroadpush_dummy2[range 20 minutes] </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy4a(exp_way integer, lane integer, dir integer, seg integer) as select S.exp_way, S.lane, 0, S.seg-Off.val from tklinroadpush_dummy3 AS S, tklinroadpush_Offsets AS Off where S.dir = 0 </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy4b(exp_way integer, lane integer, dir integer, seg integer) as select S.exp_way, S.lane, 1, S.seg+Off.val from tklinroadpush_dummy3 AS S, tklinroadpush_Offsets AS Off where S.dir = 1 </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy4c(exp_way integer, lane integer, dir integer, seg integer) as tklinroadpush_dummy4a union all tklinroadpush_dummy4b </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklinroadpush_dummy4(exp_way integer, lane integer, dir integer, seg integer) as select exp_way, lane, dir, seg from tklinroadpush_dummy4c where seg >=0 and seg <= 100 ]]> </CEP_DDL>
+
+<CEP_DDL>register view tklinroadpush_AccAffectedSeg(exp_way integer, lane integer, dir integer, seg integer) as tklinroadpush_dummy1 union tklinroadpush_dummy4 </CEP_DDL>
+
+<CEP_DDL><![CDATA[ register view tklinroadpush_SegToll (exp_way integer, lane integer, dir integer, seg integer, toll integer) as select tklinroadpush_SegAvgSpeed.exp_way, tklinroadpush_SegAvgSpeed.lane, tklinroadpush_SegAvgSpeed.dir, tklinroadpush_SegAvgSpeed.seg, 2*(tklinroadpush_SegVol.volume-50)*(tklinroadpush_SegVol.volume-50) from tklinroadpush_SegAvgSpeed, tklinroadpush_SegVol where tklinroadpush_SegAvgSpeed.exp_way = tklinroadpush_SegVol.exp_way and tklinroadpush_SegAvgSpeed.lane = tklinroadpush_SegVol.lane and tklinroadpush_SegAvgSpeed.dir = tklinroadpush_SegVol.dir and tklinroadpush_SegAvgSpeed.seg = tklinroadpush_SegVol.seg ]]> </CEP_DDL>
+
+<CEP_DDL>register view tklinroadpush_dummy5 (car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select cars.car_id, cars.exp_way, cars.lane, cars.dir, cars.seg from tklinroadpush_CarSegEntryStr[now] as cars, tklinroadpush_AccAffectedSeg where cars.exp_way = tklinroadpush_AccAffectedSeg.exp_way and cars.lane = tklinroadpush_AccAffectedSeg.lane and cars.dir = tklinroadpush_AccAffectedSeg.dir and cars.seg = tklinroadpush_AccAffectedSeg.seg </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy6 (car_id integer, exp_way integer, lane integer, dir integer, seg integer) as select cars.car_id, cars.exp_way, cars.lane, cars.dir, cars.seg from tklinroadpush_CarSegEntryStr[now] as cars </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy7 (car_id integer, exp_way integer, lane integer, dir integer, seg integer) as tklinroadpush_dummy6 except tklinroadpush_dummy5 </CEP_DDL>
+
+<CEP_DDL> register view tklinroadpush_dummy8(car_id integer, toll integer) as IStream(select cars.car_id, tklinroadpush_SegToll.toll from tklinroadpush_dummy7 as cars, tklinroadpush_SegToll where (cars.exp_way = tklinroadpush_SegToll.exp_way and cars.lane = tklinroadpush_SegToll.lane and cars.dir = tklinroadpush_SegToll.dir and cars.seg = tklinroadpush_SegToll.seg)) </CEP_DDL>
+
+<CEP_DDL> create view tklinroadpush_dummy9(car_id integer, accbal integer) as select car_id, sum(toll) from tklinroadpush_dummy8 group by car_id </CEP_DDL>
+
+<CEP_DDL>create query tklinroadpush_QTollStr as select * from tklinroadpush_dummy8 </CEP_DDL>
+
+<!--<CEP_DDL><![CDATA[ alter query tklinroadpush_QTollStr add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/@OUTPUTFILE@.txt</Address></EndPointReference>"]]>  </CEP_DDL>-->
+
+<CEP_DDL><![CDATA[ alter query tklinroadpush_QTollStr add destination "<EndPointReference><Address>@DEST1@</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query AccBalance as select tklinroadpush_dummy9.car_id, tklinroadpush_dummy9.accbal from tklinroadpush_dummy9, tklinroadpush_CarLoc[NOW] as carloc where carloc.data_type = 2 and carloc.car_id = tklinroadpush_dummy9.car_id</CEP_DDL>
+
+<!--<CEP_DDL><![CDATA[ alter query AccBalance add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/@OUTPUTFILE@_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>-->
+
+<CEP_DDL><![CDATA[ alter query AccBalance add destination "<EndPointReference><Address>@DEST2@</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>create query tklinroadpush_DailyExp as select LinRoad.c4, LinRoad.c1 from LinRoad, tklinroadpush_VCarLoc[NOW] where tklinroadpush_VCarLoc.car_id = LinRoad.c1 and LinRoad.c2 = (70 - tklinroadpush_VCarLoc.weekday) and tklinroadpush_VCarLoc.exp_way = LinRoad.c3 </CEP_DDL>
+
+<!--<CEP_DDL><![CDATA[ alter query tklinroadpush_DailyExp add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/@OUTPUTFILE@_2.txt</Address></EndPointReference>"]]>  </CEP_DDL>-->
+
+<CEP_DDL><![CDATA[ alter query tklinroadpush_DailyExp add destination "<EndPointReference><Address>@DEST3@</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tklinroadpush_QTollStr start </CEP_DDL>
+<CEP_DDL>alter query AccBalance start </CEP_DDL>
+<CEP_DDL>alter query tklinroadpush_DailyExp start </CEP_DDL>
+
+<CEP_DDL> alter system run @DURATION@ </CEP_DDL>
+</CEP>

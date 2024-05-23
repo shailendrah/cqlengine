@@ -1,0 +1,95 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkstatistics_S1 (c1 integer, c2 bigint, c3 float, c4 double, c5 number(7,5)) </CEP_DDL>
+<CEP_DDL> create stream tkstatistics_S2 (c1 integer, c2 bigint, c3 float, c4 double, c5 number(7,5)) </CEP_DDL>
+<CEP_DDL> create stream tkstatistics_S3 (c1 integer, c2 number(5,2)) </CEP_DDL>
+<CEP_DDL> create stream tkstatistics_S4 (c1 integer, c2 bigint, c3 float, c4 double, c5 number(7,5)) </CEP_DDL>
+<CEP_DDL> create stream tkstatistics_S5 (c0 integer, c1 integer, c2 bigint, c3 float, c4 double, c5 number(7,5)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkstatistics_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpstat01.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkstatistics_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpstat02.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkstatistics_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpstat03.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkstatistics_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpstat04.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkstatistics_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpstat05.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- use round() so that the output value will be consistence across different platforms(like 32vs64bit, jdk6vs7) -->
+<CEP_DDL> create query tkstatistics_q1 as select round(variance(c1)), round(variance(c2)), round(variance(c3)), round(variance(c4)), variance(c5) from tkstatistics_S1</CEP_DDL>
+<CEP_DDL> create query tkstatistics_q2 as select round(variance(c1)), round(variance(c2)), round(variance(c3)), round(variance(c4)), variance(c5) from tkstatistics_S1 [rows 3] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q3 as select round(variance(c1)), round(variance(c2)), round(variance(c3)), round(variance(c4)), variance(c5) from tkstatistics_S2 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q4 as select round(variance(c1)), round(variance(c2)), round(variance(c3)), round(variance(c4)), variance(c5) from tkstatistics_S2 [rows 3] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q5 as select round(variance(c1)), variance(c2) from tkstatistics_S3 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q6 as select round(sampleVariance(c1)), round(sampleVariance(c2)), round(sampleVariance(c3)), round(sampleVariance(c4)), sampleVariance(c5) from tkstatistics_S1 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q7 as select round(sampleVariance(c1)), round(sampleVariance(c2)), round(sampleVariance(c3)), round(sampleVariance(c4)), sampleVariance(c5) from tkstatistics_S2 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q8 as select round(standardDeviation(c1)), round(standardDeviation(c2)), round(standardDeviation(c3)), round(standardDeviation(c4)), standardDeviation(c5) from tkstatistics_S1 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q9 as select round(standardDeviation(c1)), round(standardDeviation(c2)), round(standardDeviation(c3)), round(standardDeviation(c4)), standardDeviation(c5) from tkstatistics_S1 [rows 2] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q10 as select round(standardDeviation(c1)), round(standardDeviation(c2)), round(standardDeviation(c3)), round(standardDeviation(c4)), standardDeviation(c5) from tkstatistics_S2 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q11 as select round(standardDeviation(c1)), round(standardDeviation(c2)), round(standardDeviation(c3)), round(standardDeviation(c4)), standardDeviation(c5) from tkstatistics_S2 [rows 3] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q12 as select round(sampleStandardDeviation(c1)), round(sampleStandardDeviation(c2)), round(sampleStandardDeviation(c3)), round(sampleStandardDeviation(c4)), sampleStandardDeviation(c5) from tkstatistics_S1 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q13 as select round(mean(c1)), round(mean(c2)), round(mean(c3)), round(mean(c4)), mean(c5) from tkstatistics_S1</CEP_DDL>
+<CEP_DDL> create query tkstatistics_q14 as select round(quantile(c1, 0.75)), round(quantile(c2, 0.75)), round(quantile(c3,0.75)), round(quantile(c4, 0.75)), quantile(c5, 0.75) from tkstatistics_S1</CEP_DDL>
+<CEP_DDL> create query tkstatistics_q15 as select round(quantile(c1, 0.75)), round(quantile(c2, 0.75)), round(quantile(c3,0.75)), round(quantile(c4, 0.75)), quantile(c5, 0.75) from tkstatistics_S2</CEP_DDL>
+<CEP_DDL> create query tkstatistics_q16 as select round(quantile(c1, 0.75)), round(quantile(c2, 0.75)), round(quantile(c3,0.75)), round(quantile(c4, 0.75)), quantile(c5, 0.75) from tkstatistics_S2 [rows 3]</CEP_DDL>
+
+<!-- Null value tests -->
+<CEP_DDL> create query tkstatistics_q17 as select round(avg(c1)), round(avg(c2)), round(avg(c3)), round(avg(c4)), avg(c5) from tkstatistics_S4</CEP_DDL>
+<CEP_DDL> create query tkstatistics_q18 as select round(avg(c1)), round(avg(c2)), round(avg(c3)), round(avg(c4)), avg(c5) from tkstatistics_S4 [rows 2] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q19 as select round(variance(c1)), round(variance(c2)), round(variance(c3)), round(variance(c4)), variance(c5) from tkstatistics_S4 </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q20 as select round(variance(c1)), round(variance(c2)), round(variance(c3)), round(variance(c4)), variance(c5) from tkstatistics_S4 [rows 2] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q21 as select round(standardDeviation(c1)), round(standardDeviation(c2)), round(standardDeviation(c3)), round(standardDeviation(c4)), standardDeviation(c5) from tkstatistics_S4 [rows 2] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q22 as select round(sampleVariance(c1)), round(sampleVariance(c2)), round(sampleVariance(c3)), round(sampleVariance(c4)), sampleVariance(c5) from tkstatistics_S4 [rows 2] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q23 as select round(sampleStandardDeviation(c1)), round(sampleStandardDeviation(c2)), round(sampleStandardDeviation(c3)), round(sampleStandardDeviation(c4)), sampleStandardDeviation(c5) from tkstatistics_S4 [rows 2] </CEP_DDL>
+<CEP_DDL> create query tkstatistics_q24 as select c0, avg(c1), avg(c2), avg(c3), avg(c4), avg(c5) from tkstatistics_S5 group by c0</CEP_DDL>
+<CEP_DDL> create query tkstatistics_q25 as select c0, avg(c1), avg(c2), avg(c3), avg(c4), avg(c5) from tkstatistics_S5 [rows 2] group by c0</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat01.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat02.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat03.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat04.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat05.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat06.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat07.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat08.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat09.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q18 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q19 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q20 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q21 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q22 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat22.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q23 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat23.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q24 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat24.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkstatistics_q25 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outstat25.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkstatistics_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q16 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q17 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q18 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q19 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q20 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q21 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q22 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q23 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q24 start </CEP_DDL>
+<CEP_DDL> alter query tkstatistics_q25 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

@@ -1,0 +1,25 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> alter system time_slice = 1</CEP_DDL>
+<CEP_DDL> alter system sched_name = "oracle.cep.execution.scheduler.RoundRobinScheduler" </CEP_DDL>
+<CEP_DDL > register relation  tkdata6_rr_R2 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata6_rr_R2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpR2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata6_rr_q0 as select *  from tkdata6_rr_R2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata6_rr_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR2S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata6_rr_q0 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata6_rr_q1 as select *  from tkdata6_rr_R2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata6_rr_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR2S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata6_rr_q1 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata6_rr_q2 as select *  from tkdata6_rr_R2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata6_rr_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR2S2_rr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata6_rr_q2 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>
+<CEP_DDL> create query tkdata6_rr_q3 as select *  from tkdata6_rr_R2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata6_rr_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR2S3_rr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata6_rr_q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

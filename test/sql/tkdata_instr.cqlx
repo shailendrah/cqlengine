@@ -1,0 +1,41 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_instr (c1 char(30)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_instr add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_instr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_instr1  as select instr(c1,"or",3,2) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr2  as select instr(c1,"or",-3,2) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr3  as select instr(c1,"or",1) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr4  as select instr(c1,"or") from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr5  as select instr(c1,"or",0) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr6  as select instr(c1,"or",0,-3) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr7  as select instr(c1,"or",0,0) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr_null1  as select instr(null,"or",3,2) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr_null2  as select instr(c1,null,3,2) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr_null3  as select instr(c1,"or",null,2) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr_null4  as select instr(c1,"or",3,null) from tkdata_instr</CEP_DDL>
+<CEP_DDL> create query tkdata_instr_null5  as select instr(c1,"or",null,4) from tkdata_instr</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr_null1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr_null1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr_null2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr_null2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr_null3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr_null3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr_null4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr_null4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_instr_null5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/instr_null5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_instr1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr3 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr4 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr5 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr6 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr7 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr_null1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr_null2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr_null3 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr_null4 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_instr_null5 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

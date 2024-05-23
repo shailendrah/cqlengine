@@ -1,0 +1,20 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata_fab1_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_fab1_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_fab1_q1 as select c1 as OrderId, c2 as OrderAmount from tkdata_fab1_S0[range 1]</CEP_DDL>
+<CEP_DDL> create query tkdata_fab1_q2 as 
+          select xmlelement("cep:ComplexEvent",
+                             XMLAttributes('http://xmlns.oracle.com/cep' as
+                                  "xmlns:cep"), 
+                             xmlelement("cep:OrderId", c1),
+                             xmlelement("cep:OrderAmount", c2))  from tkdata_fab1_S0[range 1] </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata_fab1_q1 add destination "<EndPointReference><Address><Type>fabric</Type><EDNNamespace>http://www.globalcompany.com/ns/CEP/</EDNNamespace><EDNEventName>OrderAlert</EDNEventName><PayloadNameSpace>http://xmlns.oracle.com/cep</PayloadNameSpace></Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata_fab1_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_fab1_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_fab1_q2 add destination "<EndPointReference><Address>fabric://OrderAlert</Address><ReferenceParameters><EDNNamespace>http://www.globalcompany.com/ns/CEP/</EDNNamespace><PayloadNamespace>http://xmlns.oracle.com/cep</PayloadNamespace></ReferenceParameters></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_fab1_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_fab1_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_fab1_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_fab1_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

@@ -1,0 +1,993 @@
+<?xml version="1.0"?>
+<ColtAggrFunctions>
+<!--Colt Class : cern.jet.stat.Descriptive -->
+
+    
+
+<!--(1) double cern.jet.stat.Descriptive.autoCorrelation(DoubleArrayList data, int lag, double mean, double variance) -->
+<ColtAggrFunction className="CEPAutoCorrelation" index="1" skipTestGeneration="true">
+
+  <Signature name="autoCorrelation" invokeFunction="autoCorrelation" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="autoCorrelation" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+      <arg>
+        <invoke invokeId="3" fName="variance" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><size paramId="0"/></arg>
+            <arg>
+              <invoke invokeId="4" fName="sum" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg><param paramId="0"/></arg> 
+                </arguments>
+              </invoke>
+            </arg>
+            <arg>
+              <invoke invokeId="5" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg><param paramId="0"/></arg>
+                </arguments>
+              </invoke>
+            </arg>
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(2) double correlation(DoubleArrayList data1, double standardDev1, DoubleArrayList data2, double standardDev2) -->
+
+<ColtAggrFunction className="CEPCorrelation" index="2">
+  <Signature name="correlation" invokeFunction="correlation" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="correlation" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="standardDeviation" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg>
+              <invoke invokeId="3" fName = "variance" returnType="double" implementingClass="Descriptive">
+                <arguments>
+                 <arg> <size paramId="0"/> </arg>
+                 <arg>
+                   <invoke invokeId="4" fName="sum" implementingClass="Descriptive" returnType="double">
+                     <arguments>
+                       <arg ><param paramId="0"/></arg>
+                     </arguments>
+                   </invoke>
+                 </arg>
+                 <arg>
+                   <invoke invokeId="5" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                     <arguments>
+                       <arg><param paramId="0"/></arg>
+                     </arguments>
+                   </invoke>
+                 </arg>
+                </arguments>
+              </invoke>
+            </arg>
+         </arguments>
+        </invoke>
+      </arg>
+      <arg><param paramId="1"/></arg>
+      <arg>
+        <invoke invokeId="6" fName="standardDeviation" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg>
+              <invoke invokeId="7" fName = "variance" returnType="double" implementingClass="Descriptive">
+                <arguments>
+                 <arg> <size paramId="1"/> </arg>
+                 <arg>
+                   <invoke invokeId="8" fName="sum" implementingClass="Descriptive" returnType="double">
+                     <arguments>
+                       <arg ><param paramId="1"/></arg>
+                     </arguments>
+                   </invoke>
+                 </arg>
+                 <arg>
+                   <invoke invokeId="9" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                     <arguments>
+                       <arg><param paramId="1"/></arg>
+                     </arguments>
+                   </invoke>
+                 </arg>
+                </arguments>
+              </invoke>
+            </arg>
+         </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!-- (3) double covariance(DoubleArrayList data1, DoubleArrayList data2)-->
+<ColtAggrFunction className = "CEPCovariance" index="3">
+    
+    <Signature name="covariance"  invokeFunction="covariance" typeName="double" typeClass="Double" numParams="2">
+        <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+        <param index="1" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    </Signature>
+    
+    <invoke invokeId="1" fName="covariance" implementingClass="Descriptive" returnType="double">
+        <arguments>
+            <arg><param paramId="0"/></arg>
+            <arg><param paramId="1"/></arg>
+         </arguments>
+    </invoke>
+</ColtAggrFunction>
+    
+<!--(4) double durbinWatson(DoubleArrayList data) -->
+<ColtAggrFunction className="CEPDurbinWatson" index="4" skipTestGeneration="true" supportTest="false">
+  <Signature name="durbinWatson" invokeFunction="durbinWatson" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="durbinWatson" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(6) double geometricMean(DoubleArrayList data)-->
+
+<ColtAggrFunction className="CEPGeometricMean" index="6">
+  <Signature name="geometricMean" invokeFunction="geometricMean" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="geometricMean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!-- (7) double geometricMean(int size, double sumOfLogartihms)-->
+
+<ColtAggrFunction className="CEPGeometricMean1" index="7">
+  <Signature name="geometricMean1" invokeFunction="geometricMean" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="geometricMean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="sumOfLogarithms" implementingClass="Descriptive" returnType="double">
+          <arguments>
+             <arg><param paramId="0"/></arg>
+             <arg><const constVal="0"/></arg>
+             <arg><size paramId="0" isLastIndex="true"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(8) double harmonicMean(int size, double sumOfInversions) -->
+<ColtAggrFunction className="CEPHarmonicMean" index="8">
+  <Signature name="harmonicMean" invokeFunction="harmonicMean" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="harmonicMean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="sumOfInversions" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+            <arg><const constVal="0"/></arg>
+            <arg><size paramId="0" isLastIndex="true"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(12). double kurtosis(DoubleArrayList data, double mean, double standardDeviation) -->
+
+<ColtAggrFunction className="CEPKurtosis" index="12">
+  <Signature name="kurtosis" invokeFunction="kurtosis" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="kurtosis" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+      <arg>
+        <invoke invokeId="3" fName="standardDeviation" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg>
+              <invoke invokeId="4" fName = "variance" returnType="double" implementingClass="Descriptive">
+                <arguments>
+                  <arg> <size paramId="0"/> </arg>
+                  <arg>
+                    <invoke invokeId="5" fName="sum" implementingClass="Descriptive" returnType="double">
+                      <arguments>
+                        <arg ><param paramId="0"/></arg>
+                      </arguments>
+                    </invoke>
+                  </arg>
+                  <arg>
+                    <invoke invokeId="6" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                      <arguments>
+                        <arg><param paramId="0"/></arg>
+                      </arguments>
+                    </invoke>
+                  </arg>
+                </arguments>
+              </invoke>
+            </arg>
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(14). double lag1 ( DoubleArrayList data, double mean) -->
+<ColtAggrFunction className="CEPLag1" index="14">
+  <Signature name="lag1" invokeFunction="lag1" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="lag1" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>          
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(15) double max(DoubleArrayList data)
+<ColtAggrFunction className="CEPMax" index="15">
+  <Signature name="max" invokeFunction="max" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </SignatureMoment>
+
+  <invoke invokeId="1" fName="max" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>-->
+
+<!--(16). double mean(DoubleArrayList data)-->
+
+<!--<ColtAggrFunction className="CEPMean" index="16">
+  <Signature name="mean" invokeFunction="mean" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="mean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>-->
+
+<!--(17) double meanDeviation(DoubleArrayList data, double mean) -->
+<ColtAggrFunction className="CEPMeanDeviation" index="17">
+  <Signature name="meanDeviation" invokeFunction="meanDeviation" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="meanDeviation" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="1" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>  
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(18) double median(DoubleArrayList sortedData)
+<ColtAggrFunction className="CEPMedian" index="18">
+  <Signature name="median" invokeFunction="median" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="true" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="median" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+-->
+<!--(19) double min(DoubleArrayList data)
+<ColtAggrFunction className="CEPMin" index="19">
+  <Signature name="min" invokeFunction="min" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="min" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction> -->
+
+<!--(20)double moment(int k, double c, int size, double[] sumOfPowers) -->
+<!--(21) double moment(DoubleArrayList data, int k, double c)-->
+<ColtAggrFunction className="CEPMoment" index="21">
+  <Signature name="moment" invokeFunction="moment" typeName="double" typeClass="Double" numParams="3">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+    <param index="2" isSortedListRequired="false" isList="false" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="moment" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+      <arg><param paramId="2"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(22) double pooledMean(int size1, double mean1,int size2, double mean2) -->
+<ColtAggrFunction className="CEPPooledMean" index="22">
+  <Signature name="pooledMean" invokeFunction="pooledMean" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="pooledMean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>  
+      </arg>
+      <arg><size paramId="1"/></arg>
+      <arg>
+        <invoke invokeId="3" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="1"/></arg>
+          </arguments>
+        </invoke>  
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(23) double pooledVariance(int size1, double variance1, int size2, double variance2) -->
+<ColtAggrFunction className="CEPPooledVariance" index="23">
+  <Signature name="pooledVariance" invokeFunction="pooledVariance" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="pooledVariance" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="variance" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><size paramId="0"/></arg>
+            <arg>
+              <invoke invokeId="3" fName="sum" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg ><param paramId="0"/></arg> 
+                </arguments>
+              </invoke>
+            </arg>
+            <arg>
+              <invoke invokeId="4" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg ><param paramId="0"/></arg> 
+                </arguments>
+              </invoke>
+            </arg>
+           </arguments>
+        </invoke>
+      </arg>
+      <arg><size paramId="1"/></arg>
+      <arg>
+        <invoke invokeId="5" fName="variance" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><size paramId="1"/></arg>
+            <arg>
+              <invoke invokeId="6" fName="sum" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg ><param paramId="1"/></arg> 
+                </arguments>
+              </invoke>
+            </arg>
+            <arg>
+              <invoke invokeId="7" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg ><param paramId="1"/></arg> 
+                </arguments>
+              </invoke>
+            </arg>
+           </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(24) double product(DoubleArrayList data) -->
+<!--(25) double product(int size,double sumOfLogarithms)-->
+<ColtAggrFunction className="CEPProduct" index="24">
+  <Signature name="product" invokeFunction="product" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="product" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(26) double quantile(DoubleArrayList sortedData, double phi) -->
+<!--<ColtAggrFunction className="CEPQuantile" index="26" skipTestGeneration="true">
+  <Signature name="quantile" invokeFunction="quantile" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="true" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="quantile" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>-->
+
+<!--(27). double quantileInverse(DoubleArrayList sortedList, double element)-->
+<ColtAggrFunction className="CEPQuantileInverse" index="27">
+  <Signature name="quantileInverse" invokeFunction="quantileInverse" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="true" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="quantileInverse" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(29). double rankInterpolated(DoubleArrayList sortedList, double element)-->
+<ColtAggrFunction className="CEPRankInterpolated" index="29">
+  <Signature name="rankInterpolated" invokeFunction="rankInterpolated" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="true" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="rankInterpolated" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(30). double rms(int size, double sumOfSquares) -->
+<ColtAggrFunction className="CEPRms" index="30">
+  <Signature name="rms" invokeFunction="rms" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="rms" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg ><param paramId="0"/></arg> 
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(31). double sampleKurtosis(DoubleArrayList data, double mean, double sampleVariance) -->
+<!--(32). double sampleKurtosis(int size, double moment4, double sampleVariance) -->
+<ColtAggrFunction className="CEPSampleKurtosis" index="31">
+  <Signature name="sampleKurtosis" invokeFunction="sampleKurtosis" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sampleKurtosis" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+      <arg>
+        <invoke invokeId="3" fName="sampleVariance" implementingClass="Descriptive" returnType="double">
+          <arguments>
+              <arg> <param paramId="0"/> </arg>
+              <arg>
+                <invoke invokeId="4" fName="mean" implementingClass="Descriptive" returnType="double">
+                   <arguments>
+                     <arg ><param paramId="0"/></arg> 
+                   </arguments>
+                 </invoke>
+               </arg>
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(33). double sampleKurtosisStandardError(int size) -->
+<ColtAggrFunction className="CEPSampleKurtosisStandardError" index="33">
+  <Signature name="sampleKurtosisStandardError" invokeFunction="sampleKurtosisStandardError" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sampleKurtosisStandardError" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(34). double sampleSkew(DoubleArrayList data, double mean, double sampleVariance) -->
+<!--(35). double sampleSkew(int size, double moment3, double sampleVariance)-->
+<ColtAggrFunction className="CEPSampleSkew" index="34">
+  <Signature name="sampleSkew" invokeFunction="sampleSkew" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sampleSkew" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+      <arg>
+        <invoke invokeId="3" fName="sampleVariance" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg> <param paramId="0"/> </arg>
+            <arg>
+              <invoke invokeId="4" fName="mean" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg ><param paramId="0"/></arg> 
+                </arguments>
+              </invoke>
+            </arg>
+          </arguments>
+        </invoke> 
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(36) double sampleSkewStandardError(int size) -->
+<ColtAggrFunction className="CEPSampleSkewStandardError" index="36">
+  <Signature name="sampleSkewStandardError" invokeFunction="sampleSkewStandardError" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sampleSkewStandardError" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(37). double sampleStandardDeviation(int size, double sampleVariance) -->
+<!--<ColtAggrFunction className = "CEPSampleStandardDeviation" index="37" skipTestGeneration="true" supportTest="false">
+  <Signature name="sampleStandardDeviation" typeClass="Double"  typeName="double" invokeFunction="sampleStandardDeviation" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+        
+  <invoke invokeId="1" fName="sampleStandardDeviation" implementingClass="Descriptive" returnType="double">
+     <arguments>
+       <arg><size paramId="0"/></arg>
+       <arg>
+         <invoke invokeId="2" fName = "sampleVariance" returnType="double" implementingClass="Descriptive">
+            <arguments>
+              <arg> <param paramId="0"/> </arg>
+              <arg>
+                <invoke invokeId="3" fName="mean" implementingClass="Descriptive" returnType="double">
+                   <arguments>
+                     <arg ><param paramId="0"/></arg> 
+                   </arguments>
+                 </invoke>
+              </arg>
+            </arguments>
+          </invoke>
+       </arg>
+     </arguments>       
+  </invoke>
+</ColtAggrFunction>-->
+
+<!--(38). double sampleVariance(DoubleArrayList data, double mean)  -->
+<!--(39). double sampleVariance(int size, double sum, double sumOfSquares) -->
+<!--<ColtAggrFunction className="CEPSampleVariance" index="38">
+  <Signature name="sampleVariance" invokeFunction="sampleVariance" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sampleVariance" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg ><param paramId="0"/></arg> 
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>-->
+
+<!--(41). double skew(DoubleArrayList data, double mean, double standardDeviation) -->
+<!--(42). double skew(double moment3, double standardDeviation)  -->
+<ColtAggrFunction className="CEPSkew" index="41">
+  <Signature name="skew" invokeFunction="skew" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="skew" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg ><param paramId="0"/></arg> 
+          </arguments>
+        </invoke>
+      </arg>
+      <arg>
+        <invoke invokeId="1" fName="standardDeviation" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg>
+              <invoke invokeId="2" fName = "variance" returnType="double" implementingClass="Descriptive">
+                <arguments>
+                  <arg> <size paramId="0"/> </arg>
+                  <arg>
+                    <invoke invokeId="3" fName="sum" implementingClass="Descriptive" returnType="double">
+                      <arguments>
+                        <arg ><param paramId="0"/></arg> 
+                      </arguments>
+                    </invoke>
+                  </arg>
+                  <arg>
+                    <invoke invokeId="4" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                      <arguments>
+                        <arg><param paramId="0"/></arg>
+                      </arguments>
+                    </invoke>
+                  </arg>
+                </arguments>
+              </invoke>
+            </arg>
+          </arguments>       
+        </invoke>
+      </arg>
+     </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(44) double standardDeviation(double variance) -->
+<!--<ColtAggrFunction className = "CEPStandardDeviation" index="44">
+  <Signature name="standardDeviation" typeClass="Double"  typeName="double" invokeFunction="standardDeviation" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+        
+  <invoke invokeId="1" fName="standardDeviation" implementingClass="Descriptive" returnType="double">
+     <arguments>
+       <arg>
+         <invoke invokeId="2" fName = "variance" returnType="double" implementingClass="Descriptive">
+            <arguments>
+              <arg> <size paramId="0"/> </arg>
+              <arg>
+                <invoke invokeId="3" fName="sum" implementingClass="Descriptive" returnType="double">
+                   <arguments>
+                     <arg ><param paramId="0"/></arg> 
+                   </arguments>
+                 </invoke>
+               </arg>
+               <arg>
+                 <invoke invokeId="4" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                    <arguments>
+                      <arg><param paramId="0"/></arg>
+                    </arguments>
+                  </invoke>
+                </arg>
+              </arguments>
+            </invoke>
+         </arg>
+       </arguments>       
+   </invoke>
+</ColtAggrFunction>-->
+
+<!--(45). double standardError(int size, double variance) -->
+<ColtAggrFunction className = "CEPStandardError" index="45">
+  <Signature name="standardError" typeClass="Double"  typeName="double" invokeFunction="standardError" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+        
+  <invoke invokeId="1" fName="standardError" implementingClass="Descriptive" returnType="double">
+     <arguments>
+       <arg><size paramId="0"/></arg>
+       <arg>
+         <invoke invokeId="2" fName = "variance" returnType="double" implementingClass="Descriptive">
+            <arguments>
+              <arg> <size paramId="0"/> </arg>
+              <arg>
+                <invoke invokeId="3" fName="sum" implementingClass="Descriptive" returnType="double">
+                   <arguments>
+                     <arg ><param paramId="0"/></arg> 
+                   </arguments>
+                 </invoke>
+               </arg>
+               <arg>
+                 <invoke invokeId="4" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                    <arguments>
+                      <arg><param paramId="0"/></arg>
+                    </arguments>
+                  </invoke>
+                </arg>
+              </arguments>
+            </invoke>
+         </arg>
+       </arguments>       
+   </invoke>
+</ColtAggrFunction>
+
+<!--(48). double sumOfInversions(DoubleArrayList data, int from, int to) -->
+<ColtAggrFunction className="CEPSumOfInversions" index="48">
+  <Signature name="sumOfInversions" invokeFunction="sumOfInversions" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sumOfInversions" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><const constVal="0"/></arg>
+      <arg><size paramId="0" isLastIndex="true"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(49). double sumOfLogarithms(DoubleArrayList data, int from, int to)  -->
+<ColtAggrFunction className="CEPSumOfLogarithms" index="49">
+  <Signature name="sumOfLogarithms" invokeFunction="sumOfLogarithms" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sumOfLogarithms" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><const constVal="0"/></arg>
+      <arg><size paramId="0" isLastIndex="true"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(50). double sumOfPowerDeviations(DoubleArrayList data, int k, double c) -->
+<!--(51). double sumOfPowerDeviations(DoubleArrayList data, int k, double c, int from, int to) -->
+<ColtAggrFunction className="CEPSumOfPowerDeviations" index="50">
+  <Signature name="sumOfPowerDeviations" invokeFunction="sumOfPowerDeviations" typeName="double" typeClass="Double" numParams="3">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+    <param index="2" isSortedListRequired="false" isList="false" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sumOfPowerDeviations" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+      <arg><param paramId="2"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(52) double sumOfPowers(DoubleArrayList data, int k) -->
+<ColtAggrFunction className="CEPSumOfPowers" index="52">
+  <Signature name="sumOfPowers" invokeFunction="sumOfPowers" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sumOfPowers" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(53). double sumOfSquaredDeviations(int size, double variance) -->
+<ColtAggrFunction className="CEPSumOfSquaredDeviations" index="53">
+  <Signature name="sumOfSquaredDeviations" invokeFunction="sumOfSquaredDeviations" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+  
+  <invoke invokeId="1" fName="sumOfSquaredDeviations" returnType="double" implementingClass="Descriptive">
+    <arguments>
+      <arg><size paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="1" fName = "variance" returnType="double" implementingClass="Descriptive">
+          <arguments>
+            <arg> <size paramId="0"/> </arg>
+            <arg>
+              <invoke invokeId="2" fName="sum" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg ><param paramId="0"/></arg> 
+                </arguments>
+              </invoke>
+            </arg>
+            <arg>
+              <invoke invokeId="3" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+                <arguments>
+                  <arg><param paramId="0"/></arg>
+                </arguments>
+              </invoke>
+            </arg>
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>
+</ColtAggrFunction>
+
+<!--(54). double sumOfSquares(DoubleArrayList data) -->
+<ColtAggrFunction className="CEPSumOfSquares" index="54">
+  <Signature name="sumOfSquares" invokeFunction="sumOfSquares" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(55). double trimmedMean(DoubleArrayList sortedData, double mean, int left, int right) -->
+<ColtAggrFunction className="CEPTrimmedMean" index="55" skipTestGeneration="true">
+  <Signature name="trimmedMean" invokeFunction="trimmedMean" typeName="double" typeClass="Double" numParams="3">
+    <param index="0" isSortedListRequired="true" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+    <param index="2" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="trimmedMean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+      <arg><param paramId="1"/></arg>
+      <arg><param paramId="2"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(56). double variance(double standardDeviation) -->
+<!--(57). double variance(int size, double sum, double sumOfSquares) -->
+<!--<ColtAggrFunction className="CEPVariance" index="57">
+  <Signature name="variance" invokeFunction="variance" typeName="double" typeClass="Double" numParams="1">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName = "variance" returnType="double" implementingClass="Descriptive">
+    <arguments>
+      <arg> <size paramId="0"/> </arg>
+      <arg>
+        <invoke invokeId="2" fName="sum" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg ><param paramId="0"/></arg> 
+          </arguments>
+        </invoke>
+      </arg>
+      <arg>
+        <invoke invokeId="3" fName="sumOfSquares" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+    </arguments>
+  </invoke>
+</ColtAggrFunction>-->
+
+<!--(58). double weightedMean(DoubleArrayList data, DoubleArrayList weights) -->
+<ColtAggrFunction className="CEPWeightedMean" index="58">
+  <Signature name="weightedMean" invokeFunction="weightedMean" typeName="double" typeClass="Double" numParams="2">
+    <param index="0" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="true" typeName="double" typeClass="Double"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="weightedMean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg><param paramId="1"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+<!--(60). double winsorizedMean(DoubleArrayList sortedData, double mean, int left, int right) -->
+<ColtAggrFunction className="CEPWinsorizedMean" index="60" skipTestGeneration="true">
+  <Signature name="winsorizedMean" invokeFunction="winsorizedMean" typeName="double" typeClass="Double" numParams="3">
+    <param index="0" isSortedListRequired="true" isList="true" typeName="double" typeClass="Double"/>
+    <param index="1" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+    <param index="2" isSortedListRequired="false" isList="false" typeName="int" typeClass="Integer"/>
+  </Signature>
+
+  <invoke invokeId="1" fName="winsorizedMean" implementingClass="Descriptive" returnType="double">
+    <arguments>
+      <arg><param paramId="0"/></arg>
+      <arg>
+        <invoke invokeId="2" fName="mean" implementingClass="Descriptive" returnType="double">
+          <arguments>
+            <arg><param paramId="0"/></arg>
+          </arguments>
+        </invoke>
+      </arg>
+      <arg><param paramId="1"/></arg>
+      <arg><param paramId="2"/></arg>
+    </arguments>
+  </invoke>  
+</ColtAggrFunction>
+
+</ColtAggrFunctions>

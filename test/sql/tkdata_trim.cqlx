@@ -1,0 +1,41 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_trim(c1 char(30)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_trim add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_trim.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q1  as select trim(c1,"	","LEADING") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q2  as select trim(c1,"	","TRAILING") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q3  as select trim(c1,"	","BOTH") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q4  as select trim(c1,"11","BOTH") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q5  as select trim(c1,"1","BOTH") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q6  as select trim(c1,"1","blah") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q7  as select trim(null,"1","BOTH") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q8  as select trim(c1,null) from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q9  as select trim(c1) from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q10  as select trim(c1,"	",null) from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q11  as select trim(c1,"11") from tkdata_trim</CEP_DDL>
+<CEP_DDL> create query tkdata_trim_q12  as select trim(c1," ") from tkdata_trim</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_trim_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/trim_q12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q3 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q4 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q5 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q6 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q7 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q8 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q9 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q10 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q11 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_trim_q12 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

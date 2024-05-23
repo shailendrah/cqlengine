@@ -1,0 +1,94 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkbuiltinAggr_S1 (c1 int, c2 bigint)</CEP_DDL>
+<CEP_DDL> create stream tkbuiltinAggr_S8 (c1 interval)</CEP_DDL>
+<CEP_DDL> create stream tkbuiltinAggr_S2 (c1 int, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkbuiltinAggr_S15 (c1 int, c2 timestamp) </CEP_DDL>
+<CEP_DDL> create stream tkbuiltinAggr_S4 (c1 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkbuiltinAggr_S5 (c1 int, c2 byte(10)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkbuiltinAggr_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkbuiltinAggr_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkbuiltinAggr_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS100.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkbuiltinAggr_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkbuiltinAggr_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkbuiltinAggr_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkbuiltinAggr_test_sum_timestamp as select sum(c2) from tkbuiltinAggr_S15[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_sum_interval as select sum(c1) from tkbuiltinAggr_S8[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_sum_char as select sum(c1) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_sum_byte as select sum(c2) from tkbuiltinAggr_S5[range 2]</CEP_DDL>
+
+<CEP_DDL> create query tkbuiltinAggr_test_avg_timestamp as select avg(c2) from tkbuiltinAggr_S15[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_avg_interval as select avg(c1) from tkbuiltinAggr_S8[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_avg_char as select avg(c1) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_avg_byte as select avg(c2) from tkbuiltinAggr_S5[range 2]</CEP_DDL>
+
+<CEP_DDL> create query tkbuiltinAggr_test_count_timestamp as select count(c2) from tkbuiltinAggr_S15[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_count_interval as select count(c1) from tkbuiltinAggr_S8[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_count_char as select count(c1) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_count_byte as select count(c2) from tkbuiltinAggr_S5[range 2]</CEP_DDL>
+
+<CEP_DDL> create query tkbuiltinAggr_test_max_timestamp as select max(c2) from tkbuiltinAggr_S15[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_max_interval as select max(c1) from tkbuiltinAggr_S8[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_max_char as select max(c1) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_max_byte as select max(c2) from tkbuiltinAggr_S5[range 2]</CEP_DDL>
+
+<CEP_DDL> create query tkbuiltinAggr_test_min_timestamp as select min(c2) from tkbuiltinAggr_S15[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_min_interval as select min(c1) from tkbuiltinAggr_S8[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_min_char as select min(c1) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_min_byte as select min(c2) from tkbuiltinAggr_S5[range 2]</CEP_DDL>
+
+<CEP_DDL> create function tkbuiltinAggr_concat2(c1 char, c2 char) return char as language java name "oracle.cep.test.userfunctions.TkUsrConcat" </CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_max_case as select max(case c1 when "hi" then tkbuiltinAggr_concat2(c1,"add") when "xyz" then tkbuiltinAggr_concat2(c1,"aaa") end) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+<CEP_DDL> create query tkbuiltinAggr_test_min_case as select min(case c1 when "hi" then tkbuiltinAggr_concat2(c1,"add") when "xyz" then tkbuiltinAggr_concat2(c1,"aaa") end) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+
+<CEP_DDL> create query tkbuiltinAggr_test_max_userdef as select max(tkbuiltinAggr_concat2(c1,"abc")) from tkbuiltinAggr_S4[range 2]</CEP_DDL>
+
+<CEP_DDL> create query tkbuiltinAggr_test_max_constExpr as select max("ABCD") from tkbuiltinAggr_S4[range 2] </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_max_timestamp add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_max_timestamp.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_max_interval add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_max_interval.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_max_char add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_max_char.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_max_byte add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_max_byte.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_min_timestamp add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_min_timestamp.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_min_interval add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_min_interval.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_min_char add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_min_char.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_min_byte add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_min_byte.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_count_timestamp add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_count_timestamp.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_count_interval add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_count_interval.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_count_char add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_count_char.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_count_byte add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_count_byte.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_max_case add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_max_case.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_min_case add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_min_case.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_max_userdef add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_max_userdef.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkbuiltinAggr_test_max_constExpr add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out_max_constExpr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkbuiltinAggr_test_max_timestamp start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_max_interval start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_max_char start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_max_byte start</CEP_DDL>
+
+<CEP_DDL> alter query tkbuiltinAggr_test_min_timestamp start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_min_interval start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_min_char start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_min_byte start</CEP_DDL>
+
+<CEP_DDL> alter query tkbuiltinAggr_test_count_timestamp start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_count_interval start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_count_char start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_count_byte start</CEP_DDL>
+
+<CEP_DDL> alter query tkbuiltinAggr_test_max_case start</CEP_DDL>
+<CEP_DDL> alter query tkbuiltinAggr_test_min_case start</CEP_DDL>
+
+<CEP_DDL> alter query tkbuiltinAggr_test_max_userdef start</CEP_DDL>
+
+<CEP_DDL> alter query tkbuiltinAggr_test_max_constExpr start</CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

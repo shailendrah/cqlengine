@@ -1,0 +1,75 @@
+<?xml version="1.0"  encoding="iso-8859-1"?>
+
+<!--  $Header: logging-config.xml 17-mar-2008.15:58:39 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2007, 2008, Oracle. All rights reserved.  
+
+   NAME
+     logging-config.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     This file is the logging configuration file for OJDL.
+     It is only for testing if ojdl is properly generating odl formatted log and
+     does size control and rotation of logs.
+     In development environment, logging.properties should be used instead.
+     
+     It is based on the guideline which can be found in the following links:
+     http://files.oraclecorp.com/content/MySharedFolders/ST%20Functional%20Specs/AS11gR1/AS%20Platform/Guidelines/DIAGNOSTICLOGGINGGUIDELINES.HTML#Section_5
+     http://logging.us.oracle.com/logging/javadoc/oracle/core/ojdl/logging/LoggingConfiguration.html
+
+     In order to use this config, the following should be added for the java task
+      <jvmarg value= "-Djava.util.logging.config.class=oracle.core.ojdl.logging.LoggingConfiguration"/>
+      <jvmarg value= "-Doracle.core.ojdl.logging.config.file=@{logging.properties}"/>
+
+   NOTES
+      In order to create XML format, 'format' property should be used for handler.
+        <log_handler name='cepTrace' class='oracle.core.ojdl.logging.ODLHandlerFactory'> 
+            <property name='format' value='ODL-XML'/>
+      
+     Tried to use XMLFormatter in ODLHandler, but it seems it ignores formatter.
+        <log_handler name='CEP-FILEHANDLER' class='oracle.core.ojdl.logging.ODLHandlerFactory'
+                formatter='java.util.logging.XMLFormatter'> 
+
+   MODIFIED   (MM/DD/YY)
+   hopark      03/17/08 - use spring bean for config
+   hopark      05/11/07 - Creation
+
+-->
+<logging_configuration>
+
+    <log_handlers>
+        <log_handler name='cepConsole' class='java.util.logging.ConsoleHandler'
+                formatter='oracle.cep.util.SimpleFormatter'>
+            <property name='level' value='INFO'/>
+        </log_handler> 
+
+        <log_handler name='cepCustomer' class='oracle.core.ojdl.logging.ODLHandlerFactory'> 
+            <property name='path' value='@T_WORK@/cep/diag'/>
+            <property name='maxFileSize' value='10000000'/>
+            <property name='maxLogSize'  value='100000000'/>
+            <property name='encoding' value='UTF-8'/>
+        </log_handler> 
+
+        <log_handler name='cepTrace' class='oracle.core.ojdl.logging.ODLHandlerFactory'> 
+            <property name='path' value='@T_WORK@/cep/diag/trace'/>
+            <property name='maxFileSize' value='10000000'/>
+            <property name='maxLogSize'  value='100000000'/>
+            <property name='encoding' value='UTF-8'/>
+            <property name='format' value='ODL-XML'/>
+        </log_handler> 
+    </log_handlers>
+
+    <loggers>
+        <logger name='oracle.soa.cep' level='NOTIFICATION:16' useParentHandlers='false'>
+            <handler name="cepConsole"/>
+        </logger>
+        <logger name='oracle.soa.cep' level='TRACE:32' useParentHandlers='false'>
+            <handler name="cepCustomer"/>
+        </logger>
+        <logger name='oracle.soa.cep.trace' level='TRACE:32' useParentHandlers='false'>
+            <handler name="cepTrace"/>
+        </logger>
+    </loggers>
+
+</logging_configuration>

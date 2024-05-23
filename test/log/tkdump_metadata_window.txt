@@ -1,0 +1,526 @@
+ oracle.cep.logging.LogUtil log
+CONFIG: Metadata storage : oracle/work/cep/storage
+ oracle.cep.logging.LogUtil log
+CONFIG: Spill storage : oracle/work/cep/storage/data
+ oracle.cep.logging.LogUtil log
+CONFIG: ===  QueueSrcPolicy 
+ oracle.cep.logging.LogUtil log
+CONFIG: normalThreshold ,partialSpillThreshold ,fullSpillThreshold ,syncSpillThreshold 
+ oracle.cep.logging.LogUtil log
+CONFIG: window = 5
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S (c1 integer, c2 float) is application timestamped 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S1 (c1 integer) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S5 (c1 integer, c2 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_SP3(c1 integer, name char(10)) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S3 (c1 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S12(c1 integer, c2 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_SP3 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpSP1.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create stream tklog_S0 (c1 integer, c2 float) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S0 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpPattern0.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S5 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpPattern5.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S3 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/coverage3.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S12 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpS12.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create relation tklog_R (d1 integer, d2 char(10)) is silent 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create relation tklog_R1 (c1 integer, c2 float) is silent 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpS1000.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter stream tklog_S1 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpS1_data1.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter relation tklog_R add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpR.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter relation tklog_R1 add source "<EndPointReference><Address>file://pcbpel/cep/test/data/inpR-static.txt</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create view tklog_v1 (c1 integer, c2 float) as select * from tklog_S[range 1] 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create view tklog_v2 (c1 integer) as IStream(select * from tklog_S1[range 10 slide 10]) 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q1 as select * from tklog_R, tklog_S[range 1] where tklog_S.c1 = tklog_R.d1 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q2 as tklog_R1 union all tklog_v1 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q3 as tklog_R1 except tklog_v1 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q5 as select c1, element_time from tklog_v2 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 char) return char aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 byte) return byte aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 timestamp) return timestamp aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create function tklog_secondMax(c1 interval) return interval aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_uda_float_float as select tklog_secondMax(c1) from tklog_S3[range 7] 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create window tklog_range_slide(winrange int, winslide int) implement using "oracle.cep.test.userfunctions.TkRangeSlide" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_q79 as select * from tklog_S12 [tklog_range_slide(10,5)] 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_qp1 as select T.Ac1,T.Bc1,T.Dc1 from tklog_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1, D.c1 as Dc1 PATTERN(A B C* D) DEFINE A as A.c1 = 30, B as B.c2 = 10.0, C as C.c1 = 7, D as D.c1 = 40) as T 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  create query tklog_qp10 as select T.Ac1, T.sumB, T.Cc1 from tklog_S5 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, sum(B.c1) as sumB, C.c1 as Cc1 PATTERN(A B* C) DEFINE A as A.c1 = 10, B as B.c1 > A.c1 , C as C.c1 > B.c1) as T 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp1 add destination "<EndPointReference><Address>file://oracle/work/cep/patternout1.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp10 add destination "<EndPointReference><Address>file://oracle/work/cep/patternout10.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q1 add destination "<EndPointReference><Address>file://oracle/work/cep/outSR1-static.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q2 add destination "<EndPointReference><Address>file://oracle/work/cep/outSR1-union-static.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q3 add destination "<EndPointReference><Address>file://oracle/work/cep/outSR1-except-static.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q5 add destination "<EndPointReference><Address>file://oracle/work/cep/outq5_data1.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_uda_float_float add destination "<EndPointReference><Address>file://oracle/work/cep/outuda6_l.log</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q79 add destination "<EndPointReference><Address>file://oracle/work/cep/outS12great_rs_l.og</Address></EndPointReference>" 
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q1 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpR.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpS1000.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outSR1-static.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q2 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpR-static.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outSR1-union-static.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q3 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outSR1-except-static.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q5 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpS1_data1.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outq5_data1.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp1 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpPattern0.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/patternout1.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_qp10 start 
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpPattern5.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/patternout10.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_uda_float_float start
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/coverage3.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outuda6_l.log
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter query tklog_q79 start
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://pcbpel/cep/test/data/inpS12.txt
+ oracle.cep.logging.LogUtil log
+INFO: InterfaceManager: uriStr = file://oracle/work/cep/outS12great_rs_l.og
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter system dump logging systemstate level 8 
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=SYSTEMSTATE event=DUMP target=SystemState levels=8 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="0" TargetName="SystemState">
+  <Level Name="SYSTEMSTATE_LOGLEVELS" Value="8">
+   <Levels>
+   </Levels>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL =  alter system run duration = 2 
+ oracle.cep.logging.LogUtil log
+INFO: Scheduler = oracle.cep.execution.scheduler.FIFOScheduler
+ oracle.cep.logging.LogUtil log
+INFO: Scheduler State : RUNNING
+ oracle.cep.logging.LogUtil log
+INFO: Scheduler State : STOPPED
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL = alter system dump logging metadata_window level 0,1,2,3
+ oracle.cep.logging.LogUtil log
+FINE: trace : area=METADATA_WINDOW event=DUMP target=WindowManager levels=0 1 2 3 
+ oracle.cep.logging.LogUtil log
+FINE:  <Event Name="DUMP" TargetId="0" TargetName="WindowManager">
+  <Level Name="STACKTRACE" Value="0">
+   <Stacktrace>java.lang.Exception
+	at oracle.cep.util.DebugUtil.getCurrentStackTrace
+	at oracle.cep.logging.LogUtil.trace
+	at oracle.cep.logging.LogLevelManager.dump
+	at oracle.cep.logging.LogLevelManager.dumpLog
+	at oracle.cep.server.CommandDriver.LoggingNodeDriver.execute
+	at oracle.cep.server.CommandInterpreter.execute
+	at oracle.cep.service.CEPManager.executeDDL
+	at oracle.cep.service.CEPManager.ddlProcess
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.activate
+	at oracle.cep.service.CEPManager.runCqlx
+	at oracle.cep.service.CEPManager.init
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke
+	at java.lang.reflect.Method.invoke
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeCustomInitMethod
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons
+	at org.springframework.context.support.AbstractApplicationContext.refresh
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at org.springframework.context.support.FileSystemXmlApplicationContext.<init>
+	at TkCEPServer.main
+</Stacktrace>
+  </Level>
+  <Level Name="MWINDOW_INFO" Value="2">
+   <Windows >
+    <Window Key="CalendarDay">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.Day</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+    </Window>
+    <Window Key="CurrentMonth">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.CurrentMonth</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+    </Window>
+    <Window Key="tklog_range_slide">
+     <paramList >
+      <Attribute>
+       <position>0</position>
+       <name>winrange</name>
+       <type>int</type>
+       /maxLength>
+      </Attribute>
+      <Attribute>
+       <position>1</position>
+       <name>winslide</name>
+       <type>int</type>
+       /maxLength>
+      </Attribute>
+     </paramList>
+     <implClassName>oracle.cep.test.userfunctions.TkRangeSlide</implClassName>
+     <destQueries >
+      <destQueriesElem>496</destQueriesElem>
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+    </Window>
+    <Window Key="CurrentYear">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.CurrentYear</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+    </Window>
+    <Window Key="CalendarMonth">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.Month</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+    </Window>
+    <Window Key="CurrentDay">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.CurrentDay</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+    </Window>
+    <Window Key="CalendarYear">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.Year</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+    </Window>
+   </Windows>
+  </Level>
+  <Level Name="MWINDOW_LOCKINFO" Value="3">
+   <Windows >
+    <Window Key="CalendarDay">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.Day</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+     <lock>java.util.concurrent.locks.ReentrantReadWriteLock[Write locks = 0, Read locks = 0]</lock>
+     <refCount>0</refCount>
+    </Window>
+    <Window Key="CurrentMonth">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.CurrentMonth</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+     <lock>java.util.concurrent.locks.ReentrantReadWriteLock[Write locks = 0, Read locks = 0]</lock>
+     <refCount>0</refCount>
+    </Window>
+    <Window Key="tklog_range_slide">
+     <paramList >
+      <Attribute>
+       <position>0</position>
+       <name>winrange</name>
+       <type>int</type>
+       /maxLength>
+      </Attribute>
+      <Attribute>
+       <position>1</position>
+       <name>winslide</name>
+       <type>int</type>
+       /maxLength>
+      </Attribute>
+     </paramList>
+     <implClassName>oracle.cep.test.userfunctions.TkRangeSlide</implClassName>
+     <destQueries >
+      <destQueriesElem>496</destQueriesElem>
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+     <lock>java.util.concurrent.locks.ReentrantReadWriteLock[Write locks = 0, Read locks = 0]</lock>
+     <refCount>0</refCount>
+    </Window>
+    <Window Key="CurrentYear">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.CurrentYear</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+     <lock>java.util.concurrent.locks.ReentrantReadWriteLock[Write locks = 0, Read locks = 0]</lock>
+     <refCount>0</refCount>
+    </Window>
+    <Window Key="CalendarMonth">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.Month</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+     <lock>java.util.concurrent.locks.ReentrantReadWriteLock[Write locks = 0, Read locks = 0]</lock>
+     <refCount>0</refCount>
+    </Window>
+    <Window Key="CurrentDay">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.CurrentDay</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+     <lock>java.util.concurrent.locks.ReentrantReadWriteLock[Write locks = 0, Read locks = 0]</lock>
+     <refCount>0</refCount>
+    </Window>
+    <Window Key="CalendarYear">
+     <paramList >
+     </paramList>
+     <implClassName>oracle.cep.extensibility.windows.builtin.Year</implClassName>
+     <destQueries >
+     </destQueries>
+     <typ>WINDOW</typ>
+     <nameSpace>WINDOW</nameSpace>
+     <bDirty>false</bDirty>
+     <bLoaded>true</bLoaded>
+     <change>NONE</change>
+     <lock>java.util.concurrent.locks.ReentrantReadWriteLock[Write locks = 0, Read locks = 0]</lock>
+     <refCount>0</refCount>
+    </Window>
+   </Windows>
+  </Level>
+ </Event>
+
+ oracle.cep.logging.LogUtil log
+INFO: Activate : DDL success

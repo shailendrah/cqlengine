@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream tkcoltAggr_SColtAggrFunc(c1 integer, c2 float, c3 double, c4 bigint)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcoltAggr_SColtAggrFunc add source "<EndPointReference><Address>file://@TEST_DATA@/inpSColtAggrFunc.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>create query tkcoltAggr_q1 as select autoCorrelation(c3, 0) from tkcoltAggr_SColtAggrFunc</CEP_DDL>
+<CEP_DDL>create query tkcoltAggr_q2 as select quantile(c3, 0.5) from tkcoltAggr_SColtAggrFunc</CEP_DDL>
+<CEP_DDL>create query tkcoltAggr_q3 as select trimmedMean(c3, 0, 0) from tkcoltAggr_SColtAggrFunc</CEP_DDL>
+<CEP_DDL>create query tkcoltAggr_q4 as select winsorizedMean(c3, 0, 0) from tkcoltAggr_SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcoltAggr_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkcoltAggr_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcoltAggr_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkcoltAggr_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcoltAggr_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkcoltAggr_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcoltAggr_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkcoltAggr_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>alter query tkcoltAggr_q1 start </CEP_DDL>
+<CEP_DDL>alter query tkcoltAggr_q2 start </CEP_DDL>
+<CEP_DDL>alter query tkcoltAggr_q3 start </CEP_DDL>
+<CEP_DDL>alter query tkcoltAggr_q4 start </CEP_DDL>
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

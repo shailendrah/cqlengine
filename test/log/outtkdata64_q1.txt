@@ -1,0 +1,18 @@
+1000:+ <parent>san jose</parent>
+<!--this is a comment-->
+
+1000:+ <parent>mountain view</parent>
+<!--this is a comment-->
+
+1000:+ <parent/>
+<!--this is a comment-->
+
+1000:+ <parent>sunnyvale</parent>
+<!--this is a comment-->
+
+1003:+ <parent/>
+<!--this is a comment-->
+
+1004:+ <parent>belmont</parent>
+<!--this is a comment-->
+

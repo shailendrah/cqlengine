@@ -1,0 +1,150 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/OperatorStatsManager.java /main/5 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle and/or its affiliates.All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    03/27/08 - abstract class for operators
+    parujain    03/27/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/OperatorStatsManager.java /main/5 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.statsmgr;
+
+import java.util.ArrayList;
+
+import oracle.cep.common.Datatype;
+import oracle.cep.execution.operators.ExecOpt;
+import oracle.cep.execution.operators.ExecStats;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.Column;
+import oracle.cep.jmx.stats.FilterCondition;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+
+public abstract class OperatorStatsManager extends StatsManager
+{
+  protected boolean hasFilters = false;
+  protected Datatype[] types;
+  protected ArrayList<FilterCondition> oFilters;
+  protected boolean query_id_filter ;
+  protected int qryId ;
+  protected boolean strm_id_filter ;
+  protected int strmId ;
+
+  public OperatorStatsManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+  
+  public static boolean isSpecialCase(FilterCondition[] filters)
+  {
+	if(filters != null)
+	{
+      for(int i=0; i<filters.length; i++)
+      {
+        int colcode = filters[i].getColName().colCode;
+        if((colcode == Column.OPERATOR_QUERY_ID.colCode) ||
+           (colcode == Column.OPERATOR_STREAM_ID.colCode))
+          return true;
+      }
+	}
+    return false;
+  }
+  
+  public void init(FilterCondition[] filters)
+  {
+    oFilters = new ArrayList<FilterCondition>();
+    query_id_filter = false;
+    qryId = -1;
+    strm_id_filter = false;
+    strmId = -1;
+    hasFilters = false;
+    if(filters != null)
+    {
+      for(int i=0; i<filters.length; i++)
+      {
+        if(filters[i].getColName().colCode == Column.OPERATOR_QUERY_ID.colCode)
+        {
+          query_id_filter = true;
+          qryId = Integer.parseInt(filters[i].getColVal());
+        }
+        else if(filters[i].getColName().colCode == Column.OPERATOR_STREAM_ID.colCode)
+        {
+          strm_id_filter = true;
+          strmId = Integer.parseInt(filters[i].getColVal());
+        }
+       else
+       {
+         hasFilters = true;
+         oFilters.add(filters[i]);
+       }
+	  }
+    }
+	if(hasFilters)
+    {
+      types = new Datatype[oFilters.size()];
+      for(int i=0; i<oFilters.size(); i++)
+        types[i] = getDatatype(oFilters.get(i).getColName());
+    }
+    else
+    {
+      types = null;
+      oFilters = null;
+    }
+  }
+  
+  public abstract IStats getNext();
+  
+  protected IStats getOpStats(ExecOpt op)
+  {
+	  int qid;
+      if (op.getOutputQueue() == null)
+        qid = -1;
+      else
+        qid = op.getOutputQueue().getId();
+    
+      float percent = 0;
+      if(ExecStats.getRunningTime() >0)
+        percent = (((float)op.getStats().getTotalTime()/(float)ExecStats.getRunningTime())*100);
+	  return factory.createOperatorStat(op.getId(), qid, 
+                                  op.getStats().getNumOutputs(),
+                                  op.getStats().getNumInputs(),
+                                  op.getStats().getNumExecutions(),
+                                  op.getStats().getTotalTime(),
+                                  op.getStats().getStartTime(),
+                                  op.getStats().getEndTime(),
+                                  op.getStats().getNumInputsLatest(),
+                                  op.getStats().getNumOutputsLatest(),
+                                  op.getOpttyp().toString(),
+                                  op.getOptName(),
+                                  percent);
+  }
+  
+  public void close()
+  {
+    hasFilters = false;
+    oFilters = null;
+    types = null;
+    query_id_filter = false;
+	qryId = -1;
+	strm_id_filter = false;
+	strmId = -1;
+  }
+}

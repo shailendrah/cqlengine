@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>cqlengine.server</name>
+	<comment></comment>
+	<projects/>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments/>
+		</buildCommand>
+	</buildSpec>
+	<linkedResources>
+		<link>
+			<name>jaxb-generated</name>
+			<type>2</type>
+			<location>/home/hopark/gitlocal/soa-osa7/out/build/modules/spark-cql/cqlengine/server/jaxb-generated</location>
+		</link>
+		<link>
+			<name>colt-generated</name>
+			<type>2</type>
+			<location>/home/hopark/gitlocal/soa-osa7/out/build/modules/spark-cql/cqlengine/server/colt-generated</location>
+		</link>
+	</linkedResources>
+</projectDescription>

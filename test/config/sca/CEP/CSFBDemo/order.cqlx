@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP>
+
+   <CEP_DDL> register stream OrderEvent(orderId integer, orderAmount float); </CEP_DDL>
+   <CEP_DDL> alter stream OrderEvent add source push; </CEP_DDL>
+   <CEP_DDL> register query q0 as select orderId as orderId, orderAmount as orderAmount from OrderEvent where orderAmount &gt; 10000.0 ; </CEP_DDL>
+   <CEP_DDL> alter query q0 add destination "&lt;EndPointReference&gt; &lt;Address&gt;&lt;Type&gt;file&lt;/Type&gt;&lt;FileName&gt;///home/dlenkov/simple.log&lt;/FileName&gt;&lt;/Address&gt;&lt;/EndPointReference&gt;"; </CEP_DDL>
+   <CEP_DDL> alter query q0 start; </CEP_DDL>
+
+</CEP>
+
+

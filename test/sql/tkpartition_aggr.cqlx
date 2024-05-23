@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkpartition_aggr_SP1(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpartition_aggr_SP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkpartition_aggr_SP2(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpartition_aggr_SP2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSPar_float.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkpartition_aggr_SP3(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpartition_aggr_SP3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSPar_2int.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<!-- row parition with aggregate-->
+<CEP_DDL><![CDATA[ create query tkpartition_aggr_q1 as select max(c1), avg(c1) from tkpartition_aggr_SP1 [partition by c1 rows 3] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_aggr_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPart-rowq1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_aggr_q2 as select count(c2) from tkpartition_aggr_SP2 [partition by c2 rows 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_aggr_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPart-rowq2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- ranged partition window with aggregate -->
+<CEP_DDL><![CDATA[ create query tkpartition_aggr_qr3 as select max(c1),avg(c1) from tkpartition_aggr_SP1 [partition by c1 rows 4 range 10] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_aggr_qr3  add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPart-rangeq3.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_aggr_qr4 as select max(c2),avg(c2) from tkpartition_aggr_SP3 [partition by c2 rows 1 range 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_aggr_qr4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPart-rangeq4.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- row,range parition with aggregate and predicate-->
+<CEP_DDL><![CDATA[ create query tkpartition_aggr_pred_q1 as select max(c1), avg(c1) from tkpartition_aggr_SP1 [partition by c1 rows 3] where c1 > 1]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_aggr_pred_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPart-row-predq1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpartition_aggr_pred_q2 as select max(c1),avg(c1) from tkpartition_aggr_SP1 [partition by c1 rows 4 range 10] where c1 > 1]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkpartition_aggr_pred_q2  add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSPart-range-predq2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> alter query tkpartition_aggr_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_aggr_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_aggr_qr3 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_aggr_qr4 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_aggr_pred_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkpartition_aggr_pred_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

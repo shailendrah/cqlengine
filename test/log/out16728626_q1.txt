@@ -1,0 +1,15 @@
+1000:+ 1,1,Modern Science
+2000:+ 1,1,Modern Science
+2000:+ 2,1,Chemistry
+3000:+ 1,1,Modern Science
+3000:+ 2,1,Chemistry
+3000:+ 3,1,Supernova
+5000:+ 2,1,Chemistry
+5000:+ 3,1,Supernova
+5000:+ 4,2,Tank War
+6000:+ 3,1,Supernova
+6000:+ 4,2,Tank War
+6000:+ 5,1,Z Files
+7000:+ 4,2,Tank War
+7000:+ 5,1,Z Files
+8000:+ 5,1,Z Files

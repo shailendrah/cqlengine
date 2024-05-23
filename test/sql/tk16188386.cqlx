@@ -1,0 +1,26 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>create stream tk16188386_s1 (c1 bigint) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk16188386_s1 add source "<EndPointReference><Address>file://@TEST_DATA@/inp16188386.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tk16188386_q1 as
+  select * from tk16188386_s1[range java.lang.String("123456").length()]
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tk16188386_q2 as
+  select * from tk16188386_s1[range to_bigint(java.lang.String("123456").length())]
+]]></CEP_DDL>
+
+<!-- output will be same in both the cases -->
+<CEP_DDL> <![CDATA[ alter query tk16188386_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out16188386_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16188386_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out16188386_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16188386_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk16188386_q2 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

@@ -1,0 +1,27 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk15972620_S1 (c1 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk15972620_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk15972620_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tk15972620_v1 as select * from tk15972620_S1[rows 100] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create view tk15972620_v2 as select * from tk15972620_S1[rows 100] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create view tk15972620_v3 as select * from tk15972620_S1[rows 100] ]]></CEP_DDL>
+
+<!-- 
+Input:(only 1 event)
+Event-1: ts=1000 c1=1
+
+This event is common in all views output.
+tk15972620_q1 is intersection of all views v1,v2 and v3.
+
+Note: RSTREAM will remove the intermediate outputs at timetamp 1000 as R1 intersect R2 := R1 MINUS (R1 MINUS R2)
+-->
+<CEP_DDL><![CDATA[ create query tk15972620_q1 as RSTREAM(tk15972620_v1 intersect tk15972620_v2 intersect tk15972620_v3) ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk15972620_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk15972620_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk15972620_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

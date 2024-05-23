@@ -1,0 +1,31 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata51_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkdata51_S10(c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata51_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkdata51_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata51_q0 as select XMLELEMENT(NAME "S0", XMLELEMENT(NAME "c1", tkdata51_S0.c1), XMLELEMENT(NAME "c2", tkdata51_S0.c2)) from tkdata51_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata51_q1 as select XMLELEMENT(NAME "S0", XMLATTRIBUTES(tkdata51_S0.c1 as "C1", tkdata51_S0.c2 as "C2"), XMLELEMENT(NAME "c1_plus_c2", c1+c2), XMLELEMENT(NAME "c2_plus_10", c2+10.0)) from tkdata51_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata51_q2 as select XMLELEMENT("S0", XMLELEMENT("c1", c1), XMLELEMENT(NAME "c2", c2)) from tkdata51_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata51_q3 as select XMLELEMENT("S0", XMLATTRIBUTES(c1 as "C1", c2 as "C2"), XMLELEMENT(NAME "c1", tkdata51_S0.c1), XMLELEMENT("c2", tkdata51_S0.c2)) from tkdata51_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata51_q4 as select XMLELEMENT("S0", XMLATTRIBUTES(tkdata51_S0.c1 as "C1" , c2 AS "C2"), XMLELEMENT(NAME "c1", c1), XMLELEMENT("c2", c2)) from tkdata51_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata51_q5 as select XMLELEMENT("S10", XMLATTRIBUTES(tkdata51_S10.c1 AS "C1" , tkdata51_S10.c2 AS EVALNAME tkdata51_S10.c2 ), XMLELEMENT(NAME "c1", tkdata51_S10.c1), XMLELEMENT(EVALNAME tkdata51_S10.c2 || "ab", tkdata51_S10.c2)) from tkdata51_S10 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata51_q6 as select XMLELEMENT("S0", XMLATTRIBUTES(c1 , c2 ), XMLELEMENT(NAME "c1", tkdata51_S0.c1), XMLELEMENT("c2", tkdata51_S0.c2)) from tkdata51_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata51_q7 as select XMLELEMENT("S0", XMLATTRIBUTES(tkdata51_S0.c1 , tkdata51_S0.c2 ), XMLELEMENT(NAME "c1", c1), XMLELEMENT("c2", c2)) from tkdata51_S0 [range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata51_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata51_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkdata51_q7 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

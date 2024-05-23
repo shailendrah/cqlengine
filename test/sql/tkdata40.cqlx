@@ -1,0 +1,29 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata40_S40_1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata40_S40_1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata40_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdata40_Q40_1 as select * from tkdata40_S40_1[range 1] where c1 > 2  </CEP_DDL>
+<CEP_DDL> create view  tkdata40_V40_1(c1 integer, c2 float) as query tkdata40_Q40_1 </CEP_DDL>
+<CEP_DDL> create query tkdata40_Q40_2 as select * from tkdata40_V40_1</CEP_DDL>
+<CEP_DDL> create view  tkdata40_V40_2(c1 integer, c2 float) as query tkdata40_Q40_2 </CEP_DDL>
+<CEP_DDL> create query tkdata40_Q40_3 as select c1+10, c2 from tkdata40_V40_2</CEP_DDL>
+<CEP_DDL> create view  tkdata40_V40_3(c1 integer, c2 float) as query tkdata40_Q40_3 </CEP_DDL>
+<CEP_DDL> create query tkdata40_Q40_4 as select * from tkdata40_V40_3  </CEP_DDL>
+<CEP_DDL> create query tkdata40_Q40_5 as select * from tkdata40_V40_3 where c1 > 2 </CEP_DDL>
+<CEP_DDL> create view  tkdata40_V40_4(c1 integer, c2 float) as query tkdata40_Q40_5 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata40_Q40_4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata40_4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata40_Q40_5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata40_5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata40_Q40_4 start </CEP_DDL>
+<CEP_DDL> alter query tkdata40_Q40_5 start </CEP_DDL>
+<CEP_DDL> drop stream tkdata40_S40_1  </CEP_DDL>
+<CEP_DDL> drop  query tkdata40_Q40_3 </CEP_DDL>
+<CEP_DDL> drop  view tkdata40_V40_3 </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+<CEP_DDL> register stream tkdata40_S40_1 (c1 integer, c2 float)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata40_S40_1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata40_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata40_Q40_6 as select * from tkdata40_S40_1[range 2]</CEP_DDL>
+<CEP_DDL> register view tkdata40_V40_4 (c1 integer, c2 float) as query tkdata40_Q40_6</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata40_Q40_6 add destination "<EndPointReference> <Address>file://@TEST_OUTPUT@/outtkdata40_6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> drop query tkdata40_Q40_6</CEP_DDL>
+<CEP_DDL> drop stream tkdata40_S40_1</CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

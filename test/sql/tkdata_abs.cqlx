@@ -1,0 +1,23 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_abs(c1 integer, c2 float, c3 bigint, c4 double, c5 number(7,5)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_abs add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_abs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_abs_q1 as select abs(c1) from tkdata_abs</CEP_DDL>
+<CEP_DDL> create query tkdata_abs_q2 as select abs(c2) from tkdata_abs</CEP_DDL>
+<CEP_DDL> create query tkdata_abs_q3 as select abs(c3) from tkdata_abs</CEP_DDL>
+<CEP_DDL> create query tkdata_abs_q4 as select abs(c4) from tkdata_abs</CEP_DDL>
+<CEP_DDL> create query tkdata_abs_q5 as select abs(null) from tkdata_abs</CEP_DDL>
+<CEP_DDL> create query tkdata_abs_q6 as select abs(c5) from tkdata_abs</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_abs_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/abs_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_abs_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/abs_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_abs_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/abs_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_abs_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/abs_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_abs_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/abs_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_abs_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/abs_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_abs_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_abs_q2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_abs_q3 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_abs_q4 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_abs_q5 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_abs_q6 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

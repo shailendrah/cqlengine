@@ -1,0 +1,7 @@
+i, i, c 30
+1000 1, 1, "Modern Science"
+2000 2, 1, "Chemistry"
+3000 3, 1, "Supernova"
+4000 4, 2, "Tank War"
+5000 5, 2, "Z files"
+h 6000

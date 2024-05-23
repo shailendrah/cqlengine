@@ -1,0 +1,46 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/Spill.java /main/3 2008/10/24 15:50:21 hopark Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates. All rights reserved.*/
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    hopark      10/10/08 - remove statics
+    hopark      03/26/08 - server reorg
+    hopark      09/29/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/Spill.java /main/3 2008/10/24 15:50:21 hopark Exp $
+ *  @author  hopark  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx;
+
+import oracle.cep.memmgr.IEvictPolicy;
+import oracle.cep.service.CEPManager;
+
+public class Spill implements SpillMBean
+{
+  CEPManager cepMgr;
+  
+  public Spill(CEPManager cepMgr)
+  {
+    this.cepMgr = cepMgr;
+  }
+  
+  public void evict() throws Exception
+  {
+    IEvictPolicy policy = cepMgr.getEvictPolicy();
+    if (policy != null)
+      policy.forceEvict();
+  }
+}

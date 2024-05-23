@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<adf-config xmlns="http://xmlns.oracle.com/adf/config"
+            xmlns:mdsc="http://xmlns.oracle.com/mds/config_10_1_3_001">
+  <mdsdata>
+    <mdsc:mds-config>
+      <mdsc:persistence-config>
+        <mdsc:metadata-namespaces>
+            <mdsc:namespace path="/CSFBDemo" metadata-store-usage="CEPAppStore"/>
+        </mdsc:metadata-namespaces>
+        <mdsc:metadata-store-usages>
+          <mdsc:metadata-store-usage id="CEPAppStore">
+             <mdsc:metadata-store-ref connection-name="CEPAppFileStore" />           
+           </mdsc:metadata-store-usage>
+         </mdsc:metadata-store-usages>
+       </mdsc:persistence-config>
+     </mdsc:mds-config>
+  </mdsdata>
+</adf-config>

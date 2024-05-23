@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsd:schema  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             targetNamespace="http://xmlns.oracle.com/cep"
+             xmlns:cep="http://xmlns.oracle.com/cep"
+              xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+             elementFormDefault="qualified">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <jaxb:schemaBindings>
+                <jaxb:package name="generated"/>
+            </jaxb:schemaBindings>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+<xsd:element name="CepMetadata" type="cep:MetadataElement" />
+
+<xsd:complexType name = "MetadataElement">
+<xsd:sequence>
+         <xsd:element name="Source"  type="cep:sourceType" />
+         <xsd:element name="Query"  type="cep:queryType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="Functions"  type="cep:FunctionType"/>
+         <xsd:element name="Objects"  type="cep:ObjType" minOccurs="0" maxOccurs="unbounded"/>
+</xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType  name="sourceType">
+<xsd:sequence>
+         <xsd:element name="Table"  type="cep:tableType" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element name="View"  type="cep:viewType" minOccurs="0" maxOccurs="unbounded"/>
+</xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType  name="FunctionType">
+<xsd:sequence>
+		<xsd:element name="SimpleFunction"  type="cep:SimpleFunctionType" minOccurs="0"  maxOccurs="unbounded"/>
+		<xsd:element name="AggrFunction" type="cep:AggrFunctionType" minOccurs="0" maxOccurs="unbounded" />
+		<xsd:element name="SimpleFunctionSet" type="cep:SimpleFunctionSetType" minOccurs="0" maxOccurs="unbounded" />
+</xsd:sequence>
+</xsd:complexType>
+
+<xsd:simpleType  name="ObjectType">
+        <xsd:restriction  base="xsd:string">
+           <xsd:enumeration   value="STREAM" />
+           <xsd:enumeration   value="RELATION" />
+           <xsd:enumeration   value="VIEW" />
+        </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:complexType  name="tableType">
+   <xsd:sequence>
+        <xsd:element  name="Name"  type="xsd:string"  />
+        <xsd:element  name="isStream"  type="xsd:boolean"  />
+        <xsd:element  name="isSilent" type="xsd:boolean" />
+        <xsd:element  name="pushSource" type="xsd:boolean" />
+        <xsd:element  name="Attr" type = "cep:InpAttributes" minOccurs = "0"  maxOccurs="unbounded" />
+		<xsd:element  name="source"   type="xsd:string" />
+		<xsd:element  name="Id"  type="xsd:int" />
+		<xsd:element  name="refQuery"   type="xsd:int" minOccurs ="0" maxOccurs="unbounded" />
+    	<xsd:element name="objectType" type="cep:ObjectType" />
+   </xsd:sequence>
+</xsd:complexType>
+
+<xsd:simpleType  name="listIDs" >
+        <xsd:list  itemType = "xsd:int" />
+</xsd:simpleType>
+
+<xsd:simpleType  name="attrType" >
+     <xsd:restriction  base="xsd:string">
+           <xsd:enumeration   value="int" />
+           <xsd:enumeration   value="bigint" />
+           <xsd:enumeration  value="float" />
+           <xsd:enumeration   value="char" />
+           <xsd:enumeration   value="boolean" />
+   <xsd:enumeration   value="byte" />
+   <xsd:enumeration   value="timestamp" />
+      <xsd:enumeration   value="interval" />
+   <xsd:enumeration   value="object" />
+   <xsd:enumeration   value="void" />
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:complexType  name="queryType" >
+   <xsd:sequence>
+        <xsd:element  name="Name"  type="xsd:string"  />
+        <xsd:element  name="cql"  type="xsd:string"  />
+        <xsd:element  name="isNamed" type="xsd:boolean" />
+        <xsd:element  name="destView"  type="xsd:int" minOccurs ="0" maxOccurs="unbounded"/>
+        <xsd:element  name="refView"   type="xsd:int"  minOccurs ="0" maxOccurs="unbounded"/>
+        <xsd:element  name="extDest"   type="xsd:string"  minOccurs ="0" maxOccurs="unbounded"/>
+        <xsd:element  name="refRln"   type="xsd:int" minOccurs ="0" maxOccurs="unbounded"/>
+        <xsd:element  name="refStrm"   type="xsd:int" minOccurs ="0" maxOccurs="unbounded"/>
+	<xsd:element  name="refFn"   type="xsd:int" minOccurs ="0" maxOccurs="unbounded"/>
+	<xsd:element  name="Id"  type="xsd:int" />
+	<xsd:element  name="desiredState"  type="cep:queryState" />
+	<xsd:element  name="state"  type="cep:queryState" />
+   </xsd:sequence>
+</xsd:complexType>
+
+<xsd:simpleType  name="queryState" >
+     <xsd:restriction  base="xsd:string">
+           <xsd:enumeration  value="CREATE" />
+           <xsd:enumeration   value="TYPECHECKED" />
+           <xsd:enumeration   value="READY" />
+	   <xsd:enumeration   value="RUN" />
+	   <xsd:enumeration   value="COMPILE_ERROR" />
+	   <xsd:enumeration   value="RUNTIME_ERROR" />
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType  name="listNames" >
+        <xsd:list  itemType = "xsd:string" />
+</xsd:simpleType>
+
+<xsd:complexType name="ObjType">
+  <xsd:sequence>
+        <xsd:element  name="objectId"   type="xsd:int" />
+        <xsd:element  name="objectName"  type="xsd:string" />
+        <xsd:element  name="objectType"   type="xsd:string" />
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType  name = "viewType" >
+   <xsd:sequence>
+        <xsd:element name ="queryID"  type="xsd:int" />
+        <xsd:element  name="viewName"  type="xsd:string"  />
+        <xsd:element  name="isStream"  type="xsd:boolean"  />
+        <xsd:element  name="Attr" type="cep:InpAttributes" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element  name="Id"  type="xsd:int" />
+        <xsd:element  name="refQuery"   type="xsd:int" minOccurs ="0" maxOccurs="unbounded"/>
+    	<xsd:element name="objectType" type="cep:ObjectType" />
+   </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType  name="InpAttributes" >
+   <xsd:sequence>
+        <xsd:element name="AttrName" type="xsd:string" />
+        <xsd:element name="AttrType" type="cep:attrType" />
+        <xsd:element name="Length"  type="xsd:int" minOccurs="0" />
+   </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType  name = "SimpleFunctionType" >
+   <xsd:sequence>
+        <xsd:element  name="FnName"  type="xsd:string"  />
+        <xsd:element  name="return"  type="cep:attrType" />
+        <xsd:element  name ="functype" type="cep:function" />
+        <xsd:element  name="builtIn" type="xsd:boolean" />
+        <xsd:element  name="inpAttr"  type ="cep:InpAttributes" minOccurs = "0"  maxOccurs="unbounded" />
+ 	<xsd:element name ="fnClass"  type="xsd:string" />
+	<xsd:element  name="Id"  type="xsd:int" />
+	<xsd:element  name="refQuery"   type="xsd:int" minOccurs ="0" maxOccurs="unbounded" />
+   </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name = "SimpleFunctionSetType" >
+   <xsd:sequence>
+       <xsd:element name="FnName" type="xsd:string" />
+       <xsd:element name="functype" type="cep:function" />
+       <xsd:element name="Id" type="xsd:int" />
+       <xsd:element name="FuncIds" type="xsd:int" minOccurs="0" maxOccurs="unbounded" />
+   </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType  name = "AggrFunctionType" >
+   <xsd:sequence>
+        <xsd:element  name="FnName"  type="xsd:string"  />
+        <xsd:element  name="return"  type="cep:attrType" />
+        <xsd:element  name ="functype" type="cep:function" />
+        <xsd:element  name="builtIn" type="xsd:boolean" />
+        <xsd:element  name="incremental" type="xsd:boolean" />
+        <xsd:element  name="inpAttr"  type ="cep:InpAttributes" minOccurs = "0"  maxOccurs="unbounded" />
+ 	<xsd:element name ="fnClass"  type="xsd:string" />
+	<xsd:element  name="Id"  type="xsd:int" />
+	<xsd:element  name="refQuery"   type="xsd:int" minOccurs ="0" maxOccurs="unbounded" />
+   </xsd:sequence>
+</xsd:complexType>
+
+<xsd:simpleType  name="function" >
+     <xsd:restriction  base="xsd:string">
+           <xsd:enumeration   value="SINGLE_FUNCTION" />
+           <xsd:enumeration   value="AGGR_FUNCTION" />
+           <xsd:enumeration   value="SIMPLE_FUNCTION_SET" />
+          </xsd:restriction>
+</xsd:simpleType>
+
+</xsd:schema>

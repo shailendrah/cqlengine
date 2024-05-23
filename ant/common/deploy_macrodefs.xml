@@ -1,0 +1,796 @@
+<project name="macrodefs.test">
+
+	<!-- Run test
+      Run a test(tests) using the application context.
+      the test files and application context should have been prepared first.
+      if regress.tla is set, output files are compared to the reference
+      and marked them with regress.tla.
+      if regress.tla is not set, no result computation is done.
+    -->
+	<macrodef name="test.drv">
+		<attribute name="context.file" default="ApplicationContext.xml" />
+		<attribute name="jvm.maxmem" default="512m" />
+		<attribute name="run.opt" default="debug" />
+		<attribute name="compute.difs" default="true" />
+		<attribute name="regress.tla" default="single.fifo" />
+		<attribute name="use.defaultjvm" default="false" />
+
+		<attribute name="logging" default="logging" />
+		<attribute name="log.filter" default="ceplogfilter.cmd" />
+		<attribute name="log.output.name" default="" />
+
+		<!-- scalibility test -->
+		<attribute name="scale.size" default="" />
+		<attribute name="scale.rate" default="" />
+		<attribute name="scale.range" default="" />
+
+		<!-- linear road test -->
+		<attribute name="inpf.name" default="" />
+		<attribute name="outf.name" default="" />
+
+		<sequential>
+			<!-- copy resources -->
+			<mkdir dir="${work.cep}" />
+			<copy todir="${work.cep}" overwrite="true">
+				<fileset dir="${cqlengine.dir}/standaloneEnv/resources" excludes="ApplicationContext.xml">
+				</fileset>
+			</copy>
+
+			<generate.logging.properties logging="@{logging}" logbase="@{regress.tla}" />
+
+			<!-- run a test -->
+			<runserver jvm.maxmem="@{jvm.maxmem}" jvm="${test.jvm}" context.file="@{context.file}" scale.size="@{scale.size}" scale.rate="@{scale.rate}" scale.range="@{scale.range}" inpf.name="@{inpf.name}" outf.name="@{outf.name}" />
+
+			<!-- post process the log file -->
+			<if>
+				<not>
+					<equals arg1="@{log.output.name}" arg2="" />
+				</not>
+				<then>
+					<echo message="generating ${work.cep.log}/@{log.output.name}.txt" />
+					<logfilter inputfile="${work.cep}/cep_@{regress.tla}.log" outputfile="${work.cep.log}/@{log.output.name}.txt" filterfile="${test.config}/@{log.filter}" />
+				</then>
+			</if>
+
+			<!-- compute diffs and sucs -->
+			<if>
+				<equals arg1="@{compute.difs}" arg2="true" />
+				<then>
+					<diff.file.set regress.tla="@{regress.tla}" />
+				</then>
+			</if>
+
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate.logging.properties">
+		<attribute name="logging" default="logging" />
+		<attribute name="logbase" default="engine" />
+		<attribute name="output" default="logging.properties" />
+
+		<sequential>
+			<delete>
+				<fileset dir="${work.cep}" includes="**/cep_@{logbase}.*" />
+			</delete>
+			<copy file="${cqlengine.dir}/test/config/@{logging}.properties" 
+			    tofile="${work.cep}/@{output}" 
+			    filtering="true" 
+			    overwrite="true" 
+			    failonerror="true">
+				<filterset>
+					<filter token="LOG_FILE" value="${work.cep}/cep_@{logbase}.log" />
+				</filterset>
+			</copy>
+			<echo message="log : ${work.cep}/cep_@{logbase}.log" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate.context">
+		<attribute name="test.filename" default="" />
+		<attribute name="test.list" default="" />
+		<attribute name="context.file" default="ApplicationContext.xml" />
+		<attribute name="use.sysservice" default="false" />
+		<attribute name="exit.afterrun" default="true" />
+		<attribute name="dumpplan.afterrun" default="false" />
+		<attribute name="dropschema.afterrun" default="true" />
+
+		<attribute name="config.useDynTuple" default="false" />
+		<attribute name="config.usePagedTuple" default="false" />
+		<attribute name="config.usePagedList" default="false" />
+
+		<attribute name="config.runtime" default="1000000" />
+		<attribute name="config.scheduler" default="oracle.cep.execution.scheduler.FIFOScheduler" />
+		<attribute name="config.directInterop" default="false" />
+
+		<!-- multi-threaded test  -->
+		<attribute name="use.threadedScheduler" default="false" />
+		<attribute name="num.threads" default="1" />
+
+		<!-- spill test  -->
+		<attribute name="spill.policy" default="queuesrcEvictPolicy" />
+		<attribute name="spill.mode" default="1" />
+		<attribute name="spill.runtype" default="2" />
+		<attribute name="debug.count" default="0" />
+
+		<!-- logging test -->
+		<attribute name="config.logConfig" default="logConfig" />
+
+		<sequential>
+
+			<!-- check if we need to set db.host -->
+			<if>
+				<isset property="db.host" />
+				<then>
+				</then>
+				<else>
+					<checkdb/>
+				</else>
+			</if>
+
+			<filter token="ADE_VIEW_ROOT" value="${ade.view.root}" />
+			<filter token="T_WORK" value="${work}" />
+			<filter token="CQL_FOLDER" value="${cqlengine.dir}/test/sql" />
+			<filter token="TEST_DATA" value="${cqlengine.dir}/test/data" />
+			<filter token="TEST_OUTPUT" value="${work}/cep/log" />
+			<filter token="HOST" value="${host.name}" />
+			<filter token="DBHOST" value="${db.host}" />
+			<filter token="DBPORT" value="${db.port}" />
+			<filter token="DBSID" value="${db.sid}" />
+			<filter token="DBUSER" value="${db.user}" />
+			<filter token="DBPASSWORD" value="${db.password}" />
+			<filter token="USE_SYSSERVICE" value="@{use.sysservice}" />
+			<filter token="EXIT_AFTERRUN" value="@{exit.afterrun}" />
+			<filter token="DUMPPLAN_AFTERRUN" value="@{dumpplan.afterrun}" />
+			<filter token="DROPSCHEMA_AFTERRUN" value="@{dropschema.afterrun}" />
+			<filter token="EVICT_POLICY" value="@{spill.policy}" />
+			<filter token="EVICT_POLICY_DEBUG_COUNT" value="@{debug.count}" />
+			<filter token="EVICT_POLICY_MODE" value="@{spill.mode}" />
+			<filter token="EVICT_POLICY_RUNTYPE" value="@{spill.runtype}" />
+			<filter token="SCHED_RUN_TIME" value="@{config.runtime}" />
+			<filter token="SCHEDULER" value="@{config.scheduler}" />
+			<filter token="DIRECT_INTEROP" value="@{config.directInterop}" />
+			<filter token="NUM_THREADS" value="@{num.threads}" />
+			<filter token="USE_THREADED_SCHEDULER" value="@{use.threadedScheduler}" />
+			<filter token="USE_PAGED_TUPLE" value="@{config.usePagedTuple}" />
+			<filter token="USE_PAGED_LIST" value="@{config.usePagedList}" />
+			<filter token="USE_DYNAMIC_TUPLE" value="@{config.useDynTuple}" />
+			<filter token="LOG_CONFIG" value="@{config.logConfig}" />
+			<filter token="USER_INSTALL_DIR" value="${wlevs.dir}" />
+			<filter token="DOMAIN_BASE" value="${domainbase.dir}" />
+			<if>
+				<equals arg1="@{test.list}" arg2="" />
+				<then>
+					<filter token="CQLX_FILE" value="cqlx=${test.sql}/@{test.filename}" />
+				</then>
+				<else>
+					<if>
+						<equals arg1="@{test.list}" arg2="empty" />
+						<then>
+							<filter token="CQLX_FILE" value="" />
+						</then>
+						<else>
+							<filter token="CQLX_FILE" value="listfile=${work.cep}/@{test.list}" />
+						</else>
+					</if>
+				</else>
+			</if>
+			<echo message="generating context from ${test.config}/@{context.file} ${work.cep}" />
+			<copy file="${test.config}/@{context.file}" tofile="${work.cep}/@{context.file}" filtering="true" overwrite="true">
+			</copy>
+
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate.cqlxlist">
+		<attribute name="test.list" default="" />
+		<attribute name="test.listfile" default="" />
+
+		<sequential>
+			<!-- generate file list -->
+			<delete file="${work.cep}/@{test.listfile}" failonerror="false" />
+			<echo message="generating list : ${work.cep}/@{test.listfile}" />
+			<for list="@{test.list}" param="file.name">
+				<sequential>
+					<concat destfile="${work.cep}/@{test.listfile}" append="yes" fixlastline="yes">@{file.name}${line.separator}</concat>
+				</sequential>
+			</for>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate.list">
+		<attribute name="test.list" default="" />
+		<attribute name="test.listfile" default="" />
+
+		<sequential>
+			<!-- generate file list -->
+			<delete file="${work.cep}/@{test.listfile}" failonerror="false" />
+			<echo message="generating list : ${work.cep}/@{test.listfile}" />
+			<for list="@{test.list}" param="file.name">
+				<sequential>
+					<var name="should_include" value="1" />
+					<if>
+						<isset property="exclude.list" />
+						<then>
+							<for list="${exclude.list}" param="exclude.name">
+								<sequential>
+									<if>
+										<equals arg1="@{file.name}" arg2="@{exclude.name}" />
+										<then>
+											<var name="should_include" value="0" />
+										</then>
+									</if>
+								</sequential>
+							</for>
+						</then>
+					</if>
+					<if>
+						<equals arg1="${should_include}" arg2="1" />
+						<then>
+							<concat destfile="${work.cep}/@{test.listfile}" 
+								 append="yes" fixlastline="yes">@{file.name}${line.separator}</concat>
+						</then>
+					</if>
+				</sequential>
+			</for>
+		</sequential>
+	</macrodef>
+
+	<!-- clean.test target -->
+	<macrodef name="clean.test">
+		<sequential>
+			<!-- create work directory  -->
+			<mkdir dir="${work}" />
+
+			<!-- clear all old test results and re-create cqlengine.dir -->
+			<delete dir="${work.cep}" failonerror="false" />
+			<mkdir dir="${work.cep}" />
+			<delete dir="${work.cep.log}" failonerror="false" />
+			<mkdir dir="${work.cep.log}" />
+			<delete file="${cqlengine.dir}/coverage.ec" failonerror="false" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="prepare.resource">
+		<sequential>
+			<!-- copy resources -->
+			<mkdir dir="${work.cep}" />
+			<copy todir="${work.cep}" overwrite="true">
+				<fileset dir="${cqlengine.dir}/standaloneEnv/resources" excludes="ApplicationContext.xml">
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<!-- Run junit tests -->
+	<macrodef name="junit.test.drv">
+		<attribute name="junit.name" default="" />
+		<attribute name="junit.test.name" default="" />
+		<attribute name="jvm.maxmem" default="512m" />
+
+		<sequential>
+			<!-- clean work logs -->
+			<clean.work.log clean.opt="work.log" />
+
+			<echo message="running junit tests with ${test.jvm}" />
+			<!--
+There is an issue with the corrupted CEPResourceBundle.    
+So using the normal java ant target to run junit tests.
+            <junit jvm="${test.jvm}" fork="true" forkmode="once" maxmemory="@{jvm.maxmem}" printsummary="yes" filtertrace="off">
+              <test name="@{junit.test.name}" todir="${work.cep}" />
+              <formatter type="plain" usefile="true" extension=".log" />
+              <classpath>
+                <path refid="cep.classpath"/>
+              </classpath>
+              <sysproperty key="twork" value="${work}" />
+              <sysproperty key="ade.view.root"     value="${ade.view.root}" />
+              <sysproperty key="test.inputFolder"  value="${test.data}" />
+              <sysproperty key="test.outputFolder" value="${work.cep.log}" />
+            </junit>
+-->
+			<runclass classname="@{junit.test.name}" sleep="0" output="${work.cep}/TEST-@{junit.test.name}.log" />
+			<exec dir="${test}" executable="${test.perl}" output="${work.cep}/outunit_${regress.tla}.txt">
+				<arg value="-I" />
+				<arg value="${test.perl.lib}" />
+				<arg value="${test.sosd}/junit_parser.pl" />
+				<arg value="@{junit.test.name}" />
+				<arg value="@{junit.name}" />
+				<arg value="${work.cep}" />
+				<arg value="${work.cep}" />
+				<env key="ADE_VIEW_ROOT" value="${ade.home}" />
+				<env key="T_WORK" value="${test.work.home}" />
+				<env key="test.db.host" value="${test.db.host}" />
+				<env key="test.db.port" value="${test.db.port}" />
+				<env key="test.db.sid" value="XE" />
+				<env key="test.db.user" value="soainfra" />
+				<env key="test.db.password" value="soainfra" />
+			</exec>
+			<!-- compute qa stats -->
+			<if>
+				<available file="${work.cep}/@{junit.name}.dif" />
+				<then>
+					<echo>sucs  = 0</echo>
+					<echo>diffs = 1</echo>
+				</then>
+				<else>
+					<echo>sucs  = 1</echo>
+					<echo>diffs = 0</echo>
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="clean.work.log">
+		<attribute name="clean.opt" default="" />
+		<sequential>
+			<if>
+				<equals arg1="@{clean.opt}" arg2="work.log" />
+				<then>
+					<delete includeemptydirs="true">
+						<fileset dir="${work.cep.log}" includes="**/*.txt" />
+					</delete>
+					<delete includeemptydirs="true">
+						<fileset dir="${dbs.dir}" includes="**/*.jdb,**/*.lck" />
+					</delete>
+				</then>
+				<else>
+					<delete includeemptydirs="true">
+						<fileset dir="${work.cep.log}" includes="**/*.txt" />
+					</delete>
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="diff.file.set">
+		<attribute name="regress.tla" default="" />
+		<sequential>
+			<echo message="regress.tla in diff.file.set is @{regress.tla}" />
+<echo message="exec  ${test.shell} ${build.dir.target}/compute_results.sh" />
+			<exec executable="${test.shell}" vmlauncher="false" failonerror="false" resultproperty="result.success">
+				<arg value="${build.dir.target}/compute_results.sh" />
+				<arg value="@{regress.tla}" />
+				<env key="T_WORK" value="${test.work.home}" />
+                <env key="CEP_TEST_JAR" value="${mw.home}/oep/osa/modules/osa.spark-cql.cqlengine.test-shaded.jar" />
+			</exec>
+<echo message="done" />
+            
+			<if>
+				<equals arg1="${is.tkmats}" arg2="true" />
+				<then>
+					<if>
+						<equals arg1="${result.success}" arg2="1" />
+						<then>
+							<echo file="${work.soainfra}/cep.suc">${count.suc.files} </echo>
+						</then>
+						<else>
+							<echo file="${work.soainfra}/cep.dif">${count.dif.files} </echo>
+						</else>
+					</if>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="qa.stat">
+		<sequential>
+			<fileset dir="${work.cep}" id="suc.files">
+				<include name="*.suc" />
+			</fileset>
+			<fileset dir="${work.cep}" id="dif.files">
+				<include name="*.dif" />
+			</fileset>
+
+			<pathconvert pathsep="" refid="suc.files" setonempty="true" property="test.suc.files">
+				<mergemapper to="a" />
+			</pathconvert>
+
+			<pathconvert pathsep="" refid="dif.files" setonempty="true" property="test.dif.files">
+				<mergemapper to="b" />
+			</pathconvert>
+
+			<length property="count.suc.files" string="${test.suc.files}" />
+			<length property="count.dif.files" string="${test.dif.files}" />
+
+			<echo>sucs  = ${count.suc.files}</echo>
+			<echo>diffs = ${count.dif.files}</echo>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="add.db.tables">
+		<sequential>
+			<echo message="adding tables to db." />
+			<exec executable="${test.shell}" vmlauncher="false" output="${work.cep}/adddbtable.log">
+				<arg value="${build.dir.target}/deploy_dbtables.sh" />
+				<arg value="${xe.home}" />
+				<env key="ADE_VIEW_ROOT" value="${ade.home}" />
+				<env key="T_WORK" value="${test.work.home}" />
+			</exec>
+			<echo message="output log is ${work.cep}/adddbtable.log" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="runclass">
+		<attribute name="classname" default="" />
+		<attribute name="jvm" default="" />
+		<attribute name="jvm.maxmem" default="1024m" />
+		<attribute name="sleep" default="10" />
+		<attribute name="optional.classpath" default="" />
+		<attribute name="output" default="stdout" />
+		<attribute name="argline" default="" />
+		<attribute name="arg1" default="" />
+		<attribute name="arg2" default="" />
+		<attribute name="arg3" default="" />
+		<attribute name="arg4" default="" />
+		<attribute name="arg5" default="" />
+		<attribute name="logging.properties" default="logging.properties" />
+
+		<sequential>
+			<if>
+				<available file="${work.cep}/@{logging.properties}" />
+				<then>
+				</then>
+				<else>
+					<generate.logging.properties logbase="server" />
+				</else>
+			</if>
+
+			<!--Set the system and user class assertions-->
+			<setassertions assertion="${jvmarg.assertion}" />
+
+			<sleep seconds="@{sleep}" />
+			<if>
+				<equals arg1="@{output}" arg2="stdout" />
+				<then>
+					<echo message="Running @{classname} ${jvmarg.remotedebug} ${jvmarg.line} @{argline} @{arg1} @{arg2} @{arg3}" />
+					<java fork="true" classname="@{classname}" jvm="@{jvm}" maxmemory="@{jvm.maxmem}">
+						<classpath>
+							<path refid="cep.classpath" />
+							<pathelement path="@{optional.classpath}" />
+						</classpath>
+						<jvmarg value="-Xms@{jvm.maxmem}" />
+						<jvmarg line="${jvmarg.remotedebug}" />
+						<jvmarg line="${jvmarg.line}" />
+						<jvmarg line="-Djava.util.logging.config.file=${work.cep}/@{logging.properties}" />
+						<sysproperty key="wlevs.home" value="${wlevs.home}" />
+						<sysproperty key="twork" value="${work}" />
+						<sysproperty key="ade.view.root" value="${ade.view.root}" />
+						<sysproperty key="test.inputFolder" value="${test.data}" />
+						<sysproperty key="test.outputFolder" value="${work.cep.log}" />
+						<sysproperty key="use.java.logging" value="true" />
+						<arg line="@{argline}" />
+						<arg value="@{arg1}" />
+						<arg value="@{arg2}" />
+						<arg value="@{arg3}" />
+						<arg value="@{arg4}" />
+						<arg value="@{arg5}" />
+						<assertions refid="${assertionflag}" />
+					</java>
+				</then>
+				<else>
+					<echo message="Running @{classname} ${jvmarg.remotedebug} ${jvmarg.line} @{argline} log:@{output}" />
+					<java fork="true" classname="@{classname}" jvm="@{jvm}" maxmemory="@{jvm.maxmem}" output="@{output}">
+						<classpath>
+							<path refid="cep.classpath" />
+							<pathelement path="@{optional.classpath}" />
+						</classpath>
+						<jvmarg value="-Xms@{jvm.maxmem}" />
+						<jvmarg line="${jvmarg.remotedebug}" />
+						<jvmarg line="${jvmarg.line}" />
+						<jvmarg line="-Djava.util.logging.config.file=${work.cep}/@{logging.properties}" />
+						<sysproperty key="twork" value="${work}" />
+						<sysproperty key="ade.view.root" value="${ade.view.root}" />
+						<sysproperty key="test.inputFolder" value="${test.data}" />
+						<sysproperty key="test.outputFolder" value="${work.cep.log}" />
+						<sysproperty key="use.java.logging" value="true" />
+						<arg line="@{argline}" />
+						<arg value="@{arg1}" />
+						<arg value="@{arg2}" />
+						<arg value="@{arg3}" />
+						<arg value="@{arg4}" />
+						<arg value="@{arg5}" />
+						<assertions refid="${assertionflag}" />
+					</java>
+				</else>
+			</if>
+			<echo message="Done @{classname}" />
+			<sleep seconds="@{sleep}" />
+		</sequential>
+	</macrodef>
+
+	<!-- for remote monitoring
+ use jmxarg="-Dcom.sun.management.jmxremote.port=9009"
+ service url for jconsole will  be:
+  service:jmx:rmi:///jndi/rmi://localhost:9009/jmxrmi
+-->
+
+	<macrodef name="runserver">
+		<attribute name="debugproperty" default="true" />
+		<attribute name="context.file" default="ApplicationContext.xml" />
+		<attribute name="classname" default="oracle.cep.test.TestServer" />
+		<attribute name="jvm" default="" />
+		<attribute name="jvm.maxmem" default="512m" />
+		<attribute name="jvmarg" default="" />
+		<attribute name="arg1" default="" />
+		<attribute name="arg2" default="" />
+		<attribute name="arg3" default="" />
+		<attribute name="timeout" default="1800000" />
+		<attribute name="use.sunjvm" default="false" />
+		<attribute name="logging.properties" default="logging.properties" />
+
+		<!-- scalibility test -->
+		<attribute name="scale.size" default="" />
+		<attribute name="scale.rate" default="" />
+		<attribute name="scale.range" default="" />
+
+		<!-- linear road test -->
+		<attribute name="inpf.name" default="" />
+		<attribute name="outf.name" default="" />
+		<attribute name="lrbkit.source" default="" />
+		<attribute name="lrbkit.dest1" default="" />
+		<attribute name="lrbkit.dest2" default="" />
+		<attribute name="lrbkit.dest3" default="" />
+		<attribute name="lrbkit.duration" default="duration=1000000" />
+
+		<sequential>
+			<if>
+				<available file="${work.cep}/@{logging.properties}" />
+				<then>
+				</then>
+				<else>
+					<generate.logging.properties logbase="@{classname}" />
+				</else>
+			</if>
+
+			<echo message="running @{classname} maxmemory=@{jvm.maxmem}  assert=${jvmarg.assertion} context=@{context.file}" />
+			<echo message="inpf.name=@{inpf.name} outf.name=@{outf.name} scale.size=@{scale.size} scale.rate=@{scale.rate} scale.range=@{scale.range}" />
+			<echo message="lrbkit.source=@{lrbkit.source} lrbkit.dest1=@{lrbkit.dest1} lrbkit.dest2=@{lrbkit.dest2} lrbkit.dest3=@{lrbkit.dest3}" />
+
+			<!--Set the system and user class assertions-->
+			<setassertions assertion="${jvmarg.assertion}" />
+
+			<!--
+      note that all jvm related property has already been set from use.jrocket in
+      tkclean target in deploy_test.xml
+      any additional jvmarguments should be set in setup.jvm target
+    -->
+			<java fork="true" jvm="@{jvm}" classname="@{classname}" maxmemory="@{jvm.maxmem}" timeout="@{timeout}">
+				<classpath>
+					<path refid="cep.classpath" />
+				</classpath>
+				<sysproperty key="twork" value="${work}" />
+				<sysproperty key="ade.view.root" value="${ade.view.root}" />
+				<env key="test.db.host" value="${test.db.host}" />
+				<env key="test.db.port" value="${test.db.port}" />
+				<env key="test.db.sid" value="XE" />
+				<env key="test.db.user" value="soainfra" />
+				<env key="test.db.password" value="soainfra" />
+				<env key="DEBUG" value="@{debugproperty}" />
+				<env key="use.java.logging" value="true" />
+
+				<jvmarg line="-Xms@{jvm.maxmem} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=10.229.188.126" />
+				<jvmarg line="${jvmarg.remotedebug}" />
+				<jvmarg line="${jvmarg.line}" />
+				<jvmarg line="@{jvmarg}" />
+				<jvmarg line="-Djava.util.logging.config.file=${work.cep}/@{logging.properties}" />
+				<jvmarg line="-Dscale.size=@{scale.size}" />
+				<jvmarg line="-Dscale.rate=@{scale.rate}" />
+				<jvmarg line="-Dscale.range=@{scale.range}" />
+				<jvmarg line="-Dinpf.name=@{inpf.name}" />
+				<jvmarg line="-Doutf.name=@{outf.name}" />
+				<jvmarg line="-Dlrbkit.source=@{lrbkit.source}" />
+				<jvmarg line="-Dlrbkit.dest1=@{lrbkit.dest1}" />
+				<jvmarg line="-Dlrbkit.dest2=@{lrbkit.dest2}" />
+				<jvmarg line="-Dlrbkit.dest3=@{lrbkit.dest3}" />
+				<jvmarg line="-Dlrbkit.duration=@{lrbkit.duration}" />
+
+				<arg value="file:${work.cep}/@{context.file}" />
+				<arg value="@{arg1}" />
+				<arg value="@{arg2}" />
+				<arg value="@{arg3}" />
+				<assertions refid="${assertionflag}" />
+			</java>
+
+		</sequential>
+	</macrodef>
+
+	<!--Macro sets the assertion state on of off for both system and user classes -->
+	<macrodef name="setassertions">
+		<attribute name="assertion" default="true" />
+		<sequential>
+			<property name="assertionflag" value="assertions.enable" />
+
+			<if>
+				<equals arg1="@{assertion}" arg2="true" />
+				<then>
+					<property name="assertionflag" value="assertions.enable" />
+				</then>
+				<else>
+					<property name="assertionflag" value="assertions.disable" />
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="logfilter">
+		<attribute name="inputfile" default="" />
+		<attribute name="outputfile" default="" />
+		<attribute name="filterfile" default="" />
+		<sequential>
+			<echo message="filtering @{inputfile} -> @{outputfile}" />
+			<!--
+        output="${work.cep}/logfilter.log">
+-->
+			<exec dir="${test}" executable="${test.perl}">
+				<arg value="-I" />
+				<arg value="${test.perl.lib}" />
+				<arg value="${test.sosd}/logfilter.pl" />
+				<arg value="-o" />
+				<arg value="${work.cep.log}/@{outputfile}" />
+				<arg value="-f" />
+				<arg value="${test.config}/@{filterfile}" />
+				<arg value="${work.cep}/@{inputfile}" />
+				<env key="ADE_VIEW_ROOT" value="${ade.home}" />
+				<env key="T_WORK" value="${test.work.home}" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="gen.empty.outputs">
+		<attribute name="test.file" default="" />
+		<attribute name="test.list" default="" />
+		<sequential>
+			<exec dir="${test}" executable="${test.perl}">
+				<arg value="-I" />
+				<arg value="${test.perl.lib}" />
+				<arg value="${test.sosd}/genoutputs.pl" />
+				<arg value="-file" />
+				<arg value="@{test.file}" />
+				<arg value="-list" />
+				<arg value="@{test.list}" />
+				<arg value="-dest" />
+				<arg value="${work.cep}/log" />
+				<env key="ADE_VIEW_ROOT" value="${ade.home}" />
+				<env key="T_WORK" value="${test.work.home}" />
+			</exec>
+		</sequential>
+
+	</macrodef>
+
+	<macrodef name="checkdb">
+		<sequential>
+                        <delete file="${cqlengine.dir}/checkdb.log"/>
+                        <sql                  
+                            classpathref="cep.classpath"
+                            driver="oracle.jdbc.driver.OracleDriver"  
+                            url="jdbc:oracle:thin:@${host}:${port}:${sid}"
+                            userid="${testUser}"
+                            password="${testPassword}"
+                            failOnConnectionError="false"
+                            print="true"
+                            output="${cqlengine.dir}/checkdb.log">
+                            SELECT * FROM TAB
+                        </sql>
+                        <condition property="db.available">
+                            <available file="${cqlengine.dir}/checkdb.log"/>
+                        </condition>
+			<if>
+				<isset property="db.available" />
+				<then>
+					<echo message="xe is available on jdbc:oracle:thin:@${host}:${port}:${sid}" />
+					<property name="db.host" value="${host}" />
+                                        <property name="db.port" value="${port}"/>
+                                        <property name="db.sid" value="${sid}"/>
+                                        <property name="db.user" value="${testUser}"/>
+                                        <property name="db.password" value="${testPassword}"/>
+				</then>
+				<else>
+					<echo message="xe is not running on jdbc:oracle:thin:@${host}:${port}:${sid}. Uses fallback db running on '${dbhost.fallback}'" />
+					<property name="xe.home" value="/u01/app/oracle/product/11.2.0/xe" />
+					<property name="db.host" value="${dbhost.fallback}" />
+                                        <property name="db.port" value="1521"/>
+                                        <property name="db.sid" value="xe"/>
+                                        <property name="db.user" value="soainfra"/>
+                                        <property name="db.password" value="soainfra"/>
+				</else>
+			</if>
+			<echo message="db host : ${db.host}" />
+		</sequential>
+	</macrodef>
+
+	<!-- initialize jvm related parameters 
+        note that only the first run will set the property 
+        so no two test can change these settings.
+    -->
+	<macrodef name="setup.jvm">
+		<sequential>
+			<if>
+				<equals arg1="${emma.enable}" arg2="true" />
+				<then>
+					<property name="emma.args" value="-Xbootclasspath/a:${emma.dir}/emma.jar -Demma.coverage.out.file=${cqlengine.dir}/coverage.emma -Demma.coverage.out.merge=true"/>
+				</then>
+				<else>
+					<property name="emma.args" value="" />
+				</else>
+			</if>
+			<switch value="${jvm}">
+				<case value="jrockit">
+					<path id="jrockit.path">
+						<dirset dir="${wlevs.home}/external">
+							<include name="jrockit*" />
+						</dirset>
+					</path>
+					<property name="jrockit.home" refid="jrockit.path" />
+					<property name="test.jvm" value="${jrockit.home}/bin/java" />
+					<property name="jvmarg.line" value="${emma.args}" />
+					<echo message="use jrockit ${test.jvm}" />
+				</case>
+				<case value="jdk">
+					<property name="test.jvm" value="${jdk.home}/bin/java" />
+					<property name="jvmarg.line" value="-XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Xnoincgc -server ${emma.args}" />
+					<echo message="use jdk ${test.jvm} ${jvmarg.line}" />
+				</case>
+				<default>
+					<property name="test.jvm" value="${env.JAVA_HOME}/bin/java" />
+					<if>
+						<matches pattern="jrockit" string="${env.JAVA_HOME}"/>
+						<then>
+							<property name="jvmarg.line" value="${emma.args}" />
+						</then>
+						<else>
+							<property name="jvmarg.line" value="-XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Xnoincgc -server" />
+						</else>
+					</if>
+					<!-- echo message="use default ${test.jvm} ${jvmarg.line}" / -->
+				</default>
+			</switch>
+
+			<if>
+				<equals arg1="${remotedebug}" arg2="true" />
+				<then>
+					<property name="jvmarg.remotedebug" value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
+					<property name="evs.debug" value="-debug" />
+				</then>
+				<else>
+					<property name="jvmarg.remotedebug" value="" />
+					<property name="evs.debug" value="" />
+				</else>
+			</if>
+
+			<if>
+				<equals arg1="${use.ojdl}" arg2="true" />
+				<then>
+					<property name="jvmarg.ojdl" value="-Djava.util.logging.config.class=oracle.core.ojdl.logging.LoggingConfiguration" />
+				</then>
+				<else>
+					<property name="jvmarg.ojdl" value="" />
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="prep.context">
+		<sequential>
+			<copy todir="${work.cep}" overwrite="true">
+				<fileset dir="${cqlengine.dir}/standaloneEnv/resources">
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<target name="print.classpath">
+		<pathconvert pathsep="${line.separator}" 
+				property="pretty.print.classpath"
+      			refid="cep.classpath"/>
+		<echo message="${pretty.print.classpath}"/>
+	</target>
+    
+	<!--Assertion tags for enabling and disabling system and user class assertion errors -->
+	<assertions enableSystemAssertions="true" id="assertions.enable">
+		<enable/>
+	</assertions>
+
+	<assertions enableSystemAssertions="false" id="assertions.disable">
+		<disable/>
+	</assertions>
+</project>
+

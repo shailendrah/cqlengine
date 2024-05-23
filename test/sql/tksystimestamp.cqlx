@@ -1,0 +1,15 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tksystimestamp_S1 (c1 char(50))</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tksystimestamp_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptksystimestamp_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test to parse all possible timezones. display parsed timezone as General Timezones, RFC 822 time zone and ISO 8601 time zone -->
+<CEP_DDL><![CDATA[ create query tksystimestamp_q1 as select c1, to_char(systimestamp(c1), "z"), to_char(systimestamp(c1), "Z"), to_char(systimestamp(c1), "X") from tksystimestamp_S1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tksystimestamp_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtksystimestamp_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tksystimestamp_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

@@ -1,0 +1,11 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_ln(c1 double) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_ln add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_ln.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_ln_q1  as select ln(c1) from tkdata_ln</CEP_DDL>
+<CEP_DDL> create query tkdata_ln_q2  as select ln(null) from tkdata_ln</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_ln_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/ln_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_ln_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/ln_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_ln_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_ln_q2 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

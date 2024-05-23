@@ -1,0 +1,151 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- The tkmantas2_Acct relation contains the data for the Accounts table. It contains 
+     information about customer accounts and accounts that the Mantas client 
+     owns. This table stores information for accounts that are internal 
+     to the Mantas client
+ -->
+<CEP_DDL> create relation tkmantas2_Acct(ACCT_INTRL_ID CHAR(50), MANTAS_ACCT_BUS_TYPE_CD CHAR(20), ACCT_EFCTV_RISK_NB INTEGER) </CEP_DDL>
+
+<!-- The relation reads the data from a file: inpMantasAcct.txt -->
+<CEP_DDL> <![CDATA[ alter relation tkmantas2_Acct add source "<EndPointReference><Address>file:inpMantasAcct.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- The tkmantas2_AcctAddr relation contains the data for Account Address table, which
+     contains addresses for the Mantas client's accounts. Each account may 
+     have multiple addresses for different uses
+-->
+<CEP_DDL> create relation tkmantas2_AcctAddr(ACCT_INTRL_ID CHAR(50), ADDR_CNTRY_CD CHAR(2)) </CEP_DDL>
+
+<!-- The relation reads the data from a file: inpMantasAcctAddr.txt -->
+<CEP_DDL> <![CDATA[ alter relation tkmantas2_AcctAddr add source "<EndPointReference><Address>file:inpMantasAcctAddr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Tha tkmantas2_CashTrxn stream is used to model the Cash Transaction table, which
+     contains a cash (currency) or commodity transactions that occurs in the 
+     Mantas client's customer or firm account. A Cash Transaction record is 
+     designed to capture details of the conductor and location of the 
+     transaction. 
+-->
+<CEP_DDL> create stream tkmantas2_CashTrxn(ACCT_INTRL_ID CHAR(50), TRXN_BASE_AM integer, CSTM_1_TX CHAR(2), DBT_CDT_CD CHAR(20), MANTAS_TRXN_CHANL_CD CHAR(20)) </CEP_DDL>
+
+<!-- The stream reads the data from a file: inpMantasCashTrxn.txt -->
+<CEP_DDL> <![CDATA[ alter stream tkmantas2_CashTrxn add source "<EndPointReference><Address>file://@TEST_DATA@/inpMantasCashTrxn.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- The view tkmantas2_ValidAccounts is used to select Retail accounts (identified by 
+     RBK (Retail Bank) and RBR (Retail Brokerage)), and to exclude Excempt 
+     accounts (identified by -2)
+-->
+<CEP_DDL>create view tkmantas2_ValidAccounts as 
+         select ACCT_INTRL_ID from tkmantas2_Acct 
+         where (((MANTAS_ACCT_BUS_TYPE_CD = "RBK") OR (MANTAS_ACCT_BUS_TYPE_CD = "RBR")) AND (ACCT_EFCTV_RISK_NB != 2))
+</CEP_DDL>
+
+<!-- The view tkmantas2_ValidCashTrxn is used to select ATM debit withdrawl transactions
+-->
+<CEP_DDL>create view tkmantas2_ValidCashTrxn as 
+         select ACCT_INTRL_ID, TRXN_BASE_AM, CSTM_1_TX from tkmantas2_CashTrxn 
+         where DBT_CDT_CD = "D" and MANTAS_TRXN_CHANL_CD = "ATM"
+</CEP_DDL>
+
+<!-- Due to anomalies in the data, the ATM Withdrawal cannot be linked back 
+     to an address record and therefore, the domiciled or associated address 
+     cannot be determined.  In these cases, the ATM Withdrawal can be ignored.
+     tkmantas2_ValidCashTrxn2 is used to filter transactions with valid accounts
+-->
+<CEP_DDL>create view tkmantas2_ValidCashTrxn2 as 
+         RStream(tkmantas2_ValidCashTrxn[NOW] IN tkmantas2_ValidAccounts) 
+</CEP_DDL>
+
+<!-- The view ValidCashForeignTxn only contains foreign transactions -->
+<CEP_DDL>create view ValidCashForeignTxn 
+         as RStream(tkmantas2_ValidCashTrxn2[NOW] except tkmantas2_AcctAddr) 
+</CEP_DDL>
+
+<!-- Within the Lookback Window(48 hours), the total amount of Foreign 
+     ATM Withdrawals is >= Max Foreign Withdrawal Amount (1000)
+-->
+<CEP_DDL>create view tkmantas2_viewq1(ACCT_INTRL_ID, sumForeignTxns) as 
+         IStream(select ACCT_INTRL_ID, sum(TRXN_BASE_AM) as frgnTxn 
+         from ValidCashForeignTxn[range 48 hours] 
+         group by ACCT_INTRL_ID 
+         having sum(TRXN_BASE_AM) > 1000) 
+</CEP_DDL>
+
+<!-- Post the alerts in the file outMantasQ1.txt -->
+<CEP_DDL>create query tkmantas2_q1 as select * from tkmantas2_viewq1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkmantas2_q1 add destination "<EndPointReference><Address>file:outMantasQ1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkmantas2_q1 start </CEP_DDL>
+
+<!-- Post the individual transactions which led to the violation in the file
+     outMantasQ1Txns.txt. This is accomplished by joining the alert with the
+     valid foreign transactions in the loopback window (48 hours)
+-->
+<CEP_DDL>create query tkmantas2_q1Txns as IStream(
+         select TxnId, ValidCashForeignTxn.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID 
+         from tkmantas2_viewq1[NOW], ValidCashForeignTxn[range 48 hours] 
+         where tkmantas2_viewq1.ACCT_INTRL_ID = ValidCashForeignTxn.ACCT_INTRL_ID)
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmantas2_q1Txns add destination "<EndPointReference><Address>file:outMantasQ1Txns.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkmantas2_q1Txns start </CEP_DDL>
+
+<!-- Within the Lookback Window, filter the transactions for which the number 
+     of distinct countries in which Foreign ATM Withdrawals occurred >= 
+     Min Number of Distinct Foreign Countries (2) and the (total amount of 
+     all Foreign ATM Withdrawals >= 60% of Max Foreign Withdrawal Amount)
+-->
+<CEP_DDL>create view tkmantas2_viewq2Cond1(ACCT_INTRL_ID, sumForeign, countForeign) as 
+         select ACCT_INTRL_ID, sum(TRXN_BASE_AM), count(distinct ADDR_CNTRY_CD)
+         from ValidCashForeignTxn[range 48 hours] 
+         group by ACCT_INTRL_ID 
+         having ((sum(TRXN_BASE_AM) * 100) >= (1000 * 60) and
+                 (count(distinct ADDR_CNTRY_CD >= 2)))
+</CEP_DDL>
+
+<!-- Post the alerts in file outMantasQ2.txt -->
+<CEP_DDL>create query tkmantas2_q2 as select * from viewq2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkmantas2_q2 add destination "<EndPointReference><Address>file:outMantasQ2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkmantas2_q2 start </CEP_DDL>
+
+<!-- Post the individual transactions which led to the violation in the file
+     outMantasQ2Txns.txt. This is accomplished by joining the alert with the
+     valid foreign transactions in the loopback window (48 hours)
+-->
+<CEP_DDL>create query tkmantas2_q2Txns as IStream(
+         select TxnId, ValidCashForeignTxn.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID 
+         from viewq2[NOW], ValidCashForeignTxn[range 48 hours] 
+         where viewq2.ACCT_INTRL_ID = ValidCashForeignTxn.ACCT_INTRL_ID)
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmantas2_q2Txns add destination "<EndPointReference><Address>file:outMantasQ2Txns.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkmantas2_q2Txns start </CEP_DDL>
+
+<!-- Within the Withdrawal Window(60 minutes), more than one Foreign ATM 
+     Withdrawal was detected and 
+     ((the total amount of all Foreign ATM Withdrawals) >= 60% of Foreign Withdrawal Limit)
+-->
+<CEP_DDL>create view tkmantas2_viewq3 as
+         select ACCT_INTRL_ID, sum(TRXN_BASE_AM), count(distinct ADDR_CNTRY_CD)
+         from ValidCashForeignTxn[range 60 minutes]
+	 group by ACCT_INTRL_ID
+         having ((sum(TRXN_BASE_AM) * 100) >= (500 * 60) and
+	         (count(distinct ADDR_CNTRY_CD) > 1))
+</CEP_DDL>
+
+<!-- Post the alerts in file outMantasQ3.txt -->
+<CEP_DDL>create query tkmantas2_q3 as select * from tkmantas2_viewq3 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkmantas2_q3 add destination "<EndPointReference><Address>file:outMantasQ3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkmantas2_q3 start </CEP_DDL>
+
+<!-- Post the individual transactions which led to the violation in the file
+     outMantasQ3Txns.txt. This is accomplished by joining the alert with the
+     valid foreign transactions in the loopback window (60 minutes)
+-->
+<CEP_DDL>create query tkmantas2_q3Txns as IStream(
+         select TxnId, ValidCashForeignTxn.ACCT_INTRL_ID, TRXN_BASE_AM, ADDR_CNTRY_CD, TRXN_LOC_ADDR_SEQ_ID 
+         from tkmantas2_viewq3[NOW], ValidCashForeignTxn[range 60 minutes] 
+         where tkmantas2_viewq3.ACCT_INTRL_ID = ValidCashForeignTxn.ACCT_INTRL_ID)
+</CEP_DDL>
+
+<!-- start running the CEP system -->
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

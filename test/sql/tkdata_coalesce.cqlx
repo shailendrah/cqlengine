@@ -1,0 +1,21 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_coalesce(i1 integer,i2 integer,i3 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_coalesce add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_coalesce.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_coalesce_q1  as select coalesce(i1,i2,i3) from tkdata_coalesce</CEP_DDL>
+<CEP_DDL> create query tkdata_coalesce_q2  as select COALESCE(i2,i1,i3) from tkdata_coalesce</CEP_DDL>
+<CEP_DDL> create query tkdata_coalesce_q3  as select COALESCE(i1,i2,3) from tkdata_coalesce</CEP_DDL>
+<CEP_DDL> create query tkdata_coalesce_q4  as select COALESCE(i1,3,i2,4,i3) from tkdata_coalesce</CEP_DDL>
+<CEP_DDL> create query tkdata_coalesce_q5  as select COALESCE(i1,i2,3+5,i3) from tkdata_coalesce</CEP_DDL>
+<CEP_DDL> create query tkdata_coalesce_qNeg1  as select COALESCE(i1) from tkdata_coalesce</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_coalesce_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/coalesce_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_coalesce_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/coalesce_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_coalesce_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/coalesce_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_coalesce_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/coalesce_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_coalesce_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/coalesce_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_coalesce_q1 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_coalesce_q2 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_coalesce_q3 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_coalesce_q4 start</CEP_DDL>
+<CEP_DDL> alter query tkdata_coalesce_q5 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP> 

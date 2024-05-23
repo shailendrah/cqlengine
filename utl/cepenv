@@ -1,0 +1,64 @@
+########################################################################
+# 
+# CEP Environment Setup
+#
+########################################################################
+
+export ANT_HOME=$ADE_VIEW_ROOT/oracle/ant
+export JAVA_HOME=$ADE_VIEW_ROOT/oracle/jdk
+export CEP_HOME=$ADE_VIEW_ROOT/cep/wlevs_cql/modules/cqlengine
+export ORACLE_HOME=$ADE_VIEW_ROOT/pcbpel/cep/scratch
+export J2EE_HOME=$ORACLE_HOME/j2ee/home
+export PERL_BIN=$ADE_VIEW_ROOT/oracle/perl/bin/perl
+
+export PATH=$ANT_HOME/bin:$JAVA_HOME/bin:$CEP_HOME/bin:$PATH
+
+export TEST_WORK_DIR=$ADE_VIEW_ROOT/work
+export TEST_INPUT_DIR=$TEST_WORK_DIR/cep/inpfiles
+export TEST_OUTPUT_DIR=$TEST_WORK_DIR/cep/outfiles
+export TEST_STATUS_DIR=$TEST_WORK_DIR/cep
+export TEST_SRC=$CEP_HOME/test/src
+export TEST_LOG=$CEP_HOME/test/log
+export TEST_DATA=$CEP_HOME/test/data
+
+
+export CLASSPATH=$ADE_VIEW_ROOT/cep/wlevs_cql/modules/cqlengine/test/coverage/emma.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/cep/wlevs_cql/modules/cqlengine/test/coverage/emma_ant.jar:$CLASSPATH
+export CLASSPATH=$CEP_HOME/lib/ext/JFlex.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/pcbpel/lib/xmlparserv2.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/xdk/lib/xquery.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/jlib/oracle-el.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/jlib/commons-el.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/jlib/jsp-el-api.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/jdevadf/dist/oracle.ide/jlib/share.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/oracle/dbjava/lib/ojdbc14.jar:${CLASSPATH}
+export CLASSPATH=$NDE_VOB_ROOT/dms/lib/ojdl.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/rdbms_ho/jlib/xdb.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/lib/java/shared/sun.jaxb/2.0/jaxb-impl.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/lib/java/shared/sun.jaxb/2.0/jaxb-xjc.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/lib/java/shared/sun.jaxb/2.0/jaxb1-impl.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/lib/java/api/jaxb-api.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/lib/java/api/jsr173_api.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/j2ee/home/lib/activation.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/xdk/lib/xml.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/jlib/xmlef.jar:${CLASSPATH}
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/jlib/commons-cli-1.0.jar:${CLASSPATH}
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/jlib/commons-collections.jar:${CLASSPATH}
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/mds/lib/concurrent.jar:${CLASSPATH}
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/mds/lib/mdsrt.jar:$CLASSPATH
+export CLASSPATH=$NDE_VOB_ROOT/jdevadf/dist/oracle.mds/BC4J/lib/adfsharebase.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/j2ee/home/lib/adfshare.jar:$CLASSPATH
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/javacache/lib/cache.jar:${CLASSPATH}
+export CLASSPATH=$NDE_VOB_ROOT/dms/lib/dms.jar:${CLASSPATH}
+export CLASSPATH=$ADE_VIEW_ROOT/j2ee/dist/oracle.j2ee/j2ee/home/lib/servlet.jar:${CLASSPATH}
+export CLASSPATH=$HOME/libs/jms.jar:${CLASSPATH}
+export CLASSPATH=$ADE_VIEW_ROOT/cep/wlevs_cql/modules/cqlengine/dist/lib/je-3.1.0.jar:${CLASSPATH}
+export CLASSPATH=$ADE_VIEW_ROOT/pcbpel/lib/junit.jar:${CLASSPATH}
+
+## Fabric integration 
+export CLASSPATH=$ADE_VIEW_ROOT/pcbpel/lib/webservices/fabric-common.jar:${CLASSPATH}
+export CLASSPATH=$ADE_VIEW_ROOT/pcbpel/lib/fabric-runtime.jar:${CLASSPATH}
+export CLASSPATH=$ADE_VIEW_ROOT/pcbpel/lib/soa-infra-mgmt.jar:${CLASSPATH}
+
+export CLASSPATH=$ADE_VIEW_ROOT/pcbpel/lib/junit.jar:${CLASSPATH}
+

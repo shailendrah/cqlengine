@@ -1,0 +1,53 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xsd:complexType name="geocodeType">
+    <xsd:sequence>
+      <xsd:element name="match" type="matchType" minOccurs="0"
+         maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required"/>
+    <xsd:attribute name="match_count" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:element name="geocode_response">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="geocode" type="geocodeType" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="matchType">
+    <xsd:sequence>
+      <xsd:element name="output_address" type="output_addressType"/>
+    </xsd:sequence>
+    <xsd:attribute name="sequence" type="xsd:string" use="required"/>
+    <xsd:attribute name="longitude" type="xsd:string" use="required"/>
+    <xsd:attribute name="latitude" type="xsd:string" use="required"/>
+    <xsd:attribute name="match_code" use="required">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="0"/>
+          <xsd:enumeration value="1"/>
+          <xsd:enumeration value="2"/>
+          <xsd:enumeration value="3"/>
+          <xsd:enumeration value="4"/>
+          <xsd:enumeration value="10"/>
+          <xsd:enumeration value="11"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="error_message" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:complexType name="output_addressType">
+    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="house_number" type="xsd:string"/>
+    <xsd:attribute name="street" type="xsd:string"/>
+    <xsd:attribute name="builtup_area" type="xsd:string"/>
+    <xsd:attribute name="order1_area" type="xsd:string"/>
+    <xsd:attribute name="order8_area" type="xsd:string"/>
+    <xsd:attribute name="country" type="xsd:string"/>
+    <xsd:attribute name="postal_code" type="xsd:string"/>
+    <xsd:attribute name="postal_addon_code" type="xsd:string"/>
+    <xsd:attribute name="side" type="xsd:string"/>
+    <xsd:attribute name="percent" type="xsd:string"/>
+    <xsd:attribute name="edge_id" type="xsd:string"/>
+  </xsd:complexType>
+</xsd:schema>

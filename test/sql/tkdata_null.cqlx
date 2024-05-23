@@ -1,0 +1,45 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata_null_S11(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> register stream tkdata_null_S16(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> register stream tkdata_null_S17(c1 char(10), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkdata_null_S15(c1 integer, c2 timestamp) </CEP_DDL>
+<CEP_DDL> create stream tkdata_null_S19(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_null_S11 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_null_S16 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_null_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_null_S17 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_null_S19 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata_null_v1(c1 integer, name char(10)) as select * from tkdata_null_S11[rows 1000] </CEP_DDL>
+<CEP_DDL> register view tkdata_null_v2(c1 integer, name char(10)) as select * from tkdata_null_S19[rows 1000] </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q201 as select * from tkdata_null_S11[range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q202 as select max(tkdata_null_S16.c1) from tkdata_null_S16[range 1000] </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q203 as select (c1+10)*2 from tkdata_null_S16 </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q204 as select sum(c2) from tkdata_null_S16 group by c1 </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q205 as select sum(c1) from tkdata_null_S16 group by c1 </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q206 as select c1, c2 from tkdata_null_S17 where c2 != 10 </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkdata_null_q207 as select * from tkdata_null_S17 where c1 != "abc"  ]]></CEP_DDL>
+<CEP_DDL> create query tkdata_null_q208 as select * from tkdata_null_S11[range 1] as a, tkdata_null_S15[range 1] as b where a.c1 = b.c1 </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q209 as IStream(select (a.c1+10)*2, a.name from tkdata_null_S11[range 1] as a, tkdata_null_S15[range 1] as b where a.c1=b.c1) </CEP_DDL>
+<CEP_DDL> create query tkdata_null_q210 as tkdata_null_v1 except tkdata_null_v2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outNull.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q202 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q203 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSM16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q204 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSG16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q205 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outG16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q206 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q207 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSN17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q208 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSB15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q209 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSC17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_null_q210 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExc5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q201 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q202 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q203 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q204 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q205 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q206 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q207 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q208 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q209 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_null_q210 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

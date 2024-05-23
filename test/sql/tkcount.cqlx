@@ -1,0 +1,37 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkcount_S1 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkcount_S2 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcount_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCount1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcount_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCount2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create function tkcount_doubleCount_int(c1 integer) return integer aggregate using "oracle.cep.test.userfunctions.TkUsrDoubleCount" supports incremental computation </CEP_DDL>
+<CEP_DDL> create query tkcount_q1 as select c1,avg(c2) from tkcount_S1[range 4] group by c1 </CEP_DDL>
+<CEP_DDL> create query tkcount_q2 as select c1,count(c2) from tkcount_S2[range 10] group by c1 </CEP_DDL>
+<CEP_DDL> create query tkcount_q3 as select c1,count(*) from tkcount_S2[range 10] group by c1 </CEP_DDL>
+<CEP_DDL> create query tkcount_q4 as select c1,sum(c1) from tkcount_S2[range 10] group by c1 having c1 >0 and sum(c1) > 1 </CEP_DDL>
+<CEP_DDL> create query tkcount_q5 as select c1,sum(c1) from tkcount_S2[range 10] group by c1 having count(c1)>1 </CEP_DDL>
+<CEP_DDL> create query tkcount_q6 as select c1,sum(c1),sum(c2),count(*) from tkcount_S2[range 10] group by c1 having count(*)> 1 </CEP_DDL>
+<CEP_DDL> create query tkcount_q7 as select c1,sum(c1),sum(c2),count(*) from tkcount_S2[range 10] group by c1 having tkcount_doubleCount_int(c1) > 1 </CEP_DDL>
+<CEP_DDL> create query tkcount_q8 as select max(c1) from tkcount_S2[range 5] group by c1 having max(c1) = sum(c1) </CEP_DDL>
+<!-- Negative test cases -->
+<CEP_DDL> create query tkcount_q9 as select max(c2) from tkcount_S2[range 5] having c1 > 2 </CEP_DDL>
+<CEP_DDL> create query tkcount_q10 as select c1 from tkcount_S2[range 5] having max(c1) > 2 </CEP_DDL>
+<CEP_DDL> create query tkcount_q11 as select max(c1),c2 from tkcount_S2[range 5] having max(c1) = sum(c1) </CEP_DDL>
+<CEP_DDL> create query tkcount_q12 as select c2 from tkcount_S2[range 5] having c1 > max(c1) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkcount_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCount8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkcount_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkcount_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkcount_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkcount_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkcount_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkcount_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkcount_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkcount_q8 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

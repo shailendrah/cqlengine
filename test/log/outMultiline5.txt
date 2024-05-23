@@ -1,0 +1,9 @@
++ 0.111,abcdef,1
++ ,ghijkl,2
++ 0.333,<xml>
+<name>ABCD</name>
+<desig>MTS</desig>
+</xml>,3
++ 0.444,xyz,4
++ 0.555,ABC,5
++ 0.212121,DEF,21

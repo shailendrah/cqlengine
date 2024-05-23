@@ -1,0 +1,25 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17180183_S1 (c1 char(30)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17180183_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17180183_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+create query tk17180183_q1 as 
+select
+   to_char(to_timestamp(c1), 'yyMMddHHmmssz') as alldata,
+   to_char(to_timestamp(c1), 'Day') as dayname,
+   to_char(to_timestamp(c1), 'MM/dd/yyyy') as mdy,
+   to_char(to_timestamp(c1), 'D') as dayofweek,
+   to_char(to_timestamp(c1), 'DDD') as dayofyear,
+   to_char(to_timestamp(c1), 'IW') as weekofyear,
+   to_char(to_timestamp(c1), 'h:mm a') as hrmn
+from
+   tk17180183_S1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17180183_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17180183_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17180183_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

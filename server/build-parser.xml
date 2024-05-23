@@ -1,0 +1,51 @@
+<project name="build-parser" default="gen.parser" basedir=".">
+
+    <!-- set the operating system specific properties -->
+    <condition property="isMac">
+        <os family="mac" />
+    </condition>
+
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>
+
+    <condition property="isUnix">
+        <!-- mac ox x is also considered a unix OS, therefore we need to negate this condition -->
+        <and>
+            <os family="unix" />
+            <not>
+                <os family="mac" />
+            </not>
+        </and>
+    </condition>
+
+    <condition property="yacc.bin" value="${project.parent.basedir}/tools/yacc.linux">
+        <isset property="isUnix" />
+    </condition>
+
+    <condition property="yacc.bin" value="${project.parent.basedir}/tools/yacc.macosx">
+        <isset property="isMac" />
+    </condition>
+
+    <condition property="yacc.bin" value="${project.parent.basedir}/tools/yacc.exe">
+        <isset property="isWindows" />
+    </condition>
+
+    <target name="gen.parser">
+        <!-- Generate the Parser. Enable the commented targets only when cql.yy is changed. -->
+       <!-- <exec dir="${project.build.generatedsrc}/oracle/cep/parser" executable="${yacc.bin}">
+            <arg value="-v" />
+            <arg value="-Jstack=1024" />
+            <arg value="-Jclass=Parser" />
+            <arg value="-Jpackage=oracle.cep.parser" />
+            <arg value="-Jthrows=java.lang.Exception" />
+            <arg value="-Jnorun" />
+            <arg file="${project.build.sourceDirectory}/oracle/cep/parser/cql.yy" />
+        </exec>
+        <exec dir="${project.build.generatedsrc}/oracle/cep/parser" executable="sh">
+           <arg value="${project.build.generatedsrc}/../../../utl/genParser.sh"/>
+        </exec>
+        -->
+    </target>
+
+</project>

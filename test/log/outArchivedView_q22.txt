@@ -1,0 +1,14 @@
+1000:+ 10,1.5,third query
+1000:+ 20,3.0,third query
+1000:+ 30,4.5,third query
+1000:+ 10,6.0,third query
+1000:+ 20,7.5,third query
+1100:+ 30,4.5,third query
+1500:- 30,4.5,third query
+2100:+ 10,7.0,third query
+3100:+ 50,5.0,third query
+4100:+ 30,3.5,third query
+4100:+ 20,4.25,third query
+4500:- 30,3.5,third query
+4700:- 10,7.0,third query
+5000:+ 20,3.0,third query

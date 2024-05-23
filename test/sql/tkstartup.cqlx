@@ -1,0 +1,3 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

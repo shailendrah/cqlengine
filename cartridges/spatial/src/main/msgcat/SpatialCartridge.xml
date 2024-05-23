@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2006 BEA Systems, Inc. -->
+<!DOCTYPE message_catalog PUBLIC "weblogic-message-catalog-dtd"  "http://www.bea.com/servers/wls710/dtd/msgcat.dtd">
+<message_catalog
+  i18n_package="com.oracle.cep.cartridge.spatial"
+  l10n_package="com.oracle.cep.cartridge.spatial"
+  subsystem="SpatialCartridge"
+  version="1.0"
+  baseid="2069000"
+  endid ="2069017"
+  loggables="true"
+  prefix="BEA">
+
+    <logmessage messageid="2069000" severity="error" methodtype="getter"
+                method="reservedServerContext(String name)">
+        <messagebody>
+            "{0}" is reserved for the server cartridge context.
+        </messagebody>
+        <messagedetail>
+            "{0}" is reserved for the server cartridge context.
+        </messagedetail>
+        <cause>
+             The reserved server cartridge context name was used for the application cartridge context name.
+        </cause>
+        <action>
+             Use other name.
+        </action>
+    </logmessage>
+
+    <logmessage messageid="2069001" severity="error" methodtype="getter"
+                method="invalidSpatialContext(String name, String newparam, int srid, String oldparam)">
+        <messagebody>
+            {0}({1}) cannot be registered. "{3}" is already using the same srid, please use other srid.
+        </messagebody>
+        <messagedetail>
+            "{3}" is already using the same srid.
+        </messagedetail>
+        <cause>
+             The same srid is already used either in the same application or from other application.
+        </cause>
+        <action>
+             Use other srid.
+        </action>
+    </logmessage>
+
+    <logmessage messageid="2069002" severity="error" methodtype="getter"
+                method="InvalidGeomTypeForContain()">
+        <messagebody>
+            The 'Contain' operator can only be used with GTYPE_POINT.
+        </messagebody>
+        <messagedetail>
+            The 'Contain' operator can only be used with GTYPE_POINT.
+        </messagedetail>
+        <cause>
+             Non-point geometry type is used for contain operator.
+        </cause>
+        <action>
+             Use point geometry type.
+        </action>
+    </logmessage>
+
+    <logmessage messageid="2069003" severity="error" methodtype="getter"
+                method="BufferingErrorUnknown()">
+        <messagebody>
+            The buffering operation has failed with the exception below.
+        </messagebody>
+        <messagedetail>
+            The buffering operation has failed with the exception below.
+        </messagedetail>
+        <cause>
+             The cause is unknown.
+        </cause>
+        <action>
+             Consult the message from the exception.
+        </action>
+    </logmessage>
+    
+    <logmessage messageid="2069004" severity="error" methodtype="getter"
+                method="BufferingErrorSRID()">
+        <messagebody>
+            The buffering operation has failed due to SRID mismatch.
+        </messagebody>
+        <messagedetail>
+            The buffering operation has failed because the SRID of the geometry does not match with that of the spatial context.
+        </messagedetail>
+        <cause>
+             The SRID of the geometry does not match with that of the spatial context.
+        </cause>
+        <action>
+             Make sure the geometry is created with the same SRID from the spatial context in use.
+        </action>
+    </logmessage>
+    
+    <logmessage messageid="2069005" severity="error" methodtype="getter"
+                method="ZeroToleranceForArcs()">
+        <messagebody>
+            Operations on geometries containing arcs must use non-zero tolerance. 
+        </messagebody>
+        <messagedetail>
+            Operations on geometries containing arcs must use non-zero tolerance. This is needed because arcs
+            must be densified. 
+        </messagedetail>
+        <cause>
+            Zero-tolerance used on geometries containing arcs.
+        </cause>
+        <action>
+             Make sure you specify a non-zero tolerance.
+        </action>
+    </logmessage>
+    
+    <logmessage messageid="2069006" severity="error" methodtype="getter"
+                method="Geodetic3DGeometryNotSupported(String op)">
+        <messagebody>
+            Operation "{0}" on geodetic 3D geometries not supported. 
+        </messagebody>
+        <messagedetail>
+            Operation "{0}" on geodetic 3D geometries not supported.
+        </messagedetail>
+        <cause>
+             Operation "{0}" on geodetic 3D geometries not supported.
+        </cause>
+        <action>
+             Change 3D geometry to use cartesian coordinates, or 
+             perform a Gnomonic transformation (projection) prior to invoking operation.
+        </action>
+    </logmessage>
+    
+     <logmessage messageid="2069007" severity="error" methodtype="getter"
+                method="EitherSolidOrPointInPolygon()">
+        <messagebody>
+            Containing geometry must either be a solid 3D geometry, or contained
+            geometry must be a point inside a 3D geometry. 
+        </messagebody>
+        <messagedetail>
+            Containing geometry must either be a solid 3D geometry, or contained
+            geometry must be a point inside a 3D geometry.
+        </messagedetail>
+        <cause>
+             Containing geometry must either be a solid 3D geometry, or contained
+            geometry must be a point inside a 3D geometry.
+        </cause>
+        <action>
+        </action>
+    </logmessage>
+    
+     <logmessage messageid="2069008" severity="error" methodtype="getter"
+                method="Compound3DGeometriesNotSupported(String op)">
+        <messagebody>
+          Operation "{0}" on compound 3D geometries is not supported.
+        </messagebody>
+        <messagedetail>
+          Operation "{0}" on compound 3D geometries is not supported.
+          Compound geometries are geometries that contain arcs in addition to lines.
+        </messagedetail>
+        <cause>
+          Compound 3D geometries are not supported.
+        </cause>
+        <action>
+          Use 3D geometries that do not contains arcs.
+        </action>
+    </logmessage>
+    
+ <logmessage messageid="2069009" severity="error"
+      method="UnknownGeometryError(String typ)">
+	    <messagebody>
+		Unknown geometry type : {0}.
+	    </messagebody>
+        <messagedetail>
+          Unknown geometry type : {0} is used.
+        </messagedetail>
+        <cause>
+          Unknown geometry type : {0} is used.
+        </cause>
+        <action>
+          Check the geometry type.
+        </action>
+  </logmessage>
+
+ <logmessage messageid="2069010" severity="error"
+      method="NotEnoughGeometryArguments(int required, int got)">
+    	<messagebody>
+		Not enough geometry arguments.
+    	</messagebody>
+        <messagedetail>
+          The number of arguments for the geometry is not enough : {0} is required but got only {1}.
+        </messagedetail>
+        <cause>
+          The number of arguments does not match.
+        </cause>
+        <action>
+          Check the geometry arguments.
+        </action>
+  </logmessage>
+
+ <logmessage messageid="2069011" severity="error"
+      method="MismatchedCoordinatesPairError(int dim)">
+	    <messagebody>
+		The number of coordinate does not match with the given dimension( {0} ).
+	    </messagebody>
+        <messagedetail>
+          The number of coordinate does not match with the given dimension( {0} ).
+        </messagedetail>
+        <cause>
+          The number of coordinates does not match.
+        </cause>
+        <action>
+          Check the geometry coordinates.
+        </action>
+  </logmessage>
+      
+ <logmessage messageid="2069012" severity="error"
+      method="InvalidGeometryType(String geom, String expType)">
+	    <messagebody>
+		The geometry type is not {1} : {0} ).
+	    </messagebody>
+        <messagedetail>
+          The geometry type is different from the expected type, {1} : {0} ).
+        </messagedetail>
+        <cause>
+          The geometry type is different from the expected geometry type: {1}
+        </cause>
+        <action>
+          Make sure the geometry type is {1}
+        </action>
+  </logmessage>
+      
+ <logmessage messageid="2069013" severity="error"
+      method="InvalidSRID(String geom, int srid)">
+	    <messagebody>
+		The srid of geometry is not {1} : {0} ).
+	    </messagebody>
+        <messagedetail>
+          The srid of geometry is different from the expected srid, {1} : {0} ).
+        </messagedetail>
+        <cause>
+          The srid is different from the expected srid: {1}
+        </cause>
+        <action>
+          Make sure the srid of geometry is {1}
+        </action>
+  </logmessage>
+
+ <logmessage messageid="2069014" severity="error"
+      method="InvalidDimension(String geom, int dim)">
+	    <messagebody>
+		The dimension of geometry is not {1} : {0}.
+	    </messagebody>
+        <messagedetail>
+          The dimension of geometry is different from the expected dimension, {1} : {0}.
+        </messagedetail>
+        <cause>
+          The dimension of geometry is different from the expected dimension: {1}
+        </cause>
+        <action>
+          Make sure the dimension of geometry is {1}
+        </action>
+  </logmessage>
+  <logmessage messageid="2069015" severity="error"
+      method="invalidArrayKey(String key)">
+	    <messagebody>
+	    	Invalid arrayKey({0}) : either it does not exist or the type is not array 
+	    </messagebody>
+        <messagedetail>
+          The arrayKey({0}) does not exist or the type is not array.
+        </messagedetail>
+        <cause>
+          Invalid arrayKey({0}) is used
+        </cause>
+        <action>
+          Make sure the arrayKey({0}) exists and the type is array.
+        </action>
+  </logmessage>  
+ <logmessage messageid="2069016" severity="error"
+      method="InvalidSRIDForCircle(int srid)">
+	    <messagebody>
+		The srid {0} is not supported for a circle.
+	    </messagebody>
+        <messagedetail>
+		The srid {0} is not supported for a circle.
+        </messagedetail>
+        <cause>
+          Invalid srid {0} is used for a circle.
+        </cause>
+        <action>
+          Make sure the srid is either 0 or 8307.
+        </action>
+  </logmessage>
+    <logmessage messageid="2069017" severity="error" methodtype="getter"
+                method="NonPositiveTolerance()">
+        <messagebody>
+           The tolerance value must be a positive number greater than zero.  
+        </messagebody>
+        <messagedetail>
+		Tolerance reflects the distance that two points can be apart and still be considered the same.The tolerance value must be a positive number greater than zero.  
+	</messagedetail>
+        <cause>
+            NonPositive tolerance used on geometries.
+        </cause>
+        <action>
+             Make sure you specify a Positive tolerance.
+        </action>
+    </logmessage>
+</message_catalog>

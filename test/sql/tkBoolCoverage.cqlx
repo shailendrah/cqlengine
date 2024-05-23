@@ -1,0 +1,363 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkBoolCoverage_S0 (c1 float, c2 integer) </CEP_DDL>
+<CEP_DDL> register stream tkBoolCoverage_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_S15(c1 timestamp, c2 integer) </CEP_DDL>
+<CEP_DDL> register stream tkBoolCoverage_SinpByte1 (c1 byte(10), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_S10(c1 char(10), c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_SIn1(c1 interval, c2 integer) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_STs(c1 timestamp, c2 timestamp) </CEP_DDL>
+<CEP_DDL> register stream tkBoolCoverage_SBigInt2(c1 bigint, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_S12(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_Smth(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_Syr(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkBoolCoverage_Sday(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create window tkBoolCoverage_range_slide(winrange int, winslide int) implement using "oracle.cep.test.userfunctions.TkRangeSlide" </CEP_DDL>
+<CEP_DDL> create window tkBoolCoverage_range_slide1(winrange int, winslide int) implement using "oracle.cep.test.userfunctions.TkRangeSlide" </CEP_DDL>
+<CEP_DDL> create function tkBoolCoverage_concat2(c1 char, c2 char) return char as language java name "oracle.cep.test.userfunctions.TkUsrConcat" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovS15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_SinpByte1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovByte1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_SIn1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovSIn1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_STs add source "<EndPointReference><Address>file://@TEST_DATA@/inpCovSTs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_SBigInt2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSBigInt-l-f2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_S12 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_Smth add source "<EndPointReference><Address>file://@TEST_DATA@/inpS-Curmth.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_Syr add source "<EndPointReference><Address>file://@TEST_DATA@/inpS-Curyr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkBoolCoverage_Sday add source "<EndPointReference><Address>file://@TEST_DATA@/inpS-Curday.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q0 as select * from tkBoolCoverage_S0 [range 1] where c1 < 0.2]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q1 as select a.c1, a.c2 from tkBoolCoverage_S0[rows 100] as a, tkBoolCoverage_S1[rows 100] as b where a.c1 <= b.c2]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q2 as select a.c1, a.c2 from tkBoolCoverage_S0[rows 100] as a, tkBoolCoverage_S1[rows 100] as b where a.c1 >= b.c2]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q3 as select a.c2 from tkBoolCoverage_S0[rows 100] as a, tkBoolCoverage_S1[rows 100] as b where a.c2 <= b.c1]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q4 as select tkBoolCoverage_S15.c2 from tkBoolCoverage_S15 where tkBoolCoverage_S15.c1 < to_timestamp("08/07/2006 11:13:48")]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q5 as select tkBoolCoverage_S15.c2 from tkBoolCoverage_S15 where tkBoolCoverage_S15.c1 <= to_timestamp("08/07/2006 11:13:48")]]> </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q6 as select tkBoolCoverage_S15.c2 from tkBoolCoverage_S15 where tkBoolCoverage_S15.c1 >= to_timestamp("08/07/2006 11:13:48") </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q7 as select tkBoolCoverage_S15.c2 from tkBoolCoverage_S15 where tkBoolCoverage_S15.c1 = to_timestamp("08/07/2006 11:13:48") </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q8 as select tkBoolCoverage_S15.c2 from tkBoolCoverage_S15 where tkBoolCoverage_S15.c1 != to_timestamp("08/07/2006 11:13:48") </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q9 as select * from tkBoolCoverage_SinpByte1 where c1 < hextoraw("abc")]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q10 as select * from tkBoolCoverage_SinpByte1 where c1 <= hextoraw("abc")]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q11 as select * from tkBoolCoverage_SinpByte1 where c1 > hextoraw("abc")]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q12 as select * from tkBoolCoverage_SinpByte1 where c1 >= hextoraw("abc")]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q13 as select * from tkBoolCoverage_SinpByte1 where c1 = hextoraw("abc3")]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q14 as select * from tkBoolCoverage_SinpByte1 where c1 != hextoraw("abc3")]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q15 as select * from tkBoolCoverage_S10 where c1 < "abc"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q16 as select * from tkBoolCoverage_S10 where c1 <= "abc"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q17 as select * from tkBoolCoverage_S10 where c1 > "ab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q18 as select * from tkBoolCoverage_S10 where c1 >= "ab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q19 as select * from tkBoolCoverage_SIn1 where c1 < INTERVAL "6 1:03:45.100" DAY TO SECOND]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q20 as select * from tkBoolCoverage_SIn1 where c1 <= INTERVAL "6 1:03:45.100" DAY TO SECOND]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q21 as select * from tkBoolCoverage_SIn1 where c1 > INTERVAL "6 1:03:45.100" DAY TO SECOND]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q22 as select * from tkBoolCoverage_SIn1 where c1 >= INTERVAL "6 1:03:45.100" DAY TO SECOND]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q23 as select * from tkBoolCoverage_SIn1 where c1 != INTERVAL "6 1:03:45.100" DAY TO SECOND]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q24 as select * from tkBoolCoverage_S1 [range 1] where (c1+20) < (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q25 as select * from tkBoolCoverage_S1 [range 1] where (c1+20) <= (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q26 as select * from tkBoolCoverage_S1 [range 1] where (c1+20) >=(c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q27 as select * from tkBoolCoverage_S1 [range 1] where (c1+10) != (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q28 as select * from tkBoolCoverage_S0 [range 1] where (c1+0.2) < (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q29 as select * from tkBoolCoverage_S0 [range 1] where (c1+0.2) <= (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q30 as select * from tkBoolCoverage_S0 [range 1] where (c1+0.2) > (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q31 as select * from tkBoolCoverage_S0 [range 1] where (c1+0.2) >= (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q32 as select * from tkBoolCoverage_S0 [range 1] where (c1+0.2) != (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q33 as select * from tkBoolCoverage_S10 where tkBoolCoverage_concat2(c1, "ab") < "abab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q34 as select * from tkBoolCoverage_S10 where tkBoolCoverage_concat2(c1, "ab") <= "abab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q35 as select * from tkBoolCoverage_S10 where tkBoolCoverage_concat2(c1, "ab") > "abab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q36 as select * from tkBoolCoverage_S10 where tkBoolCoverage_concat2(c1, "ab") >= "abab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q37 as select * from tkBoolCoverage_S10 where tkBoolCoverage_concat2(c1, "ab") != "abab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q38 as select * from tkBoolCoverage_STs where c2 < c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q39 as select * from tkBoolCoverage_STs where c2 <= c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q40 as select * from tkBoolCoverage_STs where c1 > c2]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q41 as select * from tkBoolCoverage_STs where c1 >= c2]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q42 as select * from tkBoolCoverage_STs where c2 = c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q43 as select * from tkBoolCoverage_STs where c2 != c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q44 as select * from tkBoolCoverage_STs where (tkBoolCoverage_STs.c1 - tkBoolCoverage_STs.c2) < INTERVAL "1095 0:0:0.0" DAY(4) TO SECOND ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q45 as select * from tkBoolCoverage_STs where (tkBoolCoverage_STs.c1 - tkBoolCoverage_STs.c2) <= INTERVAL "1095 0:0:0.0" DAY(4) TO SECOND ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q46 as select * from tkBoolCoverage_STs where (tkBoolCoverage_STs.c1 - tkBoolCoverage_STs.c2) > INTERVAL "730 0:0:0.0" DAY(3) TO SECOND ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q47 as select * from tkBoolCoverage_STs where (tkBoolCoverage_STs.c1 - tkBoolCoverage_STs.c2) >= INTERVAL "730 0:0:0.0" DAY(3) TO SECOND ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q48 as select * from tkBoolCoverage_STs where (tkBoolCoverage_STs.c1 - tkBoolCoverage_STs.c2) = INTERVAL "730 0:0:0.0" DAY(3) TO SECOND ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q49 as select * from tkBoolCoverage_STs where (tkBoolCoverage_STs.c1 - tkBoolCoverage_STs.c2) != INTERVAL "730 0:0:0.0" DAY(3) TO SECOND ]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q50 as select * from tkBoolCoverage_SinpByte1[rows 5] as a, tkBoolCoverage_SinpByte1[rows 5] as b where a.c1 < b.c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q51 as select * from tkBoolCoverage_SinpByte1[rows 5] as a, tkBoolCoverage_SinpByte1[rows 5] as b where a.c1 <= b.c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q52 as select * from tkBoolCoverage_SinpByte1[rows 5] as a, tkBoolCoverage_SinpByte1[rows 5] as b where a.c1 > b.c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q53 as select * from tkBoolCoverage_SinpByte1[rows 5] as a, tkBoolCoverage_SinpByte1[rows 5] as b where a.c1 >= b.c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q54 as select * from tkBoolCoverage_SinpByte1[rows 5] as a, tkBoolCoverage_SinpByte1[rows 5] as b where a.c1 = b.c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q55 as select * from tkBoolCoverage_SinpByte1[rows 5] as a, tkBoolCoverage_SinpByte1[rows 5] as b where a.c1 != b.c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q56 as select * from tkBoolCoverage_SBigInt2 [range 10] where (c1+14) < (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q57 as select * from tkBoolCoverage_SBigInt2 [range 10] where (c1+14) <= (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q58 as select * from tkBoolCoverage_SBigInt2 [range 10] where (c1+14) > (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q59 as select * from tkBoolCoverage_SBigInt2 [range 10] where (c1+14) >= (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q60 as select * from tkBoolCoverage_SBigInt2 [range 10] where (c1+14) = (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q61 as select * from tkBoolCoverage_SBigInt2 [range 10] where (c1+14) != (c1*2)]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q62 as select * from tkBoolCoverage_S0[rows 100], tkBoolCoverage_S1[rows 100] where tkBoolCoverage_S0.c2 < tkBoolCoverage_S1.c1]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q63 as select * from tkBoolCoverage_S0[rows 100], tkBoolCoverage_S1[rows 100] where tkBoolCoverage_S0.c2 >= tkBoolCoverage_S1.c1]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q64 as select * from tkBoolCoverage_SBigInt2 [range 10] where c1 = 14]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q65 as select * from tkBoolCoverage_S0 [range 1] where c1 = 0.2]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q66 as select * from tkBoolCoverage_S0 [range 1] where c1 > 0.2]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q67 as select * from tkBoolCoverage_S0 [range 1] where c1 != 0.2]]> </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q68 as select * from tkBoolCoverage_S10 where tkBoolCoverage_S10.c1 like "ab" </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q69 as select * from tkBoolCoverage_S10 where c1 = "abc"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q70 as select * from tkBoolCoverage_S10 where tkBoolCoverage_concat2(c1, "ab") like "abab"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q71 as select * from tkBoolCoverage_SIn1 where c1 = INTERVAL "6 1:03:45.100" DAY TO SECOND]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q72 as select * from tkBoolCoverage_S1 [range 1] where (c1+20) > (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q73 as select * from tkBoolCoverage_S0 [range 1] where (c1+0.2) = (c1*2)]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q74 as select * from tkBoolCoverage_S10 where tkBoolCoverage_concat2(c1, "ab") = "abab"]]> </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q75 as select tkBoolCoverage_S15.c2 from tkBoolCoverage_S15 where tkBoolCoverage_S15.c1 > to_timestamp("08/07/2006 11:13:48") </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q76 as select * from tkBoolCoverage_S0 [range 1] where c1 is null]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[create query tkBoolCoverage_q77 as select * from tkBoolCoverage_SinpByte1 where c1 is null]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkBoolCoverage_q78 as select * from tkBoolCoverage_SIn1 where c1 is null]]> </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q79 as select * from tkBoolCoverage_S12 [tkBoolCoverage_range_slide(10,5)] as R1</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q80 as select * from tkBoolCoverage_Smth[CurrentMonth] as R1</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q81 as select count(*) from tkBoolCoverage_Smth[CurrentMonth] as R1 group by R1.c1 </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q82 as select * from tkBoolCoverage_S12 [tkBoolCoverage_range_slide1(10,5)] as R1</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q83 as select * from tkBoolCoverage_Smth[CalendarMonth] as R1</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q84 as select * from tkBoolCoverage_Syr[CurrentYear] as R1</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q85 as select * from tkBoolCoverage_Syr[CalendarYear] as R1</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q86 as select * from tkBoolCoverage_Sday[CurrentDay] as R1</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q87 as select * from tkBoolCoverage_Sday[CalendarDay] as R1</CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q88 as select case when c2 < 25 then c2+5 when c2 > 25 then c2+10 end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q89 as select case when c2 < 25 then c2+5 when c2 > 25 then "abc" end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q90 as select case when c2 < 25 then c2+5 when c2 > 25 then null end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q91 as select case when c2 < 25 then null when c2 > 25 then null end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q92 as select case when c2 < 25 then c2+5 when c2 = 30 then c2+10 else c2+15 end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q93 as select case when c2 < 25 then c2+5 when c2 > 25 and c2 < 40 then c2+10 else c2+15 end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q94 as select case when c1 < 0.2 then c1+0.5 when c1 = 0.2 then c1+0.1 when c1>0.2 then c1+0.2 end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q95 as select case c2 when 10 then c1+0.5 when 20 then c1+0.1 when 30 then c1+0.2 else c1+0.3 end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q96 as select case to_float(tkBoolCoverage_S0.c2+10) when (tkBoolCoverage_S1.c2*100)+10 then tkBoolCoverage_S0.c1+0.5 when (tkBoolCoverage_S1.c2*100)+11 then tkBoolCoverage_S0.c1 else tkBoolCoverage_S0.c1+0.3 end from tkBoolCoverage_S0[rows 100], tkBoolCoverage_S1[rows 100]]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q97 as select * from tkBoolCoverage_S0 where case when c2 < 25 then c2+5 when c2 > 25 then c2+10 end > 25]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q98 as select case c2 when 10 then c1+0.5 when 20 then c1+0.1 when 30 then "abc" else c1+0.3 end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q99 as select case c2 when 10 then null when 20 then null when 30 then null else null end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q100 as select case c2 when 10 then c1+0.5 when 20 then c1+0.1 when 30 then c1+0.2 else c1+0.3 end from tkBoolCoverage_S0 where case c2 when 10 then c1+0.5 when 20 then c1+0.1 when 30 then c1+0.2 else c1+0.3 end > 0.2]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q101 as select case c1 when 0.1 then 0.1 when 0.2 then 0.2 when 0.3 then 0.3 end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q102 as select * from tkBoolCoverage_S12 [range 10 slide 100] </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q103 as select decode(c2, 10, c1+0.5, 20, c1+0.1, 30, c1+0.2, c1+0.3) from tkBoolCoverage_S0[range 1]</CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q104 as select decode(to_float(tkBoolCoverage_S0.c2+10), (tkBoolCoverage_S1.c2*100)+10, tkBoolCoverage_S0.c1+0.5, (tkBoolCoverage_S1.c2*100)+11 , tkBoolCoverage_S0.c1, tkBoolCoverage_S0.c1+0.3) from tkBoolCoverage_S0[rows 100], tkBoolCoverage_S1[rows 100] </CEP_DDL>
+<CEP_DDL> create query tkBoolCoverage_q105 as select decode(c2, 10, c1+0.5, 20 , c1+0.1, 30 , c1+0.2, c1+0.3) from tkBoolCoverage_S0 where decode(c2, 10, c1+0.5, 20, c1+0.1 , 30 , c1+0.2, c1+0.3 ) > 0.2 </CEP_DDL> 
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q106 as select * from tkBoolCoverage_S0 where case c2 when 10 then null when 20 then null else systimestamp() end > "07/06/2007 14:13:33"]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q107 as select case c2 when 10 then null when 20 then null else "abc" end from tkBoolCoverage_S0]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q108 as select * from tkBoolCoverage_S0[range 1] where case when c2 < 25 then null else  systimestamp() end > "07/06/2007 14:22:22"]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q109 as select case when c2 < 25 then null else "abc" end from tkBoolCoverage_S0[range 1]]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q110 as select case 5 when null then "null" when 5 then "five" else "abc" end from tkBoolCoverage_S0[range 1]]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q111 as select case 5 when concat(null,null) then "null" when 0.3 then "error" else "abc" end from tkBoolCoverage_S0[range 1]]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q112 as select case null when null then "null" when null+null then "something" when 5 then "five" else "abc" end from tkBoolCoverage_S0[range 1]]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q113 as select case null when 5 then "five" when null+null then "something" when to_timestamp(null) then "error"  else "abc" end from tkBoolCoverage_S0[range 1]]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q114 as select case length(null) when null then "null" when null-null then "length" when hextoraw(null) then "error" when 5 then "five"  else "abc" end from tkBoolCoverage_S0[range 1]]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkBoolCoverage_q115 as select case null when null then "null" when null then "length" when null then "hex2raw" else "abc" end from tkBoolCoverage_S0[range 1]]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0LT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0LTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0GTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0FLTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS15LT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS15LTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS15GTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS15ET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS15NET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16Nullb2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16LTE_b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16GT_b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16GTE_b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16ET_b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16NET_b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10LT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10LTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10GT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q18 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10GTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q19 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSIn1LT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q20 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSIn1LTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q21 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSIn1GT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q22 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSIn1GTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q23 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSIn1NE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q24 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS1CLT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q25 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS1CLTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q26 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS1CGTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q27 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS1CNE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q28 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0CFLT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q29 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0CFLTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q30 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0CFGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q31 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0CFGTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q32 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0CFNE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q33 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10CLT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q34 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10CLTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q35 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10CGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q36 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10CGTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q37 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS10CNE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q38 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsLT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q39 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsLTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q40 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q41 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsGTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q42 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q43 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsNET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q44 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsCILT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q45 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsCILTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q46 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsCIGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q47 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsCIGTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q48 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsCIET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q49 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSTsCINET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q50 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q51 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16LTEb2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q52 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16GTb2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q53 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16GTEb2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q54 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16ETb2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q55 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16NETb2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q56 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigintLT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q57 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigintLTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q58 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigintGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q59 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigintGTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q60 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigintET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q61 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigintNET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q62 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0NLT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q63 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0NGTE.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q64 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outbigintNullET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q65 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outfloatNullET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q66 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outfloatNullGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q67 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outfloatNullNET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q68 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcharNullLike.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q69 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outcharNullET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q70 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCcharNulllike.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q71 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outintervalNullET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q72 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outintNullGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q73 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCfloatNullGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q74 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCcharNullET.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q75 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCTsNullGT.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q76 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0IsNull.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q77 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outByteIsNull.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q78 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outIntervalIsNull.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q79 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS12great_rs.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q80 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS-Curmth.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q81 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSAggr-Curmth.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q83 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS-Calmth.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q84 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS-CurYr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q85 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS-CalYr.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q86 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS-CurDay.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q87 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS-CalDay.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q88 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_case.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q90 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_nullcase.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q92 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_elsecase.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q93 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_andcase.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q94 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_fltcase.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q95 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_simplecase.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q96 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0S1_simplecase.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q97 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_casewhere.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q100 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_wheresimplecase.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q101 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_simplecase1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q103 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_decode1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q104 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_decode2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q105 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_decode3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q106 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_elsesys.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q107 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_elsechar.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q108 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_syselse.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q109 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_charelse.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q110 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_compnonnull1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q112 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_compnull1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkBoolCoverage_q115 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0_allnulls.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q16 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q17 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q18 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q19 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q20 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q21 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q22 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q23 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q24 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q25 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q26 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q27 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q28 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q29 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q30 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q31 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q32 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q33 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q34 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q35 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q36 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q37 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q38 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q39 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q40 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q41 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q42 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q43 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q44 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q45 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q46 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q47 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q48 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q49 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q50 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q51 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q52 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q53 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q54 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q55 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q56 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q57 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q58 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q59 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q60 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q61 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q62 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q63 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q64 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q65 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q66 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q67 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q68 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q69 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q70 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q71 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q72 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q73 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q74 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q75 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q76 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q77 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q78 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q79 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q80 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q81 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q83 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q84 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q85 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q86 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q87 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q88 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q90 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q92 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q93 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q94 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q95 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q96 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q97 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q100 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q101 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q103 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q104 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q105 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q106 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q107 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q108 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q109 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q110 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q112 start </CEP_DDL>
+<CEP_DDL> alter query tkBoolCoverage_q115 start </CEP_DDL>
+<CEP_DDL> drop window tkBoolCoverage_range_slide </CEP_DDL>
+<CEP_DDL> drop query tkBoolCoverage_q82 </CEP_DDL>
+<CEP_DDL> drop window tkBoolCoverage_range_slide1 </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

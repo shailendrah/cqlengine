@@ -1,0 +1,855 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkmultistreampattern_S0 (c1 integer, c2 integer, c3 float, c4 char(32)) </CEP_DDL>
+<CEP_DDL> create stream tkmultistreampattern_S1 (c1 integer, c2 integer, d3 float, d4 char(32)) </CEP_DDL>
+<CEP_DDL> create stream tkmultistreampattern_S2 (c1 integer, c2 integer, e3 float, e4 char(32)) </CEP_DDL>
+<CEP_DDL> create stream tkmultistreampattern_S3 (f1 integer, f2 integer, f3 float, f4 char(32)) </CEP_DDL>
+<CEP_DDL> create stream tkmultistreampattern_SE1 (price float, volume bigint, symbol char(4)) </CEP_DDL>
+<CEP_DDL> create stream tkmultistreampattern_SE2 (price float, volume bigint, symbol char(4)) </CEP_DDL>
+<CEP_DDL> create stream tkmultistreampattern_SE3 (price float, volume bigint, symbol char(4)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkmultistreampattern_S0 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpMultiStreamPattern_S0.txt</Address></EndPointReference>"]]>  
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkmultistreampattern_S1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpMultiStreamPattern_S1.txt</Address></EndPointReference>"]]>  
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkmultistreampattern_S2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpMultiStreamPattern_S2.txt</Address></EndPointReference>"]]>  
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkmultistreampattern_S3 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpMultiStreamPattern_S1.txt</Address></EndPointReference>"]]>  
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkmultistreampattern_SE1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpMultiStreamPattern_SE1.txt</Address></EndPointReference>"]]>  
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkmultistreampattern_SE2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpMultiStreamPattern_SE2.txt</Address></EndPointReference>"]]>  
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkmultistreampattern_SE3 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpMultiStreamPattern_SE3.txt</Address></EndPointReference>"]]>  
+</CEP_DDL>
+
+
+<CEP_DDL> CREATE STREAM T(c1 integer, c2 integer, d2 integer, d3 integer, e2 integer, e3 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream T add source "<EndPointReference><Address>file://@TEST_DATA@/patternfieldinp.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> CREATE VIEW VJ0(s1 oracle.cep.test.java.S1, s2 oracle.cep.test.java.S2, s3 oracle.cep.test.java.S3) AS
+        SELECT oracle.cep.test.java.S1(c1,c2), oracle.cep.test.java.S2(c1,d2,d3), oracle.cep.test.java.S3(c1,e2,e3) FROM T </CEP_DDL>
+
+<CEP_DDL> <![CDATA[
+CREATE VIEW V0 AS SELECT * from tkmultistreampattern_S0
+]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[
+CREATE VIEW V1 AS SELECT c1, c2, d3 as c3, d4 as c4 from tkmultistreampattern_S1
+]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[
+CREATE VIEW V2 AS SELECT c1, c2, e3 as c3, e4 as c4 from tkmultistreampattern_S2
+]]>
+</CEP_DDL>
+
+<!-- Negative Test Cases -->
+
+<!-- Requires more than one sources -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY tkmultistreampattern_nq0 AS 
+SELECT T.*
+FROM (tkmultistreampattern_S1)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1
+
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 > 10),
+      B AS (B.c1 > A.c1)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Accessing non-common attribute without source reference -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_nq1 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0, tkmultistreampattern_S3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     A.c2 as Ac2
+  PATTERN (A)
+  DEFINE
+      A AS (1 = 1)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Positive Test Cases -->
+
+<!-- Tests with common attributes -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q0 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0, tkmultistreampattern_S1 AS S1)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q1 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0, (select * from tkmultistreampattern_S1) AS S1)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q2 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0, tkmultistreampattern_S1, tkmultistreampattern_S2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q3 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0 AS S0, 
+     ((select * from tkmultistreampattern_S1) 
+           UNION ALL (select * from tkmultistreampattern_S2)) AS S12)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q4 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0 AS S0,
+         (select * from tkmultistreampattern_S1 
+                where d4 = 'CEP' and d3 > 10.0 and d3 < 40.0) AS S1)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q5 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0 AS S0,
+         (select c1, c2 from tkmultistreampattern_S1 group by c1, c2) AS S1)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q6 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0,
+         (select c1, c2, d3 as c3, d4 as c4 from tkmultistreampattern_S1) AS S1,
+         (select c1, c2, e3 as c3, e4 as c4 from tkmultistreampattern_S2) AS S2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2,
+     A.c3 as Ac3,
+     B.c3 as Bc3,
+     A.c4 as Ac4,
+     B.c4 as Bc4
+
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q7 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0, (select c1 from tkmultistreampattern_S1) AS S1)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1
+
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 > 10),
+      B AS (B.c1 > A.c1)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Tests involving views -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q8 AS
+SELECT T.*
+FROM (V0, V1, V2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2,
+     A.c3 as Ac3,
+     B.c3 as Bc3,
+     A.c4 as Ac4,
+     B.c4 as Bc4
+
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q9 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0, V1, 
+          (SELECT c1, c2, e3 as c3, e4 as c4 from tkmultistreampattern_S2) AS S2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c1 as Ac1,
+     B.c1 as Bc1,
+     A.c2 as Ac2,
+     B.c2 as Bc2,
+     A.c3 as Ac3,
+     B.c3 as Bc3,
+     A.c4 as Ac4,
+     B.c4 as Bc4
+
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c1 = 10),
+      B AS (B.c2 > A.c2)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Testing the attributes access via source name & alias -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q10 AS
+SELECT T.*
+FROM (tkmultistreampattern_S0, tkmultistreampattern_S3 As S3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.$streamName as name,
+     A.tkmultistreampattern_S0.c1 as Ac1,
+     A.tkmultistreampattern_S0.c2 as Ac2,
+     A.S3.f1 as Af1,
+     A.S3.f2 as Af2
+  PATTERN (A)
+  DEFINE
+      A AS (1 = 1)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Testing the output time order of the multi streams -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q11 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+     A.SE1.price  as SE1_price,
+     A.SE1.volume as SE1_volume,
+     A.SE1.symbol as SE1_symbol,
+     A.SE2.price  as SE2_price,
+     A.SE2.volume as SE2_volume,
+     A.SE2.symbol as SE2_symbol,
+     A.SE3.price  as SE3_price,
+     A.SE3.volume as SE3_volume,
+     A.SE3.symbol as SE3_symbol
+  PATTERN (A)
+  DEFINE
+      A AS (1 = 1)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q12 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1, tkmultistreampattern_SE2 AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+     A.tkmultistreampattern_SE1.price  as SE1_price,
+     A.tkmultistreampattern_SE1.volume as SE1_volume,
+     A.tkmultistreampattern_SE1.symbol as SE1_symbol,
+     A.SE2.price  as SE2_price,
+     A.SE2.volume as SE2_volume,
+     A.SE2.symbol as SE2_symbol,
+     A.SE3.price  as SE3_price,
+     A.SE3.volume as SE3_volume,
+     A.SE3.symbol as SE3_symbol
+  PATTERN (A)
+  DEFINE
+      A AS (1 = 1)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q13 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1, (select symbol, price, volume from tkmultistreampattern_SE2) AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+     A.tkmultistreampattern_SE1.price  as SE1_price,
+     A.tkmultistreampattern_SE1.volume as SE1_volume,
+     A.tkmultistreampattern_SE1.symbol as SE1_symbol,
+     A.SE2.price  as SE2_price,
+     A.SE2.volume as SE2_volume,
+     A.SE2.symbol as SE2_symbol,
+     A.SE3.price  as SE3_price,
+     A.SE3.volume as SE3_volume,
+     A.SE3.symbol as SE3_symbol
+  PATTERN (A)
+  DEFINE
+      A AS (1 = 1)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Filtering the tuples based on the stream name -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q14 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+     X.price as SE1_price,
+     Y.price as SE2_price
+  PATTERN (X Y)
+  DEFINE
+      X AS (X.$streamName = 'SE1' AND X.symbol = 'ORCL'),
+      Y AS (Y.$streamName = 'SE2' AND Y.symbol = 'ORCL')
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Finds the pattern for immediate increase (next tuple) in price from SE1 to SE2 for ORCL -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q15 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price
+  PATTERN (A B)
+  DEFINE
+      A AS (A.$streamName = 'SE1' AND A.symbol = 'ORCL'),
+      B AS (B.price > A.price AND B.$streamName = 'SE2' AND B.symbol = 'ORCL')
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Finds the pattern for decrease in price from SE1 to SE2 for ORCL -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q16 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price
+  PATTERN (A X* B)
+  DEFINE
+      A AS (A.$streamName = 'SE1' AND A.symbol = 'ORCL'),
+      X AS (X.$streamName != 'SE2' OR X.symbol != 'ORCL'),
+      B AS (B.$streamName = 'SE2' AND B.symbol = 'ORCL' AND B.price < A.price)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Finds the pattern for increase in price from SE1 to SE2 partitioned by symbols -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q17 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  PARTITION BY symbol
+  MEASURES
+	 $streamName   as name,
+     symbol as symbol,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price
+  PATTERN (A B)
+  DEFINE
+      A AS (A.$streamName = 'SE1'),
+      B AS (B.$streamName = 'SE2' AND B.price > A.price)
+) as T
+]]>
+</CEP_DDL>
+
+<!-- Finds the pattern for consecutive increase in price in the three streams partitioned by symbols -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q18 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2, tkmultistreampattern_SE3 AS SE3)
+MATCH_RECOGNIZE
+(
+  PARTITION BY symbol
+  MEASURES
+	 $streamName   as name,
+     symbol as symbol,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price,
+     C.price as SE3_last_price
+  PATTERN (A B C)
+  DEFINE
+      A AS (A.$streamName = 'SE1'),
+      B AS (B.$streamName = 'SE2' AND B.price > A.price),
+      C AS (C.$streamName = 'SE3' AND C.price > B.price)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q19 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, (select * from tkmultistreampattern_SE2 where volume > 30000000) AS SE2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+     volume as volume,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price
+  PATTERN (A X* B)
+  DEFINE
+      A AS (A.$streamName = 'SE1' AND A.symbol = 'ORCL'),
+      X AS (X.$streamName != 'SE2' OR X.symbol != 'ORCL'),
+      B AS (B.$streamName = 'SE2' AND B.symbol = 'ORCL' AND B.price < A.price)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q20 AS
+SELECT K.*
+FROM (
+	  ( SELECT T.*
+		FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2)
+		MATCH_RECOGNIZE
+		(
+		  PARTITION BY symbol
+		  MEASURES
+			 symbol as symbol,
+			 B.price as price
+		  PATTERN (A B)
+		  DEFINE
+			  A AS (A.$streamName = 'SE1'),
+			  B AS (B.$streamName = 'SE2' AND B.price > A.price)
+		) as T
+	 ) AS SE12, tkmultistreampattern_SE3 AS SE3)
+	 
+MATCH_RECOGNIZE
+(
+  PARTITION BY symbol
+  MEASURES
+	 $streamName   as name,
+     symbol as symbol,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price
+  PATTERN (A B)
+  DEFINE
+      A AS (A.$streamName = 'SE12'),
+      B AS (B.$streamName = 'SE3' AND B.price > A.price)
+) as K
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q21 AS
+SELECT T.*
+FROM (tkmultistreampattern_SE1 AS SE1, (select * from tkmultistreampattern_SE2 where volume > 30000000) AS SE2)
+MATCH_RECOGNIZE
+(
+  PARTITION BY symbol
+  MEASURES
+	 $streamName   as name,
+     volume as volume,
+     symbol as symbol,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price,
+     count(X.price) as XCount,
+     avg(X.price) as avg_price
+  PATTERN (A X* B)
+  DEFINE
+      A AS (A.$streamName = 'SE1' AND A.symbol = 'ORCL'),
+      X AS (X.$streamName != 'SE2' OR X.symbol != 'ORCL'),
+      B AS (B.$streamName = 'SE2' AND B.symbol = 'ORCL' AND B.price < A.price)
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q22 AS
+SELECT T.symbol, count(T.symbol)
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+	 symbol       as symbol,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price
+  PATTERN (A B)
+  DEFINE
+      A AS (A.$streamName = 'SE1'),
+      B AS (B.price > A.price AND B.$streamName = 'SE2')
+) as T group by symbol
+]]>
+</CEP_DDL>
+
+<!-- Testing with Java types
+We need to filter by $streamName to access the attribute/method
+because tuple attribute values of other invovling streams will have null values
+hence it will result Null Exception
+-->
+<CEP_DDL>
+<![CDATA[  
+CREATE QUERY tkmultistreampattern_q23 AS
+  SELECT M.As1
+    FROM (VJ0, VJ0 AS VJ1)
+      MATCH_RECOGNIZE (
+       MEASURES A.s1.getMeC1() as As1
+       PATTERN(A)
+       DEFINE
+	    A as (A.$streamName = "VJ0") AND (A.VJ0.s1.getMeC1() > 10)
+      ) as M
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[  
+CREATE QUERY tkmultistreampattern_q24 AS
+  SELECT M.As1
+    FROM (VJ0, VJ0 AS VJ1)
+      MATCH_RECOGNIZE (
+       MEASURES A.s1.c1 as As1
+       PATTERN(A)
+       DEFINE
+	    A as (A.$streamName = "VJ0") AND (A.VJ0.s1.c1 > 10)
+      ) as M
+]]>
+</CEP_DDL>
+
+<!-- Testing with Pseudo columns -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q25 AS
+SELECT T.symbol, T.atime, T.btime
+FROM (tkmultistreampattern_SE1 AS SE1, tkmultistreampattern_SE2 AS SE2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+	 symbol       as symbol,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price,
+	 A.ELEMENT_TIME as atime,
+	 B.ELEMENT_TIME as btime
+  PATTERN (A B)
+  DEFINE
+      A AS (A.$streamName = 'SE1'),
+      B AS (B.price > A.price AND B.$streamName = 'SE2')
+) as T
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY tkmultistreampattern_q26 AS
+SELECT T.symbol, T.atime, T.btime
+FROM (tkmultistreampattern_SE1 AS SE1, (select ELEMENT_TIME, symbol, price from tkmultistreampattern_SE2) AS SE2)
+MATCH_RECOGNIZE
+(
+  MEASURES
+	 $streamName   as name,
+	 symbol       as symbol,
+     A.price as SE1_last_price,
+     B.price as SE2_last_price,
+	 A.ELEMENT_TIME as atime,
+	 B.ELEMENT_TIME as btime
+  PATTERN (A B)
+  DEFINE
+      A AS (A.$streamName = 'SE1'),
+      B AS (B.price > A.price AND B.$streamName = 'SE2')
+) as T
+]]>
+</CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q0 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q0.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q1.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q2 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q2.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q3 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q3.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q4 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q4.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q5 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q5.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q6 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q6.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q7 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q7.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q8 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q8.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q9 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q9.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q10 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q10.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q11 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q11.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q12 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q12.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q13 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q13.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q14 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q14.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q15 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q15.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q16 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q16.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q17 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q17.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q18 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q18.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q19 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q19.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q20 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q20.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q21 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q21.txt</Address></EndPointReference>"]]> 
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q22 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q22.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q23 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q23.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q24 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q24.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q25 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q25.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkmultistreampattern_q26 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtkmultistreampattern_q26.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> alter query tkmultistreampattern_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q16 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q17 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q18 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q19 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q20 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q21 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q22 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q23 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q24 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q25 start </CEP_DDL>
+<CEP_DDL> alter query tkmultistreampattern_q26 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+
+<CEP_DDL> drop query tkmultistreampattern_q0 </CEP_DDL>
+<CEP_DDL> drop query tkmultistreampattern_q1 </CEP_DDL>
+<CEP_DDL> drop query tkmultistreampattern_q2 </CEP_DDL>
+<CEP_DDL> drop query tkmultistreampattern_q3 </CEP_DDL>
+<CEP_DDL> drop query tkmultistreampattern_q4 </CEP_DDL>
+<CEP_DDL> drop query tkmultistreampattern_q5 </CEP_DDL>	
+</CEP>

@@ -1,0 +1,4 @@
+1001:+ true,true,true,false,true,true,false
+1001:- true,true,true,false,true,true,false
+1000001:+ true,true,true,false,true,true,false
+1000001:- true,true,true,false,true,true,false

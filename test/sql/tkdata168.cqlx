@@ -1,0 +1,244 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream SColtAggrFunc(c1 integer, c2 float, c3 double, c4 bigint)</CEP_DDL>
+<CEP_DDL><![CDATA[alter stream SColtAggrFunc add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpSColtAggrFunc.txt</Address></EndPointReference>"]]></CEP_DDL>
+
+
+
+    
+
+
+
+
+
+
+
+<CEP_DDL>create query qColtAggr2 as select correlation(c3, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr2 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr2.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr2 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr3 as select covariance(c3, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr3 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr3.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr3 start</CEP_DDL>
+    
+
+
+
+
+
+
+<CEP_DDL>create query qColtAggr6 as select geometricMean(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr6 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr6.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr6 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>create query qColtAggr7 as select geometricMean1(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr7 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr7.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr7 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr8 as select harmonicMean(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr8 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr8.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr8 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>create query qColtAggr12 as select kurtosis(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr12 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr12.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr12 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr14 as select lag1(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr14 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr14.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr14 start</CEP_DDL>
+
+
+
+
+
+
+<CEP_DDL>create query qColtAggr16 as select mean(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr16 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr16.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr16 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr17 as select meanDeviation(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr17 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr17.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr17 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr18 as select median(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr18 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr18.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr18 start</CEP_DDL>
+
+
+
+
+
+
+<CEP_DDL>create query qColtAggr21 as select moment(c3, c1, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr21 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr21.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr21 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr22 as select pooledMean(c3, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr22 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr22.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr22 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr23 as select pooledVariance(c3, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr23 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr23.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr23 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>create query qColtAggr24 as select product(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr24 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr24.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr24 start</CEP_DDL>
+
+
+
+
+
+
+<CEP_DDL>create query qColtAggr27 as select quantileInverse(c3, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr27 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr27.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr27 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr29 as select rankInterpolated(c3, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr29 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr29.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr29 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr30 as select rms(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr30 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr30.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr30 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>create query qColtAggr31 as select sampleKurtosis(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr31 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr31.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr31 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr33 as select sampleKurtosisStandardError(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr33 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr33.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr33 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>create query qColtAggr34 as select sampleSkew(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr34 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr34.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr34 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr36 as select sampleSkewStandardError(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr36 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr36.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr36 start</CEP_DDL>
+
+
+
+
+
+
+
+<CEP_DDL>create query qColtAggr38 as select sampleVariance(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr38 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr38.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr38 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>create query qColtAggr41 as select skew(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr41 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr41.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr41 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr44 as select standardDeviation(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr44 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr44.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr44 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr45 as select standardError(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr45 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr45.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr45 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr48 as select sumOfInversions(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr48 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr48.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr48 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr49 as select sumOfLogarithms(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr49 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr49.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr49 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>create query qColtAggr50 as select sumOfPowerDeviations(c3, c1, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr50 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr50.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr50 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr52 as select sumOfPowers(c3, c1) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr52 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr52.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr52 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr53 as select sumOfSquaredDeviations(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr53 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr53.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr53 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr54 as select sumOfSquares(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr54 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr54.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr54 start</CEP_DDL>
+
+
+
+
+
+
+
+<CEP_DDL>create query qColtAggr57 as select variance(c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr57 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr57.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr57 start</CEP_DDL>
+
+
+
+<CEP_DDL>create query qColtAggr58 as select weightedMean(c3, c3) from SColtAggrFunc</CEP_DDL>
+<CEP_DDL><![CDATA[alter query qColtAggr58 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outSColtAggr58.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL>alter query qColtAggr58 start</CEP_DDL>
+
+
+
+
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

@@ -1,0 +1,14 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create relation tk16769886_R1 (saledate bigint, profit integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tk16769886_R1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16769886_R1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create view tk16769886_v1(SaleDate timestamp, Profit integer) as select to_timestamp(saledate * 1000000000l) as SaleDate, profit as Profit from tk16769886_R1</CEP_DDL>
+<CEP_DDL> create query tk16769886_q1 as SELECT extract("year",SaleDate) AS YEAR_SaleDate,  to_int(to_char(SaleDate, 'DDD')) AS DAYOFYEAR_SaleDate,  extract("hour",SaleDate) AS HOUR_SaleDate,  extract("minute",SaleDate) AS MINUTE_SaleDate,  SUM(Profit) AS SUMProfit FROM tk16769886_v1[range 10 minutes on SaleDate slide 1 minute] group by extract("year",SaleDate), to_int(to_char(SaleDate, 'DDD')), extract("hour",SaleDate), extract("minute",SaleDate) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16769886_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16769886_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk16769886_q1 start</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

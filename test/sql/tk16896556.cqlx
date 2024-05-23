@@ -1,0 +1,25 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk16896556_S1 (product_id bigint, name char(20), price bigint) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk16896556_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16896556_S1.txt</Address></EndPointReference>"]]></CEP_DDL>
+
+<!-- q1 has syntactic error (parser error) as the keyword 'like' is mis-spelled. q1 would throw error but q2 is correct and should execute. -->
+<CEP_DDL><![CDATA[ create query tk16896556_q1 as 
+		select T.badProductId as product_id, T.name as name, T.trendNumber as trendNumber, T.firstValue as firstValue, T.lastValue as lastValue from tk16896556_S1
+		MATCH_RECOGNIZE(PARTITION BY product_id MEASURES A.product_id as badProductId, A.name as name, count(A.product_id) as trendNumber, 
+				sum(A.price) as sumValue, first(A.price) as firstValue, last(A.price) as lastValue 
+				INCLUDE TIMER EVENTS 
+				PATTERN (A+) DURATION 5 seconds
+				DEFINE A as A.name lik 'BOSS' and count(A.*)<3 ) as T ]]>
+</CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk16896556_q2 as 
+		select T.badProductId as product_id, T.name as name, T.trendNumber as trendNumber, T.firstValue as firstValue, T.lastValue as lastValue from tk16896556_S1
+		MATCH_RECOGNIZE(PARTITION BY product_id MEASURES A.product_id as badProductId, A.name as name, count(A.product_id) as trendNumber, 
+				sum(A.price) as sumValue, first(A.price) as firstValue, last(A.price) as lastValue 
+				INCLUDE TIMER EVENTS 
+				PATTERN (A+) DURATION 5 seconds
+				DEFINE A as A.name like 'BOSS' and count(A.*)<3 ) as T ]]>
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16896556_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16896556.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tk16896556_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

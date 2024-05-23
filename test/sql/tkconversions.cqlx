@@ -1,0 +1,82 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkconversions_S1(c1 integer, c2 bigint, c3 float, c4 double, c5 interval, c6 timestamp, c7 char(10), c8 boolean) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkconversions_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkconversions_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create function tkconversions_concat(c1 char, c2 char) return char as language java name "oracle.cep.test.userfunctions.TkUsrConcat"</CEP_DDL>
+
+<!-- test to_char() conversions -->
+<CEP_DDL> create query tkconversions_qToChar1 as select to_char(87876423), to_char(-491),  to_char(0) from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar2 as select length(to_char(87876423)), length(to_char(-491)), length(to_char(0)) from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar3 as select to_char(c1),to_char(c2), to_char(c3), to_char(c4), to_char(c5), to_char(c6) from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar4 as select length(to_char(c1)),length(to_char(c2)), length(to_char(c3)), length(to_char(c4)), length(to_char(c5)), length(to_char(c6)) from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar5 as select to_char(878.76423), to_char(to_timestamp("08/07/2006 11:13:48")), to_char(INTERVAL "2 1:01:45.23" DAY TO SECOND) from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar6 as select length(to_char(878.76423)), length(to_char(to_timestamp("08/07/2006 11:13:48"))), length(to_char(INTERVAL "2 1:01:45.23" DAY TO SECOND)) from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar7 as select concat(c1,c1), 
+                                                        concat(c2,c2),
+                                                        concat(c3,c3),
+                                                        concat(c4,c4),
+                                                        concat(c5,c5),
+                                                        concat(c6,c6),
+                                                        concat(c7,c7) from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar8 as select concat(c1,c2), 
+                                                        concat(c2,c7),
+                                                        concat(c3,c1),
+                                                        concat(c2,c4),
+                                                        concat(c7,c5),
+                                                        concat(c6,c1),
+                                                        concat(c7,"hello") from tkconversions_S1</CEP_DDL>
+
+<CEP_DDL> create query tkconversions_qToChar9 as select to_char(null),
+                                                        length(to_char(null)),
+                                                        length(null),
+                                                        concat(c1, null),
+                                                        concat(null, null),
+                                                        to_char(concat(null, null)),
+                                                        concat(null, c7) from tkconversions_S1</CEP_DDL> 
+
+<CEP_DDL> create query tkconversions_qToChar10 as select to_char(c8), to_char(true), to_char(false) 
+                                                         from tkconversions_S1</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToChar10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToChar10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkconversions_qToChar1 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar2 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar3 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar4 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar5 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar6 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar7 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar8 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar9 start</CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToChar10 start</CEP_DDL>
+
+<!-- test to_bigint() conversions -->
+<CEP_DDL> create query tkconversions_qToBigint1 as select to_bigint(c6) from tkconversions_S1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToBigint1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToBigint1.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToBigint1 start</CEP_DDL>
+
+<!-- test to_float() conversions -->
+<!-- test to_double() conversions -->
+
+<!-- test to_timestamp() conversions -->
+<CEP_DDL> create query tkconversions_qToTimestamp1 as select to_timestamp(1091902428000000000L) from tkconversions_S1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkconversions_qToTimestamp1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tkconversions_qToTimestamp1.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL> alter query tkconversions_qToTimestamp1 start</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

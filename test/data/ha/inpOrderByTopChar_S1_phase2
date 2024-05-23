@@ -1,0 +1,6 @@
+i, c 20, TOF
+1000 F 60, "test string"
+1000 F 70, "oracle"
+1000 F 80, "oracle"
+1000 F 90, "ibm"
+1000 T 100, "apple"

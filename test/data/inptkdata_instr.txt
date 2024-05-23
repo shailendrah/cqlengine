@@ -1,0 +1,6 @@
+c 30	
+1000 "Corporate Floor"
+2000 "Corporate"
+3000 "Welcome to PSOUG.org"
+4000 "Tech on the net"
+h 200000000

@@ -1,0 +1,214 @@
+<!-- XML Schema definition for Route Response from the routing engine -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     elementFormDefault="qualified">
+
+<xsd:simpleType name="nonNegativeDecimal">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minInclusive value="0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="positiveDecimal">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minExclusive value="0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="distanceUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="mile"/>
+    <xsd:enumeration value="km"/>
+    <xsd:enumeration value="kilometer"/>
+    <xsd:enumeration value="meter"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="timeUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="minute"/>
+    <xsd:enumeration value="hour"/>
+    <xsd:enumeration value="second"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="edgeIdElement">
+  <xsd:restriction base="xsd:string">
+    <xsd:pattern value="[-0-9,]+"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="edgeIdList">
+  <xsd:list itemType="edgeIdElement"/>
+</xsd:simpleType>
+
+<xsd:simpleType name="edgePercentage">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minInclusive value="0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="emptyString">
+  <xsd:restriction base="xsd:string">
+    <xsd:maxLength value="0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="latitude">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minInclusive value="-90.0"/>
+    <xsd:maxInclusive value="90.0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="longitude">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minInclusive value="-180.0"/>
+    <xsd:maxInclusive value="180.0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:complexType name="lineString">
+  <xsd:sequence>
+    <xsd:element name="coordinates" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="geometry">
+  <xsd:sequence>
+    <xsd:element name="LineString" type="lineString" minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+</xsd:complexType>
+ 
+<xsd:complexType name="outputLocation">
+  <xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
+  <xsd:attribute name="longitude" use="required">
+    <xsd:simpleType>
+      <xsd:union memberTypes="longitude emptyString" />
+    </xsd:simpleType>
+  </xsd:attribute>
+  <xsd:attribute name="latitude" use="required">
+    <xsd:simpleType>
+      <xsd:union memberTypes="latitude emptyString" />
+    </xsd:simpleType>
+  </xsd:attribute>
+  <xsd:attribute name="house_number" type="xsd:string" use="required"/>
+  <xsd:attribute name="street" type="xsd:string" use="required"/>
+  <xsd:attribute name="city" type="xsd:string" use="required"/>
+  <xsd:attribute name="state" type="xsd:string" use="required"/>
+  <xsd:attribute name="country" type="xsd:string" use="required"/>
+  <xsd:attribute name="driving_side" use="required">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="L"/>
+        <xsd:enumeration value="N"/>
+        <xsd:enumeration value="R"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:attribute>
+  <xsd:attribute name="postal_code" type="xsd:string" use="required"/>
+  <xsd:attribute name="edge_id" type="xsd:long" use="required"/>
+  <xsd:attribute name="percent" type="edgePercentage" use="required"/>
+</xsd:complexType>
+ 
+<xsd:complexType name="segmentType">
+  <xsd:sequence>
+    <xsd:element name="segment_geometry" type="geometry" minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="segment_edge_ids" type="edgeIdList" minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+  <xsd:attribute name="sequence" type="xsd:positiveInteger" use="required"/>
+  <xsd:attribute name="instruction" type="xsd:string" use="required"/>
+  <xsd:attribute name="distance" type="nonNegativeDecimal" use="required"/>
+  <xsd:attribute name="time" type="nonNegativeDecimal" use="required"/>
+</xsd:complexType>
+ 
+ <xsd:element name="route_response" type="routeResponse" />
+
+<!--
+<xsd:complexType name="routeResponse">
+  <xsd:sequence>
+    <xsd:element name="route" minOccurs="1" maxOccurs="1">
+      <xsd:simpleType>
+        <xsd:union memberTypes="multiRouteType routeType"/>
+      </xsd:simpleType>
+    </xsd:element>
+  </xsd:sequence>
+</xsd:complexType> 
+ -->
+<xsd:complexType name="routeResponse">
+  <xsd:sequence>
+    <xsd:element name="route" type="routeType" minOccurs="1" maxOccurs="1">
+    </xsd:element>
+  </xsd:sequence>
+</xsd:complexType> 
+  
+<!--  
+<xsd:complexType name="multiRouteType">
+  <xsd:sequence>
+    <xsd:element name="route_geometry" type="geometry" 
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="route_edge_ids" type="edgeIdList" 
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="start_location" type="outputLocation" 
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="end_location" type="outputLocation" 
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="subroute" minOccurs="1" maxOccurs="unbounded">
+      <xsd:complexType>
+        <xsd:sequence>
+          <xsd:element name="subroute_geometry" type="geometry"
+                       minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="subroute_edge_ids" type="edgeIdList" 
+                       minOccurs="0" maxOccurs="1"/>
+          <xsd:element name="start_location" type="outputLocation" 
+                       minOccurs="0" maxOccurs="1"/>
+         <xsd:element name="segment" type="segmentType" 
+                      minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element name="end_location" type="outputLocation" 
+                       minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>   
+        <xsd:attribute name="id" type="xsd:nonNegativeInteger"
+                       use="required"/>
+        <xsd:attribute name="step_count" type="xsd:nonNegativeInteger" 
+                       use="required"/>
+        <xsd:attribute name="distance" type="nonNegativeDecimal"
+                       use="required"/>
+        <xsd:attribute name="distance_unit" type="distanceUnit"
+                       use="required"/>
+        <xsd:attribute name="time" type="nonNegativeDecimal" use="required"/>
+        <xsd:attribute name="time_unit" type="timeUnit" use="required"/>
+        <xsd:attribute name="start_location" type="xsd:positiveInteger"
+                       use="required"/>
+        <xsd:attribute name="end_location" type="xsd:positiveInteger"
+                       use="required"/> 
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:sequence>
+</xsd:complexType>
+-->
+
+<xsd:complexType name="routeType">
+  <xsd:sequence>
+    <xsd:element name="route_geometry" type="geometry" 
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="route_edge_ids" type="edgeIdList" 
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="start_location" type="outputLocation" 
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="segment" type="segmentType"
+                 minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="end_location" type="outputLocation" 
+                 minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>       
+  <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+  <xsd:attribute name="step_count" type="xsd:nonNegativeInteger" 
+                 use="required"/>
+  <xsd:attribute name="distance" type="nonNegativeDecimal" use="required"/>
+  <xsd:attribute name="distance_unit" type="distanceUnit" use="required"/>
+  <xsd:attribute name="time" type="nonNegativeDecimal" use="required"/>
+  <xsd:attribute name="time_unit" type="timeUnit" use="required"/>
+  <xsd:attribute name="start_location" type="xsd:positiveInteger"
+                 use="required"/>
+  <xsd:attribute name="end_location" type="xsd:positiveInteger"
+                 use="required"/>
+</xsd:complexType>
+</xsd:schema>

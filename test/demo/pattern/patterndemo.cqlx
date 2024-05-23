@@ -1,0 +1,11 @@
+<CEP>
+<CEP_DDL> create stream S0 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> alter stream S0 add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/demo/pattern/inpPatternDemo2.txt?delay=2</Address></EndPointReference>" </CEP_DDL>
+<CEP_DDL><![CDATA[ create query q1 as select T.Atime, T.Atime from S0 MATCH_RECOGNIZE ( MEASURES A.c1 as Atime PATTERN(A B* C) DEFINE A as A.c2 = 1, B as ((B.c2 != 5) AND (B.c1 <= A.c1 + 5)), C as C.c1 > (A.c1 + 5)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query q2 as select * from S0]]> </CEP_DDL>
+<CEP_DDL> alter query q1 add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.demo.pattern.OutputBean</ClassName><Arguments><Argument>ATime</Argument></Arguments></Address></EndPointReference>" </CEP_DDL>
+<CEP_DDL> alter query q2 add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.demo.pattern.OutputBean</ClassName><Arguments><Argument>Input</Argument></Arguments></Address></EndPointReference>" </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

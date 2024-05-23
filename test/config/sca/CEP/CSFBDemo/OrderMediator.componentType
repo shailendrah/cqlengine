@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<componentType xmlns="http://xmlns.oracle.com/sca/1.0">
+	<service name="Client">
+		<interface.wsdl interface="http://www.globalcompany.com/ns/OrderBooking#wsdl.interface(CEPOrder)"/>        
+	</service> 
+</componentType>

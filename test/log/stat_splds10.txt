@@ -1,0 +1,9 @@
+
+difs, 0
+outtkdata34_1_splds10.suc
+outtkdata34_2_splds10.suc
+outtkdata35_1_splds10.suc
+outtkdata35_2_splds10.suc
+outtkdata36_1_splds10.suc
+outtkdata37_2_splds10.suc
+sucs, 6

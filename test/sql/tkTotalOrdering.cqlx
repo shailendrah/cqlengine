@@ -1,0 +1,102 @@
+
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tkTotalOrdering_R1 (c1 integer, c2 char(10)) is system timestamped</CEP_DDL>
+<CEP_DDL> register stream tkTotalOrdering_S1 (c1 integer, c2 float) is system timestamped</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter relation tkTotalOrdering_R1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering_R1.txt?delay=1000</Address></EndPointReference>"]]>  </CEP_DDL>  
+<CEP_DDL><![CDATA[ alter stream tkTotalOrdering_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpTotalOrdering_S1.txt?delay=1000</Address></EndPointReference>"]]>  </CEP_DDL>  
+
+
+<!-- StreamSource, RangeWindow, Select, GroupAggr, Project -->
+<CEP_DDL> create query tkTotalOrdering_q1 as select sum(c1)*1 from tkTotalOrdering_S1[range 5000 milliseconds]</CEP_DDL>
+
+<!-- GroupAggr, OrderByTop-->
+<CEP_DDL> create query tkTotalOrdering_q2 as select sum(c1),c1 from tkTotalOrdering_S1 group by c1 order by c1 asc rows 3</CEP_DDL>
+
+<!-- PartitionWindow-->
+<CEP_DDL> create query tkTotalOrdering_q3 as select sum(c1),c1 from tkTotalOrdering_S1[partition by c1 rows 2] group by c1</CEP_DDL>
+
+<!-- Row Window-->
+<CEP_DDL> create query tkTotalOrdering_q4 as select sum(c1),c2 from tkTotalOrdering_S1[rows 2] group by c2</CEP_DDL>
+
+<!-- Value Window-->
+<CEP_DDL> create query tkTotalOrdering_q5 as select sum(c1) from tkTotalOrdering_S1[range 0.1 on c2]</CEP_DDL>
+
+<!-- BinJoin -->
+<CEP_DDL> create query tkTotalOrdering_q6 as select sum(R1.c1) from tkTotalOrdering_R1 as R1, tkTotalOrdering_R1 as R2</CEP_DDL>
+
+<!-- BinStreamJoin -->
+<CEP_DDL> create view tkTotalOrdering_v1(c1 integer, c2 float, c3 integer, c4 float) as RStream(select R1.c1, R1.c2, R2.c1, R2.c2 from tkTotalOrdering_S1[now] as R1, tkTotalOrdering_S1[rows 20] as R2)</CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q7 as select * from tkTotalOrdering_v1</CEP_DDL>
+
+<!-- Distinct -->
+<CEP_DDL> create query tkTotalOrdering_q8 as select distinct * from tkTotalOrdering_v1 </CEP_DDL>
+
+<!-- OrderBy, IStream -->
+<CEP_DDL> create view tkTotalOrdering_v2(c1 integer, c2 integer) as IStream(select R1.c1, R2.c1 from tkTotalOrdering_R1 as R1, tkTotalOrdering_R1 as R2)</CEP_DDL>
+<CEP_DDL> create view tkTotalOrdering_v3 as select * from tkTotalOrdering_v2 as S1 order by S1.c1 </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q9 as select * from tkTotalOrdering_v3 </CEP_DDL>
+
+<!-- Except, Minus, Union, Union All -->
+<CEP_DDL> create view tkTotalOrdering_v4 as tkTotalOrdering_R1 union all tkTotalOrdering_R1 </CEP_DDL>
+<CEP_DDL> create view tkTotalOrdering_v5 as tkTotalOrdering_R1 union tkTotalOrdering_R1 </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q10 as select sum(c1) from tkTotalOrdering_v4 </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q11 as select sum(c1) from tkTotalOrdering_v5 </CEP_DDL>
+<CEP_DDL> create view tkTotalOrdering_v6 as select * from tkTotalOrdering_S1[rows 12] </CEP_DDL>
+<CEP_DDL> create view tkTotalOrdering_v7 as select * from tkTotalOrdering_S1[rows 6] </CEP_DDL>
+<CEP_DDL> create view tkTotalOrdering_v8 as tkTotalOrdering_v6 minus tkTotalOrdering_v7 </CEP_DDL>
+<CEP_DDL> create view tkTotalOrdering_v9 as tkTotalOrdering_v6 except tkTotalOrdering_v7 </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q12 as select * from tkTotalOrdering_v8 </CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q13 as select * from tkTotalOrdering_v9 </CEP_DDL>
+
+<!-- DStream -->
+<CEP_DDL> create view tkTotalOrdering_v10(c1 integer) as DStream(select R1.c1 from tkTotalOrdering_S1[rows 6] as R1 where R1.c1 > 10)</CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q14 as select c1 from tkTotalOrdering_v10 </CEP_DDL>
+
+<!-- OrderBy, IStream -->
+<CEP_DDL> create view tkTotalOrdering_v11(c1 integer) as select R1.c1 from tkTotalOrdering_S1[rows 6 slide 6 ] as R1 where R1.c1 = 10</CEP_DDL>
+<CEP_DDL> create view tkTotalOrdering_v12(c1 integer) as IStream(select R1.c1 from tkTotalOrdering_v11 as R1, tkTotalOrdering_S1[now])</CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q15 as select * from tkTotalOrdering_v12 as R1 order by R1.c1</CEP_DDL>
+
+<!-- RStream -->
+<CEP_DDL> create view tkTotalOrdering_v13(c1 integer, c2 float) as RStream(select * from tkTotalOrdering_S1[rows 2] as R1 where R1.c1 = 10)</CEP_DDL>
+<CEP_DDL> create query tkTotalOrdering_q16 as select sum(c1) from tkTotalOrdering_v13 as R1 </CEP_DDL> 
+<CEP_DDL> create query tkTotalOrdering_q17 as RStream(select * from tkTotalOrdering_R1)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q5.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q6.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q7.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q8.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q9.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q10.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q11.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q12.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q13.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q14.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q15.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q16.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkTotalOrdering_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTotalOrdering_q17.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q16 start </CEP_DDL>
+<CEP_DDL> alter query tkTotalOrdering_q17 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+

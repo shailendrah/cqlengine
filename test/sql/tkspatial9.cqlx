@@ -1,0 +1,34 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+    <CEP_DDL> register stream LocStream(id int, lat double, lng double) </CEP_DDL>
+    <CEP_DDL> <![CDATA[ 
+        alter stream LocStream add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSpatial2s.txt</Address> </EndPointReference>"
+    ]]></CEP_DDL>
+
+    <CEP_DDL> register view LocGeomStream(id int, lat double, lng double, geom oracle.spatial.geometry.JGeometry) as
+        select id, lat, lng, com.oracle.cep.cartridge.spatial.Geometry.createPoint(0, lng, lat)
+        from LocStream
+    </CEP_DDL>
+
+    <CEP_DDL> register relation LocRelation(id int, lat double, lng double) </CEP_DDL>
+    <CEP_DDL> <![CDATA[ 
+        alter relation LocRelation add source "<EndPointReference> <Address>file://@TEST_DATA@/inpSpatial2.txt</Address> </EndPointReference>"
+    ]]></CEP_DDL>
+    <CEP_DDL> register view LocGeomRelation(id int, lat double, lng double, geom oracle.spatial.geometry.JGeometry) as
+        select id, lat, lng, com.oracle.cep.cartridge.spatial.Geometry.createPoint(0, lng, lat)
+        from LocRelation
+    </CEP_DDL>
+
+    <CEP_DDL> create query qnn as
+        RStream(
+            select locs.id, loc.id
+            from LocGeomRelation as loc, LocGeomStream[NOW] as locs
+            where NN@cartesian(loc.geom, locs.geom, 5.0d) = true
+        )
+    </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query qnn add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/spatial_nn2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query qnn start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+
+

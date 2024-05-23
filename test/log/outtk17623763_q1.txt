@@ -1,0 +1,10 @@
+1000:+ 1,8,first
+1001:+ 2,3,second
+1002:+ 3,6,third
+1003:+ 4,6,fourth
+1004:- 2,3,second
+1008:- 1,8,first
+1008:- 3,6,third
+1008:+ 5,8,fifth
+1009:- 4,6,fourth
+1016:- 5,8,fifth

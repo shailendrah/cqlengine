@@ -1,0 +1,4 @@
+1000:+ spain
+2000:+ ukrine
+3000:+ finland
+4000:+ spain in winter

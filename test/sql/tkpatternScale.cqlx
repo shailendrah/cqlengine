@@ -1,0 +1,11 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkpatternScale_S0 (c1 integer, c2 integer, ticker integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpatternScale_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPatternScale.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- tests for demo queries -->
+<CEP_DDL><![CDATA[ create query tkpatternScale_q25 as select T.ticker, T.firstW,T.lastZ from  tkpatternScale_S0 MATCH_RECOGNIZE ( PARTITION BY ticker MEASURES A.c1 as firstW, last(Z.c1) as lastZ, A.ticker as ticker PATTERN(A W+ X+ Y+ Z+) DEFINE A as A.c1 = A.c1, W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkpatternScale_q25 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/patternScaleout.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkpatternScale_q25 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

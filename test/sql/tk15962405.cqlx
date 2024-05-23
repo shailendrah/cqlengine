@@ -1,0 +1,29 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk15962405_S1 (c1 oracle.cep.test.userfunctions.TkUserObj)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk15962405_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk15962405_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tk15962405_S2 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk15962405_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk15962405_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter stream tk15962405_S2 set degree of parallelism = 2 </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk15962405_q1 as select count(c1) from tk15962405_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk15962405_q2 as select c1, count(c2) from tk15962405_S2[range 4] group by c1 ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tk15962405_v1 as select * from tk15962405_S2[range 4] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tk15962405_q3 as select c1, count(c2) from tk15962405_v1 group by c1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk15962405_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk15962405_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk15962405_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk15962405_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk15962405_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk15962405_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tk15962405_q2 set ordering constraint partition order on tk15962405_S2.c1 </CEP_DDL>
+<CEP_DDL> alter view tk15962405_v1 set ordering constraint partition order on tk15962405_S2.c1 </CEP_DDL>
+<CEP_DDL> alter query tk15962405_q3 set ordering constraint partition order on tk15962405_v1.c1 </CEP_DDL>
+
+<CEP_DDL>alter query tk15962405_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk15962405_q2 start</CEP_DDL>
+<CEP_DDL>alter query tk15962405_q3 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

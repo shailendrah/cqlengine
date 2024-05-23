@@ -1,0 +1,9 @@
+1000:+ secondcep,20cep
+1000:+ firstcep,25cep
+1000:+ thirdcep,35cep
+1000:+ firstcep,10cep
+1000:+ thirdcep,30cep
+1050:- thirdcep,35cep
+2100:+ secondcep,50cep
+3150:- secondcep,50cep
+6000:+ fourthcep,12cep

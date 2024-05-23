@@ -1,0 +1,92 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>
+
+CREATE ARCHIVED RELATION tksubqwithviews_LeftRel1(c1 integer, c2 float, c3
+bigint, c4 char(10)) 
+archiver BIArchiver entity
+"soainfra.BinOpLeftTestTable" event identifier c3
+
+</CEP_DDL>
+
+<CEP_DDL>
+
+CREATE ARCHIVED RELATION tksubqwithviews_RightRel1(c1 integer, c2 float, 
+c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+
+alter relation tksubqwithviews_LeftRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"
+
+]]>
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[ 
+
+alter relation tksubqwithviews_RightRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"
+
+]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+
+create archived view tksubqwithviews_view1(myVal float, c3 bigint) as 
+select p.c2 + tksubqwithviews_RightRel1.c1, p.c3 
+from tksubqwithviews_LeftRel1 as p, tksubqwithviews_RightRel1 
+where (p.c1=10 or p.c1=20)
+event identifier c3
+
+]]></CEP_DDL>
+
+<!-- ***************************************************** -->
+<!-- TEST WITH ARCHIVED VIEW                               -->
+<!--  - ARCHIVED VIEW, ISTREAM, MATCH_RECOGNIZE, SUBQUERY  -->
+<!-- ***************************************************** -->
+
+<CEP_DDL><![CDATA[ 
+
+create query q0 as select * from (ISTREAM(SELECT * FROM tksubqwithviews_view1))
+as foo
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.myVal as myVal
+  PATTERN (A B)
+  DEFINE
+      A AS (A.myVal = 24.25),
+      B AS (B.myVal = 54.25)
+) as T
+
+]]></CEP_DDL>
+
+
+<!--
+<CEP_DDL><![CDATA[ 
+create query q0 as select * from (ISTREAM(SELECT * FROM tksubqwithviews_view1))
+as foo
+]]></CEP_DDL>
+-->
+
+
+<CEP_DDL> 
+<![CDATA[ 
+
+alter query q0 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqwithviews_q0.txt</Address></EndPointReference>"
+
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> alter query q0 set start_time 1000000000L </CEP_DDL>
+<CEP_DDL> alter query q0 start </CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

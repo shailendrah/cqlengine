@@ -1,0 +1,37 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream S0 (c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpUP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q1 as select c1 from S0 where c2 > 5 ]]> </CEP_DDL>
+
+<CEP_DDL> alter query q1 remove ordering constraint </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q2 as istream(select c1 from S0[range 3] where c2 > 5) ]]> </CEP_DDL>
+
+<CEP_DDL> alter query q2 remove ordering constraint </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUP2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q2 start </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view V1 as select c1 from S0 where c2 > 5 ]]> </CEP_DDL>
+
+<CEP_DDL> alter view V1 remove ordering constraint </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q3 as select * from V1 ]]> </CEP_DDL>
+
+<CEP_DDL> alter query q3 remove ordering constraint </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUP3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q3 start </CEP_DDL>
+
+
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

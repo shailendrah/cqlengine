@@ -1,0 +1,24 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkdata50_s50_0(c1 integer, c2 integer) derived timestamped c1*100 + c2*50</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata50_s50_0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter stream tkdata50_s50_0 enable monitoring</CEP_DDL>
+<CEP_DDL> create stream tkdata50_s50_1(c1 integer, c2 integer) derived timestamped to_bigint(c1+100)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata50_s50_1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tkdata50_s50_2(c1 integer, c2 integer) derived timestamped to_timestamp("08/21/1984 04:15:00")</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata50_s50_2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> create query tkdata50_q50_1 as select c1 from tkdata50_s50_0</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata50_q50_1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outderivedS50_0.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkdata50_q50_2 as select c1 from tkdata50_s50_1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata50_q50_2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outderivedS50_1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create query tkdata50_q50_3 as select c1 from tkdata50_s50_2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata50_q50_3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outderivedS50_2.txt?convertTs=false</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> alter query tkdata50_q50_1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata50_q50_2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata50_q50_3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

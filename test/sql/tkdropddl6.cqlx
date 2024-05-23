@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkdropddl6_SP1(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdropddl6_SP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkdropddl6_SP2(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdropddl6_SP2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkdropddl6_SP3(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdropddl6_SP3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkdropddl6_SP4(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdropddl6_SP4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP4.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkdropddl6_SP5(c1 integer, name char(10)) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdropddl6_SP5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP5.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> create stream tkdropddl6_SP6(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkdropddl6_SP6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSP6.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL> register relation tkdropddl6_RP1(d1 integer, rname char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdropddl6_RP1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpRP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- row parition -->
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_row as select * from tkdropddl6_SP1 [partition by c1 rows 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_row add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-row.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_row2 as select * from tkdropddl6_SP1 [partition by c1 rows 2] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_row2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-row2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_row4 as select * from tkdropddl6_SP1 [partition by c1 rows 4] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_row4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-row4.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_row5 as select * from tkdropddl6_SP4 [partition by c1 rows 2] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_row5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-row5.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_row6 as select * from tkdropddl6_SP6 [partition by c2 rows 3] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_row6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-row6.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- ranged partition window  -->
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_range as select * from tkdropddl6_SP3 [partition by c1 rows 1 range 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_range add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-range.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_range1 as select * from tkdropddl6_SP2 [partition by c1 rows 2 range 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_range1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-range1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_range2 as select * from tkdropddl6_SP5 [partition by c1 rows 2 range 2] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_range2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-range2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- partion window join -->
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_join as select c1, name, rname from tkdropddl6_SP1 [partition by c1 rows 1], tkdropddl6_RP1 where tkdropddl6_SP1.c1 = tkdropddl6_RP1.d1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_join add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-join.txt</Address></EndPointReference>" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkdropddl6_qPart_join1 as select c1, name, rname from tkdropddl6_SP1 [partition by c1 rows 2], tkdropddl6_RP1 where tkdropddl6_SP1.c1 = tkdropddl6_RP1.d1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkdropddl6_qPart_join1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-join1.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- with range and slide 
+<CEP_DDL><![CDATA[ create query qPart_rangeslide as select * from tkdropddl6_SP1 [partition by c1 rows 1 range 1 slide 1] ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qPart_rangeslide add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdropddl6_SPartwin-slide.txt</Address></EndPointReference>" ]]></CEP_DDL>
+-->
+
+<CEP_DDL> alter query tkdropddl6_qPart_row start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_row2 start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_row4 start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_row5 start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_row6 start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_range start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_range1 start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_range2 start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_join start </CEP_DDL>
+<CEP_DDL> alter query tkdropddl6_qPart_join1 start </CEP_DDL>
+<!--
+<CEP_DDL> alter query qPart_rangeslide start </CEP_DDL>
+-->
+<CEP_DDL> alter system run</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_row</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_row2</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_row4</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_range</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_range1</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_range2</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_join</CEP_DDL>	
+<CEP_DDL> drop query tkdropddl6_qPart_join1</CEP_DDL>	
+</CEP>
+

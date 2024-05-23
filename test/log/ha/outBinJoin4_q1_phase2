@@ -1,0 +1,9 @@
+5000:- 10,R1Phase1,10,R2Phase1
+5000:+ 50,R1Phase2,50,R2Phase2
+6000:- 20,R1Phase1,20,R2Phase1
+6000:+ 60,R1Phase2,60,R2Phase2
+7000:- 30,R1Phase1,30,R2Phase1
+7000:+ 70,R1Phase2,70,R2Phase2
+8000:- 40,R1Phase1,40,R2Phase1
+8000:+ 80,R1Phase2,80,R2Phase2
+9000:- 50,R1Phase2,50,R2Phase2

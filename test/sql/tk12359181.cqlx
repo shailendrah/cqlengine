@@ -1,0 +1,32 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk12359181_S1 (c1 integer) </CEP_DDL>
+<CEP_DDL> create stream tk12359181_S2 (lastPrice double, symbol char(2)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk12359181_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk12359181_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk12359181_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk12359181_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test1: Range > Slide and Range is not a multiple of slide -->
+<CEP_DDL> create query tk12359181_q1 as select * from tk12359181_S1[range 4 slide 3] </CEP_DDL>
+
+<!-- Test2: Range < Slide and Range is not a multiple of slide -->
+<!-- Note: Range is less than Slide is not allowed so this query creation should fail  -->
+<CEP_DDL> create query tk12359181_qNeg1 as select * from tk12359181_S1[range 3 slide 4] </CEP_DDL>
+
+<!-- Test3: Range < Slide and visTs - eventTime > Range -->
+<CEP_DDL> create query tk12359181_q2 as select * from tk12359181_S1[range 9 slide 2] </CEP_DDL>
+
+<!-- Test4: Test case mentioned in the bug 12359181 description -->
+<CEP_DDL> create query tk12359181_q3 as select lastPrice, symbol, tk12359181_S2.element_time from tk12359181_S2[range 5 slide 4] </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk12359181_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk12359181_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk12359181_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk12359181_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk12359181_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk12359181_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk12359181_q1 start </CEP_DDL>
+<CEP_DDL> alter query tk12359181_q2 start </CEP_DDL>
+<CEP_DDL> alter query tk12359181_q3 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>
+

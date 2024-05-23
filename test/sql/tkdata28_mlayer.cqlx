@@ -1,0 +1,12 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata28_mlayer_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata28_mlayer_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdata28_mlayer_q1 as select * from tkdata28_mlayer_S0[range 1] where c1 > 10  </CEP_DDL>
+<CEP_DDL> create view  tkdata28_mlayer_v1(c1 integer, c2 float) as query tkdata28_mlayer_q1 </CEP_DDL>
+<CEP_DDL> create query tkdata28_mlayer_q2 as select c1+2, c2 from tkdata28_mlayer_v1 where c1 > 15</CEP_DDL>
+<CEP_DDL> create view  tkdata28_mlayer_v2(c1 integer, c2 float) as query tkdata28_mlayer_q2 </CEP_DDL>
+<CEP_DDL> create query tkdata28_mlayer_q3 as SELECT * from  tkdata28_mlayer_v2, tkdata28_mlayer_v1</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata28_mlayer_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata28mq4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata28_mlayer_q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

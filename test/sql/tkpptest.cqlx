@@ -1,0 +1,103 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream S0 (c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> alter stream S0 set degree of parallelism = 2 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create external relation tkExternal_R2(d1 integer, d2 bigint, d3 char(10))</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkExternal_R2 add source "<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> create stream S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream S2 (c1 integer, c2 float) </CEP_DDL>
+
+<CEP_DDL> alter stream S1 set degree of parallelism = 2 </CEP_DDL>
+<CEP_DDL> alter stream S2 set degree of parallelism = 2 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S1 add source "<EndPointReference><Address>file://@TEST_DATA@/outerjoin0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S2 add source "<EndPointReference><Address>file://@TEST_DATA@/outerjoin1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q1 as select S0.c1,S1.d1 from S0[now], tkExternal_R2 as S1 where S0.c1 = S1.d1 * 5]]> </CEP_DDL>
+<CEP_DDL> alter query q1 set ordering constraint partition order on S0.c1 </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view v1 as select S0.c1,S1.d1 from S0[now], tkExternal_R2 as S1 where S0.c1 = S1.d1 * 5]]> </CEP_DDL>
+<CEP_DDL> alter view v1 set ordering constraint partition order on S0.c1 </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q3 as select * from v1]]> </CEP_DDL>
+<CEP_DDL> alter query q3 set ordering constraint partition order on c1 </CEP_DDL>
+
+<!-- Demonstrate the left outer join -->
+<CEP_DDL> create query q2 as select * from S1[range 2] as R1 left outer join S2[range 2] as R2 on R1.c2 = R2.c2 </CEP_DDL>
+<CEP_DDL> alter query q2 set ordering constraint partition order on R1.c2 </CEP_DDL>
+
+<!-- User Defined Function/Aggregation  -->
+<CEP_DDL> create function tkuda_var_int(c1 integer) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation </CEP_DDL>
+<CEP_DDL> register function adder(c1 integer, c2 integer) return integer as language java instance "sumObject"</CEP_DDL>
+<CEP_DDL><![CDATA[ create view v2 as select tkuda_var_int(c1)+1 as c1, c2, median(c1) as c3 from S0 group by c2]]> </CEP_DDL>
+<CEP_DDL> alter view v2 set ordering constraint partition order on c2 </CEP_DDL>
+<CEP_DDL> create query q4 as select c1, adder(Float(c1).intValue(), c2), c3 from v2 </CEP_DDL>
+<CEP_DDL> alter query q4 set ordering constraint partition order on c2 </CEP_DDL>
+
+<!-- pattern query with partition by. The partition order evaluation should happen only if the partition by expression has the same attrs in the partition by clause. One can either use unqualified attr or qualify the attrs with the base stream/relation name. -->
+<CEP_DDL><![CDATA[ create query q5 as select c1, M.c2 from S0 match_recognize(
+                    partition by c2
+		    measures  X.c1 as c1, Y.c2 as c2
+		    pattern(X+ Y) within 20 seconds
+		    define Y as count(X.*)=3) as M]]> </CEP_DDL>
+<CEP_DDL> alter query q5 set ordering constraint partition order on c2 </CEP_DDL>
+
+<!-- Since the partition by clause attr is different from partition order expression, we will go for ordered execution here. -->
+<CEP_DDL><![CDATA[ create query q6 as select c1, M.c2 from S0 match_recognize(
+                    partition by c2
+		    measures  X.c1 as c1, Y.c2 as c2
+		    pattern(X+ Y) within 20 seconds
+		    define Y as count(X.*)=3) as M]]> </CEP_DDL>
+<CEP_DDL> alter query q6 set ordering constraint partition order on S0.c1 </CEP_DDL>
+
+<!-- negative test cases. q7 and q8. Will result in 'Invalid symbolic expression' error while starting the query. -->
+<!-- trying to use a correlation variable name (X) in partition order expression -->
+<CEP_DDL><![CDATA[ create query q7 as select c1, M.c2 from S0 match_recognize(
+                    partition by c2
+		    measures  X.c1 as c1, Y.c2 as c2
+		    pattern(X+ Y) within 20 seconds
+		    define Y as count(X.*)=3) as M]]> </CEP_DDL>
+<CEP_DDL> alter query q7 set ordering constraint partition order on X.c2 </CEP_DDL>
+
+<!-- trying to use the inline view name (M) -->
+<CEP_DDL><![CDATA[ create query q8 as select c1, M.c2 from S0 match_recognize(
+                    partition by c2
+		    measures  X.c1 as c1, Y.c2 as c2
+		    pattern(X+ Y) within 20 seconds
+		    define Y as count(X.*)=3) as M]]> </CEP_DDL>
+<CEP_DDL> alter query q8 set ordering constraint partition order on M.c2 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ 
+	create query q9 as select sum(c1), c2 from S0[range 5 slide 5] group by c2
+]]>
+</CEP_DDL>
+<CEP_DDL> alter query q9 set ordering constraint partition order on c2 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest5.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outpptest9.txt</Address></EndPointReference>"]]>  batch output </CEP_DDL>
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter query q4 start </CEP_DDL>
+<CEP_DDL> alter query q5 start </CEP_DDL>
+<CEP_DDL> alter query q6 start </CEP_DDL>
+<CEP_DDL> alter query q7 start </CEP_DDL>
+<CEP_DDL> alter query q8 start </CEP_DDL>
+<CEP_DDL> alter query q9 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+
+<CEP_DDL> drop query q1 </CEP_DDL>
+</CEP>

@@ -1,0 +1,115 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/QueryStatsRowManager.java /main/10 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    05/31/07 - cep-em integration
+    parujain    05/31/07 - cep-em integration
+    parujain    04/26/07 - Query-wide statistics Manager
+    parujain    04/26/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/QueryStatsRowManager.java /main/10 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.statsmgr;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import oracle.cep.phyplan.PhyOpt;
+import oracle.cep.planmgr.PlanManager;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.FilterCondition;
+import oracle.cep.execution.operators.ExecOpt;
+
+public class QueryStatsRowManager extends QueryStatsManager 
+{
+
+  Iterator<Integer> iter;
+  
+  public QueryStatsRowManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+    
+  public void close() {
+    super.close();
+    iter = null;
+  }
+
+  public IStats getNext() {
+      
+    ExecOpt rootOp;
+    boolean found = false;
+    IStats queryStat = null;
+    
+    if(factory == null)
+      return null;
+  
+    PlanManager planMgr = execContext.getPlanMgr();
+    while(!found)
+    {
+      rootOp = null;
+      int id;
+     
+      if(iter.hasNext())
+        id = iter.next().intValue();
+      else
+        return null;
+      
+      PhyOpt opt = planMgr.getQueryRootOpt(id);
+      if(opt != null)
+        rootOp = opt.getInstOp();
+      
+      if(rootOp == null)
+        continue;
+      
+      queryStat =  getQueryStatsRow(id, opt, rootOp);     
+      
+      if(hasFilters)
+      {
+        found = processFilter(queryStat, (FilterCondition[])qFilters.toArray(new FilterCondition[0]), types); 
+      }
+      else
+        found = true;
+      
+      if(found)
+        return queryStat;
+    }
+    return null;
+  }
+
+
+  public void init(FilterCondition[] filters)
+  {
+    super.init(filters);
+    ArrayList<Integer> qryIdList = execContext.getPlanMgr().getRootQueryIds();
+    iter = qryIdList.iterator();
+  }
+  
+  public void init() 
+  {
+   this.init(null);
+  }
+  
+}

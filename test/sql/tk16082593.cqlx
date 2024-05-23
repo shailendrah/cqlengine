@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk16082593_S1 (c1 integer, c2 integer)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk16082593_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk16082593_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tk16082593_q1 as select * from tk16082593_S1[partition by c1 rows 2 range 1 minute slide 3 seconds] ]]></CEP_DDL>
+
+<!-- BUG: 16094448 (Negative Test Case to check slide shouldnot be higher than range -->
+<CEP_DDL><![CDATA[ create query tk16094448_qNeg1 as select * from tk16082593_S1[range 3 seconds slide 4 seconds] ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16082593_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk16082593_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16082593_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

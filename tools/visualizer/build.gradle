@@ -1,0 +1,21 @@
+applyTemplate 'shaded'
+
+sourceSets.main.java.srcDirs += file("src")
+
+//ServerConnection uses cep.oracle.HttpSoap11Client which seems to be the OC4J soap client that cannot be found anywhere.
+sourceSets.main.java.exclude '**/ServerConnection.java'
+
+dependencies
+{
+    compile project(":modules:common-util")
+    compile project(":modules:spark-cql:cqlengine:api")
+    compile project(":modules:spark-cql:cqlengine:logging")
+    compile libraries.cep_apache_logging
+    compile libraries.cep_jflex
+    compile libraries.apache_log4j
+}
+
+
+
+
+

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: cep/cqlengine/test/src/test/resources/srg_di.xml st_pcbpel_hopark_cqlmaven/4 2011/03/28 10:00:21 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      03/22/11 - Creation
+
+-->
+<beans>
+    <bean id="testConfig" class="oracle.cep.test.cqlxframework.env.EnvConfigOverride">
+       <property name="override">
+         <map>
+          <entry key="directInterop" value="true" />
+        </map>
+      </property>
+    </bean>
+    
+<!-- test opverride rules, ' ' separated (key, value) pairs
+key - name of test, '*' match all testcases in the suite, java-regexp to match pattern
+
+verifier - class name of verifier
+verifierarg - ',' separated list of argments
+ignorets - ignore timestamp
+ignoreorder - ignore ordering(imply ignore timestamp, too)
+exceptions - ',' separated list of expected exceptions
+-->
+    
+    <bean id="fileList" class="oracle.cep.test.cqlxframework.FileList">
+<!-- local rules 
+       <property name="rules">
+         <list>
+          <value>* verifier=oracle.cep.ExtVerifier</value>
+        </list>
+       </property>
+-->    
+       
+       <property name="includes">
+          <list>
+          </list>
+      </property>
+    
+      <property name="excludes">
+       <list>
+    		<value>order</value>
+    		<value>tkscale*</value>
+    		<value>tk20cols_scale*</value>
+    		<value>tkcsfbprscale</value>
+    		<value>tkpocbi</value>
+    		<value>tkstartup</value>
+    		<value>tkcsfb2</value>
+    		<value>tkpatternDemo1</value>
+    		<value>tkpatternDemo2</value>
+    		<value>tklinroad</value>
+    		<value>tklinroadpush</value>
+    		<value>tklrbdemo</value>
+    		<value>tklinroadbm3hrs_5000000.new</value>
+    		<value>tkdata140</value>
+    		<value>tkdata168</value>
+    		<value>tkdata145</value>
+    		<value>tkpatternScale</value>
+    		<value>tkhbtest</value>
+    		<value>tkdata6_rr</value>
+    		<value>tkdata7_rr</value>
+    		<value>tkdata40</value>
+    		<value>tkdata_fab1</value>
+    		<value>tklog</value>
+    		<value>tkairline</value>
+    		<value>tkdata1</value>
+    		<value>tkdata1_xml</value>
+    		<value>tkdata11</value>
+    		<value>tkdata12</value>
+    		<value>tkOnDemand</value>
+    		<value>tkdata4</value>
+    		<value>tkdata6_fifo</value>
+    		<value>tkdata6_rr</value>
+    		<value>tkdata7_fifo</value>
+    		<value>tkdata7_rr</value>
+    		<value>tkdata8</value>
+    		<value>tkdata9</value>
+    		<value>tkdata17</value>
+    		<value>tkdata18</value>
+    		<value>tkdata19</value>
+    		<value>tkdata20</value>
+    		<value>tkdata21</value>
+    		<value>tkdata22</value>
+    		<value>tkdata185</value>
+    		<value>tkxmlAgg</value>
+    		<value>tkdata_qryout</value>
+    		<value>tkTotalOrdering_fifo</value>
+
+<!-- cartridge related tests -->
+    		<value>tkspatial*</value>
+    		<value>tkobjexpr</value>
+            
+<!-- timeout gt 120  -->
+    		<value>tkpptest</value>
+    		<value>tkpptf</value>
+       </list>
+      </property>
+    
+<!-- the failure from intermittent lists are reported differently 
+TODO
+automatic generation of intermittent files from series of nightly runs?
+-->    
+      <property name="intermittents">
+       <list>
+       </list>
+     </property>
+    </bean>
+    
+<!-- global test rules -->    
+    <import resource="rules.context" />
+    
+<!-- setup default config -->    
+    <import resource="common.context" />
+</beans>
+

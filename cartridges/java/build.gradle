@@ -1,0 +1,19 @@
+applyTemplate 'msgcat'
+
+dependencies
+{
+    compile project(":modules:spark-cql:cqlengine:api")
+    compile project(":modules:spark-cql:cqlengine:server")
+    compile libraries.cep_apache_logging
+    //compile libraries.cep_spring_core
+    //compile libraries.cep_spring_beans
+    compile project(':modules:common-util')
+}
+
+task testJar(type: Jar) {
+        classifier = 'tests'
+        from sourceSets.test.output
+}
+
+build.dependsOn testJar
+

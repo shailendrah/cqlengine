@@ -1,0 +1,116 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+  <CEP_DDL> create stream S0(c1 integer, c2 java.lang.Double, c3 char(10), c4 java.lang.String) </CEP_DDL>
+  
+  <CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSynonym.txt</Address></EndPointReference>"]]>  
+  </CEP_DDL>
+
+  <CEP_DDL> create synonym typeA for type java.lang.String </CEP_DDL>
+  <CEP_DDL> create synonym testStatic for type oracle.cep.test.java.A.testStatic@java </CEP_DDL>
+  <CEP_DDL> create synonym myFunc for type myFunction@myCartridge </CEP_DDL>
+  <CEP_DDL> drop synonym typeA </CEP_DDL>
+  <CEP_DDL> create synonym typeA for type oracle.cep.test.java.TypeA </CEP_DDL>
+  <CEP_DDL> create synonym typeA for type java.lang.String </CEP_DDL>
+  <CEP_DDL> create synonym A for type oracle.cep.test.java.A@java </CEP_DDL>
+  <CEP_DDL> create synonym typeB for type oracle.cep.test.java.TypeB </CEP_DDL>
+  <CEP_DDL> create synonym typeA1 for type oracle.cep.test.java.TypeA1@java </CEP_DDL>
+  <CEP_DDL> create synonym system for type java.lang.System@java </CEP_DDL>
+  <CEP_DDL> create synonym Stream for type java.lang.System@java </CEP_DDL>
+  <CEP_DDL> create query q0 as select * Where from </CEP_DDL>
+  <CEP_DDL> create query q0 as select system.getProperty("user.dir") from S0[now] </CEP_DDL>
+<CEP_DDL>
+   create view V4(a1 oracle.cep.test.java.TypeA) as
+   select typeA() 
+   from S0 where c3 = "ab"
+</CEP_DDL>
+<CEP_DDL>
+    create query q1 as
+    select 
+      a1,V4.a1,
+      a1.i1, V4.a1.i2, a1.i1.intValue(),a1.nestedType.i1, a1.nestedType.getNestedType().i1, a1.nestedType.nestedType.i1.intValue(),
+      typeA().i1, typeA().nestedType.i1,
+      typeA(typeB()), typeA(a1.nestedType)
+   from V4
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query q1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outType1.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+  <CEP_DDL> alter query q1 start </CEP_DDL>
+
+<!-- test links, functions, and sub and super class assignment 
+-->
+<CEP_DDL>
+   create view V5(a1 oracle.cep.test.java.TypeA@java, a2 oracle.cep.test.java.A, 
+    a3 java.lang.String[], a4 int@java[]) as
+   select oracle.cep.test.java.TypeA@java(), oracle.cep.test.java.B(), 
+    oracle.cep.test.java.TypeConverter().getStA(),
+    oracle.cep.test.java.TypeConverter().getInA()
+   from S0 where c3 = "ab"
+</CEP_DDL>
+<CEP_DDL>
+    create query q2Neg as
+    select 
+      a1,
+      testStatic(),
+      oracle.cep.test.java.A.testStaticField@java,
+      myFunction@myCartridge(), myFunction@myCartridge1(), myFunction@myCartridge2(), myFunction@myCartridge3(),
+      echo@myCartridge("echo"), trim@myCartridge(String(" hello ")).toString(),
+      oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge1(), oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge2(), 
+      a3[1], 
+      a4[0]
+  from V5
+  </CEP_DDL>
+<CEP_DDL>
+    create query q2 as
+    select 
+      a1,
+      A.testStatic(),
+      A.testStaticField,
+      myFunction@myCartridge(), myFunction@myCartridge1(), myFunction@myCartridge2(), myFunction@myCartridge3(),
+      echo@myCartridge("echo"), trim@myCartridge(String(" hello ")).toString(),
+      oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge1(), oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge2(), 
+      a3[1], 
+      a4[0]
+  from V5
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query q2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outType2.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+<CEP_DDL> alter query q2 start </CEP_DDL>
+
+<CEP_DDL>
+    create query q4 as
+    select 
+      a1,
+      A.testStatic(),
+      typeA1.ch[1],
+      myFunction@myCartridge(), myFunction@myCartridge1(), myFunction@myCartridge2(), myFunction@myCartridge3(),
+      echo@myCartridge("echo"), trim@myCartridge(String(" hello ")).toString(),
+      oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge1(), oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge2(), 
+      a3[1], 
+      a4[0]
+  from V5
+  </CEP_DDL>
+  <CEP_DDL> <![CDATA[ alter query q4 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outType4.txt</Address></EndPointReference>"]]> 
+  </CEP_DDL> 
+<CEP_DDL> alter query q4 start </CEP_DDL>
+
+<CEP_DDL>
+    create query q3Neg as
+    select 
+      a1,
+      testStatic(),
+      oracle.cep.test.java.A.testStaticField@java,
+      myFunc(), myFunction@myCartridge1(), myFunction@myCartridge2(), myFunction@myCartridge3(),
+      echo@myCartridge("echo"), trim@myCartridge(String(" hello ")).toString(),
+      oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge1(), oracle.cep.test.java.MyCartridge.myStaticMethod@myCartridge2(), 
+      a3[1], 
+      a4[0]
+  from V5
+  </CEP_DDL>
+
+
+<CEP_DDL> alter system run</CEP_DDL>
+
+</CEP>

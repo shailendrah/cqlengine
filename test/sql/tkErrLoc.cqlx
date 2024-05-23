@@ -1,0 +1,6 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkErrLoc_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkErrLoc_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL>create view tkErrLoc_v1(c1 integer, c1 float) as select * from tkErrLoc_S0 </CEP_DDL>
+<CEP_DDL> create query tkErrLoc_q0 as select c1, c2, c3 from tkErrLoc_S0 [range 1] </CEP_DDL>
+</CEP>

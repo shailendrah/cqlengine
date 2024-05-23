@@ -1,0 +1,6 @@
+i, c 20, TOF
+1000 F 10, "test string1"
+1000 F 20, "test string2"
+1000 F 30, "test string3"
+1000 F 40, "oracle"
+1000 F 50, "good"

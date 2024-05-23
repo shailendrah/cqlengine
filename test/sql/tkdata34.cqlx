@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata34_S1 (c1 integer, c2 xmltype) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata34_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata34inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkdata34_q1 as SELECT XMLQUERY('for $i in /PDRecord where $i/PDId <= $x return $i/PDName' passing by value c2 as ".", (c1+1) as "x" RETURNING CONTENT) XMLData FROM tkdata34_S1 ]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata34_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata34_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkdata34_q2 as SELECT XMLExists('for $i in /PDRecord where $i/PDId <= $x return $i/PDName' passing by value c2 as ".", (c1+1) as "x" RETURNING CONTENT) XMLData FROM tkdata34_S1 ]]></CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata34_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata34_2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<CEP_DDL> alter query tkdata34_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata34_q2 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>	
+</CEP>
+

@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.bea.com/ns/wlevs/config/queryconstructor"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.bea.com/ns/wlevs/config/queryconstructor">
+
+	<!-- This is the first draft for the xsd used
+		by the query constructor feature of the visualizer. -->
+
+
+	<!-- The types of Operators supported by the query constructor-->
+	<xs:simpleType name="operatorTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DStream" />
+			<xs:enumeration value="Filter" />
+			<xs:enumeration value="Intersect" />
+			<xs:enumeration value="IStream" />
+			<xs:enumeration value="Join" />
+			<xs:enumeration value="Minus" />
+			<xs:enumeration value="Output" />
+			<xs:enumeration value="Pattern" />
+			<xs:enumeration value="RStream" />
+			<xs:enumeration value="Select" />
+			<xs:enumeration value="Source" />
+			<xs:enumeration value="Union" />
+			<xs:enumeration value="Window" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="timeUnitTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="" />
+			<xs:enumeration value="nanoseconds" />
+			<xs:enumeration value="milliseconds" />
+			<xs:enumeration value="microseconds" />
+			<xs:enumeration value="seconds" />
+			<xs:enumeration value="minutes" />
+			<xs:enumeration value="hours" />
+			<xs:enumeration value="days" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="windowTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="now" />
+			<xs:enumeration value="range-time" />
+			<xs:enumeration value="range-unbounded" />
+			<xs:enumeration value="row-time" />
+			<xs:enumeration value="rows" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="viewOutputTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Stream" />
+			<xs:enumeration value="Relation" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="sourceTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Stream" />
+			<xs:enumeration value="Relation" />
+			<xs:enumeration value="View" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="outputTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="View" />
+			<xs:enumeration value="Query" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="patternSkipTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DEFAULT" />
+			<xs:enumeration value="ALL MATCHES" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Outer element for all querys/views, root attribute points to the Output operator's ID for this query-->
+	<xs:element name="Rule">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Operator" type="operatorType"
+					minOccurs="1" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute name="root" type="xs:integer" />
+		</xs:complexType>
+	</xs:element>
+
+	<!-- Each "box" in the query constructor GUI is an Operator element -->
+	<xs:complexType name="operatorType">
+		<xs:sequence>
+
+			<!-- Every operator has an associated CQL DDL -->
+			<xs:element name="cql-property" type="xs:string"
+				minOccurs="1" maxOccurs="1" />
+
+			<!-- The inputs to this operator. A source operator has 0 inputs, all other operators have one or more inputs -->
+			<xs:element name="inputs" type="inputsType" minOccurs="0"
+				maxOccurs="1" />
+
+			<!-- Some operators might have an alias, e.g. source, pattern -->
+			<xs:element name="alias" type="xs:string" minOccurs="0"
+				maxOccurs="1" />
+
+			<!-- An operator may be any one of those defined in the operatorTypes enumeration -->
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:group ref="DStreamOperatorType" />
+				<xs:group ref="FilterOperatorType" />
+				<xs:group ref="IntersectOperatorType" />
+				<xs:group ref="IStreamOperatorType" />
+				<xs:group ref="JoinOperatorType" />
+				<xs:group ref="MinusOperatorType" />
+				<xs:group ref="OutputOperatorType" />
+				<xs:group ref="PatternOperatorType" />
+				<xs:group ref="RStreamOperatorType" />
+				<xs:group ref="SelectOperatorType" />
+				<xs:group ref="SourceOperatorType" />
+				<xs:group ref="UnionOperatorType" />
+				<xs:group ref="WindowOperatorType" />
+			</xs:choice>
+		</xs:sequence>
+
+		<!-- What type of operator is this -->
+		<xs:attribute name="type" type="operatorTypes" use="required" />
+
+		<!-- This xml document is a tree of operators, the ID is used as a unique identifier to point to an operator.
+			The input tag holds an ID of an operator which is an input to 'this' operator.	
+		-->
+		<xs:attribute name="ID" type="xs:integer" use="required" />
+
+	</xs:complexType>
+
+	<!-- The inputs to an operator. Only a source operator has 0 inputs -->
+	<xs:complexType name="inputsType">
+		<xs:sequence>
+			<xs:element name="input" type="xs:integer" minOccurs="1"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- DStream operator structure -->
+	<xs:group name="DStreamOperatorType">
+		<xs:sequence>
+			<!-- there are no elements as of now in the DStream operator structure -->
+		</xs:sequence>
+	</xs:group>
+
+	<!-- Filter operator structure -->
+	<xs:group name="FilterOperatorType">
+		<xs:sequence>
+			<xs:element name="predicates" type="filterPredicatesType"
+				minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:group>
+
+	<xs:complexType name="filterPredicatesType">
+		<xs:sequence>
+			<xs:element name="predicate" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Intersect Operator structure -->
+	<xs:group name="IntersectOperatorType">
+		<xs:sequence>
+			<!-- there are no elements as of now in the Intersect operator structure -->
+		</xs:sequence>
+	</xs:group>
+
+	<!-- IStream operator structure -->
+	<xs:group name="IStreamOperatorType">
+		<xs:sequence>
+			<!-- there are no elements as of now in the IStream operator structure -->
+		</xs:sequence>
+	</xs:group>
+
+	<xs:group name="JoinOperatorType">
+		<xs:sequence>
+			<xs:element name="predicates" type="joinPredicatesType"
+				minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:complexType name="joinPredicatesType">
+		<xs:sequence>
+			<xs:element name="predicate" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Intersect Operator structure -->
+	<xs:group name="MinusOperatorType">
+		<xs:sequence>
+			<!-- there are no elements as of now in the Minus operator structure -->
+		</xs:sequence>
+	</xs:group>
+
+	<!-- Output operator structure -->
+	<xs:group name="OutputOperatorType">
+		<xs:sequence>
+			<xs:element name="output-type" type="outputTypes" />
+			<xs:element name="output-name" type="xs:string" />
+			<xs:element name="view-schema-list" minOccurs="0"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:group>
+
+	<xs:complexType name="viewSchemaList">
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="view-attr">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="name" type="xs:string" />
+						<xs:element name="type" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Pattern operator structure -->
+	<xs:group name="PatternOperatorType">
+		<xs:sequence>
+			<xs:element name="pattern-skip" type="patternSkipTypes"
+				minOccurs="1" maxOccurs="1" />
+
+			<xs:element name="partition-by" minOccurs="0"
+				maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="partition-attr"
+							type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="define-list" minOccurs="1"
+				maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="define-attr" type="xs:string"
+							minOccurs="1" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="measures-list" minOccurs="1"
+				maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="measure-attr" type="xs:string"
+							minOccurs="1" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="pattern-list" minOccurs="1"
+				maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="pattern-attr" type="xs:string"
+							minOccurs="1" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="subsets" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="subset" type="subsetType"
+							minOccurs="1" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="timer-event" minOccurs="0"
+				maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="duration" type="xs:string" />
+						<xs:element name="multiple-duration"
+							type="xs:boolean" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+
+	<xs:complexType name="subsetType">
+		<xs:sequence>
+			<xs:element name="subset-name" type="xs:string" />
+			<xs:element name="corr-attr-name" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Rstream operator structure -->
+	<xs:group name="RStreamOperatorType">
+		<xs:sequence>
+			<!-- there are no elements as of now in the RStream operator structure -->
+		</xs:sequence>
+	</xs:group>
+
+	<!-- Select operator structure -->
+	<xs:group name="SelectOperatorType">
+		<xs:sequence>
+			<xs:element name="select-list" type="selectListType"
+				minOccurs="1" maxOccurs="1" />
+
+			<xs:element name="group-list" type="groupListType"
+				minOccurs="0" maxOccurs="1" />
+
+			<xs:element name="having-clause" type="xs:string"
+				minOccurs="0" maxOccurs="1" />
+
+			<xs:element name="order-by-list" minOccurs="0"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:group>
+
+
+	<xs:complexType name="groupListType">
+		<xs:sequence>
+			<xs:element name="group-by" type="xs:string" minOccurs="1"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="orderByListType">
+		<xs:sequence>
+			<xs:element name="order-by-attr" type="orderByAttrType"
+				minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="orderByAttrType">
+		<xs:sequence>
+			<xs:element name="order-by-symbol" type="xs:string" />
+			<xs:element name="ascending" type="xs:boolean" />
+			<xs:element name="nulls-first" type="xs:boolean" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="selectListType">
+		<xs:sequence>
+			<xs:element name="select-attr" type="selectAttrType"
+				minOccurs="1" maxOccurs="unbounded">
+
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="selectAttrType">
+		<xs:sequence>
+			<xs:element name="select-expression" type="xs:string" />
+			<xs:element name="alias" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Source operator structure -->
+	<xs:group name="SourceOperatorType">
+		<xs:sequence>
+			<!-- The name of this source in the CQL engine -->
+			<xs:element name="source-name" type="xs:string" />
+
+			<!-- Is this a 'View' / 'Stream' / 'Relation' -->
+			<xs:element name="source-type" type="sourceTypes" />
+
+			<!-- If this is a view, does it produce a 'Stream' or a 'Relation' -->
+			<xs:element name="view-output-type" type="viewOutputTypes"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:group>
+
+	<!-- Intersect Operator structure -->
+	<xs:group name="UnionOperatorType">
+		<xs:sequence>
+			<!-- Is this a union all statement? true/false -->
+			<xs:element name="union-all" type="xs:boolean" />
+		</xs:sequence>
+	</xs:group>
+
+	<!-- Window operator structure -->
+	<xs:group name="WindowOperatorType">
+		<xs:sequence>
+			<!-- what type of window is this -->
+			<xs:element name="type" type="windowTypes" />
+
+			<!-- only for partition windows -->
+			<xs:element name="partition-by" type="xs:string"
+				minOccurs="0" maxOccurs="1" />
+
+			<!-- required for all windows except "now" -->
+			<xs:element name="range-params" type="windowRangeParamsType"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:group>
+
+	<xs:complexType name="windowRangeParamsType">
+		<xs:sequence>
+			<xs:element name="timeSpecType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="slideSpecType" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="rows" type="xs:integer" minOccurs="0"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="slideSpecType">
+		<xs:sequence>
+			<xs:element name="slidevalue" type="xs:integer" />
+			<xs:element name="slideunit" type="timeUnitTypes" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="timeSpecType">
+		<xs:sequence>
+			<xs:element name="timevalue" type="xs:decimal" />
+			<xs:element name="timeunit" type="timeUnitTypes" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

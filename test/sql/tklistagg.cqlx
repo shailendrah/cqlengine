@@ -1,0 +1,48 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream S1 (c1 char(4), c2 integer, c3 float, c4 bigint) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream S1 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- 
+   - Test the LISTAGG function, used twice in a view
+   - Test the approach to convert List into other type of Collection 
+      implementations like LinkedHashSet using existing Java Cartridge support
+   - Test viewing the output collection as a virtual TABLE using the
+      existing Table Function support in a downstream query
+   - Test invoking List and Set APIs respectively on the output collection
+-->
+
+<CEP_DDL> create view v1 as ISTREAM(select c1, listAgg(c3) as l1, java.util.LinkedHashSet(listAgg(c3)) as set1 from S1 group by c1) </CEP_DDL>
+<CEP_DDL> create query q1 as RSTREAM(select v1.c1, S2.d1 from v1[now], table (v1.l1 as d1 of java.lang.Float) as S2) </CEP_DDL>
+<CEP_DDL> create query q2 as select v1.l1.size(), v1.set1.size() from v1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outListAgg_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outListAgg_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q1 start</CEP_DDL>
+<CEP_DDL> alter query q2 start</CEP_DDL>
+
+
+<!--
+   - Test the LISTAGG function over a (derived) Relation. This will test the
+     invocation of "remove"
+   - Test LISTAGG on different datatypes
+-->
+
+<CEP_DDL> create view v2 as ISTREAM(select c1, listAgg(c2) as l1, java.util.LinkedHashSet(listAgg(c3)) as set1 from S1[partition by c1 rows 2] group by c1) </CEP_DDL>
+<CEP_DDL> create query q3 as RSTREAM(select v2.c1, S2.d1 from v2[now], table (v2.l1 as d1 of java.lang.Integer) as S2) </CEP_DDL>
+<CEP_DDL> create query q4 as select v2.l1.size(), v2.set1.size() from v2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outListAgg_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outListAgg_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q3 start</CEP_DDL>
+<CEP_DDL> alter query q4 start</CEP_DDL>
+
+
+<!--
+   - LISTAGG with Pattern MATCH_RECOGNIZE (bug 13974437)
+-->
+<CEP_DDL> create query q5 as SELECT its.amountSum as amountSum, its.priceList as priceList, its.product as product from S1 MATCH_RECOGNIZE (MEASURES sum(B.c2) as amountSum, listAgg(B.c3) as priceList, A.c1 as product PATTERN ( A B*) DEFINE B AS B.c3 >= prev(B.c3)) as its  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outListAgg_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query q5 start</CEP_DDL>
+
+
+
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

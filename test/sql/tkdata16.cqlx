@@ -1,0 +1,34 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata16_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata16_SinpByte1 (c1 integer, c2 byte(10)) </CEP_DDL>
+<CEP_DDL> create function tkdata16_foo1( i1 integer, i2 integer, f3 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo11" </CEP_DDL>
+<CEP_DDL> create function tkdata16_foo1( i1 integer, f2 float, i3 integer) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo12" </CEP_DDL>
+<CEP_DDL> create function tkdata16_foo2( i1 integer, i2 integer, f3 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo21" </CEP_DDL>
+<CEP_DDL> create function tkdata16_foo2( f1 float, f2 float, i3 integer) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo22" </CEP_DDL>
+<CEP_DDL> create function tkdata16_foo3( f1 float, f2 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo31" </CEP_DDL>
+<CEP_DDL> create function tkdata16_foo3( f1 float, f2 float, f3 float) return float as language java name "oracle.cep.test.userfunctions.TkUsrFoo32" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata16_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata16inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata16_SinpByte1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata16inpByte1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata16_q11 as select * from tkdata16_S1 </CEP_DDL>
+<CEP_DDL> create query tkdata16_q12 as select * from tkdata16_S1 [range 1 millisecond] </CEP_DDL>
+<CEP_DDL> create query tkdata16_q13 as select c1 from tkdata16_S1[range 10] </CEP_DDL>
+<CEP_DDL> create query tkdata16_qb1 as select c1+1.2, rawtohex(c2) from tkdata16_SinpByte1 </CEP_DDL>
+<CEP_DDL> create query tkdata16_qb2 as select * from tkdata16_SinpByte1 where c2  &lt; hextoraw("22") </CEP_DDL>
+<CEP_DDL> create query tkdata16_q15 as select tkdata16_foo1(c1,2,3.1) from tkdata16_S1 where tkdata16_foo2(c1,2,3) >1 </CEP_DDL>
+<CEP_DDL> create query tkdata16_q17 as select tkdata16_foo3(c1,2) from tkdata16_S1 where tkdata16_foo3(c1,2,3) >1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata16_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16_11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata16_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16_12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata16_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16_13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata16_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16_15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata16_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16_17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata16_qb1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16_b1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata16_qb2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata16_b2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata16_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkdata16_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkdata16_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkdata16_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkdata16_q17 start </CEP_DDL>
+<CEP_DDL> alter query tkdata16_qb1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata16_qb2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

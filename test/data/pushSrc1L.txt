@@ -1,0 +1,17 @@
+<ComplexEvents>
+
+  <ComplexEvent>
+    <Timestamp> 08/07/2004 11:13:48 </Timestamp>
+    <ElementKind> plus </ElementKind>
+    <c1> 1 </c1>
+    <c2> 0.14 </c2>
+  </ComplexEvent>
+
+  <ComplexEvent>
+    <Timestamp> 08/08/2004 11:17:48 </Timestamp>
+    <ElementKind> plus </ElementKind>
+    <c1> 9223372036854775807 </c1>
+    <c2> 42.3 </c2>
+  </ComplexEvent>
+
+</ComplexEvents>

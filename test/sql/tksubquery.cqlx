@@ -1,0 +1,683 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream S0 (c1 integer, c2 float, c3 char(32)) </CEP_DDL>
+<CEP_DDL> create stream S1 (c1 integer, c2 integer) derived timestamped to_bigint(c1*100)</CEP_DDL>
+<CEP_DDL> create external relation tkExternal_R1 (d1 timestamp, d2 interval)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tksubquery.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter stream S1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter relation tkExternal_R1 add source 
+"<EndPointReference><Address>external:soainfra</Address></EndPointReference>"]]> </CEP_DDL>
+
+
+
+<!-- *******************
+
+CREATE VIEW v0 AS SELECT max(c1) from S0
+
+$ No select list aliasing
+CREATE QUERY q1 AS
+SELECT * FROM (SELECT c1*1, c2*1, c3*1 from S0) [RANGE 1] 
+
+$ No subquery alias
+CREATE QUERY q1 AS
+SELECT * FROM (SELECT c1*1, c2*1, c3*1 from S0) [RANGE 1] 
+
+$ SELECT * -> gets aliased like S0.c1
+CREATE QUERY q1 AS
+SELECT * FROM (SELECT * from S0) [RANGE 1] AS ABC
+
+$ ..and does this guy
+CREATE QUERY q1 AS
+SELECT * FROM (SELECT c1, c2, c3 from S0) [RANGE 1] AS ABC
+
+CREATE QUERY q1 AS
+SELECT * FROM (SELECT c1*1 as c1, c2*4 as c2, c3*3 as c3 from S0) [RANGE 1] AS ABC
+
+$ -ve group by test
+CREATE QUERY q1 AS SELECT * FROM (SELECT * from (SELECT * FROM S0) AS ABC) AS
+ABC WHERE c1 != 10 GROUP BY c1 HAVING count(c1) >= 1 ORDER BY c1 ROWS 5
+
+CREATE QUERY q1 AS SELECT max(c1) FROM (SELECT * from (SELECT * FROM S0) AS ABC) AS
+ABC WHERE c1 != 10 GROUP BY c1 HAVING count(c1) >= 1 ORDER BY c1 ROWS 5
+
+<CEP_DDL> 
+CREATE VIEW v0 AS SELECT c1 from S0 [RANGE 5]
+</CEP_DDL>
+
+<CEP_DDL> 
+CREATE QUERY q0 AS SELECT * FROM v0 [ROWS 1]
+</CEP_DDL>
+
+<CEP_DDL> 
+CREATE VIEW v0 AS SELECT c1 from S0 [RANGE 2000 milliseconds SLIDE 1] ORDER BY
+c2 ROWS 2
+</CEP_DDL>
+
+<CEP_DDL> 
+CREATE QUERY q0 AS SELECT * FROM v0
+</CEP_DDL>
+
+#(1): Complete query with different clauses and two levels of nesting
+Notes: 
+ - include a -ve test case which select/where don't refer to aliases
+ - complete innner query with various clauses
+
+select c1 as b1 from a where b1 = 5 ==> is not a valid query anyway as in
+RDBMS
+
+**************************************************************** 
+-->
+
+<!-- ******************************************************************** -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!--                     NEGATIVE TEST CASES                              -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!-- ******************************************************************** -->
+
+
+
+
+<!-- ************************************************** -->
+<!-- -ve test: select list must be aliased -->
+<!-- ************************************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS 
+SELECT * 
+FROM (SELECT max(c1) FROM S0) AS ABC 
+]]>
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS 
+SELECT *
+FROM (SELECT c1*50 as b1, floor(c2), upper(c3) FROM S0) AS S0
+]]>
+</CEP_DDL>
+
+
+<!-- ************************************************** -->
+<!-- -ve test: negative test cases for pattern matching -->
+<!-- ************************************************** -->
+
+<!-- a. Unaliased -->
+<CEP_DDL> 
+<![CDATA[
+
+CREATE QUERY q0 AS
+SELECT T.*
+FROM (SELECT upper(c3) FROM S0) AS ROHAN
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c3 as Exadata
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c3 = 'EXADATA'),
+      B AS (B.c3 = 'EXALOGIC')
+) as T
+
+]]>
+</CEP_DDL>
+
+<!-- b. alias mismatch -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS
+SELECT T.*
+FROM (SELECT upper(c3) AS c2 FROM S0) AS ROHAN
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c3 as Exadata
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c3 = 'EXADATA'),
+      B AS (B.c3 = 'EXALOGIC')
+) as T
+
+]]>
+</CEP_DDL>
+
+<!-- c. pattern over a relation -->
+<CEP_DDL> 
+<![CDATA[
+
+CREATE QUERY q0 AS
+SELECT T.*
+FROM (SELECT upper(c3) AS c2 FROM S0[now]) AS ISHAN
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c3 as Exadata
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c3 = 'EXADATA'),
+      B AS (B.c3 = 'EXALOGIC')
+) as T
+
+]]>
+</CEP_DDL>
+
+
+<!-- ************************************************** -->
+<!-- -ve test: subquery must be aliased                 -->
+<!-- ************************************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS 
+SELECT * 
+FROM (SELECT * FROM S0) [now]
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS 
+SELECT * 
+FROM (SELECT * FROM S0)
+]]>
+</CEP_DDL>
+
+<!-- ********************************** -->
+<!-- -ve: duplicate subquery alias      -->
+<!-- ********************************** -->
+<CEP_DDL> 
+<![CDATA[
+
+CREATE QUERY q0 AS
+SELECT FOO.*
+FROM (SELECT * FROM S0) [now] AS FOO, (SELECT * FROM S0) [now] AS FOO
+
+]]>
+</CEP_DDL>
+
+
+
+<!-- ******************************** -->
+<!-- -ve test: window over a relation -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS
+SELECT ABC.*
+FROM (SELECT c1 as b1, c2 as b2, c3 as b3 FROM S0 [RANGE 2000 milliseconds SLIDE 1]) [ROWS 5] AS ABC
+ORDER BY b2 ROWS 2
+]]>
+</CEP_DDL>
+
+
+<!-- ************************************************** -->
+<!-- -ve test: subquery select list alias duplication   -->
+<!-- ************************************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS 
+SELECT * 
+FROM (SELECT c1 as b1, c2 as b1 FROM S0) AS ABC 
+]]>
+</CEP_DDL>
+
+<!-- ************************************************** -->
+<!-- -ve test: join of subqueries that evaluate to      -->
+<!-- unbounded streams is not allowed                   -->
+<!-- ************************************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS
+SELECT ALPHA.*
+FROM (SELECT c1*50 AS a, floor(c2) as b, upper(c3) as c FROM S0) AS ALPHA, 
+     (SELECT c1*50 AS a, floor(c2) as b, upper(c3) as c FROM S0) AS BETA
+WHERE ALPHA.a = BETA.a
+]]>
+</CEP_DDL>
+
+<!-- ************************************************** -->
+<!-- -ve test: external relation                        -->
+<!-- should thorw proper error message                  -->
+<!-- ************************************************** -->
+<CEP_DDL> 
+<![CDATA[ 
+create query tkExternal_q1 as select * from (select * from tkExternal_R1) as foo
+]]> 
+</CEP_DDL> 
+
+
+
+<CEP_DDL>
+<![CDATA[
+
+CREATE QUERY q0 AS
+SELECT B.*
+FROM 
+(SELECT * FROM 
+          (SELECT c1, c2 FROM S0) AS A, (SELECT c3 FROM S0[now]) AS B) as B
+
+]]>
+</CEP_DDL>
+
+
+
+<!-- ******************************************************************** -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!--                     POSITIVE TEST CASES                              -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!--                                                                      -->
+<!-- ******************************************************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q1 AS 
+SELECT * 
+FROM 
+ (SELECT * 
+    FROM (SELECT c1 as b1, c2 as b2, c3 as b3 FROM S0 WHERE c1 = 10) AS ABC
+ ) AS ABC 
+WHERE b1 = 10
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q2 AS
+SELECT * 
+FROM
+ (SELECT * FROM (SELECT c1 as b1, c2 as b2, c3 as b3 FROM S0) AS ABC) AS ABC 
+WHERE ABC.b3 = 'Exadata'
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q3 AS
+SELECT count(ABC.c1)
+FROM (SELECT * FROM S0) AS ABC
+GROUP BY ABC.c1 
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q4 AS
+SELECT count(*)
+FROM (SELECT * FROM S0) AS ABC
+GROUP BY c1 
+]]>
+</CEP_DDL>
+
+
+<!-- *********************** -->
+<!-- .* notation, order by,  -->
+<!-- *********************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q5 AS
+SELECT ABC.*
+FROM (SELECT c1 as b1, c2 as b2, c3 as b3 FROM S0 [RANGE 2000 milliseconds SLIDE 1]) AS ABC
+ORDER BY b2 ROWS 2
+]]>
+</CEP_DDL>
+
+<!-- ************************************ -->
+<!-- +ve: SELECT clauses with expressions -->
+<!-- ************************************ -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q6 AS 
+SELECT *
+FROM (SELECT c1*76.598 as b1, floor(c2) as b2, upper(c3) as b3 FROM S0) AS S0
+]]>
+</CEP_DDL>
+
+<!-- *********************** -->
+<!-- MATCH_RECOGNIZE         -->
+<!-- *********************** -->
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q7 AS
+SELECT T.*
+FROM (ISTREAM(SELECT upper(c3) AS c5 FROM S0[now])) AS ROHAN
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c5 as Exadata
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c5 = 'EXADATA'),
+      B AS (B.c5 = 'EXALOGIC')
+) as T
+]]>
+</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q8 AS
+SELECT T.*
+FROM (SELECT * FROM S0) AS S0
+MATCH_RECOGNIZE
+(
+  MEASURES
+     A.c3 as Exadata
+  PATTERN (A B)
+  DEFINE
+      A AS (A.c3 = 'Exadata'),
+      B AS (B.c3 = 'ExaLogic')
+) as T
+]]>
+</CEP_DDL>
+
+<!-- ************************************ -->
+<!-- INSTANT REL FROM A SUBUQERY STREAM   -->
+<!-- ************************************ -->
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q9 AS
+SELECT FOO.*
+FROM (SELECT * FROM S0) [now] AS FOO
+]]>
+</CEP_DDL>
+
+<!-- ************************************ -->
+<!-- RSTREAM ON A SUBQUERY RELATION       -->
+<!-- ************************************ -->
+<CEP_DDL> 
+<![CDATA[
+
+CREATE QUERY q10 AS
+SELECT BEAM.*
+FROM (RSTREAM(SELECT c1*50 AS a, floor(c2) as b, upper(c3) as c FROM S0
+[ROWS 2])) AS BEAM
+
+]]>
+</CEP_DDL>
+
+<!-- ************************************* -->
+<!-- DSTREAM ON SUBQUERY RELATION          -->
+<!-- ************************************* -->
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q11 AS
+SELECT BEAM.*
+FROM (DSTREAM(SELECT c1*50 AS a, floor(c2) as b, upper(c3) as c FROM S0[now])) AS BEAM
+
+]]>
+</CEP_DDL>
+
+<!-- ************************************* -->
+<!-- Test various clauses of the query     -->
+<!-- ************************************* -->
+
+<!-- GROUP BY, WHERE, HAVING -->
+<!-- TODO: make this interesting on a separate stream -->
+
+<CEP_DDL> 
+<![CDATA[
+
+CREATE QUERY q12 AS
+SELECT a, count(c)
+FROM (SELECT c1*50 AS a, floor(c2) as b, upper(c3) as c FROM S0 [ROWS 3]) AS BEAM
+WHERE a > 1000
+GROUP BY a
+HAVING count(b) > 0
+ORDER BY a ROWS 3
+
+]]>
+</CEP_DDL>
+
+
+<!-- JOIN -->
+<!-- TODO: pick a current join test and redo it -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q13 AS
+SELECT ALPHA.*
+FROM (SELECT c1*40 AS a, floor(c2) as b, upper(c3) as c FROM S0) [RANGE 1 SECOND] AS ALPHA, 
+     (SELECT c1*50 AS a, floor(c2) as b, upper(c3) as c FROM S0) [RANGE 500 MILLISECOND] AS BETA
+WHERE ALPHA.a = BETA.a
+]]>
+</CEP_DDL>
+
+<!-- TODO: outer join -->
+
+
+<!-- ****************************** -->
+<!-- Multi-level nesting test cases -->
+<!-- ****************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q14 AS 
+SELECT NEST1.*
+FROM 
+  (SELECT NEST0.a/1000 as x, NEST0.b+0.456 as y, substr(NEST0.c, 1, 5) as z
+   FROM (SELECT c1*1000 as a, floor(c2) as b, upper(c3) as c FROM S0) AS NEST0) AS NEST1
+]]>
+</CEP_DDL>
+
+
+<!-- ************************************ -->
+<!-- Derived timestamp (MATCH_RECOGNIZE)  -->
+<!-- ************************************ -->
+
+<CEP_DDL>
+<![CDATA[
+
+create query q15 as 
+SELECT T.Ac2 
+FROM (SELECT * FROM S1) AS SUBQUERY0
+MATCH_RECOGNIZE
+(
+  MEASURES c2 as Ac2 
+  ALL MATCHES 
+  include timer events 
+  PATTERN (A) 
+  duration 1000 nanoseconds 
+  DEFINE A as A.c2 > 1) 
+AS T
+]]>
+</CEP_DDL>
+
+<!-- ************************************ -->
+<!-- PSEUDO Columns Support -->
+<!-- ************************************ -->
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q16a AS
+SELECT ELEMENT_TIME
+FROM (SELECT ELEMENT_TIME FROM S0) AS FOO
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q16b AS
+SELECT ELEMENT_TIME
+FROM (SELECT ELEMENT_TIME FROM S0) [now] AS FOO
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q16c AS
+SELECT ELEMENT_TIME
+FROM (SELECT ELEMENT_TIME FROM S0) [ROWS 2] AS FOO
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q16d AS
+SELECT ELEMENT_TIME, c1
+FROM (SELECT ELEMENT_TIME, c1 FROM S0) AS FOO
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q16e AS
+SELECT ELEMENT_TIME, c1
+FROM (SELECT ELEMENT_TIME, c1 FROM S0) [RANGE 1] AS FOO
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q16f AS
+SELECT ELEMENT_TIME, c1
+FROM (SELECT ELEMENT_TIME, c1 FROM S0 GROUP BY c1, ELEMENT_TIME) AS FOO
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q16g AS
+SELECT name, ELEMENT_TIME, c1
+FROM (SELECT "S1" as name, ELEMENT_TIME, c1 FROM S0 UNION ALL SELECT "S2" as name,ELEMENT_TIME, c1 FROM S0) AS FOO
+]]>
+</CEP_DDL>
+
+<!-- ************************** -->
+<!-- +ve: Set operator          -->
+<!-- TODO: not working as of now -->
+<!-- ************************** -->
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q111 AS
+SELECT ABC.*
+FROM (SELECT * from S0 UNION select * from S0) AS ABC
+]]>
+</CEP_DDL>
+
+
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q2.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q3 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q3.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q4 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q4.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q5 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q5.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q6 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q6.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q7 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q7.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q8 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q8.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q9 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q9.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q10 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q10.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q11 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q11.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q12 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q12.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q13 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q13.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q14 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q14.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q15 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q15.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q16a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q16a.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q16b add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q16b.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q16c add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q16c.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q16d add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q16d.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q16e add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q16e.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q16f add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q16f.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q16g add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubquery_q16g.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter query q4 start </CEP_DDL>
+<CEP_DDL> alter query q5 start </CEP_DDL>
+<CEP_DDL> alter query q6 start </CEP_DDL>
+<CEP_DDL> alter query q7 start </CEP_DDL>
+<CEP_DDL> alter query q8 start </CEP_DDL>
+<CEP_DDL> alter query q9 start </CEP_DDL>
+<CEP_DDL> alter query q10 start </CEP_DDL>
+<CEP_DDL> alter query q11 start </CEP_DDL>
+<CEP_DDL> alter query q12 start </CEP_DDL>
+<CEP_DDL> alter query q13 start </CEP_DDL>
+<CEP_DDL> alter query q14 start </CEP_DDL>
+<CEP_DDL> alter query q15 start </CEP_DDL>
+<CEP_DDL> alter query q16a start </CEP_DDL>
+<CEP_DDL> alter query q16b start </CEP_DDL>
+<CEP_DDL> alter query q16c start </CEP_DDL>
+<CEP_DDL> alter query q16d start </CEP_DDL>
+<CEP_DDL> alter query q16e start </CEP_DDL>
+<CEP_DDL> alter query q16f start </CEP_DDL>
+<CEP_DDL> alter query q16g start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

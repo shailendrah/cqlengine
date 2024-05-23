@@ -1,0 +1,3 @@
+x
+1000 "<r><a ID=\"1\"><data LOC=\"blr\" AMNT=\"100\" /><data LOC=\"sfo\" AMNT=\"10\" /></a></r>"
+

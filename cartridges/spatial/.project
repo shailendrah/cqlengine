@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>cartridges.spatial</name>
+	<comment></comment>
+	<projects/>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments/>
+		</buildCommand>
+	</buildSpec>
+	<linkedResources>
+		<link>
+			<name>jaxb-generated</name>
+			<type>2</type>
+			<location>/home/hopark/gitlocal/soa-osa7/out/build/modules/spark-cql/cqlengine/cartridges/spatial/jaxb-generated</location>
+		</link>
+	</linkedResources>
+</projectDescription>

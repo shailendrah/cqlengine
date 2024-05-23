@@ -1,0 +1,4 @@
+
+difs, 0
+sucs, 1
+tktrace_log.suc

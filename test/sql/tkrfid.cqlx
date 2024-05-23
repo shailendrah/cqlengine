@@ -1,0 +1,31 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkrfid_TempStream(locId integer, temp float) </CEP_DDL>
+<CEP_DDL> create stream tkrfid_MovementStream(gateId integer, itemId integer) </CEP_DDL>
+<CEP_DDL> register relation tkrfid_GateRel(gateId integer, outLocId integer, inLocId integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkrfid_TempStream add source "<EndPointReference><Address>file://@TEST_DATA@/inpRFIDTS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkrfid_MovementStream add source "<EndPointReference><Address>file://@TEST_DATA@/inpRFIDMS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkrfid_GateRel add source "<EndPointReference><Address>file://@TEST_DATA@/inpRFIDGR.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create view tkrfid_PerishableMovementStream(gateId integer,itemId integer) as select ms.gateId, ms.itemId from tkrfid_MovementStream as ms where ms.itemId = 10 </CEP_DDL>
+<CEP_DDL> create view tkrfid_ItemLoc(itemId integer, locId integer) as select pms.itemId, gr.inLocId from tkrfid_PerishableMovementStream[partition by itemId rows 1] as pms, tkrfid_GateRel as gr where gr.gateId = pms.gateId </CEP_DDL>
+<CEP_DDL> create view tkrfid_LocTemp(locId integer, temp float) as select ts.locId, ts.temp from tkrfid_TempStream[partition by locId rows 1] as ts </CEP_DDL>
+<CEP_DDL> create view tkrfid_ItemTemp(itemId integer, temp float) as select il.itemId, lt.temp from tkrfid_ItemLoc as il, tkrfid_LocTemp as lt where il.locId = lt.locId </CEP_DDL>
+<CEP_DDL> create view tkrfid_ItemTempStream(itemId integer, temp float) as IStream(select * from tkrfid_ItemTemp) </CEP_DDL>
+
+
+<CEP_DDL><![CDATA[create query tkrfid_detectPerish as
+select its.itemId
+from tkrfid_ItemTempStream MATCH_RECOGNIZE (
+    PARTITION BY itemId
+    MEASURES A.itemId as itemId
+    PATTERN (A B* C)
+    DEFINE
+         A  AS  (A.temp >= 25),
+         B  AS  ((B.temp >= 25) and (to_timestamp(B.element_time) - to_timestamp(A.element_time) < INTERVAL "0 00:00:05.00" DAY TO SECOND)),
+         C  AS  (to_timestamp(C.element_time) - to_timestamp(A.element_time) >= INTERVAL "0 00:00:05.00" DAY TO SECOND)
+) as its]]> </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkrfid_detectPerish add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/RFID.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkrfid_detectPerish start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

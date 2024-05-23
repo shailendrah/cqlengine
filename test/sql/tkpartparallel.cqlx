@@ -1,0 +1,50 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream S0 (c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> alter stream S0 set degree of parallelism = 2 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q1 as select T.C2, T.A, T.sumB, T.C from S0 MATCH_RECOGNIZE ( PARTITION BY c2 MEASURES sum(B.c1) as sumB, A.c2 as C2, C.c1 as C, A.c1 as A PATTERN(A B* C) DEFINE A as ((A.c1 < 50) AND (A.c1 > 35)), B as B.c1 > A.c1, C as C.c1 > prev(C.c1)) as T]]> </CEP_DDL>
+
+<CEP_DDL> alter query q1 set ordering constraint partition order on c2 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outPP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q2 as select c1, count(*) as b from S0 group by c1]]> </CEP_DDL>
+
+<CEP_DDL> alter query q2 set ordering constraint partition order on c1</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outPP2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q2 start </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q4 as select c1, sum(c2) as b from S0 group by c1]]> </CEP_DDL>
+
+<CEP_DDL> alter query q4 set ordering constraint partition order on c1</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outPP4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q4 start </CEP_DDL>
+
+
+<CEP_DDL> create relation R(c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation R add source "<EndPointReference><Address>file://@TEST_DATA@/inpPP3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<CEP_DDL><![CDATA[ create query q3 as select c1, sum(c2) as b from R group by c1]]> </CEP_DDL>
+
+<CEP_DDL> alter query q3 set ordering constraint partition order on c1</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outPP3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q3 start </CEP_DDL>
+
+
+
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!--  $Header: cep-ws.xml 13-may-2008.08:52:39 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, Oracle. All rights reserved.  
+
+   NAME
+     cep-ws.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      03/28/08 - Creation
+
+-->
+<EmptyNode/>
+

@@ -1,0 +1,1 @@
+14000:+ DelayedShipment,3,300.0

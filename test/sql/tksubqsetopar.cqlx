@@ -1,0 +1,105 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_LeftRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3</CEP_DDL>
+
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_LeftRel2(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_LeftRel3(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_RightRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_RightRel2(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_RightRel3(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_RightRel4(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedRelBinOp_RightRel5(c1 integer, c2 float, c3 bigint, c4 char(10)) archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3</CEP_DDL>
+<CEP_DDL>CREATE RELATION tkArchivedRelBinOp_NormalRel(c1 integer, c2 float, c3 bigint, c4 char(10))</CEP_DDL>
+<CEP_DDL>CREATE STREAM tkArchivedRelBinOp_S(c1 integer)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_LeftRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_LeftRel2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_LeftRel3 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_RightRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_RightRel2 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_RightRel3 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_RightRel4 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_RightRel5 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkArchivedRelBinOp_NormalRel add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpNormal.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkArchivedRelBinOp_S add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- union - except and minus are similar. All binops make their children as query ops-->
+<CEP_DDL><![CDATA[ 
+create query tkArchivedRelBinOp_q1 as 
+(select * from tkArchivedRelBinOp_LeftRel1)
+UNION 
+(select * from tkArchivedRelBinOp_RightRel1)
+]]></CEP_DDL>
+
+<!-- INTERSECT - this uses a tree of minus internally -->
+<CEP_DDL><![CDATA[ 
+create query tkArchivedRelBinOp_q2 as 
+(select * from tkArchivedRelBinOp_LeftRel2)
+INTERSECT 
+(select * from tkArchivedRelBinOp_RightRel2)
+]]></CEP_DDL>
+
+
+<!-- Tests query over view evaluating to relation. In this case the view query
+does not have a stateful operator so we mark the top operator in view query as
+a query operator. The query q5 does not have to undergo state initialization
+as it is not directly dependent on archived rel.  -->
+
+<CEP_DDL><![CDATA[ 
+create query tkArchivedRelBinOp_q5 as 
+select * from tkArchivedRelBinOp_LeftRel3 where c1=10 or c1=20 
+EXCEPT
+select * from tkArchivedRelBinOp_RightRel3 where c1=10
+]]></CEP_DDL>
+
+<!-- n-ary setop query. Also tests non-archived input on the right side of
+binary op. --> 
+<CEP_DDL><![CDATA[ 
+create query tkArchivedRelBinOp_q7 as
+select * from tkArchivedRelBinOp_RightRel5 
+minus 
+select c1, 1.5 as c2, 1L as c3, "first" as c4 from tkArchivedRelBinOp_S[range 70000]
+minus
+select * from tkArchivedRelBinOp_NormalRel
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelBinOp_q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopar_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelBinOp_q2 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopar_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelBinOp_q5 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopar_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkArchivedRelBinOp_q7 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopar_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- start_time specified here is assumed to be in milliseconds -->
+<CEP_DDL> alter query tkArchivedRelBinOp_q1 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelBinOp_q2 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelBinOp_q5 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedRelBinOp_q7 set start_time 1000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedRelBinOp_q1 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelBinOp_q2 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelBinOp_q5 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedRelBinOp_q7 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+</CEP>

@@ -1,0 +1,53 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata_setop_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_setop_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_q1 as select * from tkdata_setop_S0[range 1] where c1 > 10  </CEP_DDL>
+<CEP_DDL> create view  tkdata_setop_v1(c1 integer, c2 float) as query tkdata_setop_q1 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_q2 as select c1+2, c2 from tkdata_setop_v1 where c1 > 15</CEP_DDL>
+<CEP_DDL> create view  tkdata_setop_v2(c1 integer, c2 float) as query tkdata_setop_q2 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_q3 as  tkdata_setop_v2 union tkdata_setop_v1</CEP_DDL>
+<CEP_DDL> create query tkdata_setop_q4 as  tkdata_setop_v2 union tkdata_setop_v2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopq3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopq4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_q4 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+<CEP_DDL> register stream tkdata_setop_S2 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_setop_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>        
+<CEP_DDL> create query tkdata_setop_q11 as select * from tkdata_setop_S2[range 1] where c1 > 10  </CEP_DDL>
+<CEP_DDL> create view  tkdata_setop_v11(c1 integer, c2 float) as query tkdata_setop_q11 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_q22 as select c1+2, c2 from tkdata_setop_v11 where c1 > 15</CEP_DDL>
+<CEP_DDL> create view  tkdata_setop_v22(c1 integer, c2 float) as query tkdata_setop_q22 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_q33 as  tkdata_setop_v22 union all  tkdata_setop_v11</CEP_DDL>
+<CEP_DDL> create query tkdata_setop_q44 as  tkdata_setop_v22 union all  tkdata_setop_v22</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_q33 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopq33.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_q44 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopq44.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_q33 start </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_q44 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+<CEP_DDL> register stream tkdata_setop_S3( c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> register stream tkdata_setop_S4( c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> register stream tkdata_setop_S5(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_setop_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_setopS3.txt</Address></EndPointReference>"]]>  </CEP_DDL>        
+<CEP_DDL> <![CDATA[ alter stream tkdata_setop_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkdata_setopS4.txt</Address></EndPointReference>"]]>  </CEP_DDL>        
+<CEP_DDL> <![CDATA[ alter stream tkdata_setop_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS100.txt</Address></EndPointReference>"]]>  </CEP_DDL>        
+<CEP_DDL> create view tkdata_setop_v3(c1 integer, c2 integer) as select * from tkdata_setop_S3[range 2]</CEP_DDL>
+<CEP_DDL> create view tkdata_setop_v4(c1 integer, d1 integer) as select * from tkdata_setop_S4[range 1]</CEP_DDL>
+<CEP_DDL> create view tkdata_setop_v5(c1 integer, c2 float) as select * from tkdata_setop_S5[range 1]</CEP_DDL>
+<CEP_DDL> create view tkdata_setop_v6(c1 integer) as select c1 from tkdata_setop_S5[range 1]</CEP_DDL>
+<CEP_DDL> create query tkdata_setop_qMinus as tkdata_setop_v3 minus tkdata_setop_v4 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_qNotIn as tkdata_setop_v3 not in tkdata_setop_v4 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_qIntersect as tkdata_setop_v3 intersect tkdata_setop_v4 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_qSchemaError as tkdata_setop_v3 intersect tkdata_setop_v5 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_qNumberError as tkdata_setop_v3 intersect tkdata_setop_v6 </CEP_DDL>
+<CEP_DDL> create query tkdata_setop_qIn as tkdata_setop_v3 in tkdata_setop_v4 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_qMinus add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopqMinus.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_qNotIn add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopqNotIn.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_qIntersect add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopqIntersect.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_setop_qIn add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata_setopqIn.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_qMinus start </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_qNotIn start </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_qIntersect start </CEP_DDL>
+<CEP_DDL> alter query tkdata_setop_qIn start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

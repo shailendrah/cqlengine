@@ -1,0 +1,256 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>create archived relation tkm4_CallCenterFact(CallId bigint, CallPriority integer, StartInQueueTime timestamp, EndInQueueTime timestamp, StartInProcessTime timestamp, EndInProcessTime timestamp, StartEscalatedTime timestamp, EndEscalatedTime timestamp, StartAwaitingApprovalTime timestamp, EndAwaitingApprovalTime timestamp, StartDroppedTime timestamp, StartClosedTime timestamp, CustomerLocation char(255), CallCenterLocation char(255), CustomerStatus char(255), ProductType char(255), PreviousStatus char(255), CurrentStatus char(255)) archiver BIArchiver entity "soainfra.m4tableTs" event identifier CallId</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkm4_CallCenterFact add source "<EndPointReference><Address>mlffile://@TEST_DATA@/inpM4CallCenter.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- **************** Requirement 1 *************** -->
+
+<CEP_DDL><![CDATA[
+create query tkm4_q1 as
+  SELECT CallCenterLocation, count(*) AS IncomingCallVolume
+  FROM tkm4_CallCenterFact[CurrentHour on StartInQueueTime]
+  WHERE CallCenterLocation = "INDIA" AND StartInQueueTime IS NOT NULL
+  GROUP BY CallCenterLocation
+  PRIMARY KEY (CallCenterLocation)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q1.txt</Address></EndPointReference>" use update semantics ]]>  </CEP_DDL>
+
+<!-- Modifying start time DDL to ensure that archiver query fetches enough records. Possible reason is timezone changes. -->
+<!-- Fix diffs related to timezone difference. 
+     Commenting the previous DDL for start time. Also created test/log/outm4q1_prev.txt. 
+-->
+<!-- <CEP_DDL> alter query tkm4_q1 set start_time 1316887748221000000L</CEP_DDL-->
+<CEP_DDL> alter query tkm4_q1 set start_time 1316884148221000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q1 start</CEP_DDL> 
+
+<!-- **************** Requirement 2 *************** 
+      This is a drill-to-detail scenario. The queries are similar to query for requirement 1. 
+      Here only two queries are shown to demonstrate the functionality instead of showing one query for each level of the drill hierarchy.
+      Drill hierarchy : ProductType -> CallCenterLocation -> CustomerLocation
+-->
+
+<CEP_DDL><![CDATA[
+create query tkm4_q2a as 
+  SELECT * 
+  FROM tkm4_CallCenterFact [CurrentHour ON StartInQueueTime]
+  WHERE CurrentStatus="INQUEUE" AND ProductType = "WLS" 
+  PRIMARY KEY (CallId)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q2a add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q2a.txt</Address></EndPointReference>" use update semantics ]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q2a set start_time 1316877800000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q2a start</CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tkm4_q2b as 
+  SELECT * 
+  FROM tkm4_CallCenterFact [CurrentHour ON StartInQueueTime]
+  WHERE CurrentStatus="INQUEUE" AND ProductType = "WLS" AND CallCenterLocation = "INDIA"
+  PRIMARY KEY (CallId)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q2b add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q2b.txt</Address></EndPointReference>" use update semantics ]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q2b set start_time 1316877800000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q2b start</CEP_DDL>
+
+<!-- **************** Requirement 3 *************** -->
+<CEP_DDL><![CDATA[
+create query tkm4_q3 as
+  SELECT CallCenterLocation, hrfield , count(*) AS EscalatedCallsCount
+  FROM (
+         SELECT CallCenterLocation, extract("hour", to_timestamp(StartInQueueTime)) as hrfield
+         FROM tkm4_CallCenterFact [CurrentPeriod("0800", "1600" ) ON StartInQueueTime]
+	 WHERE StartEscalatedTime IS NOT NULL
+       ) as A
+  GROUP BY CallCenterLocation, hrfield
+  PRIMARY KEY(CallCenterLocation, hrfield)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q3.txt</Address></EndPointReference>" use update semantics ]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q3 set start_time 1316877800000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q3 start</CEP_DDL>
+
+<!-- **************** Requirement 4 *************** -->
+
+<CEP_DDL><![CDATA[
+create query tkm4_q4a as
+  SELECT CallCenterLocation, count(*) as CallsNeedMgrApproval
+  FROM  tkm4_CallCenterFact
+  WHERE StartAwaitingApprovalTime IS NOT NULL
+  GROUP BY CallCenterLocation
+  PRIMARY KEY (CallCenterLocation)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q4a add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q4a.txt</Address></EndPointReference>"]]> use update semantics  </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q4a set start_time 1316885000000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q4a start</CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tkm4_q4b as
+  SELECT CallCenterLocation, avg(to_bigint(EndAwaitingApprovalTime) - to_bigint(StartAwaitingApprovalTime)) AS AverageApprovalTime
+  FROM   tkm4_CallCenterFact
+  WHERE CurrentStatus != 'AWAITINGAPPROVAL' AND 
+  StartAwaitingApprovalTime IS NOT NULL AND EndAwaitingApprovalTime IS NOT NULL AND EndAwaitingApprovalTime > StartAwaitingApprovalTime 
+  GROUP BY CallCenterLocation
+  PRIMARY KEY (CallCenterLocation)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q4b add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q4b.txt</Address></EndPointReference>"]]> use update semantics  </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q4b set start_time 1316885000000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q4b start</CEP_DDL>
+
+<!-- **************** Requirement 5 and 6 (Queries are similar for both these requirements) *************** 
+     The BI Logical SQL query part in requirement 5 and 6 would be stripped off by CQService and hence it won't reach CQLEngine.
+     The CQService will issue a stream creation DDL and the data obtained by executing the BI Logical SQL would come as input from this stream.
+     We will be using a [rows 1] window to select the top most row from this stream.
+-->
+
+<CEP_DDL>create stream tkm4_HistoryStream (CallCenterLocation char(255), prev_day_avg double) is application timestamped</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkm4_HistoryStream add source "<EndPointReference><Address>mlffile://@TEST_DATA@/inpM4HistoryStream.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tkm4_q5 as
+  SELECT T.CallCenterLocation, T.AverageCompletionTime/1000l, T.PreviousDayAverage as PreviousDayAverage
+  FROM (
+         ISTREAM 
+         (
+           SELECT  A.CallCenterLocation, A.AverageCompletionTime, B.prev_day_avg as PreviousDayAverage
+           FROM (
+                  SELECT data.CallCenterLocation as CallCenterLocation, avg(to_bigint(data.StartClosedTime) - to_bigint(data.StartInQueueTime)) AS AverageCompletionTime
+                  FROM
+		  (
+		    SELECT CallCenterLocation, StartClosedTime, StartInQueueTime 
+		    FROM tkm4_CallCenterFact
+		    WHERE CurrentStatus = 'CLOSED' AND StartEscalatedTime IS NULL AND EndEscalatedTime IS NULL 
+		  ) [RANGE 10 MINUTES on StartClosedTime SLIDE 10 MINUTES] AS data
+                  GROUP BY data.CallCenterLocation
+                ) AS A, tkm4_HistoryStream[PARTITION BY CallCenterLocation ROWS 1] AS B
+           WHERE A.CallCenterLocation = B.CallCenterLocation
+         )
+  ) as patternInp
+  MATCH_RECOGNIZE
+  (
+    PARTITION BY CallCenterLocation
+    MEASURES
+      CallCenterLocation AS CallCenterLocation,
+      AverageCompletionTime AS AverageCompletionTime,
+      PreviousDayAverage AS PreviousDayAverage
+    ALL MATCHES
+    PATTERN ( (A1|A2) (B1|B2)+ (C1|C2))
+    SUBSET Z=(A2,B2,C2)
+    DEFINE
+      A1 as A1.AverageCompletionTime <= A1.PreviousDayAverage,
+      A2 as A2.AverageCompletionTime > A2.PreviousDayAverage,
+      B1 as B1.AverageCompletionTime > 1.05*prev(B1.AverageCompletionTime) and count(*) <= 11 and B1.AverageCompletionTime <= B1.PreviousDayAverage,
+      B2 as B2.AverageCompletionTime > 1.05*prev(B2.AverageCompletionTime) and count(*) <= 11 and B2.AverageCompletionTime > B2.PreviousDayAverage,
+      C1 as C1.AverageCompletionTime > 1.05*prev(C1.AverageCompletionTime) and count(*) = 12 and C1.AverageCompletionTime <= C1.PreviousDayAverage
+            and count(Z.*) >= 2,
+      C2 as C2.AverageCompletionTime > 1.05*prev(C2.AverageCompletionTime) and count(*) = 12 and C2. AverageCompletionTime > C2.PreviousDayAverage 
+            and count(Z.*) >= 2
+  ) as T
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q5.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q5 set start_time 1316885000000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q5 start</CEP_DDL>
+
+<!-- **************** Requirement 7 *************** -->
+
+<CEP_DDL><![CDATA[
+create query tkm4_q7 as
+  ISTREAM ( 
+    SELECT Dropped.CustomerStatus, Dropped.PreviousStatus, Dropped.DroppedCallsCount
+    FROM(
+         SELECT CallCenterLocation, CustomerStatus, PreviousStatus, count(*) AS DroppedCallsCount
+         FROM tkm4_CallCenterFact[CurrentPeriod("0800", "1600") ON StartInQueueTime]
+         WHERE CurrentStatus = "DROPPED" AND (PreviousStatus = 'INQUEUE' OR PreviousStatus = 'INPROCESS')
+         GROUP BY CallCenterLocation, CustomerStatus, PreviousStatus
+        )  AS Dropped,
+        (
+         SELECT CallCenterLocation, count(*) as totalCalls
+         FROM tkm4_CallCenterFact[CurrentPeriod("0800", "1600") ON StartInQueueTime]
+	 GROUP BY CallCenterLocation
+        )  AS AllCalls
+    WHERE Dropped.CallCenterLocation = AllCalls.CallCenterLocation AND (to_double(DroppedCallsCount) / totalCalls) > 0.05
+ )
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q7.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q7 set start_time 1316877800000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q7 start</CEP_DDL>
+
+<!-- **************** Requirement 8 *************** -->
+
+<CEP_DDL><![CDATA[
+create query tkm4_q8 as
+  SELECT T.CustomerStatus , T.EscalatedCalls
+  FROM (
+         ISTREAM
+	 (
+           SELECT  CustomerStatus, count(*) as EscalatedCalls
+           FROM tkm4_CallCenterFact [RANGE 15 MINUTES ON StartInQueueTime SLIDE 15 MINUTES] 
+           WHERE CustomerStatus = 'PLATINUM' AND StartEscalatedTime IS NOT NULL AND EndEscalatedTime IS NULL
+	   GROUP BY CustomerStatus
+	 )
+  ) AS esc 
+  MATCH_RECOGNIZE (
+  MEASURES
+    A.CustomerStatus as CustomerStatus,
+    C.EscalatedCalls as EscalatedCalls
+  ALL MATCHES
+  PATTERN(A B+ C)
+  DEFINE
+    B AS B.EscalatedCalls  > 1.05 * prev(B.EscalatedCalls) and count(*) <= 4,
+    C AS C.EscalatedCalls  > 1.05 * last(B.EscalatedCalls) and count(*) = 5
+  ) AS T 
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q8.txt</Address></EndPointReference>"]]> </CEP_DDL>
+<!-- Modifying start time DDL to ensure that archiver query fetches enough records. Possible reason is timezone changes. -->
+<!--CEP_DDL> alter query tkm4_q8 set start_time 1316908800000000000L</CEP_DDL-->
+<CEP_DDL> alter query tkm4_q8 set start_time 1316862000000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q8 start</CEP_DDL>
+
+<!-- **************** Requirement 9 *************** -->
+
+<CEP_DDL><![CDATA[
+create query tkm4_q9 as
+  ISTREAM (
+    SELECT CustomerStatus, count(*) AS CallsAwaitingSupervisor 
+    FROM tkm4_CallCenterFact[CurrentPeriod("0800", "1600") ON StartInQueueTime]
+    WHERE CustomerStatus = 'PLATINUM' AND StartAwaitingApprovalTime IS NOT NULL
+    GROUP BY CustomerStatus
+    HAVING count(*) >= 1 
+  )
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkm4_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outm4q9.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<CEP_DDL> alter query tkm4_q9 set start_time 1316877800000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkm4_q9 start</CEP_DDL>
+
+<!-- **************** Start the run *************** -->
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

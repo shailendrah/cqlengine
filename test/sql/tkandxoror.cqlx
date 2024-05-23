@@ -1,0 +1,55 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream S0 (c1 integer, c2 float, c3 char(32)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkandxoror.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<!-- ********* -->
+<!-- AND >> OR -->
+<!-- ********* -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q1 as select * from S0 
+   WHERE c1 = 10 OR c1 != 10 and c1 != 10
+]]>
+</CEP_DDL>
+
+<!-- ********** -->
+<!-- AND >> XOR -->
+<!-- ********** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q2 as select * from S0 
+   WHERE c1 != 10 AND 0 = 0 XOR 1 = 1
+]]>
+</CEP_DDL>
+
+<!-- ********** -->
+<!-- XOR >> OR  -->
+<!-- ********** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q3 as select * from S0 
+   WHERE 1 = 1 XOR 0 = 0 OR c1 = 10
+]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkandxoror_q1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkandxoror_q2.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q3 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkandxoror_q3.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

@@ -1,0 +1,66 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkAggrDistinct_S1 (c1 integer, c2 double, c3 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkAggrDistinct_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpAggrd1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create stream tkAggrDistinct_S2 (c1 integer, c2 double, c3 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkAggrDistinct_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpAggrd2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create function tkAggrDistinct_secondMax(n int) return int aggregate using  "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkAggrDistinct_fib(n int) return int as language java name "oracle.cep.test.userfunctions.TkUsrFib" </CEP_DDL>
+
+<!-- all distincts -->
+<CEP_DDL> create query tkAggrDistinct_q1 as select sum(distinct c2), max(distinct c1) from tkAggrDistinct_S1[range 4] group by c3</CEP_DDL>
+
+<!-- all non-distincts -->
+<CEP_DDL> create query tkAggrDistinct_q2 as select count(c3), max(c2), min(c1) from tkAggrDistinct_S1[range 7] group by c3,c2</CEP_DDL>
+
+<!-- all distincts but only one param expr so only one grpaggr (no joinproject) -->
+<CEP_DDL> create query tkAggrDistinct_q3 as select min(distinct c3), sum(distinct c3) from tkAggrDistinct_S1[range 5] group by c1</CEP_DDL>
+
+<!-- mix of distincts and non-distincts -->
+<CEP_DDL> create query tkAggrDistinct_q4 as select min(distinct c2), sum(distinct c1), sum(c1) from tkAggrDistinct_S1[range 6] group by c3</CEP_DDL>
+
+<!-- repeated aggr exprs in select clause, In the grpAggr only one will be considered. Project above it will handle it properly -->
+<CEP_DDL> create query tkAggrDistinct_q5 as select count(distinct c1), count(distinct c1) from tkAggrDistinct_S1[range 2] group by c2</CEP_DDL>
+
+<!-- mix of distincts and non-distincts. count_star already exists in select clause so need not be added explicitly -->
+<CEP_DDL> create query tkAggrDistinct_q6 as select count(distinct c3), max(c1), count(*) from tkAggrDistinct_S2[range 6] group by c1</CEP_DDL>
+
+<!-- distinct inside avg. count and sum should get added explicitly for one param expr. For other param expr they already exist so need not be added. also no group by attrs present. -->
+<CEP_DDL> create query tkAggrDistinct_q7 as select avg(distinct c1), avg(distinct c3),sum(distinct c1), count(distinct c1) from tkAggrDistinct_S2[range 3]</CEP_DDL>
+
+<!-- having some expression instead of attr as a param, some expr involving the result of aggr in select clause -->
+<CEP_DDL> create query tkAggrDistinct_q8 as select sum(distinct c1*2), min(distinct c1)*2 from tkAggrDistinct_S2[range 2] group by c1</CEP_DDL>
+
+<!-- distinct in HAVING clause -->
+<CEP_DDL> create query tkAggrDistinct_q9 as select min(distinct c1), sum(c2) from tkAggrDistinct_S2[range 5] group by c2 having avg(distinct c2) > 7</CEP_DDL>
+
+<!-- testing distinct inside UDF aggr function. should run fine -->
+<CEP_DDL> create query tkAggrDistinct_q10 as select tkAggrDistinct_secondMax(distinct c1) from tkAggrDistinct_S2[range 4] group by c1</CEP_DDL>
+
+<!-- testing distinct inside UDF non-aggr function. should throw semantic error -->
+<CEP_DDL> create query tkAggrDistinct_q11 as select tkAggrDistinct_fib(distinct c1) from tkAggrDistinct_S2[range 4] group by c3</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkAggrDistinct_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outAggrd10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkAggrDistinct_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkAggrDistinct_q10 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

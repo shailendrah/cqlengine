@@ -1,0 +1,131 @@
+<project name="cqlxtest">
+
+	<property file="cqlx_build.properties" />
+
+	<property environment="env" />
+	<property name="ant.home" value="${env.ANT_HOME}" />
+	<property name="ade.view.root" value="${env.GIT_REPO_ROOT}/source/modules/spark-cql/cqlengine" />
+	<property name="git_repo_path" value="${env.GIT_REPO_ROOT}" />
+	<property name="m2_repository" value="${git_repo_path}/env/.m2" />
+	<property name="out.home" value="${git_repo_path}/out" />
+	<property name="mw.home" value="${env.MW_HOME}" />
+
+	<!--cqlengine/test -->
+	<property name="cqlengine.dir" value="${git_repo_path}/source/modules/spark-cql/cqlengine" />
+	<property name="build.dir.target" value="${cqlengine.dir}/ant/common" />
+	<property name="test.src" value="${cqlengine.dir}/test/src" />
+
+	<!--oracle/work -->
+	<property name="work" value="${git_repo_path}/out/oracle/work" />
+	<property name="work.cep" value="${work}/cep" />
+	<property name="test.work.home" value="${work}" />
+	<property name="work.cep.log" value="${work.cep}/log" />
+
+	<property name="test.perl" value="perl" />
+	
+	<!--property name="test.perl" value="${git_repo_path}/env/perl58/bin/perl5.8.3" />
+	<property name="test.perl.lib" value="${git_repo_path}/env/perl58/lib/5.8.3" /-->
+	<property name="test" value="${cqlengine.dir}/test" />	
+	<property name="test.sosd" value="${cqlengine.dir}/test/sosd" />
+	<property name="is.tkmats" value="false" />
+	<property name="work.soainfra" value="${git_repo_path}/out/oracle/work/soa-infra" />
+	<property name="xe.home" value="/u01/app/oracle/product/11.2.0/xe" />
+
+	<property name="test.config" value="${cqlengine.dir}/test/config" />
+	<property name="test.sql" value="${cqlengine.dir}/test/sql" />
+	<property name="dir.test.cqlx" value="${cqlengine.dir}/test/sql" />
+
+    <!-- echo message="dir.test.cqlx=${dir.test.cqlx}" / -->
+    
+	<!--jvm args-->
+	<property name="test.jvm" value="${env.JAVA_HOME}/bin/java" />
+	<property name="debug.value" value="true" />
+	<property name="jvmarg.assertion" value="true" />
+	<property name="jvmarg.remotedebug" value="" />
+	<property name="jvmarg.line" value="" />
+
+    <!-- set the operating system specific properties -->
+    <condition property="isMac">
+        <os family="mac" />
+    </condition>
+
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>
+
+    <condition property="isUnix">
+        <!-- mac ox x is also considered a unix OS, therefore we need to negate this condition -->
+        <and>
+            <os family="unix" />
+            <not>
+                <os family="mac" />
+            </not>
+        </and>
+    </condition>
+
+    <condition property="test.shell" value="/bin/sh">
+        <isset property="isUnix" />
+    </condition>
+
+    <condition property="test.shell" value="/bin/sh">
+        <isset property="isMac" />
+    </condition>
+
+    <condition property="test.shell" value="c:\cygwin\bin\bash.exe">
+        <isset property="isWindows" />
+    </condition>
+<!-- TODO: Refactor classpath by consolidating all dependency read from {out.home}-->    
+	<path id="cep.classpath">
+
+		<pathelement location="${out.home}/build/modules/spark-cql/cqlengine/cartridges/java/libs/osa.spark-cql.cqlengine.cartridges.java.jar" />
+		<pathelement location="${out.home}/build/modules/spark-cql/cqlengine/cartridges/spatial/libs/osa.spark-cql.cqlengine.cartridges.spatial.jar" />
+		<pathelement location="${out.home}/build/modules/spark-cql/cqlengine/server/libs/osa.spark-cql.cqlengine.server.jar" />
+		<pathelement location="${out.home}//build/modules/spark-integration/client-spi/libs/spark-osa-client.jar" />
+		<pathelement location="${out.home}/build/modules/spark-cql/cqlengine/logging/libs/osa.spark-cql.cqlengine.logging.jar" />
+		<pathelement location="${mw.home}/oep/osa/modules/osa.spark-cql.cqlengine.test-shaded.jar" />
+		<pathelement location="${out.home}/build/modules/spark-cql/cqlengine/standaloneEnv/libs/osa.spark-cql.cqlengine.standaloneEnv.jar" />
+		<pathelement location="${out.home}/build/modules/spark-cql/cqlengine/api/libs/osa.spark-cql.cqlengine.api.jar" />
+                <pathelement location="${out.home}/build/modules/spark-cql/cqlengine/test/libs/test-tests.jar" />
+        <pathelement location="${out.home}/build/modules/spark-cql/test/libs/osa.spark-cql.test.jar" />
+        <pathelement location="${out.home}/build/modules/spark-cql/cqlengine/server/libs/server-tests.jar" />
+        <pathelement location="${out.home}/build/modules/spark-cql/cqlengine/cartridges/java/libs/java-tests.jar" />
+		<pathelement location="${cqlengine.dir}/lib/colt-1.2.0.jar" />
+			<pathelement location="${cqlengine.dir}/lib/antlr-2.7.2.jar" />
+			<pathelement location="${cqlengine.dir}/lib/commons-beanutils-1.8.0.jar" />
+
+			<pathelement location="${mw.home}/oracle_common/modules/org.springframework_3.1.0.jar" />
+			<pathelement location="${cqlengine.dir}/lib/spring-osgi-core-1.2.0.jar" />
+
+			<pathelement location="${cqlengine.dir}/lib/sdoutl-12.1.0.jar" />
+			<pathelement location="${cqlengine.dir}/lib/sdotopo-12.1.0.jar" />
+			<pathelement location="${cqlengine.dir}/lib/sdoapi-12.1.0.jar" />
+
+			<pathelement location="${cqlengine.dir}/lib/junit-4.10.jar" />
+		<pathelement location="${cqlengine.dir}/lib/commons-logging-1.2.jar" />
+		<pathelement location="${cqlengine.dir}/lib/i18n-3.0.0.0.jar" />
+		<pathelement location="${cqlengine.dir}/lib/orai18n-collation-1.0.jar" />
+		<pathelement location="${cqlengine.dir}/lib/com.bea.core.apache.log4j.jar" />
+		<pathelement location="${cqlengine.dir}/lib/aopalliance-1.0.jar" />
+
+		<pathelement location="${cqlengine.dir}/lib/ojdl.jar" />
+		<pathelement location="${cqlengine.dir}/lib/dms-1.0.jar" />
+		<pathelement location="${cqlengine.dir}/lib/ojdbc6.jar" />
+		<pathelement location="${cqlengine.dir}/lib/xmlparserv2_sans_jaxp_services.jar" />
+		<pathelement location="${cqlengine.dir}/lib/xquery.jar" />
+		<pathelement location="${cqlengine.dir}/lib/commons-csv-20070730.jar" />
+		<pathelement location="${cqlengine.dir}/lib/vwap-benchmark-1.0.jar" />
+
+	</path>
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${mw.home}/oracle_common/modules/net.sf.antcontrib_1.1.0.0_1-0b3/lib/ant-contrib.jar" />
+		</classpath>
+	</taskdef>
+
+	<!-- import macro defs -->
+	<import file="${cqlengine.dir}/ant/common/deploy_test.xml" />
+
+
+</project>
+

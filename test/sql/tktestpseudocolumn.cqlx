@@ -1,0 +1,32 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tktestpseudocolumn_S1 (c1 integer) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tktestpseudocolumn_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptktestpseudocolumn_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tktestpseudocolumn_q1 as select ora_query_id from tktestpseudocolumn_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tktestpseudocolumn_q2 as select ora_query_id from tktestpseudocolumn_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tktestpseudocolumn_q3 as select "tktestpseudocolumn_q2" from tktestpseudocolumn_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tktestpseudocolumn_q4 as select ora_query_id from tktestpseudocolumn_S1 where ora_query_id like "tktestpseudocolumn*" ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tktestpseudocolumn_q5 as select ora_query_id from tktestpseudocolumn_S1 where ora_query_id like "tktestpseudocolumn*" ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tktestpseudocolumn_v1 as select ora_query_id as view_name from tktestpseudocolumn_S1 ]]></CEP_DDL>
+<CEP_DDL><![CDATA[ create query tktestpseudocolumn_q6 as select ora_query_id, view_name from tktestpseudocolumn_v1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tktestpseudocolumn_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtktestpseudocolumn_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktestpseudocolumn_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtktestpseudocolumn_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktestpseudocolumn_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtktestpseudocolumn_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktestpseudocolumn_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtktestpseudocolumn_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktestpseudocolumn_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtktestpseudocolumn_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktestpseudocolumn_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtktestpseudocolumn_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tktestpseudocolumn_q1 start</CEP_DDL>
+<CEP_DDL>alter query tktestpseudocolumn_q2 start</CEP_DDL>
+<CEP_DDL>alter query tktestpseudocolumn_q3 start</CEP_DDL>
+<CEP_DDL>alter query tktestpseudocolumn_q4 start</CEP_DDL>
+<CEP_DDL>alter query tktestpseudocolumn_q5 start</CEP_DDL>
+<CEP_DDL>alter query tktestpseudocolumn_q6 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

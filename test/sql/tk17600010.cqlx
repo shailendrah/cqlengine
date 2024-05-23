@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17600010_S1 (c0 bigint, c1 integer) derived timestamped tk17600010_S1.c0 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17600010_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17600010_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tk17600010_S2 (c0 bigint, c1 integer) derived timestamped tk17600010_S2.c0</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17600010_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17600010_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+create query tk17600010_q1 as select * from (tk17600010_S1 union all tk17600010_S2) as A  ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17600010_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17600010_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17600010_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+</CEP>

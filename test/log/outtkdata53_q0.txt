@@ -1,0 +1,30 @@
+1000:+ <column name="c1">10</column>
+<column name="c2">0.1</column>
+
+1002:+ <column name="c1">15</column>
+<column name="c2">0.14</column>
+
+2000:- <column name="c1">10</column>
+<column name="c2">0.1</column>
+
+2002:- <column name="c1">15</column>
+<column name="c2">0.14</column>
+
+200000:+ <column name="c1">20</column>
+<column name="c2">0.2</column>
+
+201000:- <column name="c1">20</column>
+<column name="c2">0.2</column>
+
+400000:+ <column name="c1">30</column>
+<column name="c2">0.3</column>
+
+401000:- <column name="c1">30</column>
+<column name="c2">0.3</column>
+
+100000000:+ <column name="c1">40</column>
+<column name="c2">4.04</column>
+
+100001000:- <column name="c1">40</column>
+<column name="c2">4.04</column>
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> register stream tkbigint1_SBigInt (c1 bigint, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint1_SBigInt add source "<EndPointReference><Address>file://@TEST_DATA@/inpSBigInt-l-f.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkbigint1_SBigInt2(c1 bigint, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint1_SBigInt2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSBigInt-l-f2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkbigint1_S2 (c1 int, c2 float) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint1_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS2.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> register stream tkbigint1_S15 (c1 int, c2 timestamp) </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkbigint1_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check nvl(bigint, bigint) -->
+<CEP_DDL> create query qBigInt_nvl as select nvl(c1, 55555555555L) from tkbigint1_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_nvl add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-nvl.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check nvl(bigint, int) -->
+<CEP_DDL> create query tkbigint1_qBigInt_nvli as select nvl(c1, 5555) from tkbigint1_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_nvli add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-nvli.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check nvl(bigint, flt) -->
+<CEP_DDL> create query qBigInt_nvlf as select nvl(c1, 0.123) from tkbigint1_SBigInt2 [range 10] </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_nvlf add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-nvlf.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check aggreate functions -->
+<CEP_DDL> create query tkbigint1_qBigInt_sum as select c2,sum(c1) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_sum add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-sum.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> create query tkbigint1_qBigInt_max as select c2,max(c1) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_max add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-max.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> create query tkbigint1_qBigInt_min as select c2,min(c1) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_min add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-min.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> create query tkbigint1_qBigInt_cnt as select c2,count(c2) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_cnt add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-cnt.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> create query tkbigint1_qBigInt_avg as select c2,avg(c1) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_avg add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-avg.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check int UDA(bigint) -->
+<CEP_DDL> create function UDA_bigint_int(c1 bigint) return int aggregate using "oracle.cep.test.userfunctions.TkUsrBigint_bigint_int" </CEP_DDL>
+<CEP_DDL> create query qBigInt_udali as select UDA_bigint_int(c1) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_udali add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-udali.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check float UDA(bigint) -->
+<CEP_DDL> create function tkbigint1_UDA_bigint_flt(c1 bigint) return float aggregate using "oracle.cep.test.userfunctions.TkUsrBigint_bigint_flt" </CEP_DDL>
+<CEP_DDL> create query tkbigint1_qBigInt_udalf as select tkbigint1_UDA_bigint_flt(c1) from tkbigint1_SBigInt2 [range 10] group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_udalf add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-udalf.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint UDA(int)  -->
+<CEP_DDL> create function UDA_int_bigint(c1 int) return bigint aggregate using "oracle.cep.test.userfunctions.TkUsrBigint_int_bigint" </CEP_DDL>
+<CEP_DDL> create query qBigInt_udail as select UDA_int_bigint(c1) from tkbigint1_S2 [range 10]  group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_udail add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-udail.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint UDA(bigint)  -->
+<CEP_DDL> create function tkbigint1_UDA_bigint_bigint(c1 bigint) return bigint aggregate using "oracle.cep.test.userfunctions.TkUsrBigint_bigint_bigint" </CEP_DDL>
+<CEP_DDL> create query tkbigint1_qBigInt_udall as select tkbigint1_UDA_bigint_bigint(c1) from tkbigint1_SBigInt2 [range 10]  group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkbigint1_qBigInt_udall add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-udall.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<!-- check bigint UDA(float)  -->
+<CEP_DDL> create function UDA_flt_bigint(c1 float) return bigint aggregate using "oracle.cep.test.userfunctions.TkUsrBigint_flt_bigint" </CEP_DDL>
+<CEP_DDL> create query qBigInt_udafl as select UDA_flt_bigint(c2) from tkbigint1_SBigInt2 [range 10]  group by c2 </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query qBigInt_udafl add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSBigInt-udafl.txt</Address></EndPointReference>" ]]></CEP_DDL>
+
+<CEP_DDL> alter query qBigInt_nvl start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_nvli start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_nvlf start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_sum start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_max start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_min start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_cnt start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_avg start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_udali start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_udalf start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_udail start </CEP_DDL>
+<CEP_DDL> alter query tkbigint1_qBigInt_udall start </CEP_DDL>
+<CEP_DDL> alter query qBigInt_udafl start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>
+

@@ -1,0 +1,8 @@
+c 10
+1000 "HELLO WORLD"
+2000 "Hello World"
+8000 "hello world"
+9000 
+15000 "hello$world"
+16000 "hello!world@test%data"
+h 200000000

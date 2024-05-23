@@ -1,0 +1,7 @@
+1000:+ ten,1
+2000:+ eleven,1
+3000:- eleven,1
+3000:+ eleven,2
+4000:- eleven,2
+4000:+ eleven,3
+5000:- ten,1

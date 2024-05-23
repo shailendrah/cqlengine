@@ -1,0 +1,7 @@
+i, c 15, i
+1000 1, ModernScience, 1
+2000 2, Chemistry, 1
+3000 3, Supernova, 2
+4000 4, Tanwar, 5
+5000 5, Zfiles, 10
+h 30000

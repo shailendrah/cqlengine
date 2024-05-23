@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--  $Header: ApplicationContext.xml 13-may-2008.08:52:44 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, Oracle. All rights reserved.  
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      03/26/08 - Creation
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd
+   ">
+<!--
+Issue with registering service.
+It hangs in Loading XML bean definitions.
+
+    <bean id="eventTypeRepos" 
+          class="oracle.cep.service.bea.CQLXEventTypeRepository" />
+          
+    <bean id="processorFactory" 
+          class="oracle.cep.service.bea.CQLXProcessorFactoryImpl"> 
+        <property name="eventTypeRepository" ref="eventTypeRepos" />
+    </bean>
+
+    <osgi:service ref="processorFactory"
+        interface="com.bea.wlevs.ede.api.ProcessorFactory">
+        <osgi:service-properties>
+            <prop key="type">cqlx</prop>
+        </osgi:service-properties>
+    </osgi:service>
+
+    <osgi:service 
+        ref="eventTypeRepos"
+        interface="com.bea.wlevs.ede.api.EventTypeRepository
+        ranking="9">
+        <osgi:service-properties>
+            <prop key="id">wlrt:epltyperep</prop>
+        </osgi:service-properties>
+    </osgi:service>
+-->
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="schedRuntime" value="0" />
+    </bean>
+
+    <bean id="cepManager" 
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="config" ref="config" />
+    </bean>
+    
+    <bean id="cepServer" 
+          class="oracle.cep.server.CEPServer"
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="CEPManager" ref="cepManager" />
+    </bean>
+</beans>
+
+

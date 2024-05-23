@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tkqry_1>
+	<CEP_TBNAME>
+		<CEP_DDL>
+S
+		</CEP_DDL>
+		<CEP_DDL>
+R
+		</CEP_DDL>
+		<CEP_DDL>
+R1 
+		</CEP_DDL>
+	</CEP_TBNAME>
+	<CEP_TABLE>
+		<CEP_DDL>
+register stream S (c1 integer, c2 float)
+		</CEP_DDL>
+		<CEP_DDL>
+register relation R (d1 integer, d2 char(10))
+		</CEP_DDL>
+		<CEP_DDL>
+register relation R1 (c1 integer, c2 float)
+		</CEP_DDL>
+	</CEP_TABLE>
+	<CEP_SOURCE>
+		<CEP_DDL>
+tkqryinpS1000.txt
+		</CEP_DDL>
+		<CEP_DDL>
+tkqryinpR.txt
+		</CEP_DDL>
+		<CEP_DDL>
+tkqryinpR-static.txt
+		</CEP_DDL>
+	</CEP_SOURCE>
+	<CEP_VIEW>
+		<CEP_DDL>
+register view v1 (c1 integer, c2 float) as select * from S[range 1]
+		</CEP_DDL>
+	</CEP_VIEW>
+	<CEP_CQL>
+		<CEP_DDL>
+select * from R, S[range 1] where S.c1 = R.d1
+		</CEP_DDL>
+		<CEP_DDL>
+R1 union all v1
+		</CEP_DDL>
+		<CEP_DDL>
+R1 except v1
+		</CEP_DDL>
+	</CEP_CQL>
+	<CEP_DESTINATION>
+		<CEP_DDL>
+tkqryoutSR1-static.txt
+		</CEP_DDL>
+		<CEP_DDL>
+tkqryoutSR1-union-static.txt
+		</CEP_DDL>
+		<CEP_DDL>
+tkqryoutSR1-except-static.txt
+		</CEP_DDL>
+	</CEP_DESTINATION>
+</tkqry_1>

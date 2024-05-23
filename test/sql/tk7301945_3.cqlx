@@ -1,0 +1,38 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream tk7301945_3_S( c1 integer, c2 integer,c3 integer,c4 integer, c5 integer,c6 integer,c7 integer, c8 integer,d integer)</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter stream tk7301945_3_S add source
+"<EndPointReference><Address>file://@TEST_DATA@/inp7301945.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>register view v2(c1 integer,c2 integer,c3 integer,c4 integer,c5 integer,c6 integer,c7 integer,c8 integer) as select max(c1) as c1,max(c2)as c2,max(c3) as c3,max(c4) as c4,max(c5)as c5,max(c6) as c6,max(c7) as c7,max(c8) as c8 from tk7301945_3_S[rows 1]</CEP_DDL>
+
+<CEP_DDL>register query tk7301945_3_q1 as select max(c1) from v2</CEP_DDL> 
+<CEP_DDL>register query tk7301945_3_q2 as select max(c2) from v2</CEP_DDL> 
+<CEP_DDL>register query tk7301945_3_q3 as select max(c3) from v2</CEP_DDL> 
+<CEP_DDL>register query tk7301945_3_q4 as select max(c4) from v2</CEP_DDL> 
+<CEP_DDL>register query tk7301945_3_q5 as select max(c5) from v2</CEP_DDL> 
+<CEP_DDL>register query tk7301945_3_q6 as select max(c6) from v2</CEP_DDL> 
+<CEP_DDL>register query tk7301945_3_q7 as select max(c7) from v2</CEP_DDL> 
+<CEP_DDL>register query tk7301945_3_q8 as select max(c8) from v2</CEP_DDL> 
+
+
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk7301945_3_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk7301945_3_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<CEP_DDL>alter query tk7301945_3_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk7301945_3_q2 start</CEP_DDL>
+<CEP_DDL>alter query tk7301945_3_q3 start</CEP_DDL>
+<CEP_DDL>alter query tk7301945_3_q4 start</CEP_DDL>
+<CEP_DDL>alter query tk7301945_3_q5 start</CEP_DDL>
+<CEP_DDL>alter query tk7301945_3_q6 start</CEP_DDL>
+<CEP_DDL>alter query tk7301945_3_q7 start</CEP_DDL>
+<CEP_DDL>alter query tk7301945_3_q8 start</CEP_DDL>
+
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

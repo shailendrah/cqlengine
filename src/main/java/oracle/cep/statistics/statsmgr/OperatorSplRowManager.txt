@@ -1,0 +1,149 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/OperatorSplRowManager.java /main/6 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle and/or its affiliates.All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    03/26/08 - support special filters
+    parujain    03/26/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/OperatorSplRowManager.java /main/6 2008/11/30 13:31:43 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.statistics.statsmgr;
+
+
+import java.util.Iterator;
+
+import oracle.cep.phyplan.PhyOpt;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.execution.operators.ExecOpt;
+import oracle.cep.statistics.IStats;
+import oracle.cep.jmx.stats.FilterCondition;
+
+/**
+ * Statistics Manager for the operator
+ *
+ * @since 1.0
+ */
+
+public class OperatorSplRowManager extends OperatorStatsManager
+{
+  // iterator to traverse the operator array
+  private Iterator<PhyOpt> itr;
+  
+  public OperatorSplRowManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+
+   
+  public void init(FilterCondition[] filters)
+  {
+    super.init(filters);
+    itr = execContext.getPlanMgr().getPhyOptList().iterator();
+  }
+
+  public IStats getNext()
+  {
+	if(factory == null)
+	  return null;
+	
+    if (itr == null)
+      return null;
+    
+    ExecOpt op = null;
+    PhyOpt opt = null;
+    boolean found = false;
+    IStats opStats = null;
+    
+    if(strm_id_filter)
+    { //There will be only one operator for stream
+      opt = execContext.getPlanMgr().getSourceOpt(strmId);
+      if(opt == null)
+      {
+        itr = null;
+        return null;
+      }
+      op = opt.getInstOp();
+      // since there will be only one execution op
+      //itr = null;
+    }
+
+    while(!found && itr.hasNext())
+    {
+      if((opt != null) && strm_id_filter)
+      {
+        itr = null;
+        if(query_id_filter)
+        { //opt cannot be null out here
+          if(!opt.findQueryId(new Integer(qryId)))
+            return null;
+        }
+      }
+      else
+      {
+        opt = itr.next();
+        if(opt == null)
+          continue;
+        op = opt.getInstOp();
+        if (op == null)
+          continue;
+        if(query_id_filter)
+        {
+          if(!opt.findQueryId(new Integer(qryId)))
+        	continue;
+        }
+        
+      }
+
+      opStats = getOpStats(op);
+      
+      if(hasFilters)
+      {
+        found = processFilter(opStats, (FilterCondition[])oFilters.toArray(new FilterCondition[0]), types);
+      }
+      else
+        found = true;
+      
+      if(!found && (itr == null))
+        return null;
+    }
+    if(found)
+      return opStats;
+    else
+      return null;
+  }
+  
+
+  public void close()
+  {
+    super.close();
+    itr = null;
+  }
+
+  @Override
+  public void init() 
+  {
+  }
+
+}
+
+

@@ -1,0 +1,465 @@
+/* $Header: pcbpel/cep/test/src/TkJMXClient.java /main/10 2008/12/31 11:57:37 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+ DESCRIPTION
+ <short description of component this file declares/defines>
+
+ PRIVATE CLASSES
+ <list of private classes defined - with one-line descriptions>
+
+ NOTES
+ <other useful comments, qualifications, etc.>
+
+ MODIFIED    (MM/DD/YY)
+ parujain    12/08/08 - stats cleanup
+ hopark      11/06/08 - add dumpplan
+ parujain    08/05/08 - stats reorg
+ hopark      04/17/08 - refactor
+ hopark      12/20/07 - add connection options
+ mthatte     10/16/07 - 
+ hopark      08/08/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/test/src/TkJMXClient.java /main/10 2008/12/31 11:57:37 parujain Exp $
+ *  @author  hopark  
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
+import javax.management.openmbean.CompositeData;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+
+import oracle.cep.common.Constants;
+import oracle.cep.jmx.LogLevelsMBean;
+import oracle.cep.jmx.PlanMBean;
+import oracle.cep.logging.DumpDesc;
+import oracle.cep.logging.IDumpContext;
+import oracle.cep.util.CSVUtil;
+import oracle.cep.util.StringUtil;
+import oracle.as.jmx.framework.mapping.MBeanProxy;
+
+public class TkJMXClient
+{
+  private interface ICommandHandler
+  {
+    void run(String[] args) throws Exception;
+  }
+
+  HashMap<String, ICommandHandler> m_cmdMap;
+  MBeanServerConnection            m_connection;
+  LogLevelsMBean                   m_logLevelsProxy;
+  PlanMBean                        m_planProxy;
+
+  TkJMXClient()
+  {
+    m_cmdMap = new HashMap<String, ICommandHandler>();
+    m_cmdMap.put("clear", new ClearCommand());
+    m_cmdMap.put("getAreas", new GetAreasCommand());
+    m_cmdMap.put("getTypes", new GetTypesCommand());
+    m_cmdMap.put("getEvents", new GetEventsCommand());
+    m_cmdMap.put("getLevels", new GetLevelsCommand());
+    m_cmdMap.put("getCurrentInfo", new GetCurrentInfoCommand());
+    m_cmdMap.put("getCurrentInfo", new GetCurrentInfoCommand());
+    m_cmdMap.put("setLevel", new SetLevelCommand());
+    m_cmdMap.put("runcqlx", new RuncqlxCommand());
+    m_cmdMap.put("wait", new WaitCommand());
+    m_cmdMap.put("quit", new QuitCommand());
+    m_cmdMap.put("dumpplan", new DumpPlanCommand());
+  }
+
+  public void runCommand(String[] oargs) throws Exception
+  {
+    if (oargs == null || oargs.length == 0)
+      return;
+    String cmd = oargs[0];
+    ICommandHandler handler = m_cmdMap.get(cmd);
+    if (handler == null)
+    {
+      System.out.println("Unknwon command : " + cmd);
+      return;
+    }
+    StringBuilder s = new StringBuilder();
+    for (String ss : oargs)
+    {
+      s.append(ss);
+      s.append(" ");
+    }
+    System.out.println("---------------------- " + s.toString());
+    handler.run(oargs);
+  }
+
+  public void run(String[] args)
+  {
+    TkJMXConnector connector = new TkJMXConnector(args);
+    JMXServiceURL url = connector.getJMXServiceURL();
+    try
+    {
+      // Create an RMI connector client
+      // 
+      JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
+      m_connection = jmxc.getMBeanServerConnection();
+      String domain = "CEP";
+
+      ObjectName mbeanName = new ObjectName(domain + ":name=Logging");
+
+      m_logLevelsProxy = (LogLevelsMBean) MBeanServerInvocationHandler
+          .newProxyInstance(m_connection, mbeanName, LogLevelsMBean.class,
+              false);
+      
+      mbeanName = new ObjectName(domain + ":name=Plan");
+      m_planProxy = (PlanMBean) MBeanServerInvocationHandler
+      .newProxyInstance(m_connection, mbeanName, PlanMBean.class,
+          false);
+      
+      System.out.println("Connected to " + url);
+
+      String[] oargs = connector.getOtherArgs();
+      StringBuilder b = new StringBuilder();
+      if (false)
+      {
+        int apos = 0;
+        b.append("args : ");
+        for (String oa : oargs)
+        {
+          if (apos > 0)
+            b.append(",");
+          b.append(oa);
+          apos++;
+        }
+        System.out.println(b.toString());
+      }
+      String cmd = null;
+      if (oargs != null && oargs.length > 0)
+        cmd = oargs[0];
+      if (cmd != null && cmd.startsWith("@"))
+      {
+        String filename = cmd.substring(1);
+        System.out.println("reading " + filename);
+        List<String> lines = new LinkedList<String>();
+        try
+        {
+          BufferedReader in = new BufferedReader(new FileReader(filename));
+          String str;
+          boolean incomment = false;
+          while ((str = in.readLine()) != null)
+          {
+            if (incomment)
+            {
+              if (str.startsWith("*/"))
+              {
+                incomment = false;
+              }
+              continue;
+            } else
+            {
+              if (str.startsWith("/*"))
+              {
+                incomment = true;
+                continue;
+              }
+            }
+            if (!str.startsWith("#") && str.length() > 0)
+              lines.add(str);
+          }
+          in.close();
+        } catch (IOException e)
+        {
+          System.out.println(e);
+          System.exit(0);
+        }
+        for (String s : lines)
+        {
+          String[] fargs = CSVUtil.split(s, ',');
+          runCommand(fargs);
+        }
+      } else
+      {
+        boolean interactive = true;
+
+        if (oargs.length > 0)
+        {
+          String c = oargs[0];
+          if (!c.equals(""))
+            interactive = false;
+        }
+        if (interactive)
+        {
+          // interactive mode
+          while (true)
+          {
+            System.out.print("> ");
+            System.out.flush();
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                System.in));
+            String line = in.readLine();
+            line = line.trim();
+            if (line.equals("exit"))
+            {
+              break;
+            }
+            if (line.startsWith("@"))
+            {
+              String[] fargs = new String[2];
+              fargs[0] = "runcqlx";
+              fargs[1] = line.substring(1);
+              runCommand(fargs);
+            } else {
+              String[] fargs = CSVUtil.split(line, ',');
+              runCommand(fargs);
+            }
+          }
+        } else
+        {
+          StringBuilder buf = new StringBuilder();
+          for (String a : oargs)
+          {
+            if (a == null)
+              continue;
+            if (a.indexOf(' ', 0) >= 0)
+            {
+              buf.append("\"");
+              buf.append(a);
+              buf.append("\"");
+            } else
+              b.append(a);
+            buf.append(" ");
+          }
+          System.out.println("cmd : " + buf.toString());
+          runCommand(oargs);
+        }
+      }
+      jmxc.close();
+    } catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
+
+  public static void main(String[] args)
+  {
+    TkJMXClient client = new TkJMXClient();
+    client.run(args);
+  }
+
+  /* Commands */
+  class ClearCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      m_logLevelsProxy.clear();
+    }
+  }
+
+  class GetAreasCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String[] r = m_logLevelsProxy.getAreas();
+      for (String i : r)
+        System.out.println(i);
+    }
+  }
+
+  class GetTypesCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String val = args[1];
+      int area = Integer.parseInt(val);
+      String[] r = m_logLevelsProxy.getTypes(area);
+      for (String i : r)
+        System.out.println(i);
+    }
+  }
+
+  class GetEventsCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String val = args[1];
+      int area = Integer.parseInt(val);
+      String[] r = m_logLevelsProxy.getEvents(area);
+      for (String i : r)
+        System.out.println(i);
+    }
+  }
+
+  class GetLevelsCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String val = args[1];
+      int area = Integer.parseInt(val);
+      String[] r = m_logLevelsProxy.getLevels(area);
+      for (String i : r)
+        System.out.println(i);
+    }
+  }
+
+  class GetCurrentInfoCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String[] r = m_logLevelsProxy.getCurrentInfo();
+      for (String i : r)
+        System.out.println(i);
+    }
+  }
+
+  class SetLevelCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String val = args[1];
+      boolean enable = (val.equals("1"));
+      val = args[2];
+      int area = Integer.parseInt(val);
+      val = args[3];
+      int type = Integer.parseInt(val);
+      val = args[4];
+      int id = Integer.parseInt(val);
+      val = args[5];
+      int event = Integer.parseInt(val);
+      val = args[6];
+      int level = Integer.parseInt(val);
+      System.out.println(enable ? "enable" : "disable" + " area=" + area
+          + " type=" + type + " id=" + id + " event=" + event + " level="
+          + level);
+      String r = m_logLevelsProxy
+          .setLevel(enable, area, type, id, event, level);
+      System.out.println(r);
+    }
+  }
+
+  class RuncqlxCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String cqlx = args[1];
+      if (cqlx.startsWith("\""))
+        cqlx = cqlx.substring(1, cqlx.length() - 1);
+      // System.out.println("cqlx : " + cqlx);
+      long starttime = System.currentTimeMillis();
+      String result = m_logLevelsProxy.runcqlx(cqlx);
+      long endtime = System.currentTimeMillis();
+      long runtime = endtime - starttime;
+      long s = runtime / 1000;
+      long m = s / 60;
+      long h = m / 60;
+      s = s % 60;
+      m = m % 60;
+      System.out.println(result + " - run time: " + h + ":" + m + ":" + s);
+    }
+  }
+
+  class WaitCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String val = args[1];
+      int n = Integer.parseInt(val);
+      try
+      {
+        Thread.sleep(n * 1000);
+      } catch (InterruptedException e)
+      {
+      }
+    }
+  }
+
+  public class QuitCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      m_logLevelsProxy.quitSystem();
+    }
+  }
+
+  private void dumpFields(Object target, String[] fs)
+  {
+    Class<?> c = target.getClass();
+    while (c != null)
+    {
+      if (c == Object.class) break;
+      Field[] fields = c.getDeclaredFields();
+      if (fields != null)
+      {
+        if (fs == null)
+          System.out.println("fields from " + c.getName());
+        int cnt = 0;
+        for (Field f : fields)
+        {
+          //ignore static field
+          if (Modifier.isStatic(f.getModifiers()))
+            continue;
+          String fname = f.getName();
+          if (fs != null)
+          {
+            boolean m = false;
+            for (String ffs : fs)
+            {
+              if (ffs.equals(fname)) {
+                m = true;
+                break;
+              }
+            }
+            if (!m) continue;
+          }
+          //ignore java internal fields such as $assertionsDisabled
+          if (fname.startsWith("$")) 
+            continue;
+          try
+          {
+            f.setAccessible(true);
+            Object v = f.get(target);
+            if (fs == null)
+              System.out.println(fname + " = " + (v == null ? "null" : v.toString()));
+            else 
+            {
+              if (cnt > 0)
+                System.out.print(", ");
+              System.out.print(fname + " = " + (v == null ? "null" : v.toString()));
+              cnt++;
+            }
+          }
+          catch (IllegalAccessException e)
+          {
+          }
+        }
+      }
+      c = c.getSuperclass();
+    }
+    if (fs != null)
+      System.out.println();
+  }
+
+  
+  public class DumpPlanCommand implements ICommandHandler
+  {
+    public void run(String[] args) throws Exception
+    {
+      String filePath = StringUtil.expand(args[1], null);
+      System.out.println("Dumping plan to : " + filePath);
+      m_planProxy.createVisPlan(Constants.DEFAULT_CEP_SERVICE_NAME, filePath);
+    }
+  }
+}

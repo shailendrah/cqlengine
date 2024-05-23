@@ -1,0 +1,26 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream S0 (c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> alter stream S0 set degree of parallelism = 2 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream S1 (c1 integer, c2 integer) </CEP_DDL>
+
+<CEP_DDL> alter stream S1 set degree of parallelism = 3 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query q1 as select S1.c1 from S0[now], S1[now] where S0.c1 = S1.c1]]> </CEP_DDL>
+
+
+<CEP_DDL> alter query q1 set ordering constraint partition order on S1.c1 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outppJoin1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>
+
+</CEP>

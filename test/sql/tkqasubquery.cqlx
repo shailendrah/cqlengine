@@ -1,0 +1,92 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream S0 (c1 integer, c2 float, c3 char(32)) </CEP_DDL>
+
+<CEP_DDL> create stream S1 (c1 integer, c2 integer) derived timestamped to_bigint(c1*100)</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tksubquery.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter stream S1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+
+<!-- ************************** -->
+<!-- RSTREAM,ISTREAM and DSTREAM on subquery -->
+<!-- ************************** -->
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q0 AS
+SELECT * FROM (RSTREAM( select a.c2 as c2, b.c1 as c1 from S0[range 5] as a, S0[range 3] as b where a.c1 = b.c1 )) as A
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q1 AS
+SELECT * FROM (ISTREAM( select a.c2 as c2, b.c1 as c1 from S0[range 5] as a, S0[range 3] as b where a.c1 = b.c1 )) as A
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q2 AS
+SELECT * FROM (DSTREAM( select a.c2 as c2, b.c1 as c1 from S0[range 5] as a, S0[range 3] as b where a.c1 = b.c1 )) as A
+]]>
+</CEP_DDL>
+
+<!-- ************************** -->
+<!-- nested subquery -->
+<!-- ************************** -->
+<CEP_DDL>
+<![CDATA[
+CREATE QUERY q4 AS
+select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from (select * from S0) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A ) as A 
+]]>
+</CEP_DDL>
+
+<!-- ************************** -->
+<!-- ELEMENT_TIME on subquery -->
+<!-- ************************** -->
+
+<CEP_DDL> 
+<![CDATA[
+CREATE QUERY q3 AS
+SELECT A.timeElement , B.c1 as c1 FROM (select a.ELEMENT_TIME as timeElement,a.c1 as c1 from S0[range 3] as a) as A, S0[range 3] as B WHERE B.c1=A.c1
+]]>
+</CEP_DDL>
+
+
+
+<CEP_DDL> <![CDATA[ alter query q0 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkqasubquery_q0.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkqasubquery_q1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkqasubquery_q2.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q3 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkqasubquery_q3.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q4 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkqasubquery_q4.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<!-- TODO: delete q0 later -->
+<CEP_DDL> alter query q0 start </CEP_DDL>
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter query q4 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+
+</CEP>

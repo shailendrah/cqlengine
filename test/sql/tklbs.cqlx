@@ -1,0 +1,408 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+	<CEP_DDL> create function getSeq(id int) return bigint as language java name
+		"oracle.cep.test.userfunctions.TkGenSeq" </CEP_DDL>
+
+	<CEP_DDL> register stream AreaMatchEventStream(eventId bigint, locationEventId bigint, customerId int, shopId int) </CEP_DDL>
+	<CEP_DDL> <![CDATA[ 
+		alter stream AreaMatchEventStream add source "<EndPointReference> <Address>file://@TEST_DATA@/inpLbsMatch.txt</Address> </EndPointReference>"
+	]]></CEP_DDL>
+	<CEP_DDL> register relation shops(shopId int, shopName char(100),
+		nCoords int, lat1 double, lng1 double, lat2 double, lng2 double, lat3
+		double, lng3 double, lat4 double, lng4 double, lat5 double, lng5
+		double , lat6 double, lng6 double, lat7 double, lng7 double, lat8
+		double, lng8 double, lat9 double, lng9 double, lat10 double, lng10
+		double) </CEP_DDL>
+	<CEP_DDL> <![CDATA[ 
+		alter relation shops add source "<EndPointReference> <Address>file://@TEST_DATA@/inpLbsMallMap.txt</Address> </EndPointReference>"
+	]]></CEP_DDL>
+	<CEP_DDL> register relation PromotionsRel(shopId int, itemId int, stockThreshold int, promotionRate int) </CEP_DDL>
+	<CEP_DDL> <![CDATA[ 
+		alter relation PromotionsRel add source "<EndPointReference> <Address>file://@TEST_DATA@/inpLbsPromo.txt</Address> </EndPointReference>"
+	]]></CEP_DDL>
+
+	<CEP_DDL> register relation InventoryRel(shopId int, itemId int, itemName char(100), itemsInStock int) </CEP_DDL>
+	<CEP_DDL> <![CDATA[ 
+		alter relation InventoryRel add source "<EndPointReference> <Address>file://@TEST_DATA@/inpLbsInventory.txt</Address> </EndPointReference>"
+	]]></CEP_DDL>
+
+
+	<CEP_DDL> register view ShopsRelation(shopId int, shopName char(100), geom oracle.spatial.geometry.JGeometry) as
+		select shopId, shopName,
+			com.oracle.cep.cartridge.spatial.GeomUtil.polygon3D(8307, nCoords,
+				lng1,lat1, lng2,lat2, lng3,lat3, lng4,lat4, lng5,lat5, lng6,lat6,
+				lng7,lat7, lng8,lat8, lng9,lat9, lng10, lat10,
+				0.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+		from shops
+	</CEP_DDL>
+
+
+	<CEP_DDL><![CDATA[    
+		create view LatestLocationRel(locationEventId bigint, customerId int) as
+ 			SELECT
+ 				locationEventId,
+ 				customerId 
+      		FROM AreaMatchEventStream[PARTITION BY customerId ROWS 1]      		   	
+   	 ]]></CEP_DDL>
+<!--  debug output begin
+<CEP_DDL> create query testLatestLocationRel as
+  select *
+  from LatestLocationRel
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testLatestLocationRel add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_LatestLocationRel.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testLatestLocationRel start </CEP_DDL>
+debug output end -->
+
+
+	<!--
+		This is a time varying relation that at every instant of time gives
+		for each (customer, shop) pair the last match output AreaMatchEvent
+
+		Note that this need not necessarily be the latest staus for that
+		(customer, shop) pair. This happens when there is no match for the
+		latest location event for a resource with an area. In such a case, the
+		last successful match for the (customer, shop) pair is present in this
+		relation
+	-->
+	<CEP_DDL><![CDATA[
+		create view LatestMatchRel(eventId bigint, locationEventId bigint, customerId int, shopId int) as
+     		SELECT *
+  			FROM AreaMatchEventStream[PARTITION BY customerId, shopId ROWS 1]
+    ]]></CEP_DDL>
+<!--  debug output begin
+<CEP_DDL> create query testLatestMatchRel as
+  select *
+  from LatestMatchRel
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testLatestMatchRel add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_LatestMatchRel.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testLatestMatchRel start </CEP_DDL>
+debug output end -->
+
+	<!--
+		This is a time varying relation that at every instant of time gives
+		for each (customer, shop) pair the latest match type status. If a
+		(customer, shop) pair does not have an entry, then it means that the
+		resource is neither IN nor NEAR nor IN-VOID
+	-->
+	<CEP_DDL><![CDATA[
+		create view CurrentStatusView(shopId int, customerId int) as
+    		SELECT 
+      			match.shopId,
+      			match.customerId
+		     FROM
+			   	LatestMatchRel AS match,
+    			LatestLocationRel AS loc
+      		 WHERE match.locationEventId = loc.locationEventId		   
+    ]]></CEP_DDL>
+<!--  debug output begin
+<CEP_DDL> create query testCurrentStatusView as
+  select *
+  from CurrentStatusView
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testCurrentStatusView add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_CurrentStatusView.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testCurrentStatusView start </CEP_DDL>
+debug output end -->
+
+
+	<CEP_DDL><![CDATA[
+		create view InsertEventsStream(shopId int, customerId int) as
+ 		ISTREAM ( SELECT * FROM  CurrentStatusView )
+    ]]></CEP_DDL>
+
+<!-- ISTREAM Drives Enter Area Events -->
+	<CEP_DDL><![CDATA[    
+		create view EnterAreaStream(customerId int, shopId int, locationEventId bigint, eventId bigint) as
+		ISTREAM (
+			SELECT
+		 		i.customerId AS customerId,
+		 		i.shopId AS shopId,
+		 		a.locationEventId as locationEventId,
+		 		a.eventId as eventId
+		 	FROM
+		      	InsertEventsStream[NOW] AS i,
+		      	AreaMatchEventStream[NOW] AS a
+		)         
+	]]></CEP_DDL>
+
+<!-- DSTREAM Drives Exit Area Events -->
+	<CEP_DDL><![CDATA[
+		create view DeleteEventsStream(shopId int, customerId int) as
+ 		DSTREAM ( SELECT * FROM  CurrentStatusView )
+    ]]></CEP_DDL>
+
+<!-- DSTREAM Over LatestMatchRel Gives Us Last Match Data on Exit -->
+	<CEP_DDL><![CDATA[
+		create view LatestAreaMatchDeleteStream(shopId int, customerId int) as
+		DSTREAM ( SELECT * FROM  DeleteEventsStream )
+    ]]></CEP_DDL>
+
+	<CEP_DDL><![CDATA[    
+		create view ExitAreaStream(customerId int, shopId int, locationEventId bigint, eventId bigint) as
+		ISTREAM (
+			SELECT
+		 		d.customerId AS customerId,
+		 		d.shopId AS shopId,
+		 		a.locationEventId as locationEventId,
+		 		a.eventId as eventId
+		 	FROM
+		      	DeleteEventsStream[NOW] AS d,
+		      	AreaMatchEventStream[NOW] AS a
+		)         
+	]]></CEP_DDL>
+
+	<CEP_DDL><![CDATA[    
+		create view EnterEventsView(enterExitType char(10), locationEventId bigint, customerId int, shopId int) as
+    	SELECT 
+    		"ENTER" AS enterExitType,
+    		locationEventId,
+    		customerId,
+    		shopId
+    	FROM
+			EnterAreaStream      				
+	]]></CEP_DDL>
+	<CEP_DDL><![CDATA[    
+		create view ExitEventsView(enterExitType char(10), locationEventId bigint, customerId int, shopId int) as
+      	SELECT 
+      		"EXIT" AS enterExitType,
+      		locationEventId,
+      		customerId,
+    		shopId
+    	FROM
+			ExitAreaStream      				
+	]]></CEP_DDL>
+	<CEP_DDL><![CDATA[    
+		create view EnterExitEventsView(enterExitType char(10), locationEventId bigint, customerId int, shopId int) as
+				EnterEventsView UNION ALL ExitEventsView     		
+	]]></CEP_DDL>
+<!--  debug output begin
+<CEP_DDL> create query testEnterExitEventsView as
+  select *
+  from EnterExitEventsView
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testEnterExitEventsView add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_EnterExitEventsView.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testEnterExitEventsView start </CEP_DDL>
+debug output end -->
+
+	<CEP_DDL><![CDATA[
+		create view AlertStream(customerId int, shopId int) as
+    	ISTREAM (
+      		SELECT 
+      			match.customerId AS customerId,
+ 				match.shopId AS shopId
+ 			FROM
+      			AreaMatchEventStream[PARTITION BY customerId, shopId ROWS 1] AS match
+      	)
+    ]]></CEP_DDL>
+    
+<!--  debug output begin
+<CEP_DDL> create query testAlertStream as
+  select *
+  from AlertStream
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testAlertStream add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_AlertStream.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testAlertStream start </CEP_DDL>
+debug output end -->
+
+	<CEP_DDL><![CDATA[
+		create view FilterRepeatedAlerts(eventId bigint, customerId int, shopId int, locationEventId bigint) as
+      	ISTREAM (
+      		SELECT
+      			match.eventId AS eventId,
+				match.customerId AS customerId,
+ 				match.shopId AS shopId,
+ 				match.locationEventId AS locationEventId
+ 			FROM
+      			AreaMatchEventStream[NOW] AS match,
+      			AlertStream[NOW] AS N
+      		WHERE
+      			match.customerId = N.customerId AND
+      			match.shopId = N.shopId
+      	)
+    ]]></CEP_DDL>
+
+<!--  debug output begin
+<CEP_DDL> create query testFilterRepeatedAlerts as
+  select *
+  from FilterRepeatedAlerts
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testFilterRepeatedAlerts add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_FilterRepeatedAlerts.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testFilterRepeatedAlerts start </CEP_DDL>
+debug output end -->
+
+	<CEP_DDL>
+		create view FirstInAreaXz as
+		SELECT *
+		FROM
+			EnterExitEventsView 
+			MATCH_RECOGNIZE (
+				PARTITION BY customerId, shopId
+				MEASURES
+					A.customerId AS customerId,
+					A.shopId AS shopId
+				PATTERN (A B)
+				DEFINE 
+				  A AS (A.enterExitType = "EXIT"), 
+				  B AS (B.enterExitType = "ENTER") and
+				       (B.element_time - A.element_time >= INTERVAL "0 00:02:00" DAYS TO SECOND)
+				       
+			)
+			AS T
+    </CEP_DDL>
+    <CEP_DDL>
+	create view FirstInAreaX(customerId int, shopId int) as
+    	ISTREAM (
+      		SELECT 
+      			customerId, shopId
+		from EnterExitEventsView[range 20 seconds slide 20 seconds]
+		where enterExitType = "ENTER"
+	   )
+    </CEP_DDL>
+
+	
+<!--  debug output begin
+<CEP_DDL> create query testFirstInAreaX as
+  select *
+  from FirstInAreaX
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testFirstInAreaX add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_FirstInAreaX.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testFirstInAreaX start </CEP_DDL>
+debug output end -->
+
+
+	<CEP_DDL><![CDATA[    
+		create view InAreaCandidates0 as
+				AlertStream UNION ALL FirstInAreaX     		
+	]]></CEP_DDL>
+	<CEP_DDL><![CDATA[    
+		create view InAreaCandidates as
+				select distinct * from InAreaCandidates0
+	]]></CEP_DDL>
+
+<!--  debug output begin
+<CEP_DDL> create query testInAreaCandidates as
+  select *
+  from InAreaCandidates
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testInAreaCandidates add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_InAreaCandidates.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testInAreaCandidates start </CEP_DDL>
+debug output end -->
+
+	<CEP_DDL>
+		create view StillInAreaEvent as
+		SELECT *
+		FROM
+			EnterExitEventsView 
+			MATCH_RECOGNIZE (
+				PARTITION BY customerId, shopId
+				MEASURES
+					A.customerId AS customerId,
+					A.shopId AS shopId,
+					"STILL_IN_AREA" AS enterExitType
+				ALL MATCHES
+				INCLUDE TIMER EVENTS
+				PATTERN (A)
+				DURATION 60 SECONDS
+				DEFINE A AS (A.enterExitType = "ENTER")
+			)
+			AS T
+    </CEP_DDL>
+    
+<!--  debug output begin
+<CEP_DDL> create query testStillInAreaEvent as
+  select *
+  from StillInAreaEvent
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testStillInAreaEvent add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_StillInAreaEvent.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testStillInAreaEvent start </CEP_DDL>
+debug output end -->
+
+    
+	<CEP_DDL>
+	    create view FirstStillInArea as
+	    ISTREAM(
+		SELECT
+			customerId, shopId
+		FROM
+			StillInAreaEvent[partition by customerId, shopId rows 1] as inarea
+	   )
+	</CEP_DDL>
+
+<!--  debug output begin
+<CEP_DDL> create query testFirstStillInArea as
+  select *
+  from FirstStillInArea
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testFirstStillInArea add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_FirstStillInArea.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testFirstStillInArea start </CEP_DDL>
+debug output end -->
+
+<CEP_DDL> create view PromoInventories0(shopId int, itemId int, itemName char(100), promotionRate int, itemsInStock int, stockThreshold int) as
+  RSTREAM(
+  select promotion.shopId, promotion.itemId, inventory.itemName, promotion.promotionRate, inventory.itemsInStock, promotion.stockThreshold
+  from PromotionsRel as promotion, InventoryRel as inventory
+  where promotion.shopId = inventory.shopId and
+        (
+         (promotion.itemId >= 0 and  inventory.itemsInStock > promotion.stockThreshold) or
+         (promotion.itemId = -1)
+        )
+   )
+</CEP_DDL>
+<!--  debug output begin
+<CEP_DDL> create query testPromoInventories0 as 
+  select *
+  from PromoInventories0 
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testPromoInventories0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_PromoInventories0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testPromoInventories0 start </CEP_DDL>
+debug output end -->
+
+<CEP_DDL> create view PromoInventoriesSorted as
+  select *
+  from PromoInventories0
+  order by promotionRate
+</CEP_DDL>
+<!--  debug output begin
+<CEP_DDL> create query testPromoInventories1 as 
+  select *
+  from PromoInventoriesSorted
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testPromoInventories1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_PromoInventories1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testPromoInventories1 start </CEP_DDL>
+debug output end -->
+
+<CEP_DDL> create view PromoInventories as
+  select shopId, itemId, itemName, promotionRate
+  from PromoInventoriesSorted[partition by shopId rows 1]
+  GROUP BY shopId, itemId, itemName, promotionRate
+  HAVING COUNT(*) = 1
+</CEP_DDL>
+
+<!--  debug output begin
+<CEP_DDL> create query testPromoInventories as
+  select *
+  from PromoInventories
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query testPromoInventories add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/debug_PromoInventories.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query testPromoInventories start </CEP_DDL>
+debug output end -->
+
+
+<CEP_DDL> create view CustomerPromo(customerId int, shopId int, itemId int, itemName char(100), promotionRate int) as
+  IStream(
+  select customer.customerId, customer.shopId, promotion.itemId, promotion.itemName, promotion.promotionRate
+  from InAreaCandidates[NOW] as customer, PromoInventories as promotion
+  where customer.shopId = promotion.shopId
+  )
+</CEP_DDL>
+
+<CEP_DDL> create query qCustomerPromo as
+  select *
+  from CustomerPromo
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query qCustomerPromo add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/lbs_customerpromo.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query qCustomerPromo start </CEP_DDL>
+
+ <CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+
+

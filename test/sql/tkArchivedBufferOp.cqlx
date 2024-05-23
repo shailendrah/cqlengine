@@ -1,0 +1,80 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>CREATE ARCHIVED RELATION tkArchivedBufferOp_Rel1(c1 integer, c2 float, eid bigint) archiver BIArchiver entity "Soainfra.BufferOpTable" event identifier eid</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation tkArchivedBufferOp_Rel1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpBufferOpTable.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- The buffer operator could be added on top of relnsrc, select or project. The test for buffer operator occuring on top of select is covered by query q8 and q10 in tkArchivedRelPhase2.cqlx. Those two also test the case when the operator in the local plan has multiple outputs and it is also a query operator for both the branches of the query plan. But after addition of buffer operator on top, it is no longer a query operator and so we have to invoke the findQueryOperators() algorithm again. -->
+
+<!-- scenario 1: a non-incremental aggr query on Rel1 first, then an incremental aggr query.
+A buffer operator would be created in between Rel1 and max(c1). -->
+
+<CEP_DDL><![CDATA[
+create query tkArchivedBufferOp_q1 as select sum(c1) from tkArchivedBufferOp_Rel1
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tkArchivedBufferOp_q2 as select max(c1) from tkArchivedBufferOp_Rel1
+]]></CEP_DDL>
+
+<!--scenario 2 : a incremental aggr query on Rel1 first and then a non-incremental aggr query.
+Here while starting the first query itself a buffer operator would be created. The second query aggr i.e. sum(c1) would join at Rel1. q1 and q4 will share aggregation operators. q2 and q3 won't because buffer operators are not shared being stateful. -->
+
+<CEP_DDL><![CDATA[
+create query tkArchivedBufferOp_q3 as select max(c1) from tkArchivedBufferOp_Rel1
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tkArchivedBufferOp_q4 as select sum(c1) from tkArchivedBufferOp_Rel1
+]]></CEP_DDL>
+
+<!-- scenario 3: buffer operator above project.
+q5 and q6 would share relnsrc and project above which there would be two separate buffer operators.-->
+<CEP_DDL><![CDATA[
+create query tkArchivedBufferOp_q5 as RStream(select c2+3.5 as changedC2 from tkArchivedBufferOp_Rel1)
+]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[
+create query tkArchivedBufferOp_q6 as select max(changedC2) from (select c2+3.5 as changedC2 from tkArchivedBufferOp_Rel1) as someQuery
+]]></CEP_DDL>
+
+<!-- sceanrio 4 : buffer operator above project and query has primary key on the output side.
+Project is the root of the query plan when buffer is added above it. This is needed since the output is added later and it may expect a synopsis from the earlier root (project operator) -->
+<CEP_DDL><![CDATA[
+create query tkArchivedBufferOp_q7 as select c1+3 as changedC1, c2-4 from tkArchivedBufferOp_Rel1 primary key (changedC1)
+]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedBufferOp_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedBufferOp1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedBufferOp_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedBufferOp2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedBufferOp_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedBufferOp3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedBufferOp_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedBufferOp4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedBufferOp_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedBufferOp5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedBufferOp_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedBufferOp6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkArchivedBufferOp_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outArchivedBufferOp7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- start_time specified here is assumed to be in nanoseconds -->
+<CEP_DDL> alter query tkArchivedBufferOp_q1 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedBufferOp_q2 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedBufferOp_q3 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedBufferOp_q4 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedBufferOp_q5 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedBufferOp_q6 set start_time 1000000000L</CEP_DDL>
+<CEP_DDL> alter query tkArchivedBufferOp_q7 set start_time 1000000000L</CEP_DDL>
+
+<CEP_DDL>alter query tkArchivedBufferOp_q1 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedBufferOp_q2 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedBufferOp_q3 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedBufferOp_q4 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedBufferOp_q5 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedBufferOp_q6 start</CEP_DDL>
+<CEP_DDL>alter query tkArchivedBufferOp_q7 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

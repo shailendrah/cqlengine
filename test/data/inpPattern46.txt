@@ -1,0 +1,17 @@
+c 10, i, o, o
+1000 "a", , false, true
+1000 "a", 10, false, false
+1200 "b", , false, true
+1300 "c", , false, true
+1600 "c", 5, false, false
+1700 "d", , false , true
+2000 "a", 20, false, false
+2100 "b", 23, false, false
+2400 "d", 35, false, false
+2600 "d", 35, false, false
+2700 "d", , true, false
+3000 "a", 30, false, false
+4000 "a", , true, false
+5600 "b", 37, false, false
+6000 "c", 43, false, false
+7000 "b", , true, false

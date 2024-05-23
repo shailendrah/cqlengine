@@ -1,0 +1,20 @@
+/
+/ $Header: cep/wlevs_cql/modules/cqlengine/test/data/inptkExtTimeZone_S2.txt /main/1 2013/10/08 11:09:54 sbishnoi Exp $
+/
+/ inptkExtTimeZone_S2.txt
+/
+/ Copyright (c) 2013, Oracle. All Rights Reserved.
+/
+/   NAME
+/     inptkExtTimeZone_S2.txt - <one-line expansion of the name>
+/
+/   DESCRIPTION
+/     <short description of component this file declares/defines>
+/
+/   NOTES
+/     <other useful comments, qualifications, etc.>
+/
+/   MODIFIED   (MM/DD/YY)
+/   sbishnoi    10/07/13 - Creation
+/
+

@@ -1,0 +1,177 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/OperatorQueryStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2006, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/12/08 - support runtime MBeans
+    parujain    10/05/07 - ordering
+    parujain    09/12/07 - remove logging
+    hopark      07/13/07 - dump stack trace on exception
+    parujain    05/31/07 - cep-em integration
+    najain      10/17/06 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/OperatorQueryStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $
+ *  @author  najain  
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+
+import oracle.cep.statistics.IStats;
+
+/**
+ * Operator-Query mapping. This can be thought of a fixed table with the
+ * following columns:
+ *
+ * ExecOperatorId : Identifier of the execution operator
+ * QueryId        : Query identifier
+ *
+ * @since 1.0
+ */
+
+public class OperatorQueryStatsRow extends StatsRow implements IStats
+{
+  private int  execOperatorId;
+  private int  queryId;
+  
+  /** 
+   * Construct a OperatorQueryStatsRow instance. 
+   * The PropertyNames annotation is used 
+   * to be able to construct a OperatorQueryStatsRow instance out of a CompositeData
+   * instance. See MXBeans documentation for more details.
+   */ 
+  @ConstructorProperties({"operatorId", "queryId" })
+  public OperatorQueryStatsRow(int opId, int qid)
+  {
+    execOperatorId = opId;
+    queryId = qid;
+  }
+
+  public int getExecOperatorId()
+  {
+    return execOperatorId ;
+  }
+  
+  public int getQueryId()
+  {
+    return queryId ;
+  }
+  
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("<OperatorQueryMapping>");
+    sb.append("<OperatorId id=\"" + execOperatorId + "\" >");
+    sb.append("<QueryId id=\"" + queryId + "\" >");
+    sb.append("</OperatorQueryMapping>");
+
+    return sb.toString();
+  }
+  
+  /*
+   * JDK 5.0 manual conversion methods. The code
+   * below would not be required if we could
+   * rely on the MXBean framework
+   * 
+   * THE REQUIRED METHODS ARE:
+   *
+   *  public static CompositeType toCompositeType();
+   *  public CompositeData toCompositeData(CompositeType ct);
+   *  public static OperatorQueryStatsRow from(CompositeData cd);
+   *
+   */
+
+  // The corresponding CompositeType for this class
+  private static CompositeType cType_= null;
+
+  private static final String[] itemNames_= {"operatorId", "queryId" };
+  
+  static{
+    try
+    {
+        OpenType[] itemTypes = {SimpleType.INTEGER,
+                                SimpleType.INTEGER};
+        cType_ = new CompositeType("oracle.cep.statistics.OperatorQueryStatsRow",
+                                   "oracle.cep.statistics.OperatorQueryStatsRow",
+                                   itemNames_,
+                                   itemNames_,
+                                   itemTypes);
+    }
+    catch (OpenDataException ode)
+    {
+      
+    }
+  }
+  
+  /**
+   * Returns the CompositeType that describes this model
+   * specific class
+   */
+  public static CompositeType toCompositeType() {
+      return cType_;
+  }
+
+  /**
+   * Convert an instance of this model specific type to 
+   * a CompositeData. This ensure that clients that do not
+   * have access to the model specific class can still
+   * use the MBean. The MXBean framework can perform this
+   * conversion automatically. However MXBeans are part of
+   * JDK 6.0 and AS11g is required to support JDK 5.0 
+   * 
+   * @param ct - This parameter is there only for future compatibility reasons
+   *             with JDK 6.0. It can be ignored at this point.
+   */
+   public CompositeData toCompositeData(CompositeType ct) {
+     Object[] itemValues = {new Integer(this.getExecOperatorId()),
+                            new Integer(this.getQueryId())};
+     
+     CompositeData cData= null;
+     try 
+     {
+        cData= new CompositeDataSupport(cType_, itemNames_, itemValues);
+     }
+     catch( OpenDataException ode) 
+     {
+       
+     }
+     return cData;
+   }
+   
+   /**
+    * Create an instance of the model specific class out of
+    * an associated CompositeData instance
+    */
+    public static OperatorQueryStatsRow from(CompositeData cd) {
+      if (cd==null)
+        return null;
+      
+      return new OperatorQueryStatsRow(((Integer)cd.get("operatorId")).intValue(),
+                                       ((Integer)cd.get("queryId")).intValue());
+    }
+
+
+}

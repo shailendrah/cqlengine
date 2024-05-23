@@ -1,0 +1,38 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tktablefunction_S1(c1 integer, c2 char(10))</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tktablefunction_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- TEST: Table function returns an ARRAY-LIST of java.lang.Integer -->
+<CEP_DDL> create query tktablefunction_q1 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q1 set ordering constraint partition order on c2 </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q1 start</CEP_DDL>
+
+
+<!-- TEST: bug 12934458 -->
+<CEP_DDL> create query tktablefunction_q3 as select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2 where S2.c1 != 100 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q3 set ordering constraint partition order on c2 </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q3 start</CEP_DDL>
+
+
+
+<!--TEST: Table function returns an ARRAY-LIST of java.lang.Integer; A StreamJoin Test -->
+<CEP_DDL> create query tktablefunction_q2 as RSTREAM(select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q2 set ordering constraint partition order on c2 </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q2 start</CEP_DDL>
+
+<!-- TEST: bug 12934458 -->
+<CEP_DDL> create query tktablefunction_q4 as RSTREAM(select S1.c1, S1.c2, S2.c1 from tktablefunction_S1[now] as S1, table ( oracle.cep.test.TestTableFunction.testArrayList(S1.c1) as c1 of java.lang.Integer) as S2 where S2.c1 != 100) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tktablefunction_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTablefunction_q4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q4 set ordering constraint partition order on c2 </CEP_DDL>
+<CEP_DDL> alter query tktablefunction_q4 start</CEP_DDL>
+
+
+
+<CEP_DDL> alter system run</CEP_DDL>
+
+
+</CEP>

@@ -1,0 +1,56 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tk8334276_S1(c1 integer, c2 timestamp) derived timestamped c2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk8334276_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk8334276.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> 
+create stream bg12324170 (c1 integer, c2 timestamp) derived timestamped c2
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream bg12324170 add source
+"<EndPointReference><Address>file://@TEST_DATA@/bg12324170.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+
+<CEP_DDL> create stream tk8334276_S2(c1 integer, c2 integer) derived timestamped c1*100 + c2*50</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk8334276_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tk8334276_S3(c1 integer, c2 integer) derived timestamped c2*1000</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk8334276_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS50.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create stream tk8334276_S4(c1 integer, c2 integer) derived timestamped c2</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk8334276_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk8334276_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<CEP_DDL> create query tk8334276_q1 as ISTREAM(select *  from
+tk8334276_S1[range 2 units])
+</CEP_DDL>
+
+<CEP_DDL> create query bg12324170 AS
+ ISTREAM(select count(*) FROM bg12324170[RANGE 100 milliseconds])
+</CEP_DDL>
+
+<CEP_DDL> create query tk8334276_q2 as select *  from tk8334276_S1[rows 3]</CEP_DDL>
+<CEP_DDL> create query tk8334276_q3 as select c1  from tk8334276_S2[rows 1]</CEP_DDL>
+<CEP_DDL> create query tk8334276_q4 as select *  from tk8334276_S4[NOW], tk8334276_S3[NOW]</CEP_DDL>
+
+
+<CEP_DDL> 
+<![CDATA[ alter query tk8334276_q1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8334276_q1.txt?convertTs=false</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ alter query bg12324170 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/outbg12324170.txt?convertTs=false</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk8334276_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8334276_q2.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk8334276_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8334276_q3.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk8334276_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk8334276_q4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tk8334276_q1 start </CEP_DDL>
+<CEP_DDL> alter query bg12324170 start </CEP_DDL>
+<CEP_DDL> alter query tk8334276_q2 start </CEP_DDL>
+<CEP_DDL> alter query tk8334276_q3 start </CEP_DDL>
+<CEP_DDL> alter query tk8334276_q4 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

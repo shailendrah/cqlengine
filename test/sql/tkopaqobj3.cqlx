@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkopaqobj_S1(c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkopaqobj_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkOrderedWindow_S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create view tkopaqobj3_v1(c1 integer, c2 java.lang.Integer) as select c1, java.lang.Integer(c2) from tkopaqobj_S1 </CEP_DDL>
+
+<CEP_DDL> create query tkopaqobj3_q1 as select c1, c2, c2.hashCode() from tkopaqobj3_v1 [rows 4]  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj3_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq3_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj3_q1 start </CEP_DDL>
+
+<CEP_DDL> create query tkopaqobj3_orderby as select c1, c2, c2.hashCode() from tkopaqobj3_v1 [rows 4] order by c2 asc rows 4</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkopaqobj3_orderby add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outOpaq3_orderby.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkopaqobj3_orderby start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

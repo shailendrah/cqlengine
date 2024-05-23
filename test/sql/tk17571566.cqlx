@@ -1,0 +1,24 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tk17571566_S1 (c1 char(50)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk17571566_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptk17571566_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ 
+create query tk17571566_q1 as select 
+    extract("day",to_timestamp(c1)),
+    extract("month",to_timestamp(c1)),
+    extract("year",to_timestamp(c1)),
+    extract("hour",to_timestamp(c1)),
+    extract("minute",to_timestamp(c1)),
+    extract("second",to_timestamp(c1))
+    
+from
+   tk17571566_S1 ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk17571566_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtk17571566_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk17571566_q1 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

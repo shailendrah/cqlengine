@@ -1,0 +1,18 @@
+1000000000:+ <column name="c1">10</column>
+<column name="c2">0.3</column>
+
+1000000000:+ <column name="c1">20</column>
+<column name="c2">0.7</column>
+
+1200000000:+ <column name="c1">20</column>
+<column name="c2">0.5</column>
+
+1200000000:+ <column name="c1">15</column>
+<column name="c2">0.9</column>
+
+1200000000:+ <column name="c1">20</column>
+<column name="c2">0.9</column>
+
+1300000000:+ <column name="c1">20</column>
+<column name="c2">0.6</column>
+

@@ -1,0 +1,30 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> create stream tkdata62_S (c char(30))</CEP_DDL>
+
+<CEP_DDL> create stream tkdata62_S1 (c1 char(30))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkdata62_S add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata62inpS.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkdata62_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata62inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ create query tkdata62_q1 as select XMLPARSE(CONTENT '1122<testing-wellformed>aaaa</testing-wellformed>' WELLFORMED) from tkdata62_S ]]> </CEP_DDL>
+
+<CEP_DDL> create query tkdata62_q2 as select XMLPARSE(DOCUMENT c WELLFORMED) from tkdata62_S</CEP_DDL>
+
+<CEP_DDL> create query tkdata62_q3 as select XMLPARSE(CONTENT c1) from tkdata62_S1</CEP_DDL>
+
+<CEP_DDL> create query tkdata62_q4 as select XMLPARSE(DOCUMENT c1) from tkdata62_S1</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata62_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata62_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata62_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata62_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata62_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata62_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata62_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata62_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkdata62_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata62_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata62_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata62_q4 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.junit.launchconfig">
+<listAttribute key="StepOutExcludePkgsOrClasses"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/server/src/ha-test/java/oracle/cep/test/ha/HATestBinJoin.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<mapAttribute key="org.eclipse.debug.core.preferred_launchers">
+<mapEntry key="[debug]" value="scala.junit.new"/>
+</mapAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
+<booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
+<stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
+<stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="oracle.cep.test.ha.HATestBinJoin"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="server"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dtest.createSnapshot=true -Dtest.inputFolder=/scratch/hopark/gitlocal/soa-osa5/source/modules/spark-cql/cqlengine/test/data/ha -Dtest.logFolder=/scratch/hopark/gitlocal/soa-osa5/source/modules/spark-cql/cqlengine/test/log/ha -Dtest.outputFolder=/scratch/hopark/gitlocal/soa-osa5/source/modules/spark-cql/cqlengine/server/target"/>
+</launchConfiguration>

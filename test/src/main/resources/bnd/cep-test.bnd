@@ -1,0 +1,22 @@
+Bundle-Version: ${wlevs.version}
+Bundle-Name: cep-test
+Bundle-SymbolicName: cep-test
+Export-Package: *;version=${wlevs.version}
+DynamicImport-Package: *
+Import-Package: cern*,\
+	com.bea.wlevs*;version=${wlevs.version};resolution:=optional,\
+	oracle.cep*;version=${oracle.cep.version};resolution:=optional,\
+	com.oracle.cep*; version=${oracle.cep.version},\
+	com.sun.tools.attach;resolution:=optional,\
+	javax.management.remote;resolution:=optional,\
+	javax.xml.namespace,\
+	junit*,\
+	net.esper*;resolution:=optional,\
+     	oracle.jdbc*;resolution:=optional,\
+	oracle.spatial*,\
+	org.apache.commons.logging,\
+	org.apache.log4j,\
+	org.osgi.framework,\
+	org.springframework.osgi*;version=${spring.osgi.version},\
+	org.springframework*;version=${spring.version},\
+	sun.jvmstat.monitor;resolution:=optional

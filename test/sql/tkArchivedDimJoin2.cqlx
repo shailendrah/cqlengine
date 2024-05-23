@@ -1,0 +1,194 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+
+<!-- This is the FACT table -->
+<CEP_DDL>
+CREATE ARCHIVED RELATION 
+tkArchivedRelBinOp_LeftRel1(c1 integer, c2 float, c3 bigint, c4 char(10)) 
+archiver BIArchiver entity 
+"soainfra.BinOpLeftTestTable" event identifier c3
+is system timestamped
+</CEP_DDL>
+
+<!-- ******************************************** -->
+<!-- volatile dimension tables                    -->
+<!-- ******************************************** -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel1a(c1 integer, c2 float, c3 bigint, c4 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+is system timestamped
+</CEP_DDL>
+
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel2a(c1 integer, c2 float, c3 bigint, c4 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+is system timestamped
+</CEP_DDL>
+
+<!-- dimension with data -->
+<CEP_DDL>
+CREATE ARCHIVED DIMENSION RELATION 
+tkArchivedRelBinOp_RightRel2z(c1 integer, c2 float, c3 bigint, c4 char(10))
+archiver BIArchiver entity 
+"soainfra.BinOpRightTestTable" event identifier c3
+is system timestamped
+</CEP_DDL>
+
+
+<!-- ******************************************************************* -->
+<!-- Set up sources                                                      -->
+<!-- same as for RelBinOp but slightly modified to suit the task at hand -->
+<!-- ******************************************************************* -->
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_LeftRel1 add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpLeft_sys_ts.txt</Address></EndPointReference>"
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel1a add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight_sys_ts.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel2a add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight_sys_ts.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+
+<!-- has data that will trigger an exception -->
+<CEP_DDL> 
+<![CDATA[ 
+alter relation tkArchivedRelBinOp_RightRel2z add source 
+"<EndPointReference><Address>file://@TEST_DATA@/inpBinOpRight2_sys_ts.txt</Address></EndPointReference>"
+]]> 
+</CEP_DDL>
+
+<!-- ****************************************************** -->
+<!--                                                        -->
+<!--              NOT BE CHECKED IN                         -->
+<!--                                                        -->
+<!-- ****************************************************** -->
+
+<!-- ******************************************************** -->
+<!--                                                          -->
+<!-- TWO WAY JOIN                                             -->
+<!--   * test with dimension data (RightRel2z)                -->
+<!--   * test with no dimension data and lot of fact data     -->
+<!--   * multiple queries not tested                          -->
+<!-- ******************************************************** -->
+
+<CEP_DDL>
+<![CDATA[ 
+create archived view v0 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10))
+as
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4
+from tkArchivedRelBinOp_LeftRel1 as p, tkArchivedRelBinOp_RightRel1a as q 
+where p.c1 = q.c1 and p.c2 = q.c2 and  (p.c4 = "second" and q.c4 = "second")
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q0 as select count(*) from v0
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************************************** -->
+<!-- THREE WAY join with change detection, one query          -->
+<!-- ******************************************************** -->
+<CEP_DDL>
+<![CDATA[ 
+create archived view v1 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2 float, r_c3 bigint, r_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_LeftRel1 as p, 
+     tkArchivedRelBinOp_RightRel1a as q,
+     tkArchivedRelBinOp_RightRel2a as r
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2 and
+     (p.c4 = "second" and q.c4 = "second" and r.c4 = "second")
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<CEP_DDL>
+<![CDATA[ 
+create query q1 as select count(*) from v1
+]]>
+</CEP_DDL>
+
+<!-- ******************************************************** -->
+<!-- THREE WAY join: no filters                               -->
+<!-- Tested with dimension data                               -->
+<!-- ******************************************************** -->
+<CEP_DDL>
+<![CDATA[
+create archived view v2 (p_c1 integer, p_c2 float, p_c3 bigint, p_c4 char(10),
+q_c1 integer, q_c2 float, q_c3 bigint, q_c4 char(10), r_c1 integer, r_c2 float, r_c3 bigint, r_c4 char(10))
+as 
+select p.c1 as p_c1, p.c2 as p_c2, p.c3 as p_c3, p.c4 as p_c4, q.c1 as q_c1, q.c2 as q_c2, q.c3 as q_c3, q.c4 as q_c4,
+       r.c1 as r_c1, r.c2 as r_c2, r.c3 as r_c3, r.c4 as p_c4
+from tkArchivedRelBinOp_LeftRel1 as p, 
+     tkArchivedRelBinOp_RightRel2a as q,
+     tkArchivedRelBinOp_RightRel2z as r
+where p.c1 = q.c1 and q.c1 = r.c1 and 
+      p.c2 = q.c2 and q.c2 = r.c2
+event identifier p_c3
+]]>
+</CEP_DDL>
+
+<!-- will throw an exception -->
+<CEP_DDL>
+<![CDATA[ 
+create query q2 as select count(*) from v2
+]]>
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q0 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin2_q0.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q1 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin2_q1.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ 
+alter query q2 add destination 
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkArchivedDimJoin2_q2.txt</Address></EndPointReference>"
+]]>  
+</CEP_DDL>
+
+<!-- ************************************************ -->
+<!-- Don't specify start time to force heartbeat code -->
+<!-- ************************************************ -->
+<CEP_DDL> alter query q0 start </CEP_DDL> 
+<CEP_DDL> alter query q1 start </CEP_DDL> 
+
+<!-- Uncomment to verify that they indeed throw exception -->
+<CEP_DDL> alter query q2 start </CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

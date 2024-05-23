@@ -1,0 +1,25 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata2_rstrm_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_rstrm_S1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata2_rstrm_S4 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_rstrm_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkdata2_rstrm_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata2_rstrm_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata2_rstrm_v1 (a, b) as RStream(select (c1+10)*2, c2+1.5 from tkdata2_rstrm_S0[range 1000 nanoseconds] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_rstrm_q0 as RStream(select (c1+10)*2, c2+1.5 from tkdata2_rstrm_S0[range 1000 nanoseconds] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_rstrm_q1 as RStream(select (c1+10)*2, c2+1.5 from tkdata2_rstrm_S4[range 1000 nanoseconds] where c1 > 10) </CEP_DDL>
+<CEP_DDL> create query tkdata2_rstrm_q2 as RStream(select (a.c1+10)*2, a.c2+1.5 from tkdata2_rstrm_S0[NOW] as a, tkdata2_rstrm_S1[range 1000 nanoseconds] as b where a.c1 = b.c1) </CEP_DDL>
+<CEP_DDL> create query tkdata2_rstrm_q3 as select * from tkdata2_rstrm_v1[range 1000 nanoseconds] </CEP_DDL>
+<CEP_DDL> create query tkdata2_rstrm_q4 as RStream(select (c2+ to_float(10))*(to_float(2)), (to_float(c1)+1.5) from tkdata2_rstrm_S0[range 1000 nanoseconds] where to_float(c1) > 9.9) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_rstrm_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0R1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_rstrm_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS4.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_rstrm_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outS0S1R1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_rstrm_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outV4Q1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata2_rstrm_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outCVT1.txt?convertTs=false</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata2_rstrm_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_rstrm_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_rstrm_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_rstrm_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata2_rstrm_q4 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

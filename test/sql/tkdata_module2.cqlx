@@ -1,0 +1,8 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tkdata_module2_R10000 (d1 integer, d2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata_module2_R10000 add source "<EndPointReference><Address>file://@TEST_DATA@/inpR10000.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata_module2_q201 as select count(d1), sum(d1), avg(d1) from tkdata_module2_R10000 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_module2_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outR10000_1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_module2_q201 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

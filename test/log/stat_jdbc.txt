@@ -1,0 +1,33 @@
+
+difs, 0
+out_JDBC_logging_jdbc.suc
+out_S_JDBC_1_1_jdbc.suc
+out_S_JDBC_2_neg_jdbc.suc
+out_S_JDBC_3_1_jdbc.suc
+out_S_JDBC_3_2_jdbc.suc
+out_S_JDBC_3_neg_jdbc.suc
+out_S_JDBC_6_1s0_jdbc.suc
+out_S_JDBC_6_1s1_jdbc.suc
+out_S_JDBC_6_1s2_jdbc.suc
+out_S_JDBC_6_1s3_jdbc.suc
+out_S_JDBC_6_1s4_jdbc.suc
+out_S_JDBC_7_11_jdbc.suc
+out_S_JDBC_7_1_jdbc.suc
+out_S_JDBC_7_2_jdbc.suc
+out_S_JDBC_7_3_jdbc.suc
+out_S_JDBC_7_4_jdbc.suc
+out_S_JDBC_8_1_jdbc.suc
+out_S_JDBC_8_2_jdbc.suc
+out_S_JDBC_lchar_1_jdbc.suc
+out_S_JDBC_lchar_2_jdbc.suc
+out_S_JDBC_nls_1_jdbc.suc
+out_S_JDBC_nls_2_jdbc.suc
+out_S_JDBC_nls_3_jdbc.suc
+out_S_JDBC_nls_4_jdbc.suc
+out_S_JDBC_nls_q1_jdbc.suc
+out_S_JDBC_nls_q2_jdbc.suc
+out_S_JDBC_nls_q3_jdbc.suc
+out_S_JDBC_nls_q4_jdbc.suc
+out_S_JDBC_stalesrc_1_jdbc.suc
+out_S_JDBC_stalesrc_2_jdbc.suc
+sucs, 30

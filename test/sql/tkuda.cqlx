@@ -1,0 +1,102 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkuda_S1 (c1 integer, c2 bigint) </CEP_DDL>
+<CEP_DDL> create stream tkuda_S3 (c1 float) </CEP_DDL>
+<CEP_DDL> create stream tkuda_S4 (c1 bigint, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkuda_S5 (c1 integer, c2 byte(10)) </CEP_DDL>
+<CEP_DDL> create stream tkuda_S11 (c1 char(4), c2 integer, c3 float, c4 bigint) </CEP_DDL>
+<CEP_DDL> create stream tkuda_S8 (c1 interval) </CEP_DDL>
+<CEP_DDL> create stream tkuda_S15 (c1 integer, c2 timestamp)</CEP_DDL>
+<CEP_DDL> create stream tkuda_S2 (c1 char(10)) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S5 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S11 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S8 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkuda_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/coverage4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create function tkuda_secondMax(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkuda_secondMax(c1 char) return char aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkuda_secondMax(c1 byte) return byte aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkuda_secondMax(c1 timestamp) return timestamp aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkuda_secondMax(c1 interval) return interval aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkuda_var_int(c1 integer) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_var_float(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_var_bigint(c1 bigint) return float aggregate using "oracle.cep.test.userfunctions.TkUsrVariance" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_doubleCount_int(c1 integer) return integer aggregate using "oracle.cep.test.userfunctions.TkUsrDoubleCount" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_doubleCount_1(c1 integer) return bigint aggregate using "oracle.cep.test.userfunctions.TkUsrDoubleCount" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_doubleCount_2(c1 bigint) return integer aggregate using "oracle.cep.test.userfunctions.TkUsrDoubleCount" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_doubleCount_3(c1 bigint) return bigint aggregate using "oracle.cep.test.userfunctions.TkUsrDoubleCount" supports incremental computation</CEP_DDL>
+<CEP_DDL> create function tkuda_doubleCount_4(c1 float) return integer aggregate using "oracle.cep.test.userfunctions.TkUsrDoubleCount" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_doubleCount_5(c1 float) return bigint aggregate using "oracle.cep.test.userfunctions.TkUsrDoubleCount" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_geometricMean(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkUsrGeometricMean" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_harmonicMean(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkUsrHarmonicMean" supports incremental computation </CEP_DDL>
+<CEP_DDL> create function tkuda_autoCorrelation(c1 float) return float aggregate using "oracle.cep.test.userfunctions.TkUsrAutoCorrelation" supports incremental computation</CEP_DDL>
+<CEP_DDL> create function tkuda_vwap1(c1 float, c2 bigint) return float aggregate using "oracle.cep.test.userfunctions.TkVWAP" </CEP_DDL>
+<CEP_DDL> create function tkuda_vwap2(c1 float, c2 bigint) return float aggregate using "oracle.cep.test.userfunctions.TkVWAP" supports incremental computation </CEP_DDL>
+<CEP_DDL> create query tkuda_uda1 as select tkuda_doubleCount_1(c1) from tkuda_S5[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda2 as select tkuda_doubleCount_2(c1) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda3 as select tkuda_doubleCount_3(c1) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda4 as select tkuda_doubleCount_4(c2) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda5 as select tkuda_doubleCount_5(c2) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_float_float as select tkuda_secondMax(c1) from tkuda_S3[range 7] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_char_char as select tkuda_secondMax(c1) from tkuda_S2[range 7] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_ts_ts as select tkuda_secondMax(c2) from tkuda_S15[range 2] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_byte_byte as select tkuda_secondMax(c2) from tkuda_S5[range 7] </CEP_DDL> 
+<CEP_DDL> create query tkuda_uda_interval_interval as select tkuda_secondMax(c1) from tkuda_S8[range 2] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_bigint_float as select tkuda_var_bigint(c1) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_int_int as select tkuda_doubleCount_int(c1) from tkuda_S1[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_int_float as select tkuda_var_int(c1) from tkuda_S1[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda6 as select tkuda_geometricMean(c2) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda7 as select tkuda_harmonicMean(c2) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda8 as select tkuda_autoCorrelation(c2) from tkuda_S4[range 3] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_vwap1 as select tkuda_vwap1(c3,c4) from tkuda_S11[range 2] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_vwap2 as select tkuda_vwap2(c3,c4) from tkuda_S11[range 2] </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_vwap3 as select c1, tkuda_vwap1(c3,c4) from tkuda_S11[range 2] group by c1 </CEP_DDL>
+<CEP_DDL> create query tkuda_uda_vwap4 as select c1, tkuda_vwap2(c3,c4) from tkuda_S11[range 2] group by c1 </CEP_DDL>
+<!-- added the below query to check if type conversion works correctly in case of aggregates. -->
+<CEP_DDL> create query tkuda_typeconversion as select tkuda_secondMax(c1),max(null) from tkuda_S1[range 2] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkuda_uda1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkuda_uda2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkuda_uda3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkuda_uda4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_float_float add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_char_char add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda_char_char.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_ts_ts add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda_ts_ts.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_byte_byte add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda_byte_byte.txt</Address></EndPointReference>"]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_interval_interval add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda_interval_interval.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_bigint_float add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_int_int add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_int_float add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outuda9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_vwap1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outudaVWAP1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_vwap2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outudaVWAP2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_vwap3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outudaVWAP3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda_vwap4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outudaVWAP4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outgm.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outhm.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_uda8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outac.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkuda_typeconversion add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outTypeConv.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda1 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda2 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda3 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda4 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda5 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_float_float start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_char_char start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_ts_ts start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_byte_byte start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_interval_interval start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_bigint_float start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_int_int start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_int_float start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda6 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda7 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda8 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_vwap1 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_vwap2 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_vwap3 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_uda_vwap4 start </CEP_DDL>
+<CEP_DDL> alter query tkuda_typeconversion start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

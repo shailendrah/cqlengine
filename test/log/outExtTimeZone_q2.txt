@@ -1,0 +1,2 @@
+1000:+ withoutTZandTrail0s,StreamTupleWithoutTZ
+1001:- withoutTZandTrail0s,StreamTupleWithoutTZ

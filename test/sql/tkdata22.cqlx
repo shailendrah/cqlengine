@@ -1,0 +1,20 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> alter system time_slice = 1</CEP_DDL>
+<CEP_DDL> register stream tkdata22_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata22_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> register view tkdata22_v0 (c1 integer, c2 float) as select * from tkdata22_S0[range 1] </CEP_DDL>
+<CEP_DDL> register view tkdata22_v1 (c1 integer, c2 float) as select * from tkdata22_S0[range 2] </CEP_DDL>
+<CEP_DDL> create query tkdata22_q1 as tkdata22_v0 except tkdata22_v1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata22_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExcept0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata22_q1 start </CEP_DDL>
+<!-- Here the scheduler should run for duration 1 and then after it stops proceed -->
+<CEP_DDL> alter system run duration = 1</CEP_DDL>	
+<CEP_DDL> create query tkdata22_q2 as tkdata22_v0 except tkdata22_v1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata22_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExcept1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata22_q2 start </CEP_DDL>
+<CEP_DDL> alter system run duration = 1</CEP_DDL>	
+<CEP_DDL> create query tkdata22_q3 as tkdata22_v0 except tkdata22_v1 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata22_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outExcept2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata22_q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

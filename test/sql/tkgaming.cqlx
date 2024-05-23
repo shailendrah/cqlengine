@@ -1,0 +1,18 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<!--<CEP_DDL> alter system time_slice = 2</CEP_DDL>-->
+<CEP_DDL> create stream tkgaming_SessionStartStop (c1 integer, c2 integer, unit integer) is system timestamped</CEP_DDL>
+<CEP_DDL> create stream tkgaming_GR (d1 integer, d2 integer) is system timestamped</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkgaming_SessionStartStop add source "<EndPointReference><Address>file://@TEST_DATA@/inpSession.txt?delay=2000</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkgaming_GR add source "<EndPointReference><Address>file://@TEST_DATA@/inpGR.txt?delay=10000</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> create view tkgaming_v1 as RStream(select * from tkgaming_GR[now] as game, tkgaming_SessionStartStop[partition by c2 rows 1] as session where session.c2 = game.d2 and session.unit = 1) </CEP_DDL>
+
+<CEP_DDL> create query tkgaming_q1 as select * from tkgaming_v1</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkgaming_q1 add destination "<EndPointReference><Address><Type>file</Type><FileName>//@TEST_OUTPUT@/outtkgaming_q1.txt</FileName></Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkgaming_q1 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

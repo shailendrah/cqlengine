@@ -1,0 +1,5 @@
+sucs, 2
+difs, 0
+
+TollStr_CarLoc20secs_1_linroad_fifo.suc
+TollStr_CarLoc20secs_linroad_fifo.suc

@@ -1,0 +1,9 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkMulDest_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkMulDest_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]></CEP_DDL>                
+<CEP_DDL> create query tkMulDest_q201 as select * from tkMulDest_S0 [range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMulDest_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMulS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkMulDest_q201 start </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkMulDest_q201 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outMulSv0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

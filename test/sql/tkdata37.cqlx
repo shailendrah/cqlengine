@@ -1,0 +1,14 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata37_S1 (c1 xmltype) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata37_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkdata37inpS1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view tkdata37_v1(orderId char(16), LastShares integer, LastPrice float) as SELECT X.OrderId, X.LastShares, X.LastPrice from tkdata37_S1 XMLTable ('//FILL' PASSING BY VALUE tkdata37_S1.c1 as "." COLUMNS OrderId char(16) PATH 'fn:data(../@ID)', LastShares integer PATH 'fn:data(@LastShares)', LastPrice float PATH 'fn:data(@LastPx)') AS X ]]></CEP_DDL>
+
+<CEP_DDL><![CDATA[ create query tkdata37_q1 as IStream(select orderId, sum(LastShares * LastPrice), sum(LastShares * LastPrice) / sum(LastShares) from tkdata37_v1[now] group by orderId) ]]></CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkdata37_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata37_2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkdata37_q1 start </CEP_DDL>
+
+<CEP_DDL> alter system run </CEP_DDL>	
+</CEP>

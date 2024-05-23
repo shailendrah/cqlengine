@@ -1,0 +1,326 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register relation tknarysetop_R1 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+<CEP_DDL> register relation tknarysetop_R2 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+<CEP_DDL> register relation tknarysetop_R3 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+<CEP_DDL> register relation tknarysetop_R4 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+
+<!-- Negative test cases -->
+<CEP_DDL> register stream tknarysetop_S1 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+<CEP_DDL> register relation tknarysetop_R11 (c1 integer, c2 float, c3 integer) </CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tksubqsetop1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R2 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tksubqsetop2.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R3 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tksubqsetop3.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R4 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tksubqsetop5.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+
+<!-- -ve test cases -->
+<CEP_DDL> <![CDATA[ alter stream tknarysetop_S1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tknarysetop1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter relation tknarysetop_R11 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tksubqsetop4.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<!-- ********************************************** -->
+<!--                                                -->
+<!--           begin: negative test cases           -->
+<!--                                                -->
+<!-- ********************************************** -->
+
+
+<!-- all operands must be relations -->
+<CEP_DDL> 
+CREATE QUERY neg0 AS 
+SELECT c1, c2, c3 from tknarysetop_R1
+UNION
+SELECT * FROM tknarysetop_S1
+</CEP_DDL>
+
+<CEP_DDL> 
+CREATE QUERY neg0 AS 
+SELECT * FROM tknarysetop_S1
+UNION ALL
+SELECT c1, c2, c3 from tknarysetop_R1
+</CEP_DDL>
+
+<!-- number of operands don't match -->
+<CEP_DDL> 
+CREATE QUERY neg0 AS 
+SELECT * FROM tknarysetop_R2
+UNION ALL
+SELECT c1, c3 from tknarysetop_R1
+</CEP_DDL>
+
+<!-- types of operands don't match -->
+<CEP_DDL> 
+CREATE QUERY neg0 AS 
+SELECT * FROM tknarysetop_R2
+UNION ALL
+SELECT c3, c1, c2 from tknarysetop_R1
+</CEP_DDL>
+
+<!-- types of operands don't match -->
+<CEP_DDL> 
+CREATE QUERY neg0 AS 
+SELECT c1*50 FROM tknarysetop_R2
+UNION ALL
+SELECT c1*50 from tknarysetop_R1
+</CEP_DDL>
+
+
+<!-- ********************************************** -->
+<!--                                                -->
+<!--           begin: positive test cases           -->
+<!--                                                -->
+<!-- ********************************************** -->
+
+<!-- ************* -->
+<!-- A - ( C U B ) -->
+<!-- {3,4,5}       -->
+<!-- ************* -->
+
+<CEP_DDL> 
+CREATE QUERY q0 AS 
+ISTREAM(
+SELECT c1, c2, c3 from tknarysetop_R1 
+MINUS 
+(SELECT c1, c2, c3 from tknarysetop_R3
+UNION
+SELECT c1, c2, c3 from tknarysetop_R2))
+</CEP_DDL>
+
+
+<!-- ************* -->
+<!-- A - (B - C)   -->
+<!-- {1,2,3,4,5}   -->
+<!-- ************* -->
+<CEP_DDL> 
+CREATE QUERY q1 AS 
+ISTREAM(
+SELECT c1, c2, c3 from tknarysetop_R1 
+MINUS 
+(SELECT c1, c2, c3 from tknarysetop_R4
+MINUS
+SELECT c1, c2, c3 from tknarysetop_R2))
+</CEP_DDL>
+
+<!-- ***************** -->
+<!-- A /\ (B U C) - B  -->
+<!-- {}                -->
+<!-- ***************** -->
+<CEP_DDL> 
+CREATE QUERY q2 AS 
+ISTREAM(
+SELECT c1, c2, c3 from tknarysetop_R1 
+INTERSECT 
+(SELECT c1, c2, c3 from tknarysetop_R2
+UNION
+SELECT c1, c2, c3 from tknarysetop_R3)
+MINUS 
+SELECT c1, c2, c3 from tknarysetop_R2)
+</CEP_DDL>
+
+<!-- A /\ B U C - B -->
+<!-- {6,7} -->
+<CEP_DDL> 
+CREATE QUERY q3 AS 
+ISTREAM(
+SELECT c1, c2, c3 from tknarysetop_R1 
+INTERSECT 
+SELECT c1, c2, c3 from tknarysetop_R2
+UNION
+SELECT c1, c2, c3 from tknarysetop_R3
+MINUS 
+SELECT c1, c2, c3 from tknarysetop_R2)
+</CEP_DDL>
+
+
+<!-- D U C /\ B -->
+<!-- {2} -->
+<CEP_DDL> 
+CREATE QUERY q4 AS 
+ISTREAM(
+SELECT c1, c2, c3 from tknarysetop_R4
+UNION 
+SELECT c1, c2, c3 from tknarysetop_R3
+INTERSECT
+SELECT c1, c2, c3 from tknarysetop_R2)
+</CEP_DDL>
+
+<CEP_DDL> 
+CREATE QUERY q5 AS 
+ISTREAM(
+(SELECT c1*50 as a from tknarysetop_R1)
+UNION ALL
+(SELECT c1*50 as b from tknarysetop_R2)
+UNION ALL
+(SELECT c1*50 as c from tknarysetop_R3))
+</CEP_DDL>
+
+<!-- ***************************** -->
+<!-- set query inside an SFW query -->
+<!-- ***************************** -->
+
+<CEP_DDL> 
+CREATE QUERY q6 AS 
+SELECT * 
+FROM (ISTREAM(
+     (SELECT c1*50 as a from tknarysetop_R1)
+     UNION ALL
+     (SELECT c1*50 as b from tknarysetop_R2)
+     UNION ALL
+     (SELECT c1*50 as c from tknarysetop_R3))) AS FOO
+</CEP_DDL>
+
+<CEP_DDL> 
+CREATE QUERY q7 AS 
+SELECT x/50 
+FROM (ISTREAM(
+     (SELECT c1*50 as x from tknarysetop_R1)
+     UNION ALL
+     (SELECT c1*50 as y from tknarysetop_R2)
+     UNION ALL
+     (SELECT c1*50 as z from tknarysetop_R3))) AS FOO
+WHERE x > 0
+
+</CEP_DDL>
+
+<!-- pattern match over set operators -->
+<CEP_DDL> 
+CREATE QUERY q8 AS 
+SELECT T.*
+FROM (ISTREAM(
+        (SELECT c1 as x from tknarysetop_R1)
+        UNION ALL
+        (SELECT c1 as y from tknarysetop_R11))
+     ) AS FOO
+MATCH_RECOGNIZE
+(
+  MEASURES A.x AS c1
+  PATTERN (A B) 
+  DEFINE 
+  A AS (A.x = 5),
+  B AS (B.x = 11)
+) AS T
+</CEP_DDL>
+
+<!-- union all of two streams -->
+<CEP_DDL> 
+CREATE QUERY q9 AS 
+ISTREAM(SELECT * FROM tknarysetop_R1)
+UNION ALL
+ISTREAM(SELECT * from tknarysetop_R1)
+</CEP_DDL>
+
+<!-- A - B - C -->
+<CEP_DDL> 
+CREATE QUERY q10 AS 
+ISTREAM(
+SELECT * FROM tknarysetop_R1
+MINUS
+SELECT * FROM tknarysetop_R2
+MINUS 
+SELECT * FROM tknarysetop_R4)
+</CEP_DDL>
+
+<!-- D U (C /\ B) -->
+<!-- see query 4  -->
+<!-- {2,6,7} -->
+<CEP_DDL> 
+CREATE QUERY q11 AS 
+ISTREAM(
+SELECT c1, c2, c3 from tknarysetop_R4
+UNION 
+(SELECT c1, c2, c3 from tknarysetop_R3
+INTERSECT
+SELECT c1, c2, c3 from tknarysetop_R2))
+</CEP_DDL>
+
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q0 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq0.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q1 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq1.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q2 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq2.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q3 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq3.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q4 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq4.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q5 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq5.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q6 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq6.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q7 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq7.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q8 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq8.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q9 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq9.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q10 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq10.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ 
+ALTER QUERY q11 ADD DESTINATION
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqsetopq11.txt</Address></EndPointReference>"
+]]></CEP_DDL> 
+
+
+<CEP_DDL> alter query q0 start </CEP_DDL>
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter query q4 start </CEP_DDL>
+<CEP_DDL> alter query q5 start </CEP_DDL>
+<CEP_DDL> alter query q6 start </CEP_DDL>
+<CEP_DDL> alter query q7 start </CEP_DDL>
+<CEP_DDL> alter query q8 start </CEP_DDL>
+<CEP_DDL> alter query q9 start </CEP_DDL>
+<CEP_DDL> alter query q10 start </CEP_DDL>
+<CEP_DDL> alter query q11 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

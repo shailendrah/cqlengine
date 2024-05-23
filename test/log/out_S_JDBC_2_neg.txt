@@ -1,0 +1,11 @@
+register stream S_JDBC_2_1 (c1 integer, c2 integer)
+ok
+alter stream S_JDBC_2_1 add source push
+ok
+java.sql.SQLException java.rmi.ServerException java.rmi.RemoteException oracle.cep.execution.ExecException(PUSH_SRC_NOT_INITIALIZED)
+create query q_JDBC_2_1 as istream(select * from S_JDBC_2_1[range 1])
+ok
+alter query q_JDBC_2_1 start
+ok
+ok
+java.sql.SQLException java.lang.ClassCastException

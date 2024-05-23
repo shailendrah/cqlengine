@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.oracle.com/ns/ocep/config/jdbc"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:wlevs="http://www.bea.com/ns/wlevs/config/application"
+           targetNamespace="http://www.oracle.com/ns/ocep/config/jdbc"
+           elementFormDefault="unqualified" attributeFormDefault="unqualified"
+           jxb:version="1.0">
+   <xs:annotation>
+       <xs:documentation>
+           Custom tags for OCEP JDBC Cartridge Context Configuration
+       </xs:documentation>
+   </xs:annotation>
+   <xs:annotation>
+       <xs:appinfo>
+           <jxb:schemaBindings>
+               <jxb:package name="com.oracle.cep.cartridge.jdbc"/>
+           </jxb:schemaBindings>
+       </xs:appinfo>
+   </xs:annotation>
+   <xs:import namespace="http://www.bea.com/ns/wlevs/config/application"
+              schemaLocation="wlevs_application_config.xsd"/>
+   <xs:element name="jdbc-ctx" type="JdbcCartridgeContextConfig"/>
+
+   <xs:complexType name="JdbcCartridgeContextConfig">
+       <xs:complexContent>
+           <xs:extension base="wlevs:StageConfig">
+	       <xs:sequence>
+	           <xs:element name="data-source" minOccurs="1" maxOccurs="1" type="xs:normalizedString"/>
+                   <xs:element name="function" minOccurs="1" maxOccurs="unbounded" type="JdbcCartridgeFunctionConfig">
+		      <xs:annotation>
+		         <xs:documentation>
+			     A JDBC Cartridge function is always a TABLE function which returns a collection.
+			 </xs:documentation>
+		      </xs:annotation>
+		   </xs:element>
+	       </xs:sequence>
+	   </xs:extension>
+       </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="JdbcCartridgeFunctionConfig">
+       <xs:sequence>
+           <xs:element name="param" minOccurs="0" maxOccurs="unbounded" type="JdbcCartridgeFuncParamConfig">
+	       <xs:annotation>
+	           <xs:documentation>
+		       The regular expression [A-Za-z0-9_]+ defines valid parameter name.
+		   </xs:documentation>
+	       </xs:annotation>
+	   </xs:element>
+	   <xs:element name="return-component-type" type="xs:normalizedString" minOccurs="1" maxOccurs="1">
+	       <xs:annotation>
+	            <xs:documentation>
+		        This will be a CQL type - either native e.g. INT, FLOAT etc. or extensible, like some POJO bean name or some extensible type defined by some cartridge. This represents the component type of the collection-type returned by the Jdbc cartridge function (which being a TABLE function always returns a collection-type).
+		    </xs:documentation>
+	       </xs:annotation>
+	   </xs:element>
+	   <xs:element name="sql" type="xs:normalizedString" minOccurs="1" maxOccurs="1">
+	       <xs:annotation>
+	           <xs:documentation>
+ 		       SQL query that defines the function. Reference to the parameters declared in 'param' element should be preceded with a ':' colon.
+		   </xs:documentation>
+	       </xs:annotation>
+	   </xs:element>
+       </xs:sequence>
+       <xs:attribute name="name" use="required" type="xs:string" />
+   </xs:complexType>
+   <xs:complexType name="JdbcCartridgeFuncParamConfig">
+       <xs:attribute name="name" use="required" type="xs:string" />
+       <xs:attribute name="type" use="required" type="xs:string">
+           <xs:annotation>
+	       <xs:documentation>
+	           This will be a CQL type. Currently we support only native CQL types like INT, FLOAT etc.
+	       </xs:documentation>
+           </xs:annotation>
+       </xs:attribute>
+   </xs:complexType>
+</xs:schema>
+

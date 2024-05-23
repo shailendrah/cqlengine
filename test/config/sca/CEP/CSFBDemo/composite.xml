@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ASCII"?>
+<composite xmlns="http://xmlns.oracle.com/sca/1.0"
+        xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+        name="CSFBDemo"
+		revision="1.0"
+		label="2006-08-05_12-20-54_123"
+		applicationName="CEP"
+        mode="active" state="on">
+      
+    <import location="OrderMediator.wsdl" />
+    <import location="OrderAlertProcessor.wsdl" />
+    
+    <service name="Client">
+        <interface.wsdl interface="http://www.globalcompany.com/ns/CEP#wsdl.interface(CEPOrder)"/>
+        <binding.ws port="http://www.globalcompany.com/ns/CEP#wsdl.endpoint(CEPOrderBooking/CEPPort)"/>
+    </service>
+    <wire>
+        <source.uri>Client</source.uri>
+        <target.uri>OrderMediator/Client</target.uri>
+    </wire>
+
+
+    <component name="OrderMediator">
+        <implementation.mediator src="OrderMediator.mplan"/>
+    </component>
+    
+    <component name="CSFB">
+        <implementation.cqlx src="order.cqlx" />
+	<business-events>
+             <subscribe xmlns:Order="http://www.globalcompany.com/ns/CEP/"  name="Order:OrderEvent" consistency="guaranteed" />
+	</business-events>
+    </component>
+
+    <component name="EventMediator">
+        <implementation.mediator src="EventMediator.mplan" />
+	<business-events>
+             <subscribe xmlns:Order="http://www.globalcompany.com/ns/CEP/"  name="Order:OrderAlert" consistency="guaranteed" />
+	</business-events>
+    </component>
+
+    <wire>
+        <source.uri>EventMediator/OrderAlertProcessor</source.uri>
+        <target.uri>OrderAlertProcessor</target.uri>
+    </wire>
+
+    
+    <reference name="OrderAlertProcessor">
+	    <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/jms/OrderAlertProcessor/#wsdl.interface(sendMessage_ptt)"/>
+	    <binding.jca config="OrderAlertProcessorService.jca"/>
+    </reference>   
+
+
+</composite>

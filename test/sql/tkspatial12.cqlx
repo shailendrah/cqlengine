@@ -1,0 +1,48 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+    <CEP_DDL> register stream tkspatial_S6 (c1 integer, c2 float) </CEP_DDL>
+    <CEP_DDL> <![CDATA[ alter stream tkspatial_S6 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS6.txt</Address></EndPointReference>"]]> </CEP_DDL>
+
+<!-- more geometries -->
+<CEP_DDL><![CDATA[ 
+        register view cgeoms(
+          	point3d com.oracle.cep.cartridge.spatial.Geometry3D,
+          	point3d2 com.oracle.cep.cartridge.spatial.Geometry3D,
+			line3d com.oracle.cep.cartridge.spatial.Geometry3D,
+			polygon3d com.oracle.cep.cartridge.spatial.Geometry3D,
+			solid3d com.oracle.cep.cartridge.spatial.Geometry3D
+        ) as    
+        select 
+        com.oracle.cep.cartridge.spatial.Geometry3D.createPoint(0,  0.0d, 0.0d, 0.0d) as point3d,
+        com.oracle.cep.cartridge.spatial.Geometry3D.createPoint(0,  4.0d, 4.0d, 4.0d) as point3d2,
+        com.oracle.cep.cartridge.spatial.Geometry3D.createLinearLineString(0,
+        	ORDSGENERATOR@cartesian(3, 2, 0.0d,0.0d,0.0d, 1.0d,1.0d,0.0d
+        )) as line3d, 
+        com.oracle.cep.cartridge.spatial.Geometry3D.createLinearPolygon(0, 
+        	ORDSGENERATOR@cartesian(3, 5, -2.0d,-2.0d,0.0d, 2.0d,-2.0d,0.0d, 2.0d,2.0d,0.0d, -2.0d,2.0d,0.0d, -2.0d,-2.0d,0.0d
+        )) as polygon3d,
+		com.oracle.cep.cartridge.spatial.Geometry3D.createSolidBox(0,  -1.0d, -1.0d, -1.0d, 2.0d, 2.0d, 2.0) as solid3d        
+                    from tkspatial_S6[NOW]
+]]>  </CEP_DDL>
+
+<!-- Note that we don't specify the tolerance argument for the operators, except for the
+	new operation, where we do use it in both forms -->
+	
+<CEP_DDL><![CDATA[ 
+        create query qgeometries1 as
+        select 
+        	ANYINTERACT@cartesian(cv.point3d, cv.line3d) as any1,
+            CONTAIN@cartesian(cv.polygon3d, cv.point3d) as contain1,
+            WITHINDISTANCE@cartesian(cv.point3d, cv.polygon3d, 0.1d) as wdist1,
+            INSIDE@cartesian(cv.polygon3d, cv.line3d) as inside1,
+            INSIDE3D@cartesian(cv.point3d, cv.solid3d) as inside2,
+            INSIDE3D@cartesian(cv.point3d, cv.polygon3d, 1.0d) as inside3,
+            INSIDE3D@cartesian(cv.point3d2, cv.solid3d, 1.0d) as inside4
+        from cgeoms as cv
+]]>  </CEP_DDL> 
+<CEP_DDL> <![CDATA[ alter query qgeometries1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/spatial_geoms2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query qgeometries1 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>
+
+

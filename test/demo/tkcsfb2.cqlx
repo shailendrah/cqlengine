@@ -1,0 +1,94 @@
+<OEPS>
+<OEPS_DDL> register stream TradeInputs(tradeId integer, tradeVolume integer, tradeSymbol char(4), tradeType integer); </OEPS_DDL>
+<OEPS_DDL> register stream TradeUpdates(tradeId integer, statusCode integer); </OEPS_DDL>
+<OEPS_DDL> register stream TradeMatched(tradeId integer); </OEPS_DDL>
+<OEPS_DDL> register relation TradeTypeCodes(tradeType char(10), code integer); </OEPS_DDL>
+<OEPS_DDL> register relation TradeStatusCodes(statusCode char(20), code integer); </OEPS_DDL>
+<OEPS_DDL> register relation Dual(c1 integer); </OEPS_DDL>
+<OEPS_DDL> alter stream TradeInputs add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTI1.txt</Address></EndPointReference>"; </OEPS_DDL>                
+<OEPS_DDL> alter stream TradeUpdates add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTU1.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter stream TradeMatched add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTM1.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter relation TradeTypeCodes add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTT1.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter relation TradeStatusCodes add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTS1.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter relation Dual add source "<EndPointReference><Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpDual.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> register view CutOffTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as DStream(select * from TradeInputs[range 20 seconds]); </OEPS_DDL>
+<OEPS_DDL> register view FineTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(select c.tradeId, c.tradeVolume, c.tradeSymbol, c.tradeType from CutOffTrades[now] as c, TradeMatched[range 20 seconds] as t where c.tradeId = t.tradeId); </OEPS_DDL>
+<OEPS_DDL> register view Dummy1(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from CutOffTrades[NOW]; </OEPS_DDL>
+<OEPS_DDL> register view Dummy2(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from FineTrades[NOW]; </OEPS_DDL>
+<OEPS_DDL> register view FailedTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(Dummy1 except Dummy2); </OEPS_DDL>
+<OEPS_DDL> register view TotalFineTrades(c1) as select count(*) from FineTrades[range 5 minutes slide 5 minutes]; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailedByNonZeroType(tradeType, total) as select tradeType, count(*) from FailedTrades[range 5 minutes slide 5 minutes] group by tradeType; </OEPS_DDL>
+<OEPS_DDL> register view Dummy6(tradeType) as select tradeType from TotalFailedByNonZeroType; </OEPS_DDL>
+<OEPS_DDL> register view Dummy7(tradeType) as select code from TradeTypeCodes; </OEPS_DDL>
+<OEPS_DDL> register view Dummy8(tradeType) as Dummy7 except Dummy6; </OEPS_DDL>
+<OEPS_DDL> register view Dummy9(tradeType, total) as select tradeType, 0 from Dummy8; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailedByType(tradeType, total) as TotalFailedByNonZeroType union Dummy9; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailedTrades(total, dummy) as select sum(total), count(*) from TotalFailedByType; </OEPS_DDL>
+<OEPS_DDL> register view TotalTrades(c1) as select fine.c1+failed.total from TotalFineTrades as fine, TotalFailedTrades as failed; </OEPS_DDL>
+<OEPS_DDL> register view Dummy4(buyCount, sellCount) as select a.total, b.total from TotalFailedByType as a, TotalFailedByType as b where a.tradeType = 0 and b.tradeType = 1; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailuresByTypes(buyCount, sellCount, exchgCount) as select b.buyCount, b.sellCount, a.total from TotalFailedByType as a, Dummy4 as b where a.tradeType = 2; </OEPS_DDL>
+<OEPS_DDL> register view FailedTradesStatus(tradeId, statusCode) as IStream(select f.tradeId, u.statusCode from FailedTrades[NOW] as f, TradeUpdates[partition by u.tradeId rows 1] as u where f.tradeId = u.tradeId); </OEPS_DDL>
+<OEPS_DDL> register view TotalFailedNonZeroByStatus12(statusCode, total) as select statusCode, count(*) from FailedTradesStatus[range 5 minutes slide 5 minutes] group by statusCode; </OEPS_DDL>
+<OEPS_DDL> register view Dummy10(statusCode) as select statusCode from TotalFailedNonZeroByStatus12; </OEPS_DDL>
+<OEPS_DDL> register view Dummy11(statusCode) as select code from TradeStatusCodes where code = 1; </OEPS_DDL>
+<OEPS_DDL> register view Dummy12(statusCode) as select code from TradeStatusCodes where code = 2; </OEPS_DDL>
+<OEPS_DDL> register view Dummy13(statusCode) as Dummy11 union Dummy12; </OEPS_DDL>
+<OEPS_DDL> register view Dummy14(statusCode) as Dummy13 except Dummy10; </OEPS_DDL>
+<OEPS_DDL> register view Dummy15(statusCode, total) as select statusCode, 0 from Dummy14; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailedStatus12(statusCode, total) as TotalFailedNonZeroByStatus12 union Dummy15; </OEPS_DDL>
+<OEPS_DDL> register view Dummy18(total, dummy) as select sum(total), count(*) from TotalFailedStatus12; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailedStatus0(statusCode, total) as select 0, all.total - status12.total from TotalFailedTrades as all, Dummy18 as status12; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailedByStatus(statusCode, total) as TotalFailedStatus0 union TotalFailedStatus12; </OEPS_DDL>
+<OEPS_DDL> register view Dummy5(status0, count0, status1, count1) as select a.statusCode, a.total, b.statusCode, b.total from TotalFailedByStatus as a, TotalFailedByStatus as b where a.statusCode = 0 and b.statusCode = 1; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailuresByStatus(status0, count0, status1, count1, status2, count2) as select b.status0, b.count0, b.status1, b.count1, a.statusCode, a.total from TotalFailedByStatus as a, Dummy5 as b where a.statusCode = 2; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailuresByStatusType(buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select a.buyCount, a.sellCount, a.exchgCount, b.count0, b.count1, b.count2 from TotalFailuresByTypes as a, TotalFailuresByStatus as b; </OEPS_DDL>
+<OEPS_DDL> register view TotalReq1(totalCount, totalFailedCount, buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select t.c1, a.buyCount+a.sellCount+a.exchgCount, a.buyCount, a.sellCount, a.exchgCount, a.noackCount, a.recvdCount, a.processedCount from TotalFailuresByStatusType as a, TotalTrades as t; </OEPS_DDL>
+<OEPS_DDL> register view TradeStatus0(tradeId, statusCode) as select tradeId, 0 from TradeInputs; </OEPS_DDL>
+<OEPS_DDL> register view TradeStatus3(tradeId, statusCode) as select tradeId, 3 from TradeMatched; </OEPS_DDL>
+<OEPS_DDL> register view TradeStatus03(tradeId, statusCode) as TradeStatus0 union TradeStatus3; </OEPS_DDL>
+<OEPS_DDL> register view TradeStatusStreamDup(tradeId, statusCode) as TradeStatus03 union TradeUpdates; </OEPS_DDL>
+<OEPS_DDL> register view TradeStatus(tradeId, statusCode) as select * from TradeStatusStreamDup[partition by tradeId rows 1]; </OEPS_DDL>
+<OEPS_DDL> register view TradeStatusStream(tradeId, statusCode) as IStream(select * from TradeStatus); </OEPS_DDL>
+<OEPS_DDL><![CDATA[ register view CutOff3(tradeId, statusCode) as DStream(select tradeId, statusCode from TradeStatusStream[range 3 seconds] where statusCode < 3); ]]> </OEPS_DDL>
+<OEPS_DDL> register view Failed3(tradeId, statusCode) as IStream(select a.tradeId, a.statusCode from CutOff3[NOW] as a, TradeStatus as b where a.tradeId = b.tradeId and a.statusCode = b.statusCode); </OEPS_DDL>
+<OEPS_DDL> register view TotalCutOff3(c1) as select count(*) from CutOff3[range 10 minutes slide 5 minutes]; </OEPS_DDL>
+<OEPS_DDL> register view TotalFailed3(c1) as select count(*) from Failed3[range 10 minutes slide 5 minutes]; </OEPS_DDL>
+<OEPS_DDL> register view Req1(total, totalFailed, buy, sell, exchg, trade_noack, trade_recvd, trade_processing) as IStream(select * from TotalReq1); </OEPS_DDL>
+<OEPS_DDL> register view Req2(tickerSymbol, symbolCount) as IStream(select tradeSymbol, count(*) from FailedTrades[range 5 minutes slide 5 minutes] group by tradeSymbol); </OEPS_DDL>
+<OEPS_DDL><![CDATA[ register view Req3(totalCount, failedCount) as IStream(select t.c1, t.c1-f.c1 from TotalTrades as t, TotalFineTrades as f where f.c1*100 < 95*t.c1); ]]> </OEPS_DDL>
+<OEPS_DDL> register view Req4(totalCount, failedCount) as IStream(select t.c1, f.c1 from TotalCutOff3 as t, TotalFailed3 as f where f.c1*100 > 10*t.c1); </OEPS_DDL>
+<OEPS_DDL> create query q201 as select * from TotalFailuresByTypes; </OEPS_DDL>
+<OEPS_DDL> create query q202 as select * from TotalFailuresByStatus; </OEPS_DDL>
+<OEPS_DDL> create query q203 as select * from TotalFailuresByStatusType; </OEPS_DDL>
+<OEPS_DDL> create query q204 as select * from TotalFailedByStatus; </OEPS_DDL>
+<OEPS_DDL> create query q205 as select * from FailedTradesStatus; </OEPS_DDL>
+<OEPS_DDL> create query q206 as select * from TotalFailedStatus12; </OEPS_DDL>
+<OEPS_DDL> create query q207 as select * from TotalFailedStatus0; </OEPS_DDL>
+<OEPS_DDL> create query q208 as select * from Req1; </OEPS_DDL>
+<OEPS_DDL> create query q209 as select * from Req2; </OEPS_DDL>
+<OEPS_DDL> create query q210 as select * from Req3; </OEPS_DDL>
+<OEPS_DDL> create query q211 as select * from Req4; </OEPS_DDL>
+<OEPS_DDL> alter query q201 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbq1.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q202 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbq2.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q203 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbq3.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q204 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbq4.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q205 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbq5.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q206 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbq6.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q207 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbq7.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q208 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbr1.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q209 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbr2.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q210 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbr3.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q211 add destination "<EndPointReference><Address>file://@T_WORK@/cep/log/outcsfbr4.txt</Address></EndPointReference>"; </OEPS_DDL>
+<OEPS_DDL> alter query q201 start; </OEPS_DDL>
+<OEPS_DDL> alter query q202 start; </OEPS_DDL>
+<OEPS_DDL> alter query q203 start; </OEPS_DDL>
+<OEPS_DDL> alter query q204 start; </OEPS_DDL>
+<OEPS_DDL> alter query q205 start; </OEPS_DDL>
+<OEPS_DDL> alter query q206 start; </OEPS_DDL>
+<OEPS_DDL> alter query q207 start; </OEPS_DDL>
+<OEPS_DDL> alter query q208 start; </OEPS_DDL>
+<OEPS_DDL> alter query q209 start; </OEPS_DDL>
+<OEPS_DDL> alter query q210 start; </OEPS_DDL>
+<OEPS_DDL> alter query q211 start; </OEPS_DDL>
+<OEPS_DDL> alter system run;</OEPS_DDL>	
+</OEPS>

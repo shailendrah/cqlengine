@@ -1,0 +1,33 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL> 
+create stream foo (c1 integer, c2 float) is application timestamped
+</CEP_DDL>
+
+<CEP_DDL> 
+<![CDATA[ alter stream foo add source
+"<EndPointReference><Address>file://@TEST_DATA@/inpS1000.txt?convertTs=false</Address></EndPointReference>"]]>
+
+</CEP_DDL>
+
+<!-- The following view creation should fail -->
+<CEP_DDL> 
+create view foo (c1 integer, c2 float) as select * from foo 
+</CEP_DDL>
+
+<!-- The following view creation should succeed -->
+<CEP_DDL> 
+create view foo2 (c1 integer, c2 float) as select * from foo 
+</CEP_DDL>
+
+<!-- The following stream creation should fail -->
+<CEP_DDL> 
+create stream foo2 (c1 integer, c2 float) is application timestamped
+</CEP_DDL>
+
+<CEP_DDL> 
+create query foo as select * from foo [RANGE 1000 nanoseconds] 
+</CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

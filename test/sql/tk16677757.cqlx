@@ -1,0 +1,38 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<CEP_DDL>create stream tk16677757_s0(c1 integer)</CEP_DDL>
+
+<CEP_DDL>create stream tk16677757_s1(product_id integer, product_type_id integer, name char(30))</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tk16677757_s0 add source "<EndPointReference><Address>file://@TEST_DATA@/inp16677757_s0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tk16677757_s1 add source "<EndPointReference><Address>file://@TEST_DATA@/inp16677757_s1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- This query is one of the questions raised by YingXi. It shows that RStream doesn't send output on receiving heartbeat unless there are changes to the output. -->
+<CEP_DDL><![CDATA[
+create query tk16677757_q1 as
+RStream(
+  select *
+  from
+    tk16677757_s0
+  order by c1 rows 2
+)
+]]></CEP_DDL>
+
+<!-- actual query as per bug 16677757 -->
+<CEP_DDL>
+<![CDATA[
+create query tk16677757_q2 as
+IStream(Select product_id, product_type_id, name from
+tk16677757_s1[range 4] order by product_id asc rows 3) 
+]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tk16677757_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out16677757_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tk16677757_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/out16677757_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>alter query tk16677757_q1 start</CEP_DDL>
+<CEP_DDL>alter query tk16677757_q2 start</CEP_DDL>
+
+<CEP_DDL>alter system run </CEP_DDL>
+
+</CEP>

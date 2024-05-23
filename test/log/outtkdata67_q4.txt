@@ -1,0 +1,61 @@
+1000:+ <colattvalexample>
+   <column name="c1">15</column>
+   <column name="c2xml">
+      <c2>0.1</c2>
+   </column>
+</colattvalexample>
+
+1000:+ <colattvalexample>
+   <column name="c1">20</column>
+   <column name="c2xml">
+      <c2>0.14</c2>
+   </column>
+</colattvalexample>
+
+1000:- <colattvalexample>
+   <column name="c1">15</column>
+   <column name="c2xml">
+      <c2>0.1</c2>
+   </column>
+</colattvalexample>
+
+1000:+ <colattvalexample>
+   <column name="c1">15</column>
+   <column name="c2xml">
+      <c2>0.1</c2>
+      <c2>0.2</c2>
+   </column>
+</colattvalexample>
+
+4000:- <colattvalexample>
+   <column name="c1">20</column>
+   <column name="c2xml">
+      <c2>0.14</c2>
+   </column>
+</colattvalexample>
+
+4000:+ <colattvalexample>
+   <column name="c1">20</column>
+   <column name="c2xml">
+      <c2>0.14</c2>
+      <c2>0.3</c2>
+   </column>
+</colattvalexample>
+
+10000:- <colattvalexample>
+   <column name="c1">15</column>
+   <column name="c2xml">
+      <c2>0.1</c2>
+      <c2>0.2</c2>
+   </column>
+</colattvalexample>
+
+10000:+ <colattvalexample>
+   <column name="c1">15</column>
+   <column name="c2xml">
+      <c2>0.1</c2>
+      <c2>0.2</c2>
+      <c2>0.04</c2>
+   </column>
+</colattvalexample>
+

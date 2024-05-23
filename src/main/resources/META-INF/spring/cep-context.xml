@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--  $Header: cep/wlevs_cql/modules/cqlengine/server/META-INF/spring/cep-context.xml /main/9 2011/11/23 09:58:43 alealves Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   anasrini    11/13/08 - set directInterop
+   hopark      10/28/08 - do not initialize CEPManager
+   hopark      08/27/08 - add service inject bpp
+   skmishra    08/26/08 - 
+   parujain    07/03/08 - 
+   hopark      05/19/08 - override registry port
+   hopark      05/15/08 - wlevs30
+   hopark      03/26/08 - Creation
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:wlevs="http://www.bea.com/ns/wlevs/spring"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+<!--
+Alex:
+This is casuing a deadlock in some samples.
+It looks like a bu in the evs server.
+    <osgi:reference id="jmxMbeanServer" interface="javax.management.MBeanServer"  />
+-->
+
+    <bean id="queuesrcEvictPolicy" 
+          class="oracle.cep.memmgr.evictPolicy.QueueSrcPolicy" >
+        <property name="normalThreshold"  value="-30" />
+        <property name="partialThreshold" value="-20" />
+        <property name="fullThreshold"  value="-10" />
+        <property name="syncThreshold" value="-5" />
+    </bean>
+ 
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="schedRuntime" value="0" />
+        <!-- <property name="directInterop" value="true" /> -->
+    </bean>
+
+    <bean id="cepServerRegistry"
+          class="oracle.cep.server.CEPServerRegistryImpl" >
+        <property name="createSystemServer" value="false" />
+    </bean>
+    
+    <bean id="cepManager"
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance">
+        <property name="config" ref="config" />
+        <property name="evictPolicy" ref="queuesrcEvictPolicy" />
+        <property name="serverRegistry" ref="cepServerRegistry" />
+    </bean>
+    
+<!--
+Alex:
+This does not work on clustered env.
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+	  <property name="serviceName" value="sys" />
+	  <property name="service" ref="cepServerRegistry"/>
+	  <property name="serviceInterface" value="oracle.cep.service.CEPServerRegistry" />
+      <property name="registryPort" value="1199" />
+   </bean>
+-->
+
+    <osgi:service interface="oracle.cep.service.CEPServerRegistry" ref="cepServerRegistry" />
+    <osgi:service interface="oracle.cep.service.CEPServerEnvConfigurable" ref="cepManager" />
+    <osgi:service interface="oracle.cep.metadata.ConfigManager" ref="config" />
+        
+</beans>
+

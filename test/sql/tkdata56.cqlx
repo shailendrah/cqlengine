@@ -1,0 +1,29 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata56_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register stream tkdata56_S1 (c1 timestamp, c2 double) </CEP_DDL>
+<CEP_DDL> register stream tkdata56_S2 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata56_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSVal.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata56_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS1Val.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata56_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inpSVal.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata56_q0 as select * from tkdata56_S0 [range 10 on c1] </CEP_DDL>
+<CEP_DDL> create query tkdata56_q1 as select * from tkdata56_S0 [range 0.1 on c2] </CEP_DDL>
+<CEP_DDL> create query tkdata56_q2 as select * from tkdata56_S1 [range INTERVAL "530 0:0:0.0" DAY(3) TO SECOND on c1] </CEP_DDL>
+<CEP_DDL> create query tkdata56_q3 as select * from tkdata56_S1 [range 9.1 on c2] </CEP_DDL>
+
+<!-- ambiguity on c1 -->
+<CEP_DDL> create query tkdata56_q4 as select S1.c1, S2.c1, S2.c2 from
+tkdata56_S0 [range 10 on c1] as S1,
+tkdata56_S2 [range 2 on c1] as S2
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata56_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata56_q0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata56_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata56_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata56_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata56_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata56_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata56_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata56_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata56_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata56_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkdata56_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata56_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata56_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata56_q4 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

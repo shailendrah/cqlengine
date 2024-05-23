@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>com.oracle.cep</groupId>
+        <artifactId>cqlengine</artifactId>
+        <version>12.2.1.3-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.oracle.cep.cql</groupId>
+    <artifactId>tools</artifactId>
+    <packaging>jar</packaging>
+    <name>CQL Tools</name>
+    <url>http://maven.apache.org</url>
+    <properties>
+        <!-- stupid resource plugin will not expand project.parent.basedir -->
+        <project.build.commonsrc>../api/src</project.build.commonsrc>
+        <project.build.serversrc>../server/src</project.build.serversrc>
+        <project.build.generatedsrc>${project.build.directory}/generated-sources/src</project.build.generatedsrc>        
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.bea.core</groupId>
+            <artifactId>apache.commons.logging.api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.bea.core</groupId>
+            <artifactId>i18n</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlparserv2</groupId>
+            <artifactId>xmlparserv2</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>    
+    <build>
+        <resources>
+            <!-- clean this up - too many interlocking dependencies in the exceptions -->
+            <resource>
+                <directory>src</directory>
+                <targetPath>${project.build.generatedsrc}</targetPath>
+ 		<excludes>
+	          <exclude>**/.ade_path/**</exclude>
+	        </excludes>
+           </resource>
+            <resource>
+                <directory>${project.build.commonsrc}</directory>
+                <includes>
+                    <include>**/exceptions/**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/exceptions/CEPException.java</exclude>
+                    <exclude>**/exceptions/StaleTableSourceException.java</exclude>
+                    <exclude>**/.ade_path/**</exclude>
+                </excludes>
+                <targetPath>${project.build.generatedsrc}</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.build.serversrc}</directory>
+                <includes>
+                    <include>**/exceptions/**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/.ade_path/**</exclude>
+                </excludes>
+                <targetPath>${project.build.generatedsrc}</targetPath>
+            </resource>
+        </resources>
+        <sourceDirectory>${project.build.generatedsrc}</sourceDirectory>
+    </build>
+</project>

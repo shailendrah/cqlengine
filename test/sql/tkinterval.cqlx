@@ -1,0 +1,202 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkinterval_S0 (c1 integer) </CEP_DDL>
+<CEP_DDL> register stream tkinterval_S1 (c1 interval year to month) </CEP_DDL>
+<CEP_DDL> register stream tkinterval_S2 (c1 interval year(4) to month, c2 interval, c3 timestamp) </CEP_DDL>
+<CEP_DDL> register stream tkinterval_S3 (c1 interval, c2 interval year to month) </CEP_DDL>
+<CEP_DDL> register stream tkinterval_S4 (c1 interval, c2 interval year to month) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream tkinterval_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkinterval_S0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkinterval_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkinterval_S1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkinterval_S2 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkinterval_S2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkinterval_S3 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkinterval_S3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkinterval_S4 add source "<EndPointReference><Address>file://@TEST_DATA@/inptkinterval_S4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<!-- Test: Only Year -->
+<CEP_DDL> create query tkinterval_q1 as select INTERVAL "23" YEAR  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Only Month -->
+<CEP_DDL> create query tkinterval_q2 as select INTERVAL "4" MONTH   from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Year with Precision --> 
+<CEP_DDL> create query tkinterval_q3 as select INTERVAL "210" YEAR(3)  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Larger value of Month -->
+<CEP_DDL> create query tkinterval_q4 as select INTERVAL "210" MONTH  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Year and Month with precision -->
+<CEP_DDL> create query tkinterval_q5 as select INTERVAL "223-10" YEAR(3) TO MONTH  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Invalid format -->
+<CEP_DDL> create query tkinterval_qNeg1 as select INTERVAL "2-10" MONTH TO YEAR  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Year value greater than precision -->
+<CEP_DDL> create query tkinterval_qNeg2 as select INTERVAL "223" YEAR  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Month value greater than precision-->
+<CEP_DDL> create query tkinterval_qNeg3 as select INTERVAL "1223" MONTH  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Day to second with trailing precision --> 
+<CEP_DDL> create query tkinterval_q6 as select INTERVAL "4 5:12:10.222" DAY TO SECOND(3)  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Day to minute without precision -->
+<CEP_DDL> create query tkinterval_q7 as select INTERVAL "4 5:12" DAY TO MINUTE  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Day to hour with leading precision -->
+<CEP_DDL> create query tkinterval_q8 as select INTERVAL "400 5" DAY(3) TO HOUR  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Only days with leading precision -->
+<CEP_DDL> create query tkinterval_q9 as select INTERVAL "400" DAY(3)  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Hour to second with trailing precision-->
+<CEP_DDL> create query tkinterval_q10 as select INTERVAL "11:12:10.2222222" HOUR TO SECOND(7)  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!--Test: Hour to Minute without precision -->
+<CEP_DDL> create query tkinterval_q11 as select INTERVAL "11:20" HOUR TO MINUTE  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Only Hours -->
+<CEP_DDL> create query tkinterval_q12 as select INTERVAL "10" HOUR  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!--Test: Minute to Second without precision  -->
+<CEP_DDL> create query tkinterval_q13 as select INTERVAL "10:22" MINUTE TO SECOND  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Only Minutes -->
+<CEP_DDL> create query tkinterval_q14 as select INTERVAL "10" MINUTE  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!--Test: Only Days -->
+<CEP_DDL> create query tkinterval_q15 as select INTERVAL "4" DAY  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Only Hours -->
+<CEP_DDL> create query tkinterval_q16 as select INTERVAL "25" HOUR  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: Only Hours with leading precision  -->
+<CEP_DDL> create query tkinterval_q17 as select INTERVAL "120" HOUR(3)  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!--Test: Only Second with precision and fractional seconds  -->
+<CEP_DDL> create query tkinterval_q18 as select INTERVAL "30.12345" SECOND(2,4)   from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- TEst: INTERVAL YEAR TO MONTH addition -->
+<CEP_DDL> create query tkinterval_q19 as select c1 + INTERVAL "1-1" YEAR TO MONTH  from tkinterval_S1[range 10] </CEP_DDL>
+
+<!-- Test: NUMTODSINTERVAL(value, time_unit) , test for fractional value -->
+<CEP_DDL> create query tkinterval_q20 as select numtodsinterval(1.1, "day")  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: NUMTODSINTERVAL(value, time_unit) , test for integer value reading from file -->
+<CEP_DDL> create query tkinterval_q21 as select numtodsinterval(c1, "hour")  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Negative Test: NUMTODSINTERVAL(value, time_unit) , invalid unit specified; it should be DAY | HOUR | MINUTE | SECOND -->
+<CEP_DDL> create query tkinterval_qNeg4 as select numtodsinterval(1.1, "year")  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: NUMTOYMINTERVAL(value, time_unit) , test for fractional value -->
+<CEP_DDL> create query tkinterval_q22 as select numtoyminterval(1.1, "year")  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: NUMTOYMINTERVAL(value, time_unit) , test for integer value reading from file -->
+<CEP_DDL> create query tkinterval_q23 as select numtoyminterval(c1, "month")  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Negative Test: NUMTOYMINTERVAL(value, time_unit) , invalid unit specified; it should be DAY | HOUR | MINUTE | SECOND -->
+<CEP_DDL> create query tkinterval_qNeg5 as select numtoyminterval(1.1, "day")  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: EXTRACT(time_unit, interval year to month)-->
+<CEP_DDL> create query tkinterval_q24 as select extract("month", INTERVAL "1-1" YEAR TO MONTH)  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: EXTRACT (time_unit, interval day to second) -->
+<CEP_DDL> create query tkinterval_q25 as select extract("hour", INTERVAL "4 2:23:60" DAY TO SECOND)  from tkinterval_S0[range 10] </CEP_DDL>
+
+<!-- Test: EXTRACT(time_unit, timetamp) where time_unit is YEAR | MONTH -->
+<CEP_DDL> create query tkinterval_q26 as select extract("year", c1), extract("month", c1)  from tkinterval_S2[range 10] </CEP_DDL>
+
+<!-- Test: EXTRACT(time_unit, timestamp) where time_unit is DAY | HOUR | MINUTE | SECOND -->
+<CEP_DDL> create query tkinterval_q27 as select extract("year", c3), extract("month", c3), extract("day", c3), extract("hour", c3), extract("minute", c3), extract("second", c3)  from tkinterval_S2[range 10] </CEP_DDL>
+
+<!-- Test: EXTRACT(time_unit, timestamp) where time_unit is DAY | HOUR | MINUTE | SECOND -->
+<CEP_DDL> create query tkinterval_q28 as select extract("day", c2), extract("hour", c2), extract("minute", c2), extract("second", c2)  from tkinterval_S2[range 10] </CEP_DDL>
+
+<!-- Test: TO_DSINTERVAL(char) -->
+<CEP_DDL> create query tkinterval_q29 as select to_dsinterval(to_char(c1)), to_dsinterval("5 5:44:22"), to_dsinterval("-4 44:44:48.9")  from tkinterval_S3[range 10] </CEP_DDL>
+
+<!-- Test: TO_YMINTERVAL(char) -->
+<CEP_DDL> create query tkinterval_q30 as select to_yminterval(to_char(c2)), to_yminterval("5-5"), to_yminterval("-4-5")  from tkinterval_S3[range 10] </CEP_DDL>
+
+<!-- Test: Simple Aggregate Functions(SUM,MAX,MIN,AVG,COUNT) on INTERVAL DAY TO SECOND Datatype.-->
+<CEP_DDL> create query tkinterval_q31 as IStream(select count(c1), sum(c1), max(c1), min(c1),avg(c1),standardDeviation(c1),sampleStandardDeviation(c1) from tkinterval_S4) </CEP_DDL>
+
+<!-- Test: Simple Aggregate Functions(SUM,MAX,MIN,AVG,COUNT) on INTERVAL YEAR TO MONTH Datatype.-->
+<CEP_DDL> create query tkinterval_q32 as select count(c2), sum(c2), max(c2), min(c2), avg(c2),standardDeviation(c2),sampleStandardDeviation(c2) from tkinterval_S4 </CEP_DDL>
+
+<CEP_DDL> create query tkinterval_q33 as select dsintervaltonum(c1,"days"),dsintervaltonum(c1,"hour"),dsintervaltonum(c1,"minute"),dsintervaltonum(c1,"seconds") from tkinterval_S4 </CEP_DDL>
+
+<CEP_DDL> create query tkinterval_q34 as select ymintervaltonum(c2,"years"), ymintervaltonum(c2,"months") from tkinterval_S4 </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkinterval_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q11 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q11.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q12 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q12.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q13 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q13.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q14 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q14.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q15 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q16 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q16.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q17 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q17.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q18 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q19 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q19.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q20 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q20.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q21 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q21.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_qNeg4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q22 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q22.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q23 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q23.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_qNeg5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_neg.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q24 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q24.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q25 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q25.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q26 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q26.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q27 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q27.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q28 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q28.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q29 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q29.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q30 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q30.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q31 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q31.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q32 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q32.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q33 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q33.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkinterval_q34 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkinterval_q34.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q5 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q10 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q11 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q12 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q13 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q14 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q15 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q16 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q17 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q18 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q19 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q20 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q21 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_qNeg4 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q22 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q23 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_qNeg5 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q24 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q25 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q26 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q27 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q28 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q29 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q30 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q31 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q32 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q33 start </CEP_DDL>
+<CEP_DDL> alter query tkinterval_q34 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

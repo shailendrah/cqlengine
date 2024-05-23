@@ -1,0 +1,17 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata25_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create function tkdata25_runError(a int, b float) return int as language java name "oracle.cep.test.userfunctions.TkRunErr" </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata25_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create view tkdata25_v1(c1 integer, c2 float) as select * from tkdata25_S0[range 1] where tkdata25_runError(tkdata25_S0.c1, tkdata25_S0.c2) > 2 </CEP_DDL>
+<CEP_DDL> create query tkdata25_q2 as select * from tkdata25_v1</CEP_DDL>
+<CEP_DDL> create query tkdata25_q3 as select c1+1, c2 from tkdata25_v1</CEP_DDL>
+<CEP_DDL> create view tkdata25_v2(c1 integer, c2 float) as query tkdata25_q2 </CEP_DDL>
+<CEP_DDL> create view tkdata25_v3(c1 integer, c2 float) as query tkdata25_q3 </CEP_DDL>
+<CEP_DDL> create query tkdata25_q4 as tkdata25_v2 union tkdata25_v3 </CEP_DDL>
+<CEP_DDL> create query tkdata25_q6 as select * from tkdata25_v3 where c1 > 2 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata25_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata25_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outq4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata25_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkdata25_q6 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

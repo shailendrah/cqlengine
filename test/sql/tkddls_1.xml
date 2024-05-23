@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tkddls_1>
+	<CEP_TBNAME>
+		<CEP_DDL>
+S2
+		</CEP_DDL>
+		<CEP_DDL>
+S5
+		</CEP_DDL>
+	</CEP_TBNAME>
+	<CEP_TABLE>
+		<CEP_DDL>
+register stream S2 (c1 integer, c2 float)
+		</CEP_DDL>
+		<CEP_DDL>
+register stream S5 (c1 integer, c2 float)
+		</CEP_DDL>
+	</CEP_TABLE>
+	<CEP_SOURCE>
+		<CEP_DDL>
+inpS2.txt
+		</CEP_DDL>
+		<CEP_DDL>
+inpS5.txt
+		</CEP_DDL>
+	</CEP_SOURCE>
+	<CEP_CQL>
+		<CEP_DDL>
+create query q11 as select * from S5
+		</CEP_DDL>
+		<CEP_DDL>
+create query q12 as select * from S2 [now]
+		</CEP_DDL>
+	</CEP_CQL>
+	<CEP_DDLS>
+		<CEP_DDL>
+alter query q11 add destination
+		</CEP_DDL>
+		<CEP_DDL>
+alter query q12 add destination
+		</CEP_DDL>
+	</CEP_DDLS>
+	<CEP_DDLS1>
+		<CEP_DDL>
+alter query q11 start
+		</CEP_DDL>
+		<CEP_DDL>
+alter query q12 start
+		</CEP_DDL>
+	</CEP_DDLS1>
+	<CEP_DESTINATION>
+		<CEP_DDL>
+outCr11.txt
+		</CEP_DDL>
+		<CEP_DDL>
+outCr12.txt
+		</CEP_DDL>
+	</CEP_DESTINATION>
+</tkddls_1>

@@ -1,0 +1,20 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata_dropfn_S9 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata_dropfn_S9 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create function tkdata_dropfn_concat2(c1 char, c2 char) return char as language java name "oracle.cep.test.userfunctions.TkUsrConcat" </CEP_DDL>
+<CEP_DDL> create function tkdata_dropfn_substring(c1 char, first1 int, last1 int) return char as language java name "oracle.cep.test.userfunctions.TkUsrSubstring" </CEP_DDL>
+<CEP_DDL> create function tkdata_dropfn_secondMax(c1 int) return int aggregate using "oracle.cep.test.userfunctions.TkUsrSecondMax" </CEP_DDL>
+<CEP_DDL> create function tkdata_dropfn_fib(n int) return int as language java name "oracle.cep.test.userfunctions.TkUsrFib" </CEP_DDL>
+<CEP_DDL> create function tkdata_dropfn_fib(n float) return int as language java name "oracle.cep.test.userfunctions.TkUsrFib2" </CEP_DDL>
+<CEP_DDL> create query tkdata_dropfn_q1 as select max(c1), tkdata_dropfn_secondMax(c1) from tkdata_dropfn_S9[range 10] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata_dropfn_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outUD1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata_dropfn_q1 start </CEP_DDL>
+<CEP_DDL> drop function tkdata_dropfn_concat2(char, char) </CEP_DDL>
+<CEP_DDL> drop function var(int) </CEP_DDL>
+<CEP_DDL> drop function length(char) </CEP_DDL>
+<CEP_DDL> drop function tkdata_dropfn_secondMax(int) </CEP_DDL>
+<CEP_DDL> drop function tkdata_dropfn_fib(int) </CEP_DDL>
+<CEP_DDL> drop query tkdata_dropfn_q1 </CEP_DDL>
+<CEP_DDL> drop function tkdata_dropfn_secondMax(int) </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

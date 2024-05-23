@@ -1,0 +1,37 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkPartitionWindow_S0 (c1 integer, c2 bigint) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ 
+alter stream tkPartitionWindow_S0 
+add source "<EndPointReference><Address>file://@TEST_DATA@/inptkValueWindow1_S0.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<!-- negative test case -->
+<CEP_DDL> 
+create query tkPartitionWindow_q1 as 
+select * 
+from (select * from tkPartitionWindow_S0) [partition by c3 rows 10]  as foo
+</CEP_DDL>
+
+<!-- this should fail too -->
+<CEP_DDL> 
+create query tkPartitionWindow_q1 as 
+select * 
+from (select c1 as c1, c2 as c3 from tkPartitionWindow_S0) [partition by c2 rows 10]  as foo, 
+     (select * from tkPartitionWindow_S0) [partition by c2 rows 5] as bar
+</CEP_DDL>
+
+
+<CEP_DDL> 
+create query tkPartitionWindow_q1 as 
+select * 
+from (select c1 as c1, c2 as c3 from tkPartitionWindow_S0) [partition by c3 rows 10]  as foo
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query tkPartitionWindow_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/tksubqpartn_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL> alter query tkPartitionWindow_q1 start</CEP_DDL>
+
+
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

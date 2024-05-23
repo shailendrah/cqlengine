@@ -1,0 +1,85 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/StoreStatsManager.java /main/4 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2008, Oracle and/or its affiliates.All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/13/08 - Use Factory for Stats generation
+    hopark      10/10/08 - remove statics
+    hopark      10/09/08 - remove statics
+    parujain    07/11/08 - stats cleanup
+    parujain    04/28/08 - 
+    najain      04/25/08 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/statistics/statsmgr/StoreStatsManager.java /main/4 2008/11/30 13:31:43 parujain Exp $
+ *  @author  najain  
+ *  @since   release specific (what release of product did this appear in)
+ */
+
+package oracle.cep.statistics.statsmgr;
+
+import java.util.Iterator;
+
+import oracle.cep.execution.stores.ExecStore;
+import oracle.cep.service.ExecContext;
+import oracle.cep.statistics.IStatsFactory;
+import oracle.cep.statistics.IStats;
+
+/**
+ * Statistics Manager for the Stores
+ * 
+ * @since 1.0
+ */
+
+public class StoreStatsManager extends StatsManager
+{
+  // iterator to traverse the stores array
+  private Iterator<ExecStore> itr;
+  
+  public StoreStatsManager(ExecContext ec, IStatsFactory factory)
+  {
+    super(ec, factory);
+  }
+    
+  public void init()
+  {
+    itr = execContext.getExecMgr().getStoreIterator();
+  }
+
+  public IStats getNext()
+  {
+    if(factory == null)
+      return null;
+    
+    if (itr == null)
+      return null;
+
+    ExecStore store = null;
+
+    if (itr.hasNext())
+      store = itr.next();
+
+    if (store == null)
+      return null;
+
+    IStats storeStatsRow = factory.createStoreStat(store.getId(), store.getPhyId(), store.getNumElems());
+    return storeStatsRow;
+  }
+
+  public void close()
+  {
+    itr = null;
+  }
+
+}

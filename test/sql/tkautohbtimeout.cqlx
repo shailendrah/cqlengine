@@ -1,0 +1,40 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<!-- NOTE: Queries and input data are similar to unit test tkhbtimeout.cqlx; hence output should match -->
+
+<CEP_DDL>create stream tkautohbtimeout_s1 (c1 char(10)) is system timestamped</CEP_DDL>
+<CEP_DDL>create stream tkautohbtimeout_s2 (c1 char(10), c2 integer, c3 integer) is system timestamped</CEP_DDL>
+<CEP_DDL>create stream tkautohbtimeout_dummy (c1 char(10)) is system timestamped</CEP_DDL>
+<CEP_DDL>create relation tkautohbtimeout_r1 (c1 integer) is system timestamped</CEP_DDL>
+<CEP_DDL>create stream tkautohbtimeout_s3 (c1 integer, c2 integer) is system timestamped</CEP_DDL>
+<CEP_DDL>create stream tkautohbtimeout_s4 (c1 char(10), c2 integer, c3 integer) is system timestamped</CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter stream tkautohbtimeout_s1 add source  "<EndPointReference><Address>file://@TEST_DATA@/inphbtestsys.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkautohbtimeout_dummy add source  "<EndPointReference><Address>file://@TEST_DATA@/inpdummysys.txt?delay=5000</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkautohbtimeout_s2 add source  "<EndPointReference><Address>file://@TEST_DATA@/inppatternsys.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter relation tkautohbtimeout_r1 add source  "<EndPointReference><Address>file://@TEST_DATA@/inptkautohbtimeout_r1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkautohbtimeout_s3 add source  "<EndPointReference><Address>file://@TEST_DATA@/inptkautohbtimeout_s3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter stream tkautohbtimeout_s4 add source  "<EndPointReference><Address>file://@TEST_DATA@/inptkautohbtimeout_s4.txt?delay=1000</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL>create query tkautohbtimeout_qAllDummy as select * from tkautohbtimeout_dummy</CEP_DDL>
+<CEP_DDL>create query tkautohbtimeout_q1 as select * from tkautohbtimeout_s1[range 1 seconds]</CEP_DDL>
+<CEP_DDL> <![CDATA[ create query tkautohbtimeout_qPattern as select T.ac1, T.bc1 from tkautohbtimeout_s2 MATCH_RECOGNIZE(PARTITION BY c3 MEASURES A.c1 as ac1, B.c1 as bc1 INCLUDE TIMER EVENTS PATTERN (A B*) DURATION 1 SECONDS DEFINE A as (A.c2=10), B as (B.c2=20)) as T ]]> </CEP_DDL>
+<CEP_DDL>create view tkautohbtimeout_v1 (c1 integer) as IStream(select c1 from tkautohbtimeout_r1)</CEP_DDL>
+<CEP_DDL>create query tkautohbtimeout_q2 as select * from tkautohbtimeout_v1[range 1 seconds]</CEP_DDL>
+<CEP_DDL>create query tkautohbtimeout_q3 as select * from tkautohbtimeout_s3 [partition by c2 rows 2 range 1 seconds]</CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkautohbtimeout_q4 as select T.Ac1, T.Bc1 from tkautohbtimeout_s4 MATCH_RECOGNIZE ( MEASURES A.c1 as Ac1, B.c1 as Bc1 PATTERN (A B*) WITHIN 2 DEFINE A as A.c2=10, B as B.c2=20) as T ]]> </CEP_DDL>
+
+<CEP_DDL><![CDATA[ alter query tkautohbtimeout_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkautohbtimeout_q1.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkautohbtimeout_qAllDummy add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkautohbtimeout_qAllDummy.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkautohbtimeout_qPattern add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkautohbtimeout_sysqPattern.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkautohbtimeout_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkautohbtimeout_q2.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkautohbtimeout_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkautohbtimeout_q3.txt</Address></EndPointReference>"]]></CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkautohbtimeout_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkautohbtimeout_q4.txt</Address></EndPointReference>"]]></CEP_DDL>
+
+<CEP_DDL>alter query tkautohbtimeout_q1 start</CEP_DDL>
+<CEP_DDL>alter query tkautohbtimeout_qAllDummy start</CEP_DDL>
+<CEP_DDL>alter query tkautohbtimeout_qPattern start</CEP_DDL>
+<CEP_DDL>alter query tkautohbtimeout_q2 start</CEP_DDL>
+<CEP_DDL>alter query tkautohbtimeout_q3 start</CEP_DDL>
+<CEP_DDL>alter query tkautohbtimeout_q4 start</CEP_DDL>
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

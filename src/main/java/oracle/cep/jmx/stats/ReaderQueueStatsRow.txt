@@ -1,0 +1,342 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/ReaderQueueStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $ */
+
+/* Copyright (c) 2006, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/12/08 - support runtime MBeans
+    parujain    10/05/07 - ordering
+    parujain    09/12/07 - remove logging
+    najain      07/23/07 - move stats to SharedQueueWriter
+    hopark      07/13/07 - dump stack trace on exception
+    parujain    05/31/07 - cep-em integration
+    najain      10/17/06 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/ReaderQueueStatsRow.java /main/2 2008/11/30 13:31:43 parujain Exp $
+ *  @author  najain  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+
+import oracle.cep.statistics.IStats;
+
+
+/**
+ * Statistic for the SharedQueuereader. This can be thought of a fixed table 
+ * with the following columns:
+ *
+ * QueueId
+ * ExecOperatorId
+ * ReaderId
+ * numDequeued
+ * numPosDequeued
+ * numNegDequeued
+ * numHeartbeatsDequeued
+ * numPresent
+ * numPosPresent
+ * numNegPresent
+ * numHeartbeatsPresent
+ * tsLastDequeued
+ * tsLastPosDequeued
+ * tsLastNegDequeued
+ * tsLastHeartbeatDequeued
+ */
+
+public class ReaderQueueStatsRow extends StatsRow implements IStats
+{
+  private int queueId;
+  private int execOperatorId;
+  private int readerId;
+  private int numDequeued;
+  private int numPosDequeued;
+  private int numNegDequeued;
+  private int numHeartbeatsDequeued;
+  private int numPresent;
+  private int numPosPresent;
+  private int numNegPresent;
+  private int numHeartbeatsPresent;
+  private long tsLastDequeued;
+  private long tsLastPosDequeued;
+  private long tsLastNegDequeued;
+  private long tsLastHeartbeatDequeued;
+  
+  /** 
+   * Construct a ReaderQueueStatsRow instance. 
+   * The PropertyNames annotation is used 
+   * to be able to construct a ReaderQueueStatsRow instance out of a CompositeData
+   * instance. See MXBeans documentation for more details.
+   */ 
+  @ConstructorProperties({"queueId", "execOperatorId", "readerId", "numDequeued", "numPosDequeued",
+                          "numNegDequeued", "numHeartbeatsDequeued", "numPresent", "numPosPresent",
+                          "numNegPresent", "numHeartbeatsPresent", "tsLastDequeued",
+                          "tsLastPosDequeued", "tsLastNegDequeued", "tsLastHeartbeatDequeued"})
+  public ReaderQueueStatsRow(int id, int opId, int rId, int dequeued, int posDequeued, int negDequeued,
+                             int hbDequeued, int present, int posPresent, int negPresent, int hbPresent,
+                             long tsLast, long tsLastPos, long tsLastNeg, long tsLasthb)
+  {
+    queueId = id;
+    execOperatorId = opId;
+    readerId = rId;
+    numDequeued = dequeued;
+    numPosDequeued = posDequeued;
+    numNegDequeued = negDequeued;
+    numHeartbeatsDequeued = hbDequeued;
+    numPresent = present;
+    numPosPresent = posPresent;
+    numNegPresent = negPresent;
+    numHeartbeatsPresent = hbPresent;
+    tsLastDequeued = tsLast;
+    tsLastPosDequeued = tsLastPos;
+    tsLastNegDequeued = tsLastNeg;
+    tsLastHeartbeatDequeued = tsLasthb;
+  }
+ 
+  public int getExecOperatorId()
+  {
+    return execOperatorId ;
+  }
+ 
+  public int getNumDequeued()
+  {
+    return numDequeued;
+  }
+  
+  public int getNumHeartbeatsDequeued()
+  {
+    return numHeartbeatsDequeued ;
+  }
+  
+  public int getNumHeartbeatsPresent()
+  {
+    return numHeartbeatsPresent;
+  }
+  
+  public int getNumNegDequeued()
+  {
+    return numNegDequeued ;
+  }
+  
+  public int getNumNegPresent()
+  {
+    return numNegPresent;
+  }
+  
+  public int getNumPosDequeued()
+  {
+    return numPosDequeued;
+  }
+  
+  public int getNumPosPresent()
+  {
+    return numPosPresent;
+  }
+  
+  public int getNumPresent()
+  {
+    return numPresent;
+  }
+
+  public int getQueueId()
+  {
+    return queueId;
+  }
+  
+  public int getReaderId()
+  {
+    return readerId;
+  }
+
+  public long getTsLastDequeued()
+  {
+    return tsLastDequeued ;
+  }
+
+  public long getTsLastHeartbeatDequeued()
+  {
+    return tsLastHeartbeatDequeued ;
+  }
+
+  public long getTsLastNegDequeued()
+  {
+    return tsLastNegDequeued ;
+  }
+  
+  public long getTsLastPosDequeued()
+  {
+    return tsLastPosDequeued ;
+  }
+
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("<ReaderQueueStatsRow>");
+    sb.append("<Queue id=\"" + queueId + "\" >");
+    sb.append("<ExecutionOperator id=\"" + execOperatorId + "\" >");
+    sb.append("<ReaderId id=\"" + readerId + "\" >");
+    sb.append("<TotalMessagesDequeued num=\"" + numDequeued + "\" />");
+    sb.append("<TotalPositiveDequeued num=\"" + numPosDequeued + "\" />");
+    sb.append("<TotalNegativeDequeued num=\"" + numNegDequeued + "\" />");
+    sb.append("<TotalHeartbeatsDequeued num=\"" + numHeartbeatsDequeued + "\" />");
+    sb.append("<TotalMessagesPresent num=\"" + numPresent + "\" />");
+    sb.append("<TotalPositivePresent num=\"" + numPosPresent + "\" />");
+    sb.append("<TotalNegativePresent num=\"" + numNegPresent + "\" />");
+    sb.append("<TotalHeartbeatsPresent num=\"" + numHeartbeatsPresent + "\" />");
+
+    sb.append("<TimeStampLastDequeued ts=\"" + tsLastDequeued + "\" />");
+    sb.append("<TimeStampLastPositiveDequeued ts=\"" + tsLastPosDequeued + "\" />");
+    sb.append("<TimeStampLastNegativeDequeued ts=\"" + tsLastNegDequeued + "\" />");
+    sb.append("<TimeStampLastHeartbeatDequeued ts=\"" + tsLastHeartbeatDequeued + "\" />");
+    sb.append("</ReaderQueueStatsRow>");
+
+    return sb.toString();
+  }
+  
+  /*
+   * JDK 5.0 manual conversion methods. The code
+   * below would not be required if we could
+   * rely on the MXBean framework
+   * 
+   * THE REQUIRED METHODS ARE:
+   *
+   *  public static CompositeType toCompositeType();
+   *  public CompositeData toCompositeData(CompositeType ct);
+   *  public static ReaderQueueStatsRow from(CompositeData cd);
+   *
+   */
+
+  // The corresponding CompositeType for this class
+  private static CompositeType cType_= null;
+
+  private static final String[] itemNames_= {"queueId", "execOperatorId", "readerId", "numDequeued", "numPosDequeued",
+                                      "numNegDequeued", "numHeartbeatsDequeued", "numPresent", "numPosPresent", 
+                                      "numNegPresent", "numHeartbeatsPresent", "tsLastDequeued",
+                                      "tsLastPosDequeued", "tsLastNegDequeued", "tsLastHeartbeatDequeued"};
+  
+  static{
+    try
+    {
+      OpenType[] itemTypes = {SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.INTEGER,
+                              SimpleType.LONG,
+                              SimpleType.LONG,
+                              SimpleType.LONG,
+                              SimpleType.LONG};
+      
+      cType_ = new CompositeType("oracle.cep.statistics.ReaderQueueStatsRow",
+                                 "oracle.cep.statistics.ReaderQueueStatsRow",
+                                 itemNames_,
+                                 itemNames_,
+                                 itemTypes);
+    }
+    catch(OpenDataException ode)
+    {
+
+    }
+  }
+  
+  /**
+   * Returns the CompositeType that describes this model
+   * specific class
+   */
+  public static CompositeType toCompositeType() {
+      return cType_;
+  }
+
+  /**
+   * Convert an instance of this model specific type to 
+   * a CompositeData. This ensure that clients that do not
+   * have access to the model specific class can still
+   * use the MBean. The MXBean framework can perform this
+   * conversion automatically. However MXBeans are part of
+   * JDK 6.0 and AS11g is required to support JDK 5.0 
+   * 
+   * @param ct - This parameter is there only for future compatibility reasons
+   *             with JDK 6.0. It can be ignored at this point.
+   */
+   public CompositeData toCompositeData(CompositeType ct) {
+     Object[] itemValues = {new Integer(this.getQueueId()),
+                            new Integer(this.getExecOperatorId()),
+                            new Integer(this.getReaderId()),
+                            new Integer(this.getNumDequeued()),
+                            new Integer(this.getNumPosDequeued()),
+                            new Integer(this.getNumNegDequeued()),
+                            new Integer(this.getNumHeartbeatsDequeued()),
+                            new Integer(this.getNumPresent()),
+                            new Integer(this.getNumPosPresent()),
+                            new Integer(this.getNumNegPresent()),
+                            new Integer(this.getNumHeartbeatsPresent()),
+                            new Long(this.getTsLastDequeued()),
+                            new Long(this.getTsLastPosDequeued()),
+                            new Long(this.getTsLastNegDequeued()),
+                            new Long(this.getTsLastHeartbeatDequeued())};
+     
+     CompositeData cData= null;
+     try 
+     {
+        cData= new CompositeDataSupport(cType_, itemNames_, itemValues);
+     }
+     catch( OpenDataException ode) 
+     {
+    
+     }
+     return cData;
+   }
+   
+   /**
+    * Create an instance of the model specific class out of
+    * an associated CompositeData instance
+    */
+    public static ReaderQueueStatsRow from(CompositeData cd) {
+      if (cd==null)
+        return null;
+      
+      return new ReaderQueueStatsRow(((Integer)cd.get("queueId")).intValue(),
+                                     ((Integer)cd.get("execOperatorId")).intValue(),
+                                     ((Integer)cd.get("readerId")).intValue(),
+                                     ((Integer)cd.get("numDequeued")).intValue(),
+                                     ((Integer)cd.get("numPosDequeued")).intValue(),
+                                     ((Integer)cd.get("numNegDequeued")).intValue(),
+                                     ((Integer)cd.get("numHeartbeatsDequeued")).intValue(),
+                                     ((Integer)cd.get("numPresent")).intValue(),
+                                     ((Integer)cd.get("numPosPresent")).intValue(),
+                                     ((Integer)cd.get("numNegPresent")).intValue(),
+                                     ((Integer)cd.get("numHeartbeatsPresent")).intValue(),
+                                     ((Long)cd.get("tsLastDequeued")).longValue(),
+                                     ((Long)cd.get("tsLastPosDequeued")).longValue(),
+                                     ((Long)cd.get("tsLastNegDequeued")).longValue(),
+                                     ((Long)cd.get("tsLastHeartbeatDequeued")).longValue());
+    }
+
+
+}

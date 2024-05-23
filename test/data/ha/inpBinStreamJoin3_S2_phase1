@@ -1,0 +1,5 @@
+i, c 20, TOF
+1000 F 10, R2Phase1
+2000 F 20, R2Phase1
+3000 F 30, R2Phase1
+4000 T 40, R2Phase1

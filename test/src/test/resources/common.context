@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: cep/cqlengine/test/src/test/resources/common.context st_pcbpel_hopark_cqlmaven/4 2011/03/28 10:00:21 hopark Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   hopark      03/22/11 - Creation
+
+-->
+<beans>
+
+    <bean id="userFunctionLocator" class="oracle.cep.test.cqlxframework.env.UserFuncLocator" />
+
+    <bean id="qryDestLocator"
+          class="oracle.cep.test.cqlxframework.env.QryDestLocator" >
+        <property name="fileDestination" value="work/log/outqrydest.txt" />
+    </bean>
+    
+    <bean id="dataSourceFinder"
+          class="oracle.cep.test.cqlxframework.env.DataSourceFinder">
+        <property name="dataSource0">
+          <props>
+            <prop key="name">soainfra</prop>
+            <prop key="server">slc00akc.us.oracle.com</prop>
+            <prop key="port">1521</prop>
+            <prop key="dbname">XE</prop>
+            <prop key="user">soainfra</prop>
+            <prop key="passwd">soainfra</prop>
+          </props>        
+        </property>
+    </bean>
+    
+<!--    
+    <bean id="javaTypeLocator" class="com.oracle.cep.cartridge.java.impl.JavaTypeSystemImpl" />
+
+    <bean id="cartridgeLocator"
+        class="oracle.cep.CartridgeRegistry">
+    </bean>
+
+    <bean class="com.oracle.cep.cartridge.java.impl.JavaCartridge">
+      <constructor-arg ref="cartridgeLocator" />
+      <property name="typeLocator" ref="javaTypeLocator"/>
+    </bean>
+     
+    <bean id="MyCartridge" class="oracle.cep.test.java.MyCartridge">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+
+    <bean id="TreeIndexCartridge" class="oracle.cep.test.cartridge.treeindex.TreeIndexCartridge">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+    
+    <bean id="SpatialCartridge" class="com.oracle.cep.cartridge.spatial.SpatialCartridge" 
+        factory-method="createInstance">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+ 
+     <bean id="spatialCtx1" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+        factory-method="registerContext">
+      <constructor-arg value="spatial1" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="CARTESIAN">false</prop>
+            <prop key="SRID">8307</prop>
+            <prop key="SMA">6378137.0</prop>
+            <prop key="ROF">298.257223563</prop>
+            <prop key="TOLERANCE">0.000000001</prop>
+            <prop key="ANYINTERACT_TOLERANCE">0.0000005</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+
+     <bean id="spatialCtx2" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+        factory-method="registerContext">
+      <constructor-arg value="spatial8265" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="CARTESIAN">false</prop>
+            <prop key="SRID">8265</prop>
+            <prop key="SMA">6378137</prop>
+            <prop key="ROF">298.257223563</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+    
+     <bean id="cartesian" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+        factory-method="registerContext">
+      <constructor-arg value="cartesian" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="CARTESIAN">true</prop>
+            <prop key="SRID">0</prop>
+            <prop key="SMA">0.0</prop>
+            <prop key="ROF">0.0</prop>
+            <prop key="TOLERANCE">0.1</prop>
+            <prop key="ANYINTERACT_TOLERANCE">0.1</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+-->
+    
+    <bean id="cepServerRegistry" 
+          class="oracle.cep.server.CEPServerRegistryImpl" />
+
+    <bean id="envConfig"
+          class="oracle.cep.test.cqlxframework.env.EnvConfig" >
+        <property name="queryDestLocator" ref="qryDestLocator" />
+        <property name="dataSourceFinder" ref="dataSourceFinder" />
+<!--        
+        <property name="cartridgeLocator" ref="cartridgeLocator" />
+-->
+        <property name="timeZone" value="GMT-7:00" />
+        <property name="schedRuntime" value="1000000" />
+        <property name="schedOnNewThread" value="false" />
+        <property name="schedNumThreads" value="1" />
+        <property name="directInterop" value="true" />
+
+        <property name="overrides" ref="testConfig" />
+    </bean>
+    
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="envConfig" ref="envConfig" />
+        <property name="userFunctionLocator" ref="userFunctionLocator" />
+    </bean>
+
+    <bean id="cepManager" 
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="config" ref="config" />
+        <property name="serverRegistry" ref="cepServerRegistry" />
+    </bean>
+    
+    <bean id="cqlRunner" 
+          class="oracle.cep.test.cqlxframework.CQLRunner" >
+        <constructor-arg ref="cepManager"/>   
+        <property name="fileList" ref="fileList"/> 
+        <property name="rules" ref="globalRules"/> 
+        
+        <property name="timeout" value="120"/>
+        <property name="testCqlxFolder" value="sql"/>
+        <property name="testDataFolder" value="data"/>
+        <property name="testRefFolder" value="log" />
+        <property name="testOutputFolder" value="work" />
+
+    </bean>
+</beans>
+

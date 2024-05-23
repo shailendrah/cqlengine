@@ -1,0 +1,74 @@
+<CEP>
+<CEP_DDL> register stream TradeInputs(tradeId integer, tradeVolume integer, tradeSymbol char(4), tradeType integer) </CEP_DDL>
+<CEP_DDL> alter stream TradeInputs add source "<EndPointReference> <Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTIDataSize1000000Rate1.txt</Address> </EndPointReference>" </CEP_DDL>
+<CEP_DDL> register stream TradeUpdates(tradeId integer, statusCode integer) </CEP_DDL>
+<CEP_DDL> alter stream TradeUpdates add source "<EndPointReference> <Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTUDataSize1000000Rate1.txt</Address> </EndPointReference>" </CEP_DDL>
+<CEP_DDL> register stream TradeMatched(tradeId integer) </CEP_DDL>
+<CEP_DDL> alter stream TradeMatched add source "<EndPointReference> <Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTMDataSize1000000Rate1.txt</Address> </EndPointReference>" </CEP_DDL>
+<CEP_DDL> register relation TradeTypeCodes(tradeType char(10), code integer) </CEP_DDL>
+<CEP_DDL> alter relation TradeTypeCodes add source "<EndPointReference> <Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTT1.txt</Address> </EndPointReference>" </CEP_DDL>
+<CEP_DDL> register relation TradeStatusCodes(statusCode char(20), code integer) </CEP_DDL>
+<CEP_DDL> alter relation TradeStatusCodes add source "<EndPointReference> <Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpTS1.txt</Address> </EndPointReference>" </CEP_DDL>
+<CEP_DDL> register relation Dual(c1 integer) </CEP_DDL>
+<CEP_DDL> alter relation Dual add source "<EndPointReference> <Address>file://@ADE_VIEW_ROOT@/pcbpel/cep/test/data/inpDual.txt</Address> </EndPointReference>" </CEP_DDL>
+<CEP_DDL> create function seqNo(n int) return int as language java name "TkUsrSeqNo" </CEP_DDL>
+<CEP_DDL> register view CutOffTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as DStream(select * from TradeInputs[range 20 seconds])</CEP_DDL>
+<CEP_DDL> register view FineTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(select c.tradeId, c.tradeVolume, c.tradeSymbol, c.tradeType from CutOffTrades[now] as c, TradeMatched[range 20 seconds] as t where c.tradeId = t.tradeId)</CEP_DDL>
+<CEP_DDL> register view Dummy1(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from CutOffTrades[NOW]</CEP_DDL>
+<CEP_DDL> register view Dummy2(tradeId, tradeVolume, tradeSymbol, tradeType) as select * from FineTrades[NOW]</CEP_DDL>
+<CEP_DDL> register view FailedTrades(tradeId, tradeVolume, tradeSymbol, tradeType) as IStream(Dummy1 except Dummy2)</CEP_DDL>
+<CEP_DDL> register view TotalFineTrades(c1) as select count(*) from FineTrades[range 5 minutes slide 5 minutes]</CEP_DDL>
+<CEP_DDL> register view TotalFailedByNonZeroType(tradeType, total) as select tradeType, count(*) from FailedTrades[range 5 minutes slide 5 minutes] group by tradeType</CEP_DDL>
+<CEP_DDL> register view Dummy6(tradeType) as select tradeType from TotalFailedByNonZeroType</CEP_DDL>
+<CEP_DDL> register view Dummy7(tradeType) as select code from TradeTypeCodes</CEP_DDL>
+<CEP_DDL> register view Dummy8(tradeType) as Dummy7 except Dummy6</CEP_DDL>
+<CEP_DDL> register view Dummy9(tradeType, total) as select tradeType, 0 from Dummy8</CEP_DDL>
+<CEP_DDL> register view TotalFailedByType(tradeType, total) as TotalFailedByNonZeroType union all Dummy9</CEP_DDL>
+<CEP_DDL> register view TotalFailedTrades(total, dummy) as select sum(total), count(*) from TotalFailedByType</CEP_DDL>
+<CEP_DDL> register view TotalTrades(c1) as select fine.c1+failed.total from TotalFineTrades as fine, TotalFailedTrades as failed</CEP_DDL>
+<CEP_DDL> register view Dummy4(buyCount, sellCount) as select a.total, b.total from TotalFailedByType as a, TotalFailedByType as b where a.tradeType = 0 and b.tradeType = 1</CEP_DDL>
+<CEP_DDL> register view TotalFailuresByTypes(buyCount, sellCount, exchgCount) as select b.buyCount, b.sellCount, a.total from TotalFailedByType as a, Dummy4 as b where a.tradeType = 2</CEP_DDL>
+<CEP_DDL> register view FailedTradesStatus(tradeId, statusCode) as IStream(select f.tradeId, u.statusCode from FailedTrades[NOW] as f, TradeUpdates[partition by u.tradeId rows 1 range 20 seconds] as u where f.tradeId = u.tradeId)</CEP_DDL>
+<CEP_DDL> register view TotalFailedNonZeroByStatus12(statusCode, total) as select statusCode, count(*) from FailedTradesStatus[range 5 minutes slide 5 minutes] group by statusCode</CEP_DDL>
+<CEP_DDL> register view Dummy10(statusCode) as select statusCode from TotalFailedNonZeroByStatus12</CEP_DDL>
+<CEP_DDL> register view Dummy11(statusCode) as select code from TradeStatusCodes where code = 1</CEP_DDL>
+<CEP_DDL> register view Dummy12(statusCode) as select code from TradeStatusCodes where code = 2</CEP_DDL>
+<CEP_DDL> register view Dummy13(statusCode) as Dummy11 union all Dummy12</CEP_DDL>
+<CEP_DDL> register view Dummy14(statusCode) as Dummy13 except Dummy10</CEP_DDL>
+<CEP_DDL> register view Dummy15(statusCode, total) as select statusCode, 0 from Dummy14</CEP_DDL>
+<CEP_DDL> register view TotalFailedStatus12(statusCode, total) as TotalFailedNonZeroByStatus12 union all Dummy15</CEP_DDL>
+<CEP_DDL> register view Dummy18(total, dummy) as select sum(total), count(*) from TotalFailedStatus12</CEP_DDL>
+<CEP_DDL> register view TotalFailedStatus0(statusCode, total) as select 0, allRec.total - status12.total from TotalFailedTrades as allRec, Dummy18 as status12</CEP_DDL>
+<CEP_DDL> register view TotalFailedByStatus(statusCode, total) as TotalFailedStatus0 union all TotalFailedStatus12</CEP_DDL>
+<CEP_DDL> register view Dummy5(status0, count0, status1, count1) as select a.statusCode, a.total, b.statusCode, b.total from TotalFailedByStatus as a, TotalFailedByStatus as b where a.statusCode = 0 and b.statusCode = 1</CEP_DDL>
+<CEP_DDL> register view TotalFailuresByStatus(status0, count0, status1, count1, status2, count2) as select b.status0, b.count0, b.status1, b.count1, a.statusCode, a.total from TotalFailedByStatus as a, Dummy5 as b where a.statusCode = 2</CEP_DDL>
+<CEP_DDL> register view TotalFailuresByStatusType(buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select a.buyCount, a.sellCount, a.exchgCount, b.count0, b.count1, b.count2 from TotalFailuresByTypes as a, TotalFailuresByStatus as b</CEP_DDL>
+<CEP_DDL> register view TotalReq1(totalCount, totalFailedCount, buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount) as select t.c1, a.buyCount+a.sellCount+a.exchgCount, a.buyCount, a.sellCount, a.exchgCount, a.noackCount, a.recvdCount, a.processedCount from TotalFailuresByStatusType as a, TotalTrades as t</CEP_DDL>
+<CEP_DDL> register view TradeStatus0(tradeId, statusCode) as select tradeId, 0 from TradeInputs</CEP_DDL>
+<CEP_DDL> register view TradeStatus3(tradeId, statusCode) as select tradeId, 3 from TradeMatched</CEP_DDL>
+<CEP_DDL> register view TradeStatus03(tradeId, statusCode) as TradeStatus0 union all TradeStatus3</CEP_DDL>
+<CEP_DDL> register view TradeStatusStreamDup(tradeId, statusCode) as TradeStatus03 union all TradeUpdates</CEP_DDL>
+<CEP_DDL> register view TradeStatus(tradeId, statusCode) as select * from TradeStatusStreamDup[partition by tradeId rows 1 range 4 seconds]</CEP_DDL>
+<CEP_DDL> register view TradeStatusStream(tradeId, statusCode) as IStream(select * from TradeStatus)</CEP_DDL>
+<CEP_DDL><![CDATA[ register view CutOff3(tradeId, statusCode) as DStream(select tradeId, statusCode from TradeStatusStream[range 3 seconds] where statusCode < 3)]]></CEP_DDL>
+<CEP_DDL> register view Failed3(tradeId, statusCode) as IStream(select a.tradeId, a.statusCode from CutOff3[NOW] as a, TradeStatus as b where a.tradeId = b.tradeId and a.statusCode = b.statusCode)</CEP_DDL>
+<CEP_DDL> register view TotalCutOff3(c1) as select count(*) from CutOff3[range 10 minutes slide 5 minutes]</CEP_DDL>
+<CEP_DDL> register view TotalFailed3(c1) as select count(*) from Failed3[range 10 minutes slide 5 minutes]</CEP_DDL>
+<CEP_DDL> register view Req1(total, totalFailed, buy, sell, exchg, trade_noack, trade_recvd, trade_processing, dummy) as IStream(select totalCount, totalFailedCount, buyCount, sellCount, exchgCount, noackCount, recvdCount, processedCount, seqNo(0) from TotalReq1)</CEP_DDL>
+<CEP_DDL> register view Req2(tickerSymbol, symbolCount, dummy) as IStream(select tradeSymbol, count(*), seqNo(0) from FailedTrades[range 5 minutes slide 5 minutes] group by tradeSymbol)</CEP_DDL>
+<CEP_DDL><![CDATA[ register view Req3(totalCount, failedCount, dummy) as IStream(select t.c1, t.c1-f.c1, seqNo(0) from TotalTrades as t, TotalFineTrades as f where f.c1*100 < 95*t.c1)]]></CEP_DDL>
+<CEP_DDL> register view Req4(totalCount, failedCount, dummy) as IStream(select t.c1, f.c1, seqNo(0) from TotalCutOff3 as t, TotalFailed3 as f where f.c1*100 > 10*t.c1)</CEP_DDL>
+<CEP_DDL> create query q0 as select total as totalCount, totalFailed as failedCount, buy as buy, sell as sell, exchg as exchg, trade_noack as trade_noack, trade_recvd as trade_recvd, trade_processing as trade_processing from Req1</CEP_DDL>
+<CEP_DDL> alter query q0 add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.demo.csfb.OutputBean</ClassName><Arguments><Argument>pr1</Argument></Arguments></Address></EndPointReference>" </CEP_DDL>
+<CEP_DDL> alter query q0 start </CEP_DDL>
+<CEP_DDL> create query q1 as select tickerSymbol as tickerSymbol, symbolCount as symbolCount from Req2</CEP_DDL>
+<CEP_DDL> alter query q1 add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.demo.csfb.OutputBean</ClassName><Arguments><Argument>pr2</Argument></Arguments></Address></EndPointReference>" </CEP_DDL>
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> create query q2 as select totalCount as totalCount, failedCount as failedCount from Req3</CEP_DDL>
+<CEP_DDL> alter query q2 add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.demo.csfb.OutputBean</ClassName><Arguments><Argument>pr3</Argument></Arguments></Address></EndPointReference>" </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> create query q3 as select totalCount as totalCount, failedCount as failedCount from Req4</CEP_DDL>
+<CEP_DDL> alter query q3 add destination "<EndPointReference><Address><Type>java</Type><ClassName>oracle.cep.demo.csfb.OutputBean</ClassName><Arguments><Argument>pr4</Argument></Arguments></Address></EndPointReference>" </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

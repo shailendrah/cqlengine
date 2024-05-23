@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+<!--
+    <bean id="stats" class="oracle.cep.jmx.CEPStats">
+      <constructor-arg ref="cepManager" />
+    </bean>
+    <bean id="logLevels" class="oracle.cep.jmx.LogLevels">
+      <constructor-arg ref="cepManager" />
+    </bean>
+    <bean id="plan" class="oracle.cep.jmx.Plan">
+      <constructor-arg ref="cepManager" />
+    </bean>
+    <bean id="spill" class="oracle.cep.jmx.Spill">
+      <constructor-arg ref="cepManager" />
+    </bean>
+
+    <bean id="pmStats" 
+          class="oracle.cep.jmx.CEPPmbStatsFactory"
+          factory-method="createPortableMbean" >
+        <constructor-arg ref="stats" />
+    </bean>
+
+    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+      <property name="beans">
+        <map>
+          <entry key="CEP:type=CEPStatsController,name=CEPStats" value-ref="pmStats"/>
+          <entry key="CEP:name=Logging" value-ref="logLevels"/>
+          <entry key="CEP:name=Plan" value-ref="plan"/>
+          <entry key="CEP:name=Spill" value-ref="spill"/>
+        </map>
+      </property>
+    </bean>
+-->
+</beans>
+

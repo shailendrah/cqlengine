@@ -1,0 +1,24 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata53_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> create stream tkdata53_S10(c1 integer, c2 char(10)) </CEP_DDL>
+<CEP_DDL> create stream tkdata53_S15(c1 integer, c2 timestamp) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata53_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> <![CDATA[ alter stream tkdata53_S10 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata53_S15 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS15.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata53_q0 as select XMLCOLATTVAL( tkdata53_S0.c1, tkdata53_S0.c2) from tkdata53_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata53_q1 as select XMLELEMENT("tkdata53_S0", XMLCOLATTVAL( tkdata53_S0.c1, tkdata53_S0.c2)) from tkdata53_S0 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata53_q2 as select XMLCOLATTVAL( tkdata53_S10.c1 AS "c1_int", tkdata53_S10.c2 AS EVALNAME tkdata53_S10.c2 || "ab") from tkdata53_S10 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata53_q3 as select XMLELEMENT("S10", XMLCOLATTVAL( tkdata53_S10.c1 AS "c1_int", tkdata53_S10.c2 AS EVALNAME tkdata53_S10.c2 || "ab")) from tkdata53_S10 [range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata53_q4 as select XMLCOLATTVAL( tkdata53_S15.c1, tkdata53_S15.c2) from tkdata53_S15 [range 1] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata53_q0 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata53_q0.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata53_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata53_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata53_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata53_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata53_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata53_q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata53_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata53_q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata53_q0 start </CEP_DDL>
+<CEP_DDL> alter query tkdata53_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata53_q2 start </CEP_DDL>
+<CEP_DDL> alter query tkdata53_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata53_q4 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

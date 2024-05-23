@@ -1,0 +1,219 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/DBStatsRow.java /main/2 2008/11/30 13:31:42 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    <short description of component this file declares/defines>
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    11/12/08 - support runtime MBeans
+    parujain    10/05/07 - ordering
+    parujain    09/12/07 - remove logging
+    hopark      07/13/07 - dump stack trace on exception
+    parujain    05/30/07 - name change
+    parujain    04/26/07 - Berkeley DB statistics
+    parujain    04/26/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/stats/DBStatsRow.java /main/2 2008/11/30 13:31:42 parujain Exp $
+ *  @author  parujain
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx.stats;
+
+import java.beans.ConstructorProperties;
+
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+
+import oracle.cep.statistics.IStats;
+
+/**
+ * Statistics for Berkeley DB: This can be thought of a fixed table with the
+ * following columns:
+ *
+ * FileLocation        : Location of the Berkeley DB Storage files
+ * CacheSize           : Amount of cache used for holding data in bytes
+ * LogSize             : Memory consumed by log buffers
+ * CacheMisses         : No of requests for DB objects not in memory
+ * TotalRequests       : No of accesses to database objects
+ *
+ */
+
+public class DBStatsRow extends StatsRow implements IStats
+{
+  
+  private String fileLoc;
+  private long  cacheSize;
+  private long logSize;
+  private long cacheMisses;
+  private int totalRequests;
+  
+  /** 
+   * Construct a DBStatsRow instance. 
+   * The PropertyNames annotation is used 
+   * to be able to construct a DBStatsRow instance out of a CompositeData
+   * instance. See MXBeans documentation for more details.
+   */ 
+  @ConstructorProperties({"fileLocation","cacheSize","logSize","cacheMisses","totalRequests" })
+  public DBStatsRow(String loc, long cache, long log, long misses, int requests)
+  {
+    fileLoc = loc;
+    cacheSize = cache;
+    logSize = log;
+    cacheMisses = misses;
+    totalRequests = requests;
+  }
+  
+  public int compareTo(StatsRow o2, Column column)
+  {
+    assert false;
+    return 0;    
+  }
+
+  public String getFileLocation()
+  {
+    return fileLoc ;
+  }
+  
+  public long getCacheSize()
+  {
+    return cacheSize ;
+  }
+  
+  public long getLogSize()
+  {
+    return logSize ;
+  }
+  
+  public long getCacheMisses()
+  {
+    return cacheMisses ;
+  }
+  
+  public int getTotalRequests()
+  {
+    return totalRequests ;
+  }
+  
+   
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+    
+    sb.append("<DBStatistics>");
+    sb.append("<File Location =\"" + fileLoc + "\" >");
+    sb.append("<Cache Size =\"" + cacheSize + "\" >");
+    sb.append("<Log Size =\"" + logSize + "\" >");
+    sb.append("<No of Cache Misses =\"" + cacheMisses + "\" >");
+    sb.append("<Total Requests =\"" + totalRequests +"\" >");
+    sb.append("</DBStatistics>");
+    return sb.toString();
+  }
+  
+  
+  /*
+   * JDK 5.0 manual conversion methods. The code
+   * below would not be required if we could
+   * rely on the MXBean framework
+   * 
+   * THE REQUIRED METHODS ARE:
+   *
+   *  public static CompositeType toCompositeType();
+   *  public CompositeData toCompositeData(CompositeType ct);
+   *  public static DBStatsRow from(CompositeData cd);
+   *
+   */
+
+  // The corresponding CompositeType for this class
+  private static CompositeType cType_= null;
+
+  private static final String[] itemNames_= {"fileLocation","cacheSize","logSize",
+                                             "cacheMisses","totalRequests"};
+  
+  static{
+    try{
+      OpenType[] itemTypes = {SimpleType.STRING,
+                              SimpleType.LONG,
+                              SimpleType.LONG,
+                              SimpleType.LONG,
+                              SimpleType.INTEGER};
+      cType_ = new CompositeType("oracle.cep.statistics.DBStatsRow",
+                                 "oracle.cep.statistics.DBStatsRow",
+                                 itemNames_,
+                                 itemNames_,
+                                 itemTypes);
+    }
+    catch(OpenDataException ode)
+    {
+      
+    }
+  }
+  
+  /**
+   * Returns the CompositeType that describes this model
+   * specific class
+   */
+  public static CompositeType toCompositeType() {
+      return cType_;
+  }
+
+  /**
+   * Convert an instance of this model specific type to 
+   * a CompositeData. This ensure that clients that do not
+   * have access to the model specific class can still
+   * use the MBean. The MXBean framework can perform this
+   * conversion automatically. However MXBeans are part of
+   * JDK 6.0 and AS11g is required to support JDK 5.0 
+   * 
+   * @param ct - This parameter is there only for future compatibility reasons
+   *             with JDK 6.0. It can be ignored at this point.
+   */
+   public CompositeData toCompositeData(CompositeType ct) {
+     Object[] itemValues = {new String(this.getFileLocation()),
+                            new Long(this.getCacheSize()),
+                            new Long(this.getLogSize()),
+                            new Long(this.getCacheMisses()),
+                            new Integer(this.getTotalRequests())};
+     
+     CompositeData cData= null;
+     try 
+     {
+        cData= new CompositeDataSupport(cType_, itemNames_, itemValues);
+     }
+     catch( OpenDataException ode)
+     {
+       
+     }
+     return cData;
+   }
+  
+   /**
+    * Create an instance of the model specific class out of
+    * an associated CompositeData instance
+    */
+    public static DBStatsRow from(CompositeData cd) {
+      if (cd==null)
+        return null;
+      
+      return new DBStatsRow(((String)cd.get("fileLocation")).toString(),
+                            ((Long)cd.get("cacheSize")).longValue(),
+                            ((Long)cd.get("logSize")).longValue(),
+                            ((Long)cd.get("cacheMisses")).longValue(),
+                            ((Integer)cd.get("totalRequests")).intValue());
+    }
+
+}

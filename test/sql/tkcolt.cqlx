@@ -1,0 +1,25 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL>register stream tkcolt_SColtFunc(c1 integer, c2 float, c3 bigint, c4 double)</CEP_DDL>
+<CEP_DDL> register stream tkcolt_Scolt (c1 bigint, c2 bigint) </CEP_DDL>
+<CEP_DDL> register stream tkcolt_S18(c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcolt_SColtFunc add source "<EndPointReference><Address>file://@TEST_DATA@/inpSColtFunc.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcolt_Scolt add source "<EndPointReference><Address>file://@TEST_DATA@/inpScolt.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkcolt_S18 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS18.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>create query tkcolt_qColt1 as select factorial(c1) from tkcolt_SColtFunc</CEP_DDL>
+<CEP_DDL>create query tkcolt_qColt2 as select binomial1(c1,c2) from tkcolt_Scolt</CEP_DDL>
+<CEP_DDL>create query tkcolt_qColt3 as select logFactorial(c1) from tkcolt_S18</CEP_DDL>
+<CEP_DDL>create query tkcolt_qColtNull1 as select factorial(null) from tkcolt_SColtFunc</CEP_DDL>
+<CEP_DDL>create query tkcolt_qColtNull2 as select binomial1(null,null) from tkcolt_Scolt</CEP_DDL>
+<CEP_DDL>create query tkcolt_qColtNull3 as select concat(binomial1(null,null),"a") from tkcolt_Scolt</CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcolt_qColt1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outSColt1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcolt_qColt2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outBinom.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcolt_qColt3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outLogFact.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcolt_qColtNull1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outColtNull1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ alter query tkcolt_qColtNull2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outColtNull2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL>alter query tkcolt_qColt1 start </CEP_DDL>
+<CEP_DDL>alter query tkcolt_qColt2 start </CEP_DDL>
+<CEP_DDL>alter query tkcolt_qColt3 start </CEP_DDL>
+<CEP_DDL>alter query tkcolt_qColtNull1 start </CEP_DDL>
+<CEP_DDL>alter query tkcolt_qColtNull2 start </CEP_DDL>
+<CEP_DDL>alter system run</CEP_DDL>
+</CEP>

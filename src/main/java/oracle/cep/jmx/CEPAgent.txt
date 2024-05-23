@@ -1,0 +1,140 @@
+/* $Header: pcbpel/cep/server/src/oracle/cep/jmx/CEPAgent.java /main/9 2008/12/31 11:57:37 parujain Exp $ */
+
+/* Copyright (c) 2007, 2008, Oracle and/or its affiliates.
+All rights reserved. */
+
+/*
+   DESCRIPTION
+    CEPAgent provides the standard management functionality 
+    of the JMX Agent.
+
+   PRIVATE CLASSES
+    <list of private classes defined - with one-line descriptions>
+
+   NOTES
+    <other useful comments, qualifications, etc.>
+
+   MODIFIED    (MM/DD/YY)
+    parujain    12/08/08 - stats cleanup
+    hopark      10/10/08 - remove statics
+    hopark      03/27/08 - add new connector server
+    hopark      04/17/08 - turn off server
+    hopark      03/25/08 - remove log info for jmxurl
+    parujain    03/14/08 - 
+    hopark      09/29/07 - add Spill
+    parujain    09/18/07 - 
+    hopark      06/22/07 - Creation
+ */
+
+/**
+ *  @version $Header: pcbpel/cep/server/src/oracle/cep/jmx/CEPAgent.java /main/9 2008/12/31 11:57:37 parujain Exp $
+ *  @author  hopark  
+ *  @since   release specific (what release of product did this appear in)
+ */
+package oracle.cep.jmx;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
+
+import oracle.cep.logging.LogUtil;
+import oracle.cep.logging.LoggerType;
+import oracle.cep.server.CEPServerRegistryImpl;
+import oracle.cep.service.CEPManager;
+
+public class CEPAgent 
+{
+  private static final int      RMI_REGISTRY_PORT = 1099;
+  private static final int      MBEAN_SERVER_PORT = 9589;
+  private static final String   DOMAIN = "CEP";
+
+  // set to true to turn on my connection server and use CEPAgent remotely.
+  // NOTE: We can have an argument in CEPAgent which can decide whether 
+  // we want to use is remotely or locally. The code is completely
+  // tested for remote access using JConsole.
+  // Update: It is possible to enable remote monitoring without having our own server.
+  // ref: http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html
+  // to enable remote monitoring
+  // com.sun.management.jmxremote.port=portNum 
+  // sevice url will be 'service:jmx:rmi:///jndi/rmi://<hostname>:<portNum>/jmxrmi'
+  // with jconsole 'jconsole hostname:portNum' to use
+  //
+  // to enable local monitoring
+  // com.sun.management.jmxremote
+  // This is currently what we enabled in tests from ant targets.
+  //
+  Registry              m_rmiRegistry;
+  JMXConnectorServer    m_connectorServer;
+  boolean               m_useMyConnectServer;
+  
+  public CEPAgent(CEPManager cepMgr, boolean useMyConnectServer) 
+  {
+    m_useMyConnectServer = useMyConnectServer;
+  //  String type = ":type=CEPStatsController,";
+  //  String name = "name=CEPStats";
+  //  String mbeanObjName = DOMAIN + type + name;
+        
+    // Create the CEP Stats MBean
+  //  CEPStats statsMBean = new CEPStats(cepMgr);
+
+    // Register the CEP Stats MBean
+  //  CEPMBeanUtil.registerMBean(CEPStatsMXBean.class, statsMBean, mbeanObjName);
+
+    String logName = DOMAIN + ":name=Logging";
+    CEPMBeanUtil.registerMBean(LogLevelsMBean.class, new LogLevels(cepMgr), logName);
+           
+    String planName = DOMAIN + ":name=Plan" ;
+    CEPMBeanUtil.registerMBean(PlanMBean.class, new Plan(cepMgr), planName);
+     
+    String spillName = DOMAIN + ":name=Spill";
+    CEPMBeanUtil.registerMBean(SpillMBean.class, new Spill(cepMgr), spillName);
+           
+    if (m_useMyConnectServer)
+    {
+      try 
+      {
+        JMXServiceURL url = new JMXServiceURL(
+                  "rmi",
+                  null,
+                  MBEAN_SERVER_PORT,
+                  "/jndi/rmi://localhost:" +
+                  RMI_REGISTRY_PORT +
+                  "/jmxapp");
+
+        //LogUtil.info(LoggerType.TRACE, "JMX connector url : " + url);
+        System.out.println("JMX connector url : " +url);
+           
+        m_connectorServer = JMXConnectorServerFactory.
+        newJMXConnectorServer(url, null, CEPMBeanUtil.getMBeanServer());
+      }
+      catch (Exception me)
+      {
+        LogUtil.fine(LoggerType.TRACE, me.toString());
+      }
+    }
+  }
+  
+  public void start() throws Exception
+  {
+    if (m_useMyConnectServer)
+    {
+      // Start JMX server
+      m_rmiRegistry = LocateRegistry.createRegistry(RMI_REGISTRY_PORT);
+      m_connectorServer.start();
+    }
+  }
+
+  // called at application end
+  public void stop()  throws Exception
+  {
+    if (m_useMyConnectServer)
+    {
+      m_connectorServer.stop();
+      UnicastRemoteObject.unexportObject(m_rmiRegistry, true);
+    }
+  }
+}

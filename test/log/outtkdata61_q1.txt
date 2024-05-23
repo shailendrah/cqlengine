@@ -1,0 +1,20 @@
+1000:+ <a>3</a>
+<!--this is a test-->
+
+1000:+ <e3>blaaaaa</e3>
+<!--this is a test-->
+
+1000:+ <r>4</r>
+<!--this is a test-->
+
+1000:+ <a>
+   <b>99999</b>
+</a>
+<!--this is a test-->
+
+1003:+ <a>s3</a>
+<!--this is a test-->
+
+1004:+ <d>b6</d>
+<!--this is a test-->
+

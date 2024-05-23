@@ -1,0 +1,12 @@
+1000:+ <c2_int>1</c2_int>
+<abc>abc</abc>
+
+2000:- <c2_int>1</c2_int>
+<abc>abc</abc>
+
+2000:+ <c2_int>2</c2_int>
+<ab>ab</ab>
+
+3000:- <c2_int>2</c2_int>
+<ab>ab</ab>
+

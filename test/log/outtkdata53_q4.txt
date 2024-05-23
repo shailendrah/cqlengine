@@ -1,0 +1,20 @@
+10:+ <column name="c1">1</column>
+<column name="c2">1091902428000000000</column>
+
+1010:- <column name="c1">1</column>
+<column name="c2">1091902428000000000</column>
+
+2000:+ <column name="c2">1123438428000000000</column>
+
+3000:- <column name="c2">1123438428000000000</column>
+
+3400:+ <column name="c1">3</column>
+<column name="c2">1154974428000000000</column>
+
+4400:- <column name="c1">3</column>
+<column name="c2">1154974428000000000</column>
+
+4700:+ <column name="c2">1186510428000000000</column>
+
+5700:- <column name="c2">1186510428000000000</column>
+

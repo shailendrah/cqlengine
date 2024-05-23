@@ -1,0 +1,20 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream PosStream(id char(100), lat double, lng double) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream PosStream add source "<EndPointReference><Address>file://@TEST_DATA@/inacceleration_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view PosGeomStreamkm(id char(100), eventTime bigint, geom com.oracle.cep.cartridge.spatial.Geometry, iskm char(3)) as select p.id as id, p.ELEMENT_TIME as eventTime, com.oracle.cep.cartridge.spatial.Geometry.createPoint(p.lat, p.lng) as geom, 'kph' from PosStream as p ]]></CEP_DDL>
+
+<CEP_DDL> create query q1 as ISTREAM( SELECT pos.id as id, aggacceleration@spatial(pos.id,pos.eventTime,pos.geom,pos.iskm) as speed FROM  PosGeomStreamkm[PARTITION BY id rows 4] as pos group by id)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outacceleration_q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+<CEP_DDL><![CDATA[ create view PosGeomStream(id char(100), eventTime bigint, geom com.oracle.cep.cartridge.spatial.Geometry) as select p.id as id, p.ELEMENT_TIME as eventTime, com.oracle.cep.cartridge.spatial.Geometry.createPoint(p.lat, p.lng) as geom from PosStream as p ]]></CEP_DDL>
+
+<CEP_DDL> create query q2 as ISTREAM( SELECT pos.id as id, aggacceleration@spatial(pos.id,pos.eventTime,pos.geom) as speed FROM  PosGeomStream[PARTITION BY id rows 4] as pos group by id)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outacceleration_q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+
+
+<CEP_DDL> alter query q1 start</CEP_DDL>
+<CEP_DDL> alter query q2 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>
+

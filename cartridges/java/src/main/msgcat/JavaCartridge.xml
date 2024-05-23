@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<!--  $Header: cep/wlevs_cql/modules/cqlengine/cartridges/java/src/main/msgcat/JavaCartridge.xml /main/3 2014/01/07 19:49:02 alealves Exp $ -->
+
+<!-- 
+ Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+
+   NAME
+     JavaCartridge.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   alealves    08/11/10 - Creation
+
+-->
+<!DOCTYPE message_catalog PUBLIC "weblogic-message-catalog-dtd"  "http://www.bea.com/servers/wls710/dtd/msgcat.dtd">
+<message_catalog i18n_package="com.oracle.cep.cartridge.java"
+  l10n_package="com.oracle.cep.cartridge.java" subsystem="JavaCartridge" version="1.0"
+  baseid="2069100" endid="2069110" loggables="true" prefix="BEA">
+
+  <logmessage messageid="2069100" severity="warning" methodtype="getter"
+    method="noSuchMethodException(String target, String expected, String found)">
+    <messagebody>
+      No matching method has been found for class: "{0}". 
+      Expected method = "{1}", but found = "{2}".
+    </messagebody>
+    <messagedetail>
+      No matching method has been found for class: "{0}". 
+      Expected method = "{1}", but found = "{2}".
+    </messagedetail>
+    <cause>
+      No matching method has been found for class: "{0}". 
+      Expected method = "{1}", but found = "{2}".
+    </cause>
+    <action>
+      Specify a different method, arguments, or target class.
+    </action>
+  </logmessage>
+  <logmessage messageid="2069101" severity="warning" methodtype="getter"
+    method="noSuchConstructorException(String target, String expected, String found)">
+    <messagebody>
+      No matching constructor has been found for class: "{0}". 
+      Expected constructor = "{1}", but found = "{2}".
+    </messagebody>
+    <messagedetail>
+      No matching constructor has been found for class: "{0}". 
+      Expected constructor = "{1}", but found = "{2}".
+    </messagedetail>
+    <cause>
+      No matching constructor has been found for class: "{0}". 
+      Expected constructor = "{1}", but found = "{2}".
+    </cause>
+    <action>
+      Specify a different constructor, arguments, or target class.
+    </action>
+  </logmessage>
+  <logmessage messageid="2069102" severity="error" methodtype="getter"
+    method="invalidNumberOfArgumentsForFunction(String functionSignature, Integer expected, Integer actual)">
+    <messagebody>
+      Invalid usage of "{0}" function. Function expects "{1}" arguments. 
+      Actual number of arguments used was = "{2}".
+    </messagebody>
+    <messagedetail>
+      Invalid usage of "{0}" function. Function expects "{1}" arguments. 
+      Actual number of arguments used was = "{2}".
+    </messagedetail>
+    <cause>
+      Invalid usage of "{0}" function. Function expects "{1}" arguments. 
+      Actual number of arguments used was = "{2}".
+    </cause>
+    <action>
+      Specify correct number of arguments to function "{0}".
+    </action>
+  </logmessage>
+  <logmessage messageid="2069103" severity="error" methodtype="getter"
+    method="illegalArgumentTypeForFunction(String functionSignature, String expected, Integer argument, String actual)">
+    <messagebody>
+      Illegal argument type for "{0}" function. 
+      Function expected type of "{1}" for argument number "{2}". 
+      Actual type used was = "{3}".
+    </messagebody>
+    <messagedetail>
+      Illegal argument type for "{0}" function. 
+      Function expected type of "{1}" for argument number "{2}". 
+      Actual type used was = "{3}".
+    </messagedetail>
+    <cause>
+      Illegal argument type for "{0}" function. 
+      Function expected type of "{1}" for argument number "{2}". 
+      Actual type used was = "{3}".
+    </cause>
+    <action>
+      Specify correct argument type for function "{0}".
+    </action>
+  </logmessage>
+  <logmessage messageid="2069104" severity="error" methodtype="getter"
+    method="illegalTypeCast(String from, String to)">
+    <messagebody>
+      Illegal cast from type "{0}" to type "{1}".
+    </messagebody>
+    <messagedetail>
+      Illegal cast from "{0}" to type "{1}".
+    </messagedetail>
+    <cause>
+      Illegal cast from "{0}" to type "{1}".    
+    </cause>
+    <action>
+      Illegal cast from "{0}" to type "{1}".
+    </action>
+  </logmessage>
+  <logmessage messageid="2069105" severity="error" methodtype="getter"
+    method="illegalConvert(String from, String to)">
+    <messagebody>
+      Failed to convert from "{0}" to native CQL type "{1}".
+    </messagebody>
+    <messagedetail>
+      Failed to convert from "{0}" to native CQL type "{1}".
+    </messagedetail>
+    <cause>
+      Failed to convert from "{0}" to native CQL type "{1}".
+    </cause>
+    <action>
+      Failed to convert from "{0}" to native CQL type "{1}".
+    </action>
+  </logmessage>
+  <logmessage messageid="2069106" severity="error" methodtype="getter"
+    method="illegalTimestampConvert(String to)">
+    <messagebody>
+      Failed to convert from oracle.sql.TIMESTAMP type to native CQL type "{0}".
+    </messagebody>
+    <messagedetail>
+      Failed to convert from oracle.sql.TIMESTAMP type to native CQL type "{0}".
+    </messagedetail>
+    <cause>
+      Failed to convert from oracle.sql.TIMESTAMP type to native CQL type "{0}".
+    </cause>
+    <action>
+      Failed to convert from oracle.sql.TIMESTAMP type to native CQL type "{0}".
+    </action>
+  </logmessage>
+  <logmessage messageid="2069107" severity="error" methodtype="getter"
+    method="illegalTimeDateFormat(String str)">
+    <messagebody>
+      Invalid time/date format = "{0}".
+    </messagebody>
+    <messagedetail>
+      Invalid time/date format = "{0}".
+    </messagedetail>
+    <cause>
+      Invalid time/date format = "{0}".
+    </cause>
+    <action>
+      Invalid time/date format = "{0}".
+    </action>
+  </logmessage>
+</message_catalog>

@@ -1,0 +1,77 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<profile xmlns="http://xmlns.oracle.com/jdeveloper/110000coding-style-profile">
+   <value n="blanklines.after_last_member" v="0"/>
+   <value n="blanklines.before_field" v="0"/>
+   <value n="blanklines.before_first_class" v="0"/>
+   <value n="blanklines.before_first_member" v="0"/>
+   <value n="blanklines.before_member_class" v="1"/>
+   <value n="blanklines.before_method" v="1"/>
+   <value n="blanklines.empty_anonymous" v="0"/>
+   <value n="blanklines.empty_block" v="0"/>
+   <value n="blanklines.empty_class" v="0"/>
+   <value n="blanklines.empty_method" v="0"/>
+   <value n="blanklines.imports_after" v="1"/>
+   <value n="blanklines.package_after" v="1"/>
+   <value n="blanklines.preserve_count" v="2"/>
+   <value n="field.prefix" v="m_"/>
+   <value n="field.suffix"/>
+   <value n="import.group_imports" v="true"/>
+   <value n="import.group_package_depth" v="2"/>
+   <value n="import.inner_class_name" v="false"/>
+   <value n="import.narrow_threshold" v="-1"/>
+   <value n="indent.block_children" v="true"/>
+   <value n="indent.class_members" v="true"/>
+   <value n="indent.control_blocks" v="false"/>
+   <value n="indent.num_spaces" v="2"/>
+   <value n="indent.replace_with_tabs" v="false"/>
+   <value n="indent.switch_case" v="false"/>
+   <value n="indent.tab_size" v="8"/>
+   <value n="local.variable.prefix"/>
+   <value n="local.variable.suffix"/>
+   <value n="newline.after_switch_case" v="true"/>
+   <value n="newline.array_braces" v="true"/>
+   <value n="newline.block_braces" v="true"/>
+   <value n="newline.catch" v="false"/>
+   <value n="newline.class_braces" v="true"/>
+   <value n="newline.else" v="false"/>
+   <value n="newline.extends" v="false"/>
+   <value n="newline.finally" v="false"/>
+   <value n="newline.implements" v="false"/>
+   <value n="newline.method_braces" v="true"/>
+   <value n="newline.throws" v="false"/>
+   <value n="newline.while" v="false"/>
+   <value n="parameter.prefix"/>
+   <value n="parameter.suffix"/>
+   <value n="profile.name" v="CEPCodingStyle"/>
+   <value n="space.arguments_before" v="false"/>
+   <value n="space.assign_around" v="true"/>
+   <value n="space.binaryop_around" v="true"/>
+   <value n="space.brace_before" v="true"/>
+   <value n="space.brackets_within" v="false"/>
+   <value n="space.colon_after" v="true"/>
+   <value n="space.colon_before" v="true"/>
+   <value n="space.comma_after" v="true"/>
+   <value n="space.comma_before" v="false"/>
+   <value n="space.keyword_after" v="true"/>
+   <value n="space.parameters_before" v="false"/>
+   <value n="space.parens_within" v="false"/>
+   <value n="space.question_after" v="true"/>
+   <value n="space.question_before" v="true"/>
+   <value n="space.semicolon_after" v="true"/>
+   <value n="space.semicolon_before" v="false"/>
+   <value n="space.typecast_after" v="false"/>
+   <value n="static.field.prefix" v="s_"/>
+   <value n="static.field.suffix"/>
+   <value n="wrap.align" v="true"/>
+   <value n="wrap.array_constant" v="1"/>
+   <value n="wrap.binary_operator" v="1"/>
+   <value n="wrap.dot_chain" v="0"/>
+   <value n="wrap.extends" v="1"/>
+   <value n="wrap.for_statement" v="1"/>
+   <value n="wrap.invoke_arguments" v="1"/>
+   <value n="wrap.line_width" v="80"/>
+   <value n="wrap.modifiers" v="1"/>
+   <value n="wrap.parameter_list" v="1"/>
+   <value n="wrap.ques_operator" v="1"/>
+   <value n="wrap.throws" v="1"/>
+</profile>

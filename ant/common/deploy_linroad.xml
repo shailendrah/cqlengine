@@ -1,0 +1,86 @@
+<project name="target.tklinroad">
+
+  <target name="tklinNum.sa">
+    <echo message="running linear road benchmark data=${input.name} #Threads=${num.threads}"/>
+    <generate.context test.filename="tklinroad.cqlx" num.threads="${num.threads}" />
+    <test.drv regress.tla="linroad" inpf.name="${input.name}" outf.name="${output.name}"/>
+  </target>
+
+  <target name="tklinear20secs.sa.di"  >
+    <echo message="running linear road benchmark for 20 secs"/>
+    <generate.context test.filename="tklinroad.cqlx"
+                      config.directInterop="true" />
+    <test.drv regress.tla="linroad_di" inpf.name="CarLoc20secs.dat" outf.name="TollStr_CarLoc20secs"/>
+  </target>
+
+  <target name="tklinear3hours">
+    <echo message="running linear road benchmark for 3 hours"/>
+    <generate.context test.filename="tklinroad.cqlx" num.threads="8" />
+    <test.drv regress.tla="linroad" inpf.name="CarLoc3hours.dat" outf.name="TollStr_CarLoc3hrs"/>
+  </target>
+
+  <target name="tklinear5mill">
+    <echo message="running linear road benchmark for 5 million rows"/>
+    <generate.context test.filename="tklinroad.cqlx" num.threads="8" />
+    <test.drv regress.tla="linroad" 
+    	inpf.name="CarLoc3hours.dat.5000000" outf.name="TollStr_CarLoc5000000"/>
+  </target>
+
+  <target name="tklrbdemo">
+    <echo message="running linear road benchmark for 5 million rows"/>
+    <generate.context test.filename="tklrbdemo.cqlx" num.threads="8" />
+    <test.drv regress.tla="linroad" inpf.name="CarLoc3hours.dat.5000000" outf.name="TollStr_CarLoc5000000"/>
+  </target>
+
+  <target name="tklrbkit" depends = "tkclean">
+    <antcall target="tklrbkit.main">
+      <param name="num.threads" value="1" />
+    </antcall>
+  </target>
+  <target name="tklrbkit4" depends = "tkclean">
+    <antcall target="tklrbkit.main">
+      <param name="num.threads" value="4" />
+    </antcall>
+  </target>
+  <target name="tklrbkit8" depends = "tkclean">
+    <antcall target="tklrbkit.main">
+      <param name="num.threads" value="8" />
+    </antcall>
+  </target>
+  <target name="tklrbkit16" depends = "tkclean">
+    <antcall target="tklrbkit.main">
+      <param name="num.threads" value="16" />
+    </antcall>
+  </target>
+  
+  <target name="tklrbkit.main" depends = "tkclean">
+    <recomp.test debug="false" />
+    <echo message="running linear road benchmark kit"/>
+    <property name="lrbkit" value="true" />
+    <property name="lrbkit.source" value="push"/>   
+    <property name="lrbkit.dest1" 
+       value= "java://oracle.cep.test.lrbkit.destination.LRBDestination"/>
+    <property name="lrbkit.dest2" 
+       value= "java://oracle.cep.test.lrbkit.destination.LRBDestination"/>
+    <property name="lrbkit.dest3" 
+       value= "java://oracle.cep.test.lrbkit.destination.LRBDestination"/>
+    <generate.context test.filename="tklinroadpush.cqlx" num.threads="${num.threads}" 
+    	exit.afterrun="false" use.threadedScheduler="true" systemrun.arg=""/>
+
+    <!-- RUN LRBKIT -->
+     <runserver jvm.maxmem="1024m" 
+              classname="oracle.cep.test.lrbkit.LRBKit" 
+              arg1="test/data/CarLoc3hours.dat"
+              debugproperty="false"
+              assertion="false" 
+              timeout="999999999999"
+              inpf.name="CarLoc3hours.dat.5000000" outf.name="TollStr_CarLoc5000000"
+              lrbkit.source="${lrbkit.source}"
+              lrbkit.dest1="${lrbkit.dest1}"
+              lrbkit.dest2="${lrbkit.dest2}"
+              lrbkit.dest3="${lrbkit.dest3}"
+     />
+
+  </target>
+
+</project>

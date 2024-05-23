@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--  $Header: cep/wlevs_cql/modules/cqlengine/test/config/ApplicationContext.xml /main/23 2012/07/18 02:49:19 udeshmuk Exp $ -->
+
+<!-- 
+ Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved. 
+
+   NAME
+     ApplicationContext.xml - <one-line expansion of the name>
+
+   DESCRIPTION
+     <short description of component this file declares/defines>
+
+   NOTES
+     <other useful comments, qualifications, etc.>
+
+   MODIFIED   (MM/DD/YY)
+   sbishnoi    04/04/12 - adding config parameter for targetSQLType in context
+                          of archived relations
+   sbishnoi    04/26/11 - adding context for archiver
+   hopark      03/12/09 - use datasource finder
+   hopark      01/30/09 - add QryDestLocator
+   anasrini    02/11/09 - add directInterop
+   alealves    02/03/09 - test user function locator
+   hopark      11/28/08 - fix timezone
+   hopark      11/06/08 - fix dumpplan
+   hopark      06/19/08 - logging refactor
+   hopark      03/26/08 - Creation
+
+-->
+<beans>
+    <import resource="cep-jdbcrmi.xml" />
+    
+    <bean id="userFunctionLocator" class="oracle.cep.test.userfunctions.TkLocator" />
+
+    <bean id="qryDestLocator"
+          class="oracle.cep.test.interfaces.QryDestLocator" >
+        <property name="fileDestination" value="@TEST_OUTPUT@/outqrydest.txt" />
+    </bean>
+    
+    <bean id="dataSourceFinder"
+          class="oracle.cep.env.standalone.DataSourceFinder">
+        <property name="dataSource0">
+          <props>
+            <prop key="name">soainfra</prop>
+            <prop key="server">@DBHOST@</prop>
+            <prop key="port">@DBPORT@</prop>
+            <prop key="dbname">@DBSID@</prop>
+            <prop key="user">@DBUSER@</prop>
+            <prop key="passwd">@DBPASSWORD@</prop>
+          </props>        
+        </property>
+    </bean>
+    
+    <bean id="javaTypeLocator" class="com.oracle.cep.cartridge.java.impl.JavaTypeSystemImpl" />
+
+    <bean id="cartridgeLocator"
+        class="oracle.cep.env.standalone.CartridgeRegistry">
+    </bean>
+
+    <bean class="com.oracle.cep.cartridge.java.impl.JavaCartridge">
+      <constructor-arg ref="cartridgeLocator" />
+      <property name="typeLocator" ref="javaTypeLocator"/>
+    </bean>
+     
+    <bean id="MyCartridge" class="oracle.cep.test.java.MyCartridge">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+
+    <bean id="TreeIndexCartridge" class="oracle.cep.test.cartridge.treeindex.TreeIndexCartridge">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+    
+    <bean id="SpatialCartridge" class="com.oracle.cep.cartridge.spatial.SpatialCartridge" 
+        factory-method="createInstance">
+     <constructor-arg ref="cartridgeLocator" />
+    </bean>
+ 
+     <bean id="spatialCtx1" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+        factory-method="registerContext">
+      <constructor-arg value="spatial1" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="CARTESIAN">false</prop>
+            <prop key="SRID">8307</prop>
+            <prop key="SMA">6378137.0</prop>
+            <prop key="ROF">298.257223563</prop>
+            <prop key="TOLERANCE">0.000000001</prop>
+            <prop key="ANYINTERACT_TOLERANCE">0.0000005</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+
+     <bean id="spatialCtx2" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+        factory-method="registerContext">
+      <constructor-arg value="spatial8265" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="CARTESIAN">false</prop>
+            <prop key="SRID">8265</prop>
+            <prop key="SMA">6378137</prop>
+            <prop key="ROF">298.257223563</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+    
+     <bean id="cartesian" class="com.oracle.cep.cartridge.spatial.SpatialContext" 
+        factory-method="registerContext">
+      <constructor-arg value="cartesian" />
+      <constructor-arg value="sys" />
+      <constructor-arg>
+          <props>
+            <prop key="CARTESIAN">true</prop>
+            <prop key="SRID">0</prop>
+            <prop key="SMA">0.0</prop>
+            <prop key="ROF">0.0</prop>
+            <prop key="TOLERANCE">0.1</prop>
+            <prop key="ANYINTERACT_TOLERANCE">0.1</prop>
+          </props>        
+      </constructor-arg>
+    </bean>
+    
+    <bean id="envConfig"
+          class="oracle.cep.env.standalone.EnvConfig" >
+        <property name="queryDestLocator" ref="qryDestLocator" />
+        <property name="dataSourceFinder" ref="dataSourceFinder" />
+        <property name="cartridgeLocator" ref="cartridgeLocator" />
+        <property name="archiverFinder" ref="archiverFinder" />
+
+        <property name="timeZone" value="GMT-7:00" />
+        <property name="schedRuntime" value="@SCHED_RUN_TIME@" />
+        <property name="schedulerClassName" value="@SCHEDULER@" />        
+        <property name="schedOnNewThread" value="@USE_THREADED_SCHEDULER@" />
+        <property name="schedNumThreads" value="@NUM_THREADS@" />
+        <property name="directInterop" value="@DIRECT_INTEROP@" />
+        <!--Config Property "targetSQLType" is used to define target sql type
+            for archiver query; Only following values are allowed:
+            1) Oracle : To form Archiver query using Oracle SQL constructs
+            2) BI : To form Archiver query using constructs of Logical SQL 
+                    used by BI environment
+        -->
+        <property name="targetSQLType" value="Oracle"/>
+	
+	<!-- Setting to default values. Not needed as such but adding these entries
+	     here just to demonstrate how these properties can be used -->
+	<property name="beamTxnCtxName" value="BEAM_TRANSACTION_CONTEXT"/>
+	<property name="contextColName" value="TRANSACTION_CID"/>
+	<property name="txnColName" value="TRANSACTION_TID"/>
+    </bean>
+    
+    <bean id="config" 
+          class="oracle.cep.metadata.ConfigManager">
+        <property name="envConfig" ref="envConfig" />
+
+        <property name="usePagedTuple" value="@USE_PAGED_TUPLE@" />
+        <property name="usePagedList" value="@USE_PAGED_LIST@" />
+        <property name="dynamicTupleClass" value="@USE_DYNAMIC_TUPLE@" />
+        <property name="userFunctionLocator" ref="userFunctionLocator" />
+    </bean>
+
+    <bean id="cepServerRegistry" 
+          class="oracle.cep.server.CEPServerRegistryImpl" />
+
+    <bean id="cepManager" 
+          class="oracle.cep.service.CEPManager" 
+          factory-method="getInstance"
+          init-method="init" >
+        <property name="config" ref="config" />
+<!--
+        <property name="evictPolicy" ref="@EVICT_POLICY@" />
+-->
+        <property name="serverRegistry" ref="cepServerRegistry" />
+    </bean>
+  
+    <bean id="fullEvictPolicy" 
+          class="oracle.cep.memmgr.evictPolicy.BottomUpPolicy" >
+        <property name="mode" value="@EVICT_POLICY_MODE@" />
+        <property name="runType"  value="@EVICT_POLICY_RUNTYPE@" />
+        <property name="debugCount" value="@EVICT_POLICY_DEBUG_COUNT@" />
+        <property name="memThreshold1"  value="-25" />
+        <property name="memThreshold2" value="-10" />
+        <property name="countThreshold0"  value="300000" />
+        <property name="countThreshold1" value="100000" />
+        <property name="minEvictable" value="1000" />
+    </bean>
+
+    <bean id="queuesrcEvictPolicy" 
+          class="oracle.cep.memmgr.evictPolicy.QueueSrcPolicy" >
+        <property name="runType"  value="@EVICT_POLICY_RUNTYPE@" />
+        <property name="debugCount" value="@EVICT_POLICY_DEBUG_COUNT@" />
+        <property name="normalThreshold"  value="-50" />
+        <property name="partialThreshold" value="-33" />
+        <property name="fullThreshold"  value="-25" />
+        <property name="syncThreshold" value="-15" />
+    </bean>
+
+    <bean id="cqlRunner" 
+          class="oracle.cep.test.CQLRunner" 
+          init-method="init" >
+        <constructor-arg ref="cepManager"/>    
+        <property name="testRule" value="@CQLX_FILE@,exit=@EXIT_AFTERRUN@,cleanup=@DROPSCHEMA_AFTERRUN@,dumpplan=@DUMPPLAN_AFTERRUN@,cqlfolder=@CQL_FOLDER@,testdata=@TEST_DATA@,testoutput=@TEST_OUTPUT@" />
+        <property name="useSysService" value="true" />
+    </bean>
+
+    <bean id="archiverFinder"
+          class="oracle.cep.env.standalone.ArchiverFinder">
+        <property name="archiver0">
+          <props>
+            <prop key="name">BIArchiver</prop>
+            <prop key="class">oracle.cep.archiver.SampleArchiver</prop>
+          </props>
+        </property>
+    </bean>
+
+  </beans>
+

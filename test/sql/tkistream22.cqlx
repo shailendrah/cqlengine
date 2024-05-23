@@ -1,0 +1,94 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+
+<!-- ******************* -->
+<!-- create relations    -->
+<!-- ******************* -->
+<CEP_DDL> register relation R0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register relation R1 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register relation R2 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> register relation R3 (c1 integer, c2 float, c3 char(48)) </CEP_DDL>
+<CEP_DDL> register relation R4 (c1 integer, c2 float, c3 char(48)) </CEP_DDL>
+
+
+<!-- ************************* -->
+<!-- add data feed sources     -->
+<!-- ************************* -->
+<CEP_DDL> <![CDATA[ alter relation R0 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkistream2-0.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation R1 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkistream2-1.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation R2 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkistream2-2.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation R3 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkistream2-3.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter relation R4 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkistream2-4.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+
+<!-- ***************************** -->
+<!-- CREATE QUERIES                -->
+<!-- ***************************** -->
+
+<CEP_DDL> create query R0_q as ISTREAM (select * from R0) DIFFERENCE USING
+(c1) </CEP_DDL>
+
+<CEP_DDL> create query R1_q as ISTREAM (select * from R1) DIFFERENCE USING
+(c1) </CEP_DDL>
+
+<CEP_DDL> create query R2_q as ISTREAM (select * from R2) DIFFERENCE USING
+(c1) </CEP_DDL>
+
+<CEP_DDL> create query R3_q as ISTREAM (select * from R3) DIFFERENCE USING
+(c2, c3) </CEP_DDL>
+
+<!-- NOTE: this is still not the same as regular ISTREAM operator, as
+semantics is still different. -->
+<CEP_DDL> create query R4_q as ISTREAM (select * from R4) DIFFERENCE USING
+(c1, c2, c3) </CEP_DDL>
+
+
+<!-- ************************************* -->
+<!-- register where queries' output sinks  -->
+<!-- ************************************* -->
+<CEP_DDL> <![CDATA[ alter query R0_q add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/out-tkistream2-R0_q.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query R1_q add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/out-tkistream2-R1_q.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query R2_q add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/out-tkistream2-R2_q.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query R3_q add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/out-tkistream2-R3_q.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter query R4_q add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/out-tkistream2-R4_q.txt</Address></EndPointReference>"]]>
+</CEP_DDL>
+
+
+<!-- ***************** -->
+<!-- START ALL QUERIES -->
+<!-- ***************** -->
+<CEP_DDL> alter query R0_q start </CEP_DDL>
+<CEP_DDL> alter query R1_q start </CEP_DDL>
+<CEP_DDL> alter query R2_q start </CEP_DDL>
+<CEP_DDL> alter query R3_q start </CEP_DDL>
+<CEP_DDL> alter query R4_q start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+
+</CEP>

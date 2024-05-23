@@ -1,0 +1,187 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+<xsd:include schemaLocation="geocoder_request.xsd" />
+
+<xsd:simpleType name="positiveDecimal">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minExclusive value="0"/>
+</xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="distanceUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="mile"/>
+    <xsd:enumeration value="km"/>
+    <xsd:enumeration value="kilometer"/>
+    <xsd:enumeration value="meter"/>
+  </xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="timeUnit">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="minute"/>
+    <xsd:enumeration value="hour"/>
+    <xsd:enumeration value="second"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="unitType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="us"/>
+    <xsd:enumeration value="metric"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="edgePercentage">
+  <xsd:restriction base="xsd:decimal">
+    <xsd:minInclusive value="0.0"/>
+    <xsd:maxInclusive value="1.0"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="roadPreference">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="highway"/>
+    <xsd:enumeration value="local"/>
+  </xsd:restriction>
+</xsd:simpleType>               
+ 
+<xsd:simpleType name="routePreference">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="shortest"/>
+    <xsd:enumeration value="fastest"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="truckType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="delivery"/>
+    <xsd:enumeration value="public"/>
+    <xsd:enumeration value="resident"/>
+    <xsd:enumeration value="trailer"/>
+  </xsd:restriction>
+</xsd:simpleType>
+ 
+<xsd:simpleType name="vehicleType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="auto"/>
+    <xsd:enumeration value="truck"/>
+  </xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="pregeocodedType">
+  <xsd:all>
+    <xsd:element name="edge_id" type="xsd:long" />
+    <xsd:element name="percent" type="edgePercentage"/>
+    <xsd:element name="side">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="L"/>
+          <xsd:enumeration value="R"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:element>
+  </xsd:all>
+</xsd:complexType>
+ 
+<xsd:complexType name="routerInputLocation">
+  <xsd:choice>
+    <xsd:element name="input_location"  type="input_locationType"/>
+    <xsd:element name="pregeocoded_location" type="pregeocodedType"/>
+  </xsd:choice>
+</xsd:complexType>
+ 
+<xsd:element name="batch_route_request" type="batchRouteRequest" />
+
+<xsd:complexType name="batchRouteRequest">
+  <xsd:sequence>
+    <xsd:element name="route_request" type="routeRequest" 
+                 minOccurs="1" maxOccurs="unbounded"/>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+</xsd:complexType>
+                
+<xsd:element name="route_request" type="routeRequest" />
+<xsd:complexType name="routeRequest">
+  <xsd:sequence>
+    <xsd:element name="start_location" type="routerInputLocation"
+                 minOccurs="0" maxOccurs="1"/>
+    <xsd:element name="location" type="routerInputLocation" 
+                 minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="end_location" type="routerInputLocation"
+                 minOccurs="0" maxOccurs="1"/>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+  <xsd:attribute name="pre_geocoded_locations" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="route_preference" type="routePreference" 
+                 use="optional"/>
+  <xsd:attribute name="road_preference" type="roadPreference"
+                 use="optional"/>
+  <xsd:attribute name="optimize_route" type="xsd:boolean" use="optional"/>
+  <xsd:attribute name="route_type" use="optional">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="open"/>
+        <xsd:enumeration value="closed"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:attribute>
+  <xsd:attribute name="driving_directions_detail" use="optional">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="medium"/>
+        <xsd:enumeration value="high"/>
+        <xsd:enumeration value="low"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:attribute>
+  <xsd:attribute name="language" use="optional">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="English"/>
+        <xsd:enumeration value="French"/>
+        <xsd:enumeration value="German"/>
+        <xsd:enumeration value="Italian"/>
+        <xsd:enumeration value="Spanish"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:attribute>
+  <xsd:attribute name="distance_unit" type="distanceUnit" use="optional"/>
+  <xsd:attribute name="length_unit" type="unitType" use="optional"/>
+  <xsd:attribute name="time_unit" type="timeUnit" use="optional"/>
+  <xsd:attribute name="weight_unit" type="unitType" use="optional"/>
+  <xsd:attribute name="return_locations" type="xsd:boolean"
+                 use="optional"/>
+  <xsd:attribute name="return_subroutes" type="xsd:boolean"
+                 use="optional"/>
+  <xsd:attribute name="return_driving_directions" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_hierarchical_directions" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_route_geometry" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_subroute_geometry" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_segment_geometry" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_detailed_geometry" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_route_edge_ids" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_subroute_edge_ids" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="return_segment_edge_ids" type="xsd:boolean" 
+                 use="optional"/>
+  <xsd:attribute name="vehicle_type" type="vehicleType" use="optional"/>
+  <xsd:attribute name="truck_type" type="truckType" use="optional"/>
+  <xsd:attribute name="truck_height" type="positiveDecimal"
+                 use="optional"/>
+  <xsd:attribute name="truck_length" type="positiveDecimal"
+                 use="optional"/>
+  <xsd:attribute name="truck_per_axle_weight" type="positiveDecimal" 
+                 use="optional"/>
+  <xsd:attribute name="truck_weight" type="positiveDecimal"
+                 use="optional"/>
+  <xsd:attribute name="truck_width" type="positiveDecimal" use="optional"/>
+</xsd:complexType>
+ 
+</xsd:schema>

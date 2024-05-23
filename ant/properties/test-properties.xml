@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<project name="test-properties" basedir=".">
+	<property environment="env" />
+            <property file="${wlevs.modules.dir}/cqlengine/user.test.properties"/>
+            <property file="${wlevs.modules.dir}/cqlengine/test.properties"/>
+	<import file="${wlevs.modules.dir}/cqlengine/cep-common.xml" />
+
+	<!-- set work properties for all tests-->
+	<property name="work" value="${test.work.home}" />
+	<property name="work.cep" value="${work}/cep" />
+	<property name="work.soainfra" value="${work}/soa-infra" />
+	<property name="work.cep.log" value="${work.cep}/log" />
+	<property name="work.cep.trc" value="${work.cep}/diag/trc" />
+	<property name="test.dir" value="${cqlengine.dir}/test" />
+	<property name="test.config" value="${test.dir}/config" />
+	<property name="test.coverage" value="${test.dir}/coverage" />
+	<property name="test.data" value="${test.dir}/data" />
+	<property name="test.log" value="${test.dir}/log" />
+	<property name="test.oc4j" value="${test.dir}/oc4j" />
+	<property name="test.oracle" value="${test.dir}/oracle" />
+	<property name="test.sosd" value="${test.dir}/sosd" />
+	<property name="test.source" value="${test.dir}/source" />
+	<property name="test.sql" value="${test.dir}/sql" />
+	<property name="test.src" value="${test.dir}/src" />
+	<property name="demo.src" value="${test.dir}/demo" />
+	<property name="perl.root" value="${ade.home}/oracle/perl58" />
+	<property name="perl" value="${perl.root}/bin/perl5.8.3" />
+	<property name="perl.lib" value="${perl.root}/bin/perl5.8.3/lib" />
+        <property name="test.db.host" value="adc2101019.us.oracle.com"/>
+        <property name="test.db.port" value="1521"/>
+        <property name="test.db.sid" value="xe"/>
+    <if>
+	   <available file="/usr/local/lib/perl5/5.8.4" type="dir" />
+	   <then>
+	     <property name="test.perl.lib" value="/usr/local/lib/perl5/5.8.4" />
+	     <property name="test.perl" value="/usr/bin/perl" />
+	   </then>
+    <elseif>
+	    <available file="/usr/lib64/perl5/" type="dir" />
+   	    <then>
+            <property name="test.perl.lib" value="/usr/lib64/perl5/" />
+            <property name="test.perl" value="/usr/bin/perl" />
+   	    </then>
+        </elseif>
+    <elseif>
+	    <available file="/System/Library/Perl/5.12" type="dir" />
+   	    <then>
+            <property name="test.perl.lib" value="/System/Library/Perl/5.12" />
+            <property name="test.perl" value="/usr/bin/perl" />
+   	    </then>
+        </elseif>
+    <elseif>
+            <available file="${perl.root}/lib" type="dir" />
+            <then>
+            <property name="test.perl.lib" value="${perl.root}/lib" />
+            <property name="test.perl" value="${perl}" />
+            </then>
+        </elseif>
+    <elseif>
+	    <available file="c:/cygwin/lib/perl5/5.10" type="dir" />
+   	    <then>
+            <property name="test.perl.lib" value="c:/cygwin/lib/perl5/5.10" />
+            <property name="test.perl" value="c:/cygwin/bin/perl" />
+   	    </then>
+        </elseif>
+    <else>
+	     <property name="test.perl.lib" value="g:/cygwin/lib/perl5/5.10" />
+	     <property name="test.perl" value="g:/cygwin/bin/perl" />
+	</else>
+    </if>
+	<if>
+	   <available file="${test.perl.lib}" type="dir" />
+  	<then>
+               <echo message="use ${test.perl} ${test.perl.lib}" />
+            </then>
+ <else>
+ <echo message="cannot find ${test.perl.lib}" />
+ </else>
+ </if>
+	<property name="null" value="0" />
+	<property name="dbs.dir" value="${work.cep}/storage" />
+	<property name="dbs.data.dir" value="${work.cep}/storage/data" />
+	<property name="dir.test.cqlx" value="${test.dir}/sql/" />
+	<property name="twork" value="${work}" />
+	<property name="ade.view.root" value="${ade.home}" />
+	<property name="host.name" value="${env.HOST}" />
+	<property name="build.dir.target" value="${cqlengine.dir}/ant/target" />
+	<property name="debug.flag.sh"
+		value="${cqlengine.dir}/utl/debugflag.sh" />
+	<property name="debug.flag.file"
+		value="${cqlengine.dir}/src/oracle/cep/util/DebugUtil.java" />
+	<!--property name = "wlevs.beahome" value = "${cqlengine.dir}/bea" /-->
+	<property name = "wlevs.beahome" value = "${wlevs.staging.ce.dir}" />
+
+<!--
+	<property="jrockit.home" value="${wlevs.home}/external/jrockit-R27.6.0-50-1.6.0_05" />
+-->
+	<!-- log events and levels -->
+	<property name="queue.events" value="21,22,23,24,25" />
+	<property name="queue.levels" value="0,1,2,3,4,5,6" />
+
+	<property name="store.events" value="41,42,43,44,45,46,47" />
+	<property name="store.levels" value="0,1,2,3,4,5,6" />
+
+	<property name="index.events" value="61,62,63,64,65,66" />
+	<property name="index.levels" value="0,1,2,3,4,5,6" />
+
+	<property name="synopsis.events" value="81,82,83,84,85,86,87" />
+	<property name="synopsis.levels" value="0,1,2,3,4,5,6,7" />
+
+	<property name="operator.events"
+		value="101,102,103,104,105,106,107,108,109" />
+	<property name="operator.levels" value="0,1,2,3,4,5,6,7,8" />
+
+	<property name="spill.events" value="121,122,123,124,125,126" />
+	<property name="spill.levels" value="0,1,2,3,4,5" />
+
+	<property name="storage.events"
+		value="141,142,143,144,145,146,147,148,149" />
+	<property name="storage.levels" value="0,1,2,3" />
+
+	<property name="metadata_query.events"
+		value="161,162,163,164,165,166" />
+	<property name="metadata_query.levels" value="0,1,2,3" />
+
+	<property name="metadata_table.events" value="181,182,183" />
+	<property name="metadata_table.levels" value="0,1,2,3" />
+
+	<property name="metadata_window.events" value="201,202" />
+	<property name="metadata_window.levels" value="0,1,2,3" />
+
+	<property name="metadata_userfunc.events" value="221,222" />
+	<property name="metadata_userfunc.levels" value="0,1,2,3" />
+
+	<property name="metadata_view.events" value="241,242,243" />
+	<property name="metadata_view.levels" value="0,1,2,3" />
+
+	<property name="metadata_system.events" value="261,262,263" />
+	<property name="metadata_system.levels" value="0,1,2,3" />
+
+	<property name="metadata_cache.events" value="281,282,283,284,285" />
+	<property name="metadata_cache.levels" value="0,1,2,3" />
+
+	<property name="systemstate.levels" value="1,2,3,4,5,6,7,8" />
+
+	<!-- set emma properties for test code coverage-->
+	<property name="emma.dir" value="${test.coverage}" />
+	<property name="work.emma" value="${work.cep}/emma" />
+</project>

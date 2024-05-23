@@ -1,0 +1,43 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata31_distinct_S(c1 integer, c2 float, c3 char(10), c4 char(10), c5 byte(10), c6 timestamp, c7 interval, c8 bigint)  </CEP_DDL>
+<CEP_DDL> register relation tkdata31_distinct_R(c1 integer, c2 float, c3 char(10), c4 char(10), c5 byte(10), c6 timestamp, c7 interval, c8 bigint)  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata31_distinct_S add source "<EndPointReference><Address>file://@TEST_DATA@/tkinpSDistinct1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter relation tkdata31_distinct_R add source "<EndPointReference><Address>file://@TEST_DATA@/tkinpRDistinct1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q1 as select distinct c1, c2, c5, c6 from tkdata31_distinct_S </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q2 as select distinct c1, c2, c5, c6 from tkdata31_distinct_R </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q1.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q2.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q2 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+<CEP_DDL> register stream tkdata31_distinct_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata31_distinct_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/tkinpSDistinct.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdata31_distinct_q3 as select distinct sum(c1), avg(c2) from tkdata31_distinct_S0  </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q4 as select distinct c1*10/2 +5-3,  c2*2.4+1.2 from tkdata31_distinct_S0 </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q5 as select distinct count(c1), avg(c2)  from tkdata31_distinct_S0 </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q3 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q3.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q4 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q4.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q5 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q5.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q3 start </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q4 start </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q5 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+<CEP_DDL> register stream tkdata31_distinct_S1 (c1 char(10), c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata31_distinct_S1 add source "<EndPointReference><Address>file://@TEST_DATA@/tkinpSDistinct_null.txt</Address></EndPointReference>"]]>  </CEP_DDL>                
+<CEP_DDL> create query tkdata31_distinct_q6 as select distinct sum(c2+1) from tkdata31_distinct_S1  </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q7 as select distinct c2*2+10 from tkdata31_distinct_S1 </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q8 as select distinct avg(c2) from tkdata31_distinct_S1 </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q9 as select distinct max(c2) from tkdata31_distinct_S1[range 1] </CEP_DDL>
+<CEP_DDL> create query tkdata31_distinct_q10 as select distinct min(c2) from tkdata31_distinct_S1[range 2] </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q6 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q6.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q7 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q7.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q8 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q8.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q9 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q9.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkdata31_distinct_q10 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outtkdata31q10.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q6 start </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q7 start </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q8 start </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q9 start </CEP_DDL>
+<CEP_DDL> alter query tkdata31_distinct_q10 start </CEP_DDL>
+<CEP_DDL> alter system run</CEP_DDL>
+</CEP>

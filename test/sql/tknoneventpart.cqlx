@@ -1,0 +1,55 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tknoneventpart_S (eventType integer, orderId integer, amount double)</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tknoneventpart_S add source "<EndPointReference><Address>file://@TEST_DATA@/noneventpartInp.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[
+  create query tknoneventpart_q1 as
+   select
+   "DelayedShipment" as alertType,
+   orders.orderId,
+   orders.amount
+   from tknoneventpart_S MATCH_RECOGNIZE
+   (
+   PARTITION BY
+   orderId
+   MEASURES
+   CustOrder.orderId AS orderId,
+   CustOrder.amount AS amount
+  INCLUDE TIMER EVENTS
+  PATTERN (CustOrder NotTheShipment*) DURATION 10 SECONDS
+  DEFINE
+  CustOrder AS (eventType = 1),
+  NotTheShipment AS (NOT (eventType = 3))
+   ) AS orders
+  ]]>
+</CEP_DDL>
+<CEP_DDL><![CDATA[
+create query tknoneventpart_q2 as
+   select
+   "DelayedShipment" as alertType,
+   orders.orderId,
+   orders.amount
+   from tknoneventpart_S MATCH_RECOGNIZE
+   (
+   MEASURES
+   CustOrder.orderId AS orderId,
+   CustOrder.amount AS amount
+  INCLUDE TIMER EVENTS
+  PATTERN (CustOrder NotTheShipment*) DURATION 10 SECONDS
+  DEFINE
+  CustOrder AS (eventType = 1),
+  NotTheShipment AS
+  (
+  (eventType != 3) OR
+  (
+  (eventType = 3 AND orderId != CustOrder.orderId)
+  )
+  )
+   ) AS orders 
+]]>
+</CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tknoneventpart_q1 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnoneventpart.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tknoneventpart_q2 add destination "<EndPointReference><Address>file://@TEST_OUTPUT@/outnoneventpartAlt.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tknoneventpart_q1 start</CEP_DDL>
+<CEP_DDL> alter query tknoneventpart_q2 start</CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

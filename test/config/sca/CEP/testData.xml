@@ -1,0 +1,30 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body xmlns:ns1="http://www.globalcompany.com/ns/OrderBooking">
+        <ns1:SOAOrderBookingProcessRequest xmlns="http://www.oracle.com/cep">
+            <ComplexEvent>
+                <Timestamp>12/31/1969 16:02:00</Timestamp><ElementKind>plus</ElementKind><orderId>2</orderId><orderAmount>20000.0</orderAmount>            
+            </ComplexEvent>
+        </ns1:SOAOrderBookingProcessRequest>
+    </soap:Body>
+</soap:Envelope>
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body xmlns:ns1="http://www.globalcompany.com/ns/OrderBooking">
+        <ns1:SOAOrderBookingProcessRequest xmlns="http://www.oracle.com/cep">
+            <ComplexEvent>
+                <Timestamp>12/31/1969 16:03:00</Timestamp><ElementKind>plus</ElementKind><orderId>3</orderId><orderAmount>20.0</orderAmount>            
+            </ComplexEvent>
+        </ns1:SOAOrderBookingProcessRequest>
+    </soap:Body>
+</soap:Envelope>
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body xmlns:ns1="http://www.globalcompany.com/ns/OrderBooking">
+        <ns1:SOAOrderBookingProcessRequest xmlns="http://www.oracle.com/cep">
+            <ComplexEvent>
+                <Timestamp>12/31/1969 16:04:00</Timestamp><ElementKind>plus</ElementKind><orderId>4</orderId><orderAmount>35000.0</orderAmount>            
+            </ComplexEvent>
+        </ns1:SOAOrderBookingProcessRequest>
+    </soap:Body>
+</soap:Envelope>
+

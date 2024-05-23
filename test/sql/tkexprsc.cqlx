@@ -1,0 +1,219 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream S0 (c1 integer, c2 float, c3 char(32)) </CEP_DDL>
+
+<CEP_DDL> <![CDATA[ alter stream S0 add source
+"<EndPointReference><Address>file://@TEST_DATA@/tkexprsc.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<!-- ******************************** -->
+<!-- (1). Just bunch of OR predicates -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q1 as select * from S0 
+   WHERE c1 = 10 OR c1 = 1/0 OR c1 > 1/0 OR c1 < 1/0
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************** -->
+<!-- (1.a). Just bunch of AND predicates -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q1a as select * from S0 
+   WHERE c1 != 10 AND c1 = 1/0 AND c1 > 1/0 AND c1 < 1/0
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************** -->
+<!-- (2). OR predicates ANDed together -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q2 as select * from S0 
+   WHERE (c1 = 10 OR c1 > 1/0 OR c1 = 1/0 OR c1 = 1/0) AND
+         (1 = 1 OR c1 = 1/0)
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************** -->
+<!-- (3). OR predicates ANDed         -->
+<!-- THIS ONE WILL FAIL AT RUNTIME.   -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q3 as select * from S0 
+   WHERE (c1 != 10 OR c1 = 1/0 OR c1 > 1/0) AND
+         (c1 = 10 OR 1/0 = 1/0)
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************** -->
+<!-- (4). OR predicates ANDed         -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q4 as select * from S0 
+   WHERE (c1 != 10 OR c1 < 9 OR c1 > 11) AND
+         (c1 = 1/0 OR c1 = 10)
+]]>
+</CEP_DDL>
+
+<!-- ******************************** -->
+<!-- (5). OR predicates and Nulls     -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q5 as select * from S0 
+   WHERE (c1 is null) or (c1 = 10)
+]]>
+</CEP_DDL>
+
+<!-- ******************************** -->
+<!-- (6). Complex predicates ORed     -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q6 as select * from S0
+   WHERE (c1 = 10 and c1 < 11 and c1 > 1) or (c1 > 1/0 and c1 = 10)
+]]>
+</CEP_DDL>
+
+<!-- ******************************** -->
+<!-- (6.1). Complex predicates ORed   -->
+<!-- THIS ONE WILL FAIL AT RUNTIME    -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q7 as select * from S0 
+   WHERE (c1 != 10 and c1 = 1/0 and c1 > 1) or (c1 > 1/0 and c1 = 10) 
+]]>
+</CEP_DDL>
+
+<!-- ******************************** -->
+<!-- (7). Complex predicates ANDed    -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q8 as select * from S0 
+   WHERE (c1 = 10 OR c1 = 1/0 OR c1 > 1/0) AND (c1 > 9 and c1 = 10)
+]]>
+</CEP_DDL>
+
+
+<!-- ******************************** -->
+<!-- (8). Complex predicates ANDed    -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+   CREATE QUERY q9 as select * from S0 
+   WHERE (c1 = 10 or c1 != 1/0) and (c1 != 10 and c1 = 1/0)
+]]>
+</CEP_DDL>
+
+
+
+<!-- ******************************** -->
+<!-- (9). Large Number of Predicates  -->
+<!-- ******************************** -->
+<CEP_DDL> 
+<![CDATA[
+
+CREATE QUERY q10 as select * from S0 
+WHERE 1 = 1 OR
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0) OR 
+(1/0 = 1 AND 0 = 0)
+
+]]>
+</CEP_DDL>
+
+
+
+<CEP_DDL> <![CDATA[ alter query q1 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q1.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q1a add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q1a.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+
+<CEP_DDL> <![CDATA[ alter query q2 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q2.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q3 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q3.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q4 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q4.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q5 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q5.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q6 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q6.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q7 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q7.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q8 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q8.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q9 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q9.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+<CEP_DDL> <![CDATA[ alter query q10 add destination
+"<EndPointReference><Address>file://@TEST_OUTPUT@/tkexprsc_q10.txt</Address></EndPointReference>"]]>
+</CEP_DDL> 
+
+
+
+<CEP_DDL> alter query q1 start </CEP_DDL>
+<CEP_DDL> alter query q1a start </CEP_DDL>
+<CEP_DDL> alter query q2 start </CEP_DDL>
+<CEP_DDL> alter query q3 start </CEP_DDL>
+<CEP_DDL> alter query q4 start </CEP_DDL>
+<CEP_DDL> alter query q5 start </CEP_DDL>
+<CEP_DDL> alter query q6 start </CEP_DDL>
+<CEP_DDL> alter query q7 start </CEP_DDL>
+<CEP_DDL> alter query q8 start </CEP_DDL>
+<CEP_DDL> alter query q9 start </CEP_DDL>
+<CEP_DDL> alter query q10 start </CEP_DDL>
+
+<CEP_DDL> alter system run</CEP_DDL>	
+</CEP>

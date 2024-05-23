@@ -1,0 +1,11 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> register stream tkdata71_S0 (c1 integer, c2 float) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkdata71_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpS0.txt</Address></EndPointReference>"]]></CEP_DDL>                
+<CEP_DDL> register view tkdata71_v0 (c1 integer) as select * from tkdata71_S0 </CEP_DDL>
+<CEP_DDL> register view tkdata71_v1 (c1 integer, c2 float) as select * from tkdata71_S0 </CEP_DDL>
+<CEP_DDL> register view tkdata71_v2 (c1 integer) as select * from tkdata71_S0 </CEP_DDL>
+<CEP_DDL> register view tkdata71_v3 (c1 integer, c2 float) as select * from tkdata71_S0 </CEP_DDL>
+<CEP_DDL> register view tkdata71_v4 (c1 integer) as select * from tkdata71_v1 </CEP_DDL>
+<CEP_DDL> register view tkdata71_v5 (c1 integer, c2 float) as select * from tkdata71_v1 </CEP_DDL>
+<CEP_DDL> create query tkdata71_q1 as select * from tkdata71_v1 </CEP_DDL>
+</CEP>

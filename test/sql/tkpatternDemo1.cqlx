@@ -1,0 +1,11 @@
+<CEP xmlns="http://xmlns.oracle.com/cep">
+<CEP_DDL> create stream tkpatternDemo1_S0 (c1 integer, c2 integer) </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter stream tkpatternDemo1_S0 add source "<EndPointReference><Address>file://@TEST_DATA@/inpPatternDemo1.txt?delay=1</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpatternDemo1_q1 as select T.firstW,T.lastZ from tkpatternDemo1_S0 MATCH_RECOGNIZE ( MEASURES A.c1 as firstW, last(Z.c1) as lastZ PATTERN(A W+ X+ Y+ Z+) DEFINE A as A.c1 = A.c1, W as W.c2 < prev(W.c2), X as X.c2 > prev(X.c2), Y as Y.c2 < prev(Y.c2), Z as Z.c2 > prev(Z.c2)) as T]]> </CEP_DDL>
+<CEP_DDL><![CDATA[ create query tkpatternDemo1_q2 as select * from tkpatternDemo1_S0]]> </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpatternDemo1_q1 add destination "<EndPointReference><Address>file:///var/ftp/pub/pattern/output.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> <![CDATA[ alter query tkpatternDemo1_q2 add destination "<EndPointReference><Address>file:///var/ftp/pub/pattern/input.txt</Address></EndPointReference>"]]>  </CEP_DDL>
+<CEP_DDL> alter query tkpatternDemo1_q1 start </CEP_DDL>
+<CEP_DDL> alter query tkpatternDemo1_q2 start </CEP_DDL>
+<CEP_DDL> alter system run </CEP_DDL>
+</CEP>

@@ -1,0 +1,7 @@
+sucs, 4
+difs, 0
+
+outcsfbPR1Size1000Rate1_splscaleds200k.suc
+outcsfbPR2Size1000Rate1_splscaleds200k.suc
+outcsfbPR3Size1000Rate1_splscaleds200k.suc
+outcsfbPR4Size1000Rate1_splscaleds200k.suc
